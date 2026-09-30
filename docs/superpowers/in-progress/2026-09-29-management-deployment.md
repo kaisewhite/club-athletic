@@ -54,8 +54,8 @@ Use this checklist as the gate before any CDK/deployment work:
   - [ ] Existing database facts are answerable; real missing data is described accurately.
   - [ ] No unwanted assistant quote/left rule appears.
   - [ ] Mobile sidebar opens, navigates, and closes via touch and keyboard.
-  - [x] Schedule ticker and FAQ/home requirements match the requested design/content. (Local Playwright: `mobile-layout.spec.ts` checks FAQ rows, homepage ticker, schedule route and page overflow.)
-  - [x] Every table and detail surface is readable at supported mobile widths without page overflow. (Local Playwright mobile layout/table suites: 113 passed across 320, 375, 390, 414, 768, 859 and 860px.)
+  - [ ] Schedule ticker and FAQ/home requirements match the requested design/content. (Partial Playwright coverage only: `mobile-layout.spec.ts` checks FAQ answer line count, page overflow, and ticker scroller geometry; it does not verify the full requested content/design criteria.)
+  - [ ] Every table and detail surface is readable at supported mobile widths without page overflow. (Partial Playwright coverage only: mobile layout checks route-level overflow, room/chef/task/flights layouts; mobile table checks cover flight recommendations and chef dietary rows/editors at 320, 375, 390, 414, 768 and 859px. Other tables/details remain unverified.)
   - [ ] Instagram links and guest/room/chef mappings match the agreed list.
 
 ## Task 2: Prove local readiness before touching deployment infrastructure
