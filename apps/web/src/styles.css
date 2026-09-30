@@ -1,0 +1,487 @@
+@import "tailwindcss";
+
+@custom-variant dark (&:is(.dark *));
+
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/fonts/hanken-grotesk/HankenGrotesk.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/maison-neue/MaisonNeue-Book.woff2") format("woff2"),
+    url("/fonts/maison-neue/MaisonNeue-Book.woff") format("woff");
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/maison-neue/MaisonNeue-Medium.woff2") format("woff2"),
+    url("/fonts/maison-neue/MaisonNeue-Medium.woff") format("woff");
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/maison-neue/MaisonNeue-Demi.woff2") format("woff2"),
+    url("/fonts/maison-neue/MaisonNeue-Demi.woff") format("woff");
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Maison Neue";
+  src: url("/fonts/maison-neue/MaisonNeue-Bold.woff2") format("woff2"),
+    url("/fonts/maison-neue/MaisonNeue-Bold.woff") format("woff");
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #0f0f0e;
+  --surface: #1a1a18;
+  --surface-alt: #161615;
+  --sidebar: #131312;
+  --hover: #2b2b27;
+  --border: #2c2c28;
+  --border-strong: #33332d;
+  --border-subtle: #262622;
+  --accent: #75cee1;
+  --accent-hover: #9adcea;
+  --text: #ffffff;
+  --text-muted: #cfcdc4;
+  --text-dim: #a3a199;
+  --text-faint: #85837b;
+  --paper: #f2f1ea;
+  --warn: #e5a13a;
+  --danger: #e8705f;
+
+  /* shadcn semantic variables share the trip palette. */
+  --background: var(--bg);
+  --foreground: var(--text);
+  --card: var(--surface);
+  --card-foreground: var(--text);
+  --popover: var(--surface);
+  --popover-foreground: var(--text);
+  --primary: var(--accent);
+  --primary-foreground: var(--bg);
+  --secondary: var(--surface-alt);
+  --secondary-foreground: var(--text-muted);
+  --muted: var(--surface-alt);
+  --muted-foreground: var(--text-dim);
+  --accent-foreground: var(--bg);
+  --destructive: var(--danger);
+  --destructive-foreground: var(--bg);
+  --input: var(--border-strong);
+  --ring: var(--accent);
+  --sidebar-foreground: var(--text-muted);
+  --sidebar-primary: var(--accent);
+  --sidebar-primary-foreground: var(--bg);
+  --sidebar-accent: var(--hover);
+  --sidebar-accent-foreground: var(--accent);
+  --sidebar-border: var(--border-subtle);
+  --sidebar-ring: var(--accent);
+  --radius: 12px;
+}
+
+@theme inline {
+  --color-bg: var(--bg);
+  --color-surface: var(--surface);
+  --color-surface-alt: var(--surface-alt);
+  --color-sidebar: var(--sidebar);
+  --color-hover: var(--hover);
+  --color-border: var(--border);
+  --color-border-strong: var(--border-strong);
+  --color-border-subtle: var(--border-subtle);
+  --color-accent: var(--accent);
+  --color-accent-hover: var(--accent-hover);
+  --color-text: var(--text);
+  --color-text-muted: var(--text-muted);
+  --color-text-dim: var(--text-dim);
+  --color-text-faint: var(--text-faint);
+  --color-paper: var(--paper);
+  --color-warn: var(--warn);
+  --color-danger: var(--danger);
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-sidebar-foreground: var(--sidebar-foreground);
+  --color-sidebar-primary: var(--sidebar-primary);
+  --color-sidebar-primary-foreground: var(--sidebar-primary-foreground);
+  --color-sidebar-accent: var(--sidebar-accent);
+  --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
+  --color-sidebar-border: var(--sidebar-border);
+  --color-sidebar-ring: var(--sidebar-ring);
+  --font-sans: "Maison Neue", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Hanken Grotesk", "Maison Neue", sans-serif;
+  --radius-sm: 10px;
+  --radius-md: 12px;
+  --radius-lg: 14px;
+  --radius-pill: 999px;
+}
+
+@theme {
+  --breakpoint-wide: 860px;
+  --animate-rise: rise 0.35s ease-out;
+  --animate-blink: blink 1.2s infinite;
+}
+
+@layer base {
+  *, *::before, *::after { box-sizing: border-box; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--font-sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  ::selection { background: rgba(255, 255, 255, .22); }
+  a {
+    color: var(--text);
+    text-decoration: none;
+  }
+  a:hover { color: var(--accent); }
+  input::placeholder { color: var(--text-faint); }
+  h2 {
+    margin: 0 0 8px;
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 64px);
+    letter-spacing: -.035em;
+    line-height: .95;
+  }
+}
+
+@keyframes rise {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes blink {
+  0%, 80%, 100% { opacity: .25; }
+  40% { opacity: 1; }
+}
+
+/* App shell and read-only trip pages, matching the decoded trip design. */
+.app-shell { display: flex; min-height: 100vh; }
+.sidebar { width: 250px; flex: none; background: var(--sidebar); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; padding: 14px 10px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.new-chat { display: flex; align-items: center; gap: 10px; padding: 9px 10px; margin-top: 10px; border: 1px solid var(--border-strong); background: none; border-radius: 10px; font: inherit; font-size: 14px; color: var(--text); text-align: left; }
+.nav-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); padding: 20px 10px 8px; font-weight: 600; }
+.side-nav { display: flex; flex-direction: column; gap: 2px; }
+.side-item { display: block; width: 100%; padding: 8px 10px; border-radius: 8px; font-size: 14px; color: var(--text-muted); }
+.side-item:hover, .side-item.active { background: var(--hover); }
+.side-item.active { color: var(--accent); font-weight: 600; }
+.shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.mobile-header { display: none; }
+.route-content { max-width: 960px; width: 100%; margin: 0 auto; }
+.page-route { padding: 32px 20px 64px; animation: rise .3s ease-out; }
+.home-route { display: flex; flex: 1; padding: 0 20px; }
+.overview { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.overview-content { flex: 1; padding: 40px 0 8px; animation: rise .4s ease-out; }
+.home-welcome { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: min(44vh, 360px); padding: 16px 0 40px; }
+.home-welcome h1 { margin: 0; font: 500 clamp(28px, 4vw, 38px)/1.15 "Hanken Grotesk", "Maison Neue", sans-serif; letter-spacing: -.035em; }
+.home-welcome p { margin: 12px 0 16px; color: var(--text-dim); font-size: 15px; line-height: 1.5; }
+.home-welcome a { display: inline-flex; min-height: 44px; align-items: center; color: var(--accent); font-size: 13px; }
+.home-welcome a:hover { color: var(--accent-hover); }
+.faq-tiles { margin-top: 24px; }
+/* The shell owns the countdown and date range. Home content starts at the
+   location details without a second trip dateline. */
+.tile-heading, .week-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+.tile-heading { border-top: 1px solid var(--border-strong); padding-top: 14px; margin-bottom: 12px; }
+.section-label { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
+.tile-heading > span:last-child { font-size: 12px; color: var(--text-faint); }
+.overview-tiles { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+/* FAQ rows (§2.3, restyled 2026-09-28 on the owner's instruction: "make it look
+   more like an FAQ ... easy to read these from top to bottom"). Question on the
+   first line, answer stacked directly beneath it, in DOM order — deliberately
+   NOT an accordion, because every answer has to be visible without a tap. The
+   answer spans both columns so it keeps the full measure under the chevron. */
+.overview-tile { display: grid; grid-template-columns: 1fr auto; align-items: start; column-gap: 16px; width: 100%; padding: 16px 18px; border-top: 1px solid var(--border-subtle); color: var(--text); transition: background .15s; }
+.overview-tile:first-child { border-top: 0; }
+.overview-tile:hover, .schedule-row:hover { background: #151a22; color: var(--text); }
+.tile-question { grid-column: 1; grid-row: 1; font-size: 15px; font-weight: 600; line-height: 1.35; }
+/* One answer line, not two. The figure was its own 24px row above the sentence,
+   which repeated "10:30" and "6 + 5" verbatim and made each row ~107px tall —
+   tall enough that the last row sat under the sticky composer. `.tile-lead` now
+   sits inline at the head of the sentence, and only on the rows whose sentence
+   does not already contain the figure. */
+.tile-answer { grid-column: 1 / -1; grid-row: 2; min-width: 0; margin-top: 5px; font-size: 13px; line-height: 1.45; color: var(--text-dim); }
+.tile-lead { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; margin-right: 6px; }
+.tile-sub { color: var(--text-dim); }
+.overview-tile > svg { grid-column: 2; grid-row: 1; margin-top: 3px; color: var(--text-faint); }
+.home-schedule { margin: 0 0 20px; }
+.week-heading { margin: 0 0 4px; }
+.week-heading a { font-size: 12px; color: var(--accent); }
+.schedule-ticker-actions { display: flex; align-items: center; }
+.schedule-ticker-window { min-width: 0; overflow: hidden; border-block: 1px solid var(--border-subtle); -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); }
+.schedule-ticker-track { display: flex; width: max-content; animation: schedule-ticker-scroll 72s linear infinite; }
+.schedule-ticker-sequence { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
+.schedule-ticker-item { display: flex; flex: none; align-items: center; gap: 10px; min-height: 46px; padding: 0 18px; white-space: nowrap; }
+.schedule-ticker-item + .schedule-ticker-item { border-left: 1px solid var(--border-subtle); }
+.ticker-date { color: var(--accent); font-size: 11px; font-weight: 700; letter-spacing: .08em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
+.ticker-event { color: var(--text); font-size: 13px; }
+@keyframes schedule-ticker-scroll { to { transform: translateX(-50%); } }
+@media (prefers-reduced-motion: reduce) {
+  .schedule-ticker-track { animation: none; }
+  .schedule-ticker-sequence[data-copy="true"] { display: none; }
+  .schedule-ticker-window { overflow-x: auto; scrollbar-width: thin; -webkit-mask-image: none; mask-image: none; }
+}
+/* Guest names in the flight table and cards open a chat question. */
+.flight-table th a, .flight-guest-card a { color: inherit; }
+.schedule-day-number { font-family: var(--font-display); font-weight: 700; line-height: 1; letter-spacing: -.03em; }
+.day-label { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
+/* The address now sits directly under the place chain it describes, in the same
+   quiet register as the dateline — it is context, not a call to action, and as a
+   bottom-of-page card it was covered by the sticky composer. */
+.maps-label { font-size: 12px; color: var(--accent); white-space: nowrap; }
+.composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgba(15,15,14,0),var(--bg) 35%); padding: 20px 0 18px; }
+.composer { display: flex; align-items: center; gap: 8px; border: 1px solid #3a3a34; border-radius: 999px; padding: 6px 6px 6px 20px; background: var(--surface); box-shadow: 0 30px 80px rgb(0 0 0 / 55%); }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 9px 0; resize: none; }
+.send { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; flex: none; }
+/* Same pill geometry as Send so the composer does not resize mid-turn; the
+   inverted CTA colour from the source keeps it from reading as another Send. */
+.stop { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--paper); color: var(--bg); display: grid; place-items: center; flex: none; cursor: pointer; }
+.stop:disabled { opacity: .5; cursor: default; }
+/* Shown exactly while auto-scroll is not following, so the reader is never
+   dragged back to the bottom without asking. */
+.chat-jump-row { display: flex; justify-content: center; padding-bottom: 10px; }
+.chat-jump { border: 1px solid var(--border-strong); background: var(--surface-alt); border-radius: 999px; padding: 6px 14px; font: inherit; font-size: 12.5px; color: var(--text-muted); cursor: pointer; }
+.chat-jump:hover { background: var(--hover); color: var(--text); }
+.suggestions { display: flex; gap: 6px; overflow-x: auto; margin-top: 10px; }
+.suggestions button { flex: none; border: 1px solid var(--border-strong); background: none; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); }
+
+/* Chat geometry and motion follow meribel-source-decoded.html. */
+/* flex:1 anchors the composer to the bottom of the viewport while messages flow
+   from the top. The thread is only ever entered with content in it, so this can
+   never leave a screen-high gap between the chip row and the composer. */
+.chat-thread { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; gap: 24px; padding: 28px 0 16px; min-width: 0; min-height: 0; }
+.chat-user { display: flex; flex-direction: column; align-items: flex-end; }
+.chat-user-bubble { background: #2a2a26; border-radius: 20px; padding: 10px 16px; max-width: 80%; font-size: 15px; white-space: pre-wrap; overflow-wrap: anywhere; }
+/* No left rail. Owner, 2026-09-28: "we have lines that are on the left-hand
+   side … which makes it difficult to see." The answer is the longest thing on
+   screen; it does not need a rule to say so, and the user bubble already marks
+   the other side of the conversation. */
+.chat-assistant { display: flex; flex-direction: column; align-items: flex-start; min-width: 0; }
+.chat-prose { padding: 2px 0; font: 500 17px/1.55 "Hanken Grotesk", "Maison Neue", sans-serif; white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-sources { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.chat-sources a { display: inline-flex; align-items: center; border: 1px solid var(--border-strong); background: var(--surface-alt); border-radius: 999px; padding: 4px 11px; font-size: 12px; color: var(--text-dim); }
+.chat-sources a:hover { color: var(--text); border-color: var(--text-faint); }
+
+.chat-activity { display: flex; align-items: center; gap: 10px; padding: 4px 2px; color: var(--text-dim); font-size: 13px; }
+.chat-dots { display: inline-flex; gap: 5px; }
+.chat-dots span { width: 7px; height: 7px; border-radius: 50%; background: #75cee1; animation: blink 1.2s infinite; }
+@keyframes blink { 0%, 80%, 100% { opacity: .25; } 40% { opacity: 1; } }
+.chat-delivery, .chat-notice { font-size: 12px; color: var(--text-dim); margin-top: 6px; }
+/* A fallback, a dead conversation or a dropped transport is a message in the
+   thread, distinguished by the colour of its rule rather than by leaving the flow. */
+.chat-assistant-notice .chat-prose { font-size: 15px; color: var(--text-muted); }
+.chat-assistant-status .chat-prose { font-size: 13px; color: var(--text-dim); }
+.chat-message-actions button, .chat-error button, .chat-tool-group button { background: none; border: 0; color: var(--text-dim); font: inherit; font-size: 13px; cursor: pointer; }
+.chat-message-actions { display: flex; gap: 12px; padding-top: 6px; }
+.chat-error { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; color: var(--text-muted); overflow-wrap: anywhere; }
+.chat-tool-group { border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+.chat-tool-group > button { width: 100%; display: flex; justify-content: space-between; text-align: left; }
+.chat-tool-row { display: flex; flex-direction: column; gap: 4px; padding-top: 12px; font-size: 13px; color: var(--text-dim); }
+.chat-tool-row[data-status="error"] { color: var(--danger); }
+.chat-loading { display: flex; flex-direction: column; gap: 12px; padding: 28px 0; }
+.chat-loading > span { width: 65%; height: 16px; border-radius: 8px; background: var(--surface); }
+.chat-loading .wide { width: 85%; }.chat-loading .tool { width: 50%; height: 36px; }.chat-loading .short { width: 40%; }
+.send:not(:disabled), .suggestions button:not(:disabled) { cursor: pointer; }
+.send:not(:disabled):hover { background: var(--accent-hover); }
+.send:disabled { opacity: .5; cursor: default; }
+.suggestions button:not(:disabled):hover { background: var(--hover); }
+@media (prefers-reduced-motion: reduce) { .chat-dots span { animation: none; opacity: .75; } }
+button:disabled, input:disabled { cursor: not-allowed; }
+.page-sub { color: var(--text-dim); margin: 0 0 24px; }
+.schedule-list { display: flex; flex-direction: column; }
+.schedule-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 18px 8px; border-top: 1px solid var(--border); }
+.schedule-day-number { font-size: 36px; }
+.schedule-event { font-size: 17px; font-weight: 600; line-height: 1.3; }
+/* Breakfast, the event and dinner share one row shape, so a guest reads the day
+   as a sequence of times rather than an event with meals appended to it. The
+   time column is fixed and tabular so the times line up down the whole week. */
+.schedule-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.schedule-entry { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: baseline; }
+.schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
+.schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
+/* A meal with no chef sitting still gets its row — the guest needs to know — but
+   it steps back so the real fixtures of the day read first. */
+a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
+@media (prefers-reduced-motion: reduce) {
+  .page-route, .overview-content { animation: none; }
+  .overview-tile { transition: none; }
+}
+
+/* ==========================================================================
+   MOBILE — TODO §2.15. THE CONVENTION, NOT A SUGGESTION.
+   ==========================================================================
+   Everything ABOVE this banner is DESKTOP-FROZEN. The ≥860px layout is locked
+   by a 40-snapshot Playwright baseline (`bun run test:visual`,
+   `tests/visual/__screenshots__/`), and a single changed pixel there is a bug,
+   not a judgement call.
+
+   So the rules for everything BELOW this banner:
+
+     1. Every declaration lives inside a `@media (max-width: 859px …)` block.
+        Nothing here may leak above the seam.
+     2. Never edit a base style, a shared token value (`:root`, `@theme`), or a
+        component's desktop branch to fix a phone. Override it down here
+        instead. If an override cannot express the fix, it is a layout
+        restructure — raise it, do not do it quietly.
+     3. 860px is the ONE seam, matching `useWideLayout()` in
+        `app/components/app-shell.tsx` and `matchMedia("(width < 860px)")` in
+        `app/components/flight-table.tsx`. Do not add a second breakpoint unless
+        a screen genuinely needs three layouts.
+     4. `100dvh`, never `100vh`. Composer input never below 16px (iOS zooms).
+        Touch targets ≥44×44px, except links inline in a sentence (WCAG 2.5.8).
+
+   `tests/unit/mobile-css-convention.test.ts` enforces 1, 3 and 4 mechanically,
+   so a future pass that forgets this banner fails `bun run test` rather than
+   the baseline.
+   ========================================================================== */
+@media (max-width: 859px) {
+  /* ---- Full height: mobile Safari's collapsing toolbar makes 100vh overflow. */
+  .app-shell { min-height: 100dvh; }
+
+  /* ---- Safe areas. The sticky top bar and the page gutters clear the notch;
+     every inset is floored at the design's own padding so a device without
+     insets renders exactly the spacing the source specifies. */
+  .mobile-header { display: block; position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px); background: rgba(15,15,14,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-subtle); }
+  .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+  .mobile-brand { color: var(--text); font: 600 14px/1 "Maison Neue", sans-serif; letter-spacing: .04em; }
+  .mobile-nav-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: transparent; color: var(--text); font: inherit; font-size: 13px; }
+  .mobile-nav-layer { position: fixed; z-index: 10; inset: 0; }
+  .mobile-nav-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(0,0,0,.58); }
+  .mobile-drawer { position: absolute; inset: 0 auto 0 0; width: min(84vw, 320px); padding: max(16px, env(safe-area-inset-top, 0px)) 12px max(20px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: var(--sidebar); border-right: 1px solid var(--border-subtle); box-shadow: 16px 0 40px rgba(0,0,0,.28); animation: drawer-in .2s ease-out; }
+  .mobile-drawer-heading { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px 18px 10px; color: var(--text-faint); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .mobile-drawer-close { min-height: 44px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; letter-spacing: normal; text-transform: none; }
+  .mobile-drawer .side-nav { gap: 2px; }
+  .mobile-drawer .side-item { min-height: 44px; padding: 11px 12px; }
+  @keyframes drawer-in { from { opacity: .7; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }
+  .page-route,
+  .home-route {
+    padding-left: max(20px, env(safe-area-inset-left, 0px));
+    padding-right: max(20px, env(safe-area-inset-right, 0px));
+  }
+
+  /* Keep the homepage content close to its navigation on small screens. */
+  .overview-content { padding-top: 20px; }
+
+  /* ---- Horizontal scrollers (suggestions and the reduced-motion
+     schedule ticker). Momentum so a flick coasts, hidden bars, and `overscroll-behavior-x:
+     contain` so swiping a chip row past its end cannot trigger the browser's
+     back gesture. `.navrow` already hides the bar; this covers the rest. */
+  .navrow,
+  .schedule-ticker-window,
+  .suggestions {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-x: contain;
+    overscroll-behavior-y: auto;
+    scrollbar-width: none;
+    scroll-padding-inline: 4px;
+  }
+  .schedule-ticker-window::-webkit-scrollbar,
+  .suggestions::-webkit-scrollbar { display: none; }
+  /* Right-edge bleed: chat suggestions extend to the gutter so the last chip
+     is visibly clipped rather than looking like the row simply ends. */
+  .suggestions { margin-inline: -20px; padding-inline: 20px; }
+
+  /* ---- Touch targets, 44×44 minimum (TODO §2.15; Fitts). Links sitting
+     inline inside a sentence are deliberately left alone — padding them to
+     44px would break the line box, and WCAG 2.5.8 exempts them. */
+  .mobile-nav-toggle:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
+  .week-heading { align-items: center; }
+  .week-heading a,
+  .suggestions button,
+  .chat-jump,
+  .chat-sources a,
+  .chat-message-actions button,
+  .chat-error button {
+    display: inline-flex;
+    align-items: center;
+    min-height: 44px;
+  }
+  .chat-tool-group > button { min-height: 44px; align-items: center; }
+  /* Send/Stop share the composer's pill geometry, so both grow together. */
+  .send,
+  .stop { width: 44px; height: 44px; }
+  /* Reclaim the left gutter the 44px paperclip already occupies, so the
+     textarea keeps a usable measure at 320px. */
+  .composer { padding-left: 12px; }
+  /* The source sets 16px and this keeps it there: anything smaller makes iOS
+     zoom the page on focus. Do not shrink it in a later "polish" pass. */
+  .composer textarea { font-size: 16px; }
+  /* Safe-area floor for the sticky composer, at the design's own 18px/0px. */
+  .composer-shell {
+    padding-bottom: max(18px, env(safe-area-inset-bottom, 0px));
+    padding-left: env(safe-area-inset-left, 0px);
+    padding-right: env(safe-area-inset-right, 0px);
+  }
+
+  /* ---- Pressed feedback. Hover does nothing on touch, so `:active` is the
+     only feedback there is, and the grey tap flash is replaced by it. */
+  a, button, [role="button"], summary { -webkit-tap-highlight-color: transparent; }
+  .overview-tile:active,
+  .link-row:active,
+  .chalet-address:active { background: var(--hover); color: var(--text); }
+  .week-heading a:active,
+  .suggestions button:not(:disabled):active,
+  .chat-jump:active,
+  .chat-sources a:active,
+  .chat-message-actions button:active,
+  .chat-tool-group > button:active { background: var(--hover); color: var(--text); }
+  .send:not(:disabled):active { background: var(--accent-hover); transform: scale(.94); }
+  .stop:not(:disabled):active { opacity: .82; transform: scale(.94); }
+
+  /* §2.15 touch targets. The address is a quiet inline link on the pointer side,
+     but it is still tappable, so below the seam it gets a real 44px box rather
+     than a 17px line of text. */
+  /* ---- Home FAQ rows (§2.3). The question, the value and the detail line each
+     own a line at every width, so the FAQ needs no restructuring below the seam
+     — only the gutter back: 16px sides give the detail line the full 248px of
+     measure at 320px instead of 244px, and the row is already far over 44px. */
+  .overview-tile { padding: 14px 16px; column-gap: 12px; }
+
+  /* ---- Schedule entries. The desktop row spends 96px on the day and 52px on
+     the time, which at 320px leaves the title 104px of measure — the longest
+     real event ("Chill drinks at Le Rond Point des Pistes") took 5 lines. The
+     day stacks weekday over number so it needs far less than 96px, and a
+     "19:30" needs far less than 52px, so below the seam both gutters shrink and
+     the title gets 160px back. Guarded by the 320px case in mobile-layout.spec. */
+  .schedule-row { grid-template-columns: 56px 1fr; gap: 12px; }
+  .schedule-entry { grid-template-columns: 44px 1fr; gap: 8px; }
+}
+
+/* Reduced motion for the `:active` transforms added above. The base
+   `prefers-reduced-motion` block (rise/blink/tile+chip transitions) is desktop
+   territory and is deliberately not touched. */
+@media (max-width: 859px) and (prefers-reduced-motion: reduce) {
+  .send:not(:disabled):active,
+  .stop:not(:disabled):active { transform: none; }
+}

@@ -1,0 +1,29 @@
+{
+  "name": "aws",
+  "version": "0.1.0",
+  "private": true,
+  "description": "CDK infrastructure for the Club Athletic trip app: one Fargate service on edge's shared management-account cluster and load balancer",
+  "scripts": {
+    "build": "node -e \"console.error('Blocked: do not run build in apps/aws. Use build:manual only when intentionally approved.'); process.exit(1)\"",
+    "build:manual": "tsc -b --clean && tsc -b",
+    "watch": "tsc -w",
+    "test": "jest",
+    "cdk": "cdk",
+    "deploy": "./scripts/deploy.sh",
+    "push-secrets": "./scripts/push-secrets.sh"
+  },
+  "devDependencies": {
+    "@types/jest": "^30",
+    "@types/node": "^24.10.1",
+    "aws-cdk": "^2.1129.0",
+    "jest": "^30",
+    "ts-jest": "^29",
+    "typescript": "~5.9.3",
+    "esbuild": "^0.25.9"
+  },
+  "dependencies": {
+    "aws-cdk-lib": "^2.257.0",
+    "constructs": "^10.5.0",
+    "dotenv": "^17.4.2"
+  }
+}

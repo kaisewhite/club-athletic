@@ -1,0 +1,19 @@
+{
+  "compilerOptions": {
+    "allowImportingTsExtensions": true,
+    "module": "Preserve",
+    "moduleDetection": "force",
+    "noEmit": true,
+    "noUncheckedIndexedAccess": true,
+    "strict": true,
+    "target": "ES2023",
+    "types": [
+      "bun-types"
+    ]
+  },
+  "include": [
+    "scripts/**/*.ts",
+    "tests/**/*.ts",
+    "oxlint.config.ts"
+  ]
+}

@@ -1,0 +1,23 @@
+Flight rules
+Everything is timed around the group shuttle at Geneva Airport (GVA).
+
+Getting there, Saturday 30 January 2027
+Your flight needs to land in Geneva by 09:30. Aim for 08:30 or earlier to leave room for bags
+and delays, because the shuttle leaves GVA between 10:30 and 11:00.
+Land later than 09:30 and you will likely miss the shuttle and have to arrange your own transfer.
+
+Going home, Saturday 6 February 2027
+Book a flight leaving Geneva at 10:00 or later, never earlier. The chalet pickup is 04:00 sharp
+(confirmed with Alps2Alps) and the drive is about 2.5 hours, so the bus reaches GVA before 07:00,
+then check-in and security. Anything earlier than 10:00 will not work.
+
+Option: arrive on the Friday
+Fly out Thursday evening, land Friday morning, sleep by the airport and meet the shuttle on
+Saturday. A worked example is EWR to GVA departing Thursday 17:35 and landing Friday 07:25.
+Two hotels by the airport are on the list:
+  Geneva Marriott — free shuttle, under 5 minutes.
+  Hilton Geneva — free shuttle roughly every 20 minutes, 04:20 to 23:40.
+
+These are the rules, not anyone's actual booking. For a specific guest's flights, or for who has
+booked, call getFlightTable. Never state a guest's flight from memory.
+Source section for this material: Flights.

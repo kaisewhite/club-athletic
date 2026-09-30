@@ -1,0 +1,23 @@
+Bedroom layout and bed types
+This is the fixed layout of the chalet. It is NOT who is staying where, and it is NOT what is
+still free. For occupancy or availability call getRoomsByFloor and getOpenSpots every time.
+
+Upper floor, code R11 / F21
+  Bedroom 1 — master double, 2 spots
+
+Middle floor, code R10 / F21
+  Bedroom 2 — double, 2 spots
+  Bedroom 3 — twin, 2 spots
+  Bedroom 4 — quad bunk, 4 spots
+  Bedroom 5 — bunk cabin, 2 spots
+
+Lower floor, code R9 / F12
+  Bedroom 6 — double, 2 spots
+  Bedroom 7 — double, 2 spots
+  Bedroom 8 — quad bunk, 4 spots
+
+Eight bedrooms, 20 spots in total, which is why the chalet sleeps up to 20.
+Most rooms are en-suite with a balcony or terrace. A couple of the bunk rooms share a shower
+room and may not have balcony access. Which specific room is en-suite or has a balcony is not
+recorded, so do not claim it for an individual room.
+Source section for this material: Rooms.

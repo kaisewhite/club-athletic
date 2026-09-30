@@ -1,0 +1,511 @@
+// App-owned IDs are supplied by @paralleldrive/cuid2, including seed inserts.
+// Keep SQL table/column names aligned with TODO.md's acceptance queries.
+generator client {
+  provider        = "prisma-client"
+  output          = "./generated"
+  previewFeatures = ["partialIndexes"]
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+enum RoomType {
+  MASTER_DOUBLE
+  DOUBLE
+  TWIN
+  QUAD_BUNK
+  BUNK_CABIN
+}
+
+enum SpotStatus {
+  ASSIGNED
+  AVAILABLE
+  NOT_OFFERED
+}
+
+enum GuestStatus {
+  CONFIRMED
+  INVITED
+  WAITLIST
+  DECLINED
+}
+
+enum GuestCreatedVia {
+  SEED
+  IMPORT
+  AGENT
+}
+
+enum GuestTaskType {
+  FLIGHT
+  PAYMENT
+  DETAILS
+}
+
+// INBOUND is travel toward the chalet; OUTBOUND is travel home.
+enum Direction {
+  INBOUND
+  OUTBOUND
+}
+
+enum FlightSource {
+  AGENT_EXTRACTION
+  ORGANIZER
+}
+
+enum Meal {
+  CHEF
+  NONE
+  OWN
+}
+
+enum UploadPurpose {
+  FLIGHT_CONFIRMATION
+  OTHER
+}
+
+enum AuditSource {
+  AGENT
+  ORGANIZER
+  GUEST
+}
+
+model Trip {
+  id                  String         @id
+  seedKey             String?        @unique
+  name                String
+  destination         String
+  resort              String
+  startDate           DateTime       @db.Date
+  endDate             DateTime       @db.Date
+  timezone            String
+  currency            String         @db.Char(3)
+  status              String?
+  chefBreakfastCount  Int
+  chefDinnerCount     Int
+  pricing             Json           @db.JsonB
+  // Local airport times on startDate/endDate, interpreted in timezone.
+  flightArrivalCutoff String
+  flightArrivalTarget String
+  flightReturnCutoff  String
+  propertyId          String
+  property            Property       @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  guests              Guest[]
+  shuttles            Shuttle[]
+  scheduleDays        ScheduleDay[]
+  links               Link[]
+  flightRecommendations FlightRecommendation[]
+  notes               Note[]
+  conversations       Conversation[]
+
+  @@index([propertyId])
+}
+
+model Property {
+  id                  String  @id
+  seedKey             String? @unique
+  name                String
+  address             String
+  lat                 Decimal? @db.Decimal(9, 6)
+  lng                 Decimal? @db.Decimal(9, 6)
+  mapsUrl             String?
+  sizeSquareMeters    Int?
+  floorCount          Int?
+  bedroomCount        Int?
+  sleepsMin           Int?
+  sleepsMax           Int?
+  description         String?
+  externalListingUrls Json    @db.JsonB
+  photos              Json    @db.JsonB
+  amenities           Json    @db.JsonB
+  floors              Floor[]
+  trips               Trip[]
+}
+
+model Floor {
+  id         String   @id
+  name       String
+  code       String
+  sortOrder  Int
+  propertyId String
+  property   Property @relation(fields: [propertyId], references: [id], onDelete: Restrict)
+  rooms      Room[]
+
+  @@unique([propertyId, code])
+  @@index([propertyId, sortOrder])
+}
+
+model Room {
+  id             String   @id
+  floorId        String
+  name           String
+  shortName      String
+  type           RoomType
+  // Unknown in the decoded source: null does not mean false or free.
+  ensuite        Boolean?
+  balcony        Boolean?
+  description    String?
+  pricePerPerson Decimal? @db.Decimal(10, 2)
+  sortOrder      Int
+  floor          Floor    @relation(fields: [floorId], references: [id], onDelete: Restrict)
+  spots          Spot[]
+
+  @@unique([floorId, name])
+  @@index([floorId, sortOrder])
+}
+
+model Spot {
+  id            String     @id
+  roomId        String
+  index         Int
+  status        SpotStatus
+  guestId       String?    @unique
+  priceOverride Decimal?   @db.Decimal(10, 2)
+  room          Room       @relation(fields: [roomId], references: [id], onDelete: Restrict)
+  guest         Guest?     @relation(fields: [guestId], references: [id], onDelete: Restrict)
+
+  // SQL CHECK requires a guest exactly when status = ASSIGNED.
+  @@unique([roomId, index])
+  @@index([status])
+}
+
+model Guest {
+  id                    String              @id
+  seedKey               String?             @unique
+  tripId                String
+  firstName             String
+  // Empty for the explicitly reviewed mononym Kaise; never invent a surname.
+  lastName              String
+  displayName           String
+  email                 String?
+  phone                 String?
+  status                GuestStatus
+  dietaryNotes          String?
+  emergencyContact      Json?               @db.JsonB
+  notes                 String?
+  createdVia            GuestCreatedVia
+  trip                  Trip                @relation(fields: [tripId], references: [id], onDelete: Restrict)
+  spot                  Spot?
+  tasks                 GuestTask[]
+  payments              Payment[]
+  flights               Flight[]
+  pendingExtractions    PendingExtraction[] @relation("IntakeGuest")
+  createdForExtractions PendingExtraction[] @relation("IntakeCreatedGuest")
+
+  // Guest_lastName_lower_idx is an expression index, maintained in migration SQL.
+  @@index([tripId])
+}
+
+model GuestTask {
+  id          String        @id
+  guestId     String
+  type        GuestTaskType
+  done        Boolean       @default(false)
+  completedAt DateTime?     @db.Timestamptz(3)
+  notes       String?
+  guest       Guest         @relation(fields: [guestId], references: [id], onDelete: Restrict)
+
+  @@unique([guestId, type])
+}
+
+model Payment {
+  id        String    @id
+  guestId   String
+  amount    Decimal   @db.Decimal(10, 2)
+  currency  String    @db.Char(3)
+  method    String?
+  paidAt    DateTime? @db.Timestamptz(3)
+  reference String?
+  status    String
+  guest     Guest     @relation(fields: [guestId], references: [id], onDelete: Restrict)
+
+  @@index([guestId])
+}
+
+model Flight {
+  id                   String       @id
+  guestId              String
+  direction            Direction
+  airline              String?
+  flightNumber         String?
+  origin               String       @db.Char(3)
+  destination          String       @db.Char(3)
+  scheduledDeparture   DateTime     @db.Timestamptz(3)
+  scheduledArrival     DateTime     @db.Timestamptz(3)
+  terminal             String?
+  confirmationCode     String?
+  notes                String?
+  source               FlightSource
+  uploadId             String?
+  supersededById       String?
+  supersededAt         DateTime?    @db.Timestamptz(3)
+  confirmedByGuest     Boolean      @default(false)
+  confirmedAt          DateTime?    @db.Timestamptz(3)
+  extractionConfidence Float?
+  rawExtraction        Json?        @db.JsonB
+  guest                Guest        @relation(fields: [guestId], references: [id], onDelete: Restrict)
+  upload               Upload?      @relation(fields: [uploadId], references: [id], onDelete: Restrict)
+  supersededBy         Flight?      @relation("FlightHistory", fields: [supersededById], references: [id], onDelete: Restrict)
+  supersedes           Flight[]     @relation("FlightHistory")
+
+  // Flight_supersededById_fkey is DEFERRABLE INITIALLY DEFERRED in migration SQL.
+  // Exactly one current flight per direction; superseded history remains valid.
+  @@unique([guestId, direction], map: "Flight_guestId_direction_live_key", where: raw("\"supersededById\" IS NULL"))
+  @@index([guestId])
+  @@index([uploadId])
+  @@index([supersededById])
+}
+
+model Shuttle {
+  id                String    @id
+  tripId            String
+  direction         Direction
+  seats             Int       @default(49)
+  departWindowStart DateTime  @db.Timestamptz(3)
+  departWindowEnd   DateTime  @db.Timestamptz(3)
+  pickupLocation    String
+  dropoffLocation   String
+  durationMinutes   Int
+  driverContact     String?
+  notes             String?
+  trip              Trip      @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  @@unique([tripId, direction])
+}
+
+model ScheduleDay {
+  id          String   @id
+  tripId      String
+  date        DateTime @db.Date
+  dow         String
+  dayNumber   Int
+  eventTitle  String
+  eventDetail String?
+  venue       String?
+  venueUrl    String?
+  breakfast   Meal
+  dinner      Meal
+  // Local clock times, "HH:MM" in the trip's timezone. Nullable means "no time
+  // set": the meal is not served that day, or the event time is still TBD.
+  // Owner, 2026-09-28: breakfast is ready by 07:00 and dinner is around 19:30
+  // every day. Arrival and departure take their time from the Shuttle row
+  // (window + durationMinutes); the rest are genuinely TBD. Per-day columns
+  // rather than trip defaults so the organizer can move one evening in Prisma
+  // Studio (D12) without a code change. A null breakfastAt/dinnerAt means the
+  // meal is not served and the schedule drops the row entirely.
+  breakfastAt String?
+  dinnerAt    String?
+  eventAt     String?
+  isOpen      Boolean  @default(false)
+  trip        Trip     @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  @@unique([tripId, date])
+}
+
+// Owner-written flight guidance shown on /flights (2026-09-29): sections of
+// prose around a short list of concrete flights. Content, not rules — the
+// booking cutoffs stay on Trip and are what getFlightRules enforces.
+model FlightRecommendation {
+  id        String  @id
+  tripId    String
+  sortOrder Int
+  title     String
+  // Paragraphs, separated by a blank line, before and after the options.
+  intro     String?
+  outro     String?
+  trip      Trip    @relation(fields: [tripId], references: [id], onDelete: Restrict)
+  options   FlightRecommendationOption[]
+
+  @@unique([tripId, sortOrder])
+}
+
+model FlightRecommendationOption {
+  id               String               @id
+  recommendationId String
+  sortOrder        Int
+  route            String // "JFK → GVA"
+  carrier          String // "SWISS LX23"
+  departs          String // "around 7:25 PM"
+  arrives          String // "around 9:15 AM the next morning"
+  // Whether the group shuttle works for this flight (null = not applicable),
+  // and the one-line verdict beside it ("Best buffer", "Lands after the 8:30
+  // cutoff — separate transfer"). Owner, 2026-09-29: keep the flights the
+  // shuttle cannot serve, but say so, short and plain.
+  fitsShuttle      Boolean?
+  note             String?
+  recommendation   FlightRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
+
+  @@unique([recommendationId, sortOrder])
+}
+
+model Link {
+  id        String @id
+  tripId    String
+  group     String
+  label     String
+  href      String
+  // Short organizer note beside the link ("free shuttle, <5 min"), when there is one.
+  note      String?
+  sortOrder Int
+  trip      Trip   @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  @@unique([tripId, group, href])
+  @@index([tripId, sortOrder])
+}
+
+model Note {
+  id      String  @id
+  tripId  String
+  seedKey String? @unique
+  section String?
+  title   String?
+  content String
+  trip    Trip    @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  @@index([tripId])
+}
+
+model Upload {
+  id                       String              @id
+  // Reserved before provider upload; fileId retains the original upload identity.
+  fileId                   String?
+  status                   String              @default("pending")
+  mountedFileId            String?
+  sessionResourceId        String?
+  mountPath                String?
+  originalFileDeletedAt    DateTime?           @db.Timestamptz(3)
+  mountedFileDeletedAt     DateTime?           @db.Timestamptz(3)
+  sessionResourceDeletedAt DateTime?           @db.Timestamptz(3)
+  originalFilename         String
+  mimeType                 String
+  sizeBytes                Int
+  sha256                   String              @unique
+  conversationId           String
+  uploadedAt               DateTime            @default(now()) @db.Timestamptz(3)
+  purpose                  UploadPurpose
+  processedAt              DateTime?           @db.Timestamptz(3)
+  extractionResult         Json?               @db.JsonB
+  deletedFromAnthropicAt   DateTime?           @db.Timestamptz(3)
+  conversation             Conversation        @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  messages                 Message[]
+  flights                  Flight[]
+  pendingExtractions       PendingExtraction[]
+
+  @@index([conversationId])
+}
+
+model Conversation {
+  id                 String              @id
+  tripId             String
+  agentSessionId     String?             @unique
+  // Draft writers explicitly use completed/waiting until the opening send.
+  status             String              @default("running")
+  runtimeStatus      String?
+  nextEventSeq       Int                 @default(0)
+  streamIndex        Int                 @default(0)
+  activeRequestId    String?
+  activeTurnId       String?
+  finishedAt         DateTime?           @db.Timestamptz(3)
+  error              String?
+  requestId          String?             @unique
+  createdAt          DateTime            @default(now()) @db.Timestamptz(3)
+  updatedAt          DateTime            @updatedAt @db.Timestamptz(3)
+  trip               Trip                @relation(fields: [tripId], references: [id], onDelete: Restrict)
+  messages           Message[]
+  uploads            Upload[]
+  pendingExtractions PendingExtraction[]
+  auditLogs          AuditLog[]
+
+  @@index([tripId])
+}
+
+model Message {
+  id                 String       @id
+  conversationId     String
+  seq                Int
+  type               String
+  payload            Json         @db.JsonB
+  providerEventKey   String?
+  requestId          String?
+  lifecycleAppliedAt DateTime?    @db.Timestamptz(3)
+  role               String
+  content            String
+  sourceSections     Json         @default("[]") @db.JsonB
+  uploadId           String?
+  createdAt          DateTime     @default(now()) @db.Timestamptz(3)
+  conversation       Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  upload             Upload?      @relation(fields: [uploadId], references: [id], onDelete: Restrict)
+
+  namedExtractions         PendingExtraction[] @relation("IntakeNameMessage")
+  readbackExtractions      PendingExtraction[] @relation("IntakeReadbackMessage")
+  confirmedExtractions     PendingExtraction[] @relation("IntakeConfirmationMessage")
+  guestCreationExtractions PendingExtraction[] @relation("IntakeGuestConsentMessage")
+
+  @@unique([conversationId, seq])
+  @@unique([conversationId, providerEventKey])
+  @@unique([conversationId, requestId])
+  @@index([conversationId, createdAt])
+  @@index([uploadId])
+}
+
+model PendingExtraction {
+  id                            String       @id
+  conversationId                String
+  uploadId                      String?
+  phase                         String       @default("collecting")
+  version                       Int          @default(1)
+  claimedFirstName              String?
+  claimedLastName               String?
+  guestId                       String?
+  nameMessageId                 String?
+  readbackVersion               Int?
+  readbackMessageId             String?
+  confirmationMessageId         String?
+  confirmedAt                   DateTime?    @db.Timestamptz(3)
+  toolCallId                    String?
+  committedFlightIds            Json?        @db.JsonB
+  consumedAt                    DateTime?    @db.Timestamptz(3)
+  guestCreationConsentMessageId String?
+  createdGuestId                String?
+  flightCandidates              Json         @db.JsonB
+  outstandingQuestion           String?
+  expiresAt                     DateTime     @db.Timestamptz(3)
+  conversation                  Conversation @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+  upload                        Upload?      @relation(fields: [uploadId], references: [id], onDelete: Restrict)
+  guest                         Guest?       @relation("IntakeGuest", fields: [guestId], references: [id], onDelete: Restrict)
+  createdGuest                  Guest?       @relation("IntakeCreatedGuest", fields: [createdGuestId], references: [id], onDelete: Restrict)
+  nameMessage                   Message?     @relation("IntakeNameMessage", fields: [nameMessageId], references: [id], onDelete: Restrict)
+  readbackMessage               Message?     @relation("IntakeReadbackMessage", fields: [readbackMessageId], references: [id], onDelete: Restrict)
+  confirmationMessage           Message?     @relation("IntakeConfirmationMessage", fields: [confirmationMessageId], references: [id], onDelete: Restrict)
+  guestCreationConsentMessage   Message?     @relation("IntakeGuestConsentMessage", fields: [guestCreationConsentMessageId], references: [id], onDelete: Restrict)
+
+  @@unique([conversationId, toolCallId])
+  @@index([conversationId])
+  @@index([uploadId])
+  @@index([guestId])
+  @@index([createdGuestId])
+  @@index([nameMessageId])
+  @@index([readbackMessageId])
+  @@index([confirmationMessageId])
+  @@index([guestCreationConsentMessageId])
+  @@index([expiresAt])
+}
+
+model AuditLog {
+  id               String        @id
+  action           String
+  entity           String
+  entityId         String
+  before           Json?         @db.JsonB
+  after            Json?         @db.JsonB
+  source           AuditSource
+  conversationId   String?
+  claimedGuestName String?
+  timestamp        DateTime      @default(now()) @db.Timestamptz(3)
+  conversation     Conversation? @relation(fields: [conversationId], references: [id], onDelete: Restrict)
+
+  @@index([entity, entityId])
+  @@index([conversationId])
+  @@index([timestamp])
+}

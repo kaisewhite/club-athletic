@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="ada12ddf-e205-46d9-8090-ef9dd937cebc"></script>
+
+</head>
+<body>
+<x-dc>
+<helmet>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <style>/* cyrillic-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("be0cc961-2c32-4eca-bf4c-59c22386acd7") format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C8A, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+/* vietnamese */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("f3586d49-91b7-4f45-ab7f-9ad5d5382ae4") format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+0128-0129, U+0168-0169, U+01A0-01A1, U+01AF-01B0, U+0300-0301, U+0303-0304, U+0308-0309, U+0323, U+0329, U+1EA0-1EF9, U+20AB;
+}
+/* latin-ext */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("2c1fb4e5-f484-49e2-9e3d-00a17e434432") format('woff2');
+  unicode-range: U+0100-02BA, U+02BD-02C5, U+02C7-02CC, U+02CE-02D7, U+02DD-02FF, U+0304, U+0308, U+0329, U+1D00-1DBF, U+1E00-1E9F, U+1EF2-1EFF, U+2020, U+20A0-20AB, U+20AD-20C0, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+/* latin */
+@font-face {
+  font-family: 'Hanken Grotesk';
+  font-style: normal;
+  font-weight: 300 800;
+  font-display: swap;
+  src: url("601fc0d9-14a8-412e-8ddd-55f9844e3ca3") format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+0304, U+0308, U+0329, U+2000-206F, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+</style>
+  <script src="15e7c011-20d4-4b7b-9566-f9d6131e9d34"></script>
+  <style>
+    body{margin:0;background:#0f0f0e;color:#ffffff;font-family:"Maison Neue",ui-sans-serif,system-ui,sans-serif;font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+    a{color:#ffffff;text-decoration:underline;text-underline-offset:3px;text-decoration-color:#75cee1}a:hover{color:#75cee1}
+    *{box-sizing:border-box}
+    ::selection{background:rgba(255,255,255,.22)}
+    input::placeholder{color:#85837b}
+    .side-item:hover{background:#2b2b27}
+    .tile:hover{border-color:#75cee1 !important;transform:translateY(-2px)}
+    .tile{transition:border-color .15s,transform .15s}
+    .chip:hover{background:#2b2b27;border-color:#3a3a34 !important}
+    .send:hover{background:#9adcea !important}
+    .row:hover{background:#151a22}
+    .navrow::-webkit-scrollbar{display:none}
+    @keyframes blink{0%,80%,100%{opacity:.25}40%{opacity:1}}
+    @keyframes rise{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  </style>
+</helmet>
+
+<div style="display:flex;min-height:100vh">
+
+  <sc-if value="{{ isWide }}" hint-placeholder-val="{{ true }}">
+  <aside style="width:250px;flex:none;background:#131312;border-right:1px solid #262622;display:flex;flex-direction:column;padding:14px 10px;position:sticky;top:0;height:100vh;overflow-y:auto">
+    <button class="side-item" sc-camel-on-click="{{ newChat }}" style="display:flex;align-items:center;gap:10px;padding:8px 10px;border:0;background:none;border-radius:10px;font:inherit;color:#ffffff;cursor:pointer;text-align:left">
+      <span style="width:30px;height:30px;border-radius:6px;background:#75cee1;color:#0f0f0e;display:grid;place-items:center;font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:17px">M</span>
+      <span style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:16px;letter-spacing:-.01em">Méribel ’27</span>
+    </button>
+    <button class="side-item" sc-camel-on-click="{{ newChat }}" style="display:flex;align-items:center;gap:10px;padding:9px 10px;margin-top:10px;border:1px solid #33332d;background:none;border-radius:10px;font:inherit;font-size:14px;color:#ffffff;cursor:pointer;text-align:left">
+      <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 20h9"></path><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z"></path></svg>New question
+    </button>
+    <div style="font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:#85837b;padding:20px 10px 8px;font-weight:600">Trip pages</div>
+    <div style="display:flex;flex-direction:column;gap:2px">
+      <sc-for list="{{ navItems }}" as="s" hint-placeholder-count="10">
+        <button class="side-item" sc-camel-on-click="{{ s.go }}" style="{{ s.sideStyle }}">{{ s.label }}</button>
+      </sc-for>
+    </div>
+    <div style="margin-top:auto;padding:14px 10px 4px;border-top:1px solid #262622">
+      <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:34px;line-height:1;letter-spacing:-.03em">{{ daysUntil }}<span style="color:#75cee1">.</span></div>
+      <div style="font-size:12px;color:#a3a199;margin-top:4px">days until the shuttle<br>30 Jan – 6 Feb 2027</div>
+    </div>
+  </aside>
+  </sc-if>
+
+  <main style="flex:1;min-width:0;display:flex;flex-direction:column">
+
+    <sc-if value="{{ isNarrow }}" hint-placeholder-val="{{ false }}">
+    <div style="position:sticky;top:0;background:rgba(15,15,14,.9);backdrop-filter:blur(10px);z-index:2;border-bottom:1px solid #262622">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px 6px">
+        <button sc-camel-on-click="{{ newChat }}" style="display:flex;align-items:center;gap:8px;border:0;background:none;font:inherit;color:#ffffff;padding:0;cursor:pointer">
+          <span style="width:26px;height:26px;border-radius:6px;background:#75cee1;color:#0f0f0e;display:grid;place-items:center;font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:15px">M</span>
+          <span style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:16px">Méribel ’27</span>
+        </button>
+        <span style="font-size:12px;color:#a3a199"><strong style="color:#ffffff">{{ daysUntil }}</strong> days</span>
+      </div>
+      <nav class="navrow" style="display:flex;gap:6px;overflow-x:auto;padding:4px 16px 10px;scrollbar-width:none">
+        <sc-for list="{{ navItems }}" as="s" hint-placeholder-count="10">
+          <button sc-camel-on-click="{{ s.go }}" style="{{ s.chipStyle }}">{{ s.label }}</button>
+        </sc-for>
+      </nav>
+    </div>
+    </sc-if>
+
+    <!-- HOME -->
+    <sc-if value="{{ isOverview }}" hint-placeholder-val="{{ true }}">
+    <section data-screen-label="Home" style="flex:1;display:flex;flex-direction:column;max-width:960px;width:100%;margin:0 auto;padding:0 20px">
+
+      <sc-if value="{{ noMessages }}" hint-placeholder-val="{{ true }}">
+      <div style="flex:1;padding:40px 0 8px;animation:rise .4s ease-out">
+        <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:10px">Les 3 Vallées · France · Falcon Lodge F</div>
+        <div style="display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:8px 24px;margin-bottom:28px">
+          <h1 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(52px,9vw,112px);line-height:.9;letter-spacing:-.04em;margin:0">Méribel<span style="color:#75cee1">.</span></h1>
+          <div style="text-align:left;padding-bottom:6px">
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(28px,4vw,44px);line-height:1;letter-spacing:-.03em">{{ daysUntil }} days</div>
+            <div style="font-size:13px;color:#a3a199;margin-top:4px">Sat 30 Jan → Sat 6 Feb 2027</div>
+          </div>
+        </div>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;border-top:1px solid #33332d;padding-top:14px;margin-bottom:12px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#a3a199;font-weight:600">The things everyone asks</div>
+          <div style="font-size:12px;color:#85837b">Tap a row for the details</div>
+        </div>
+        <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;overflow:hidden">
+          <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="6">
+            <button class="row" sc-camel-on-click="{{ t.go }}" style="display:grid;grid-template-columns:minmax(92px,auto) 1fr auto;align-items:center;gap:16px;width:100%;padding:14px 18px;border:0;border-top:1px solid #262622;background:none;color:#ffffff;font:inherit;text-align:left;cursor:pointer">
+              <div style="{{ t.bigStyle }}">{{ t.big }}</div>
+              <div style="min-width:0">
+                <div style="font-size:15px;font-weight:600;line-height:1.3">{{ t.kicker }}</div>
+                <div style="font-size:13px;color:#a3a199;line-height:1.4;margin-top:2px">{{ t.sub }}</div>
+              </div>
+              <svg width="16" height="16" sc-camel-view-box="0 0 24 24" fill="none" stroke="#85837b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"></path></svg>
+            </button>
+          </sc-for>
+        </div>
+
+        <div style="display:flex;align-items:baseline;justify-content:space-between;gap:12px;margin:28px 0 10px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:#a3a199;font-weight:600">The week</div>
+          <button sc-camel-on-click="{{ goSchedule }}" style="border:0;background:none;font:inherit;font-size:12px;color:#75cee1;cursor:pointer;padding:0">Full schedule →</button>
+        </div>
+        <div class="navrow" style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -20px;padding:0 20px 4px">
+          <sc-for list="{{ week }}" as="d" hint-placeholder-count="8">
+            <div style="{{ d.style }}">
+              <div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#a3a199;font-weight:600">{{ d.dow }}</div>
+              <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:30px;line-height:1;letter-spacing:-.03em;margin:4px 0 8px">{{ d.num }}</div>
+              <div style="font-size:12.5px;line-height:1.4;color:#cfcdc4">{{ d.event }}</div>
+              <div style="font-size:11px;color:#85837b;margin-top:8px">{{ d.meals }}</div>
+            </div>
+          </sc-for>
+        </div>
+
+        <a href="https://maps.google.com/?q=269+Rte+de+l'Altiport,+73550+Les+Allues,+France" target="_blank" style="display:flex;align-items:center;gap:12px;margin-top:20px;padding:14px 16px;border:1px solid #33332d;border-radius:10px;text-decoration:none;color:#ffffff;background:#161615">
+          <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#75cee1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span style="flex:1;font-size:14px"><strong style="font-weight:600">269 Rte de l'Altiport, 73550 Les Allues</strong> <span style="color:#a3a199">· ~200 m from the slopes</span></span>
+          <span style="font-size:12px;color:#75cee1;white-space:nowrap">Maps ↗</span>
+        </a>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ hasMessages }}" hint-placeholder-val="{{ false }}">
+      <div class="navrow" style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding:16px 0 4px;border-bottom:1px solid #262622">
+        <sc-for list="{{ tiles }}" as="t" hint-placeholder-count="6">
+          <button class="chip" sc-camel-on-click="{{ t.go }}" style="flex:none;display:flex;align-items:baseline;gap:6px;border:1px solid #33332d;background:#161615;border-radius:999px;padding:6px 12px;font:inherit;color:#ffffff;cursor:pointer">
+            <span style="font-size:11px;color:#a3a199">{{ t.kicker }}</span><span style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:14px">{{ t.big }}</span>
+          </button>
+        </sc-for>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;gap:24px;padding:28px 0 16px">
+        <sc-for list="{{ messages }}" as="m" hint-placeholder-count="2">
+          <div style="{{ m.rowStyle }}">
+            <div style="{{ m.bubbleStyle }}">{{ m.text }}</div>
+            <sc-if value="{{ m.hasSources }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-wrap:wrap;gap:6px;margin-top:10px">
+                <sc-for list="{{ m.sources }}" as="l" hint-placeholder-count="1">
+                  <button class="chip" sc-camel-on-click="{{ l.go }}" style="display:inline-flex;align-items:center;gap:6px;border:1px solid #3a3a34;background:#161615;border-radius:999px;padding:5px 12px;font:inherit;font-size:12px;color:#ffffff;cursor:pointer">
+                    <span style="width:6px;height:6px;border-radius:50%;background:#75cee1"></span>{{ l.label }} →
+                  </button>
+                </sc-for>
+              </div>
+            </sc-if>
+          </div>
+        </sc-for>
+        <sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex;gap:5px;padding:4px 2px">{{ dots }}</div>
+        </sc-if>
+      </div>
+      </sc-if>
+
+      <div style="position:sticky;bottom:0;background:linear-gradient(rgba(15,15,14,0),#0f0f0e 35%);padding:20px 0 18px">
+        <form sc-camel-on-submit="{{ ask }}" style="display:flex;align-items:center;gap:8px;border:1px solid #3a3a34;border-radius:999px;padding:6px 6px 6px 20px;background:#1a1a18;box-shadow:0 30px 80px rgb(0 0 0 / 55%)">
+          <input value="{{ q }}" sc-camel-on-change="{{ setQ }}" placeholder="Ask anything about the trip…" style="flex:1;min-width:0;border:0;outline:0;background:none;font:inherit;font-size:16px;color:#ffffff;padding:9px 0">
+          <button class="send" type="submit" disabled="{{ loading }}" aria-label="Send" style="width:40px;height:40px;border-radius:50%;border:0;background:#75cee1;color:#0f0f0e;display:grid;place-items:center;cursor:pointer;flex:none">
+            <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M12 19V5"></path><path d="m5 12 7-7 7 7"></path></svg>
+          </button>
+        </form>
+        <div class="navrow" style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;margin-top:10px">
+          <sc-for list="{{ suggestions }}" as="s" hint-placeholder-count="4">
+            <button class="chip" sc-camel-on-click="{{ s.go }}" style="flex:none;border:1px solid #33332d;background:none;border-radius:999px;padding:6px 12px;font:inherit;font-size:12.5px;color:#cfcdc4;cursor:pointer">{{ s.text }}</button>
+          </sc-for>
+        </div>
+      </div>
+    </section>
+    </sc-if>
+
+    <!-- PAGES -->
+    <sc-if value="{{ isPage }}" hint-placeholder-val="{{ false }}">
+    <section style="max-width:960px;width:100%;margin:0 auto;padding:32px 20px 64px;animation:rise .3s ease-out">
+
+      <sc-if value="{{ isSchedule }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Schedule">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">The week<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">Events and chef meals. Open days are up for grabs.</p>
+        <div style="display:flex;flex-direction:column">
+          <sc-for list="{{ schedule }}" as="d" hint-placeholder-count="8">
+            <div class="row" style="display:grid;grid-template-columns:96px 1fr;gap:16px;padding:18px 8px;border-top:1px solid #2c2c28">
+              <div><div style="font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#a3a199;font-weight:600">{{ d.dow }}</div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:36px;line-height:1;letter-spacing:-.03em">{{ d.num }}</div></div>
+              <div><div style="font-size:17px;font-weight:600;line-height:1.3">{{ d.event }}</div><div style="font-size:13px;color:#a3a199;margin-top:6px">Breakfast: {{ d.breakfast }} · Dinner: {{ d.dinner }}</div></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isFlights }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Flights">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Flights<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">Everything is timed around the group shuttle at Geneva (GVA).</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700">Getting there · Saturday 30 Jan</div>
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:56px;line-height:1;letter-spacing:-.04em;margin:10px 0 4px">08:30</div>
+            <div style="font-weight:600;margin-bottom:10px">Your flight needs to land in Geneva by 8:30 AM</div>
+            <p style="font-size:14px;margin:0 0 6px;color:#cfcdc4">Aim for 8:00 or earlier for bags and delays. Shuttle leaves GVA 10:30–11:00.</p>
+            <p style="font-size:13px;margin:0;color:#a3a199">Land later and you'll likely miss it — plan your own transfer.</p>
+          </div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700">Going home · Saturday 6 Feb</div>
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:56px;line-height:1;letter-spacing:-.04em;margin:10px 0 4px">11:00</div>
+            <div style="font-weight:600;margin-bottom:10px">Book a flight leaving Geneva at 11:00 AM or later</div>
+            <p style="font-size:14px;margin:0 0 6px;color:#cfcdc4">Chalet pickup 4:15–4:30 AM, ~2 h to GVA, then check-in and security.</p>
+            <p style="font-size:13px;margin:0;color:#a3a199">Anything earlier and you won't make it through security in time.</p>
+          </div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700">Option · Arrive Friday</div>
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:30px;line-height:1.05;letter-spacing:-.03em;margin:10px 0 10px">Overnight near GVA</div>
+            <p style="font-size:14px;margin:0 0 12px;color:#cfcdc4">Fly Thursday evening, land Friday morning (e.g. EWR → GVA 5:35 PM → 7:25 AM), sleep by the airport, meet the shuttle Saturday.</p>
+            <div style="font-size:13px;display:flex;flex-direction:column;gap:6px">
+              <div><a href="https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/" target="_blank">Geneva Marriott</a> <span style="color:#a3a199">— free shuttle, under 5 min</span></div>
+              <div><a href="https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/" target="_blank">Hilton Geneva</a> <span style="color:#a3a199">— free shuttle every ~20 min, 4:20 AM–11:40 PM</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isShuttle }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Shuttle">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Shuttle<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">One 49-seat bus each way for people, luggage and skis. About 2 hours door to door.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+          <div style="background:#75cee1;color:#0f0f0e;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;font-weight:700">To the chalet · Saturday 30 Jan</div>
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(48px,7vw,72px);line-height:1;letter-spacing:-.04em;margin:10px 0 8px">10:30</div>
+            <p style="font-size:14px;margin:0;font-weight:500">The bus leaves Geneva Airport between 10:30 and 11:00 AM. Have your bags with you at the meeting point.</p>
+          </div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700">Back to the airport · Saturday 6 Feb</div>
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(48px,7vw,72px);line-height:1;letter-spacing:-.04em;margin:10px 0 8px">04:15</div>
+            <p style="font-size:14px;margin:0;color:#cfcdc4">The bus picks us up at the chalet between 4:15 and 4:30 AM. Pack the night before.</p>
+          </div>
+        </div>
+        <p style="font-size:13px;color:#a3a199;margin:16px 0 0">Meeting point and driver contact will be posted here closer to the date.</p>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isChalet }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Chalet">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Falcon Lodge F<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">Two apartments (F12 + F21) combined. 326 m² over three levels, 8 bedrooms, sleeps 10–20.</p>
+        <div style="width:100%;aspect-ratio:16/9;border-radius:12px;overflow:hidden;margin-bottom:12px;background:#1a1a18">
+          <image-slot id="chalet-photo-v3" shape="rect" placeholder="Drop a chalet photo"></image-slot>
+        </div>
+        <a href="https://maps.google.com/?q=269+Rte+de+l'Altiport,+73550+Les+Allues,+France" target="_blank" style="display:flex;align-items:center;gap:12px;padding:16px 18px;border:1px solid #33332d;border-radius:10px;text-decoration:none;color:#ffffff;background:#1a1a18;margin-bottom:12px">
+          <svg width="18" height="18" sc-camel-view-box="0 0 24 24" fill="none" stroke="#75cee1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+          <span style="flex:1;font-size:15px;font-weight:600">269 Rte de l'Altiport, 73550 Les Allues, France</span>
+          <span style="font-size:12px;color:#75cee1">Maps ↗</span>
+        </a>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:10px">In the chalet</div>
+            <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.75;color:#cfcdc4"><li>Multiple lounges, dining areas, two fireplaces</li><li>Main kitchen plus lower-level kitchenette</li><li>Private outdoor hot tub, two saunas, fitness room</li><li>Ski lockers with boot warmers</li><li>Underground parking, private laundry</li></ul>
+          </div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:10px">Shared in the residence</div>
+            <ul style="margin:0 0 16px;padding-left:18px;font-size:14px;line-height:1.75;color:#cfcdc4"><li>Indoor pool, hammam, sauna, massage rooms</li><li>On-site ski shop and equipment rental</li></ul>
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:8px">Rooms</div>
+            <p style="font-size:14px;margin:0;color:#cfcdc4">Mostly en-suite with balcony or terrace. A couple of bunk rooms share a shower room and may not have balcony access.</p>
+          </div>
+        </div>
+        <div style="display:flex;flex-wrap:wrap;gap:8px 14px;margin-top:16px;font-size:13px">
+          <a href="https://www.skiinluxury.com/france/meribel/falcon-lodge-f" target="_blank">Falcon Lodge F</a>
+          <a href="https://www.skiinluxury.com/france/meribel/falcon-lodge-f12" target="_blank">F12 (sleeps 4–8)</a>
+          <a href="https://www.skiinluxury.com/france/meribel/falcon-lodge-f21" target="_blank">F21 (sleeps 6–12)</a>
+          <a href="https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f" target="_blank">Alpine Resorts</a>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isRooms }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Rooms">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Rooms<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">{{ guestCount }} confirmed · {{ openCount }} spots open · sleeps up to 20.</p>
+        <div style="display:flex;flex-direction:column;gap:28px">
+          <sc-for list="{{ floors }}" as="f" hint-placeholder-count="3">
+            <div>
+              <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:10px;padding-bottom:8px;border-bottom:1px solid #33332d"><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:20px;letter-spacing:-.02em">{{ f.name }}</div><span style="font-size:12px;color:#a3a199">{{ f.code }}</span></div>
+              <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px">
+                <sc-for list="{{ f.rooms }}" as="r" hint-placeholder-count="3">
+                  <div style="{{ r.style }}">
+                    <div style="font-weight:600;font-size:14px">{{ r.name }}</div>
+                    <div style="font-size:12px;color:#a3a199;margin-bottom:12px">{{ r.type }}</div>
+                    <div style="display:flex;flex-direction:column;gap:6px">
+                      <sc-for list="{{ r.spots }}" as="s" hint-placeholder-count="2">
+                        <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;font-size:13px">
+                          <span style="color:#85837b;font-size:12px">Spot {{ s.n }}</span>
+                          <span style="{{ s.style }}">{{ s.who }}</span>
+                        </div>
+                      </sc-for>
+                    </div>
+                  </div>
+                </sc-for>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+        <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a3a199;font-weight:600;margin:32px 0 10px">Bedroom map</div>
+        <img src="1b2f6e88-e367-4c61-a873-86d689760037" alt="Chalet F bedroom map across the three floors" style="width:100%;border-radius:12px">
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isSpots }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Spots &amp; pricing">
+        <div style="background:#75cee1;color:#0f0f0e;border-radius:14px;padding:28px 24px 26px;margin-bottom:12px">
+          <div style="font-size:11px;letter-spacing:.14em;text-transform:uppercase;font-weight:700">Spots still open</div>
+          <div style="display:flex;flex-wrap:wrap;align-items:baseline;gap:8px 24px">
+            <div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(96px,20vw,180px);line-height:.9;letter-spacing:-.05em">{{ openCount }}</div>
+            <div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(26px,4vw,40px);letter-spacing:-.03em;line-height:1">€1,690–1,860</div><div style="font-size:14px;font-weight:500;margin-top:4px">per person, all-in · varies by room</div></div>
+          </div>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:12px">
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:10px">Included</div>
+            <ul style="margin:0;padding-left:18px;font-size:14px;line-height:1.75;color:#cfcdc4"><li>Your bed for 7 nights</li><li>Private chef — 6 breakfasts, 5 dinners</li><li>Group shuttle GVA ↔ chalet</li><li>Taxes, incidentals and tips</li></ul>
+            <p style="font-size:13px;color:#a3a199;margin:12px 0 0">Not included: flights, ski pass, rentals, nights out.</p>
+          </div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;padding:22px">
+            <div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:700;margin-bottom:6px">Where the spots are</div>
+            <div style="display:flex;flex-direction:column;font-size:14px">
+              <sc-for list="{{ openRooms }}" as="r" hint-placeholder-count="3">
+                <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;padding:10px 0;border-top:1px solid #2c2c28">
+                  <span>{{ r.name }} <span style="color:#a3a199">· {{ r.floor }}</span></span>
+                  <span style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:22px;letter-spacing:-.02em;color:#75cee1">{{ r.open }}</span>
+                </div>
+              </sc-for>
+            </div>
+          </div>
+        </div>
+        <a href="#" style="display:inline-flex;align-items:center;margin-top:16px;background:#f2f1ea;color:#0f0f0e;border-radius:999px;padding:12px 20px;font-size:14px;font-weight:700;text-decoration:none">Message the organizer to claim a spot →</a>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isChef }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Private chef">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Chef<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">6 breakfasts and 5 dinners at the chalet.</p>
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:10px;margin-bottom:12px">
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:10px;padding:16px 18px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a3a199;font-weight:600">First meal</div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:20px;margin-top:4px">Dinner, Sat 30</div></div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:10px;padding:16px 18px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a3a199;font-weight:600">Last dinner</div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:20px;margin-top:4px">Wed 3 Feb</div></div>
+          <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:10px;padding:16px 18px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#a3a199;font-weight:600">Last breakfast</div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:20px;margin-top:4px">Fri 5 Feb</div></div>
+          <div style="background:#1a1a18;border:1px solid #75cee1;border-radius:10px;padding:16px 18px"><div style="font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:#75cee1;font-weight:600">On your own</div><div style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:20px;margin-top:4px">Dinner Thu &amp; Fri</div></div>
+        </div>
+        <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;overflow:hidden">
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:10px 18px;font-size:11px;letter-spacing:.08em;text-transform:uppercase;color:#a3a199;font-weight:600"><div>Day</div><div>Breakfast</div><div>Dinner</div></div>
+          <sc-for list="{{ schedule }}" as="d" hint-placeholder-count="7">
+            <div style="display:grid;grid-template-columns:1fr 1fr 1fr;padding:12px 18px;border-top:1px solid #262622;font-size:14px"><div style="font-weight:600">{{ d.short }}</div><div style="color:#cfcdc4">{{ d.breakfast }}</div><div style="color:#cfcdc4">{{ d.dinner }}</div></div>
+          </sc-for>
+        </div>
+        <p style="font-size:13px;color:#a3a199;margin:16px 0 0">Allergies or dietary needs: tell the organizer before the trip.</p>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isTasks }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Tasks">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 8px">Who’s done what<span style="color:#75cee1">.</span></h2>
+        <p style="color:#a3a199;margin:0 0 24px">Tap to toggle. Saved on this device. <strong style="color:#ffffff">{{ doneCount }}</strong> of {{ totalTasks }} complete.</p>
+        <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;overflow:hidden">
+          <sc-for list="{{ taskRows }}" as="row" hint-placeholder-count="9">
+            <div style="display:flex;flex-wrap:wrap;align-items:center;gap:8px 12px;padding:13px 18px;border-top:1px solid #262622">
+              <div style="font-weight:600;font-size:14px;flex:1;min-width:140px">{{ row.name }}</div>
+              <div style="display:flex;gap:6px;flex-wrap:wrap">
+                <button sc-camel-on-click="{{ row.toggleFlight }}" style="{{ row.flightStyle }}">{{ row.flightLabel }}</button>
+                <button sc-camel-on-click="{{ row.togglePaid }}" style="{{ row.paidStyle }}">{{ row.paidLabel }}</button>
+                <button sc-camel-on-click="{{ row.toggleInfo }}" style="{{ row.infoStyle }}">{{ row.infoLabel }}</button>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+      <sc-if value="{{ isLinks }}" hint-placeholder-val="{{ false }}">
+      <div data-screen-label="Links">
+        <h2 style="font-family:'Hanken Grotesk','Maison Neue',sans-serif;font-weight:700;font-size:clamp(36px,6vw,64px);letter-spacing:-.035em;line-height:.95;margin:0 0 24px">Links<span style="color:#75cee1">.</span></h2>
+        <div style="background:#1a1a18;border:1px solid #2c2c28;border-radius:12px;overflow:hidden">
+          <sc-for list="{{ links }}" as="l" hint-placeholder-count="9">
+            <a class="row" href="{{ l.href }}" target="_blank" style="display:flex;justify-content:space-between;align-items:center;gap:12px;padding:14px 18px;border-top:1px solid #262622;text-decoration:none;font-size:14px;color:#ffffff">
+              <span><span style="font-weight:600">{{ l.label }}</span><span style="display:block;font-size:12px;color:#a3a199">{{ l.group }}</span></span>
+              <span style="color:#75cee1">↗</span>
+            </a>
+          </sc-for>
+        </div>
+      </div>
+      </sc-if>
+
+    </section>
+    </sc-if>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script="">
+const TRIP_START = new Date(2027, 0, 30);
+const SECTIONS = [
+  ['overview','Home'],['schedule','Schedule'],['flights','Flights'],['shuttle','Shuttle'],
+  ['chalet','Chalet'],['rooms','Rooms'],['spots','Spots & pricing'],['chef','Chef'],['tasks','Tasks'],['links','Links']
+];
+const SCHEDULE = [
+  {dow:'Sat',num:'30',short:'Sat 30',event:'Arrival — shuttle from GVA, settle in',breakfast:'—',dinner:'Chef'},
+  {dow:'Sun',num:'31',short:'Sun 31',event:'Chill drinks at Le Rond Point des Pistes',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Mon',num:'1',short:'Mon 1',event:'La Folie Douce, Méribel–Courchevel',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Tue',num:'2',short:'Tue 2',event:'Open — plans to be decided',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Wed',num:'3',short:'Wed 3',event:'Le Cap Horn, Courchevel 1850',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Thu',num:'4',short:'Thu 4',event:'Final night out',breakfast:'Chef',dinner:'On your own'},
+  {dow:'Fri',num:'5',short:'Fri 5',event:'Open — last ski day',breakfast:'Chef',dinner:'On your own'},
+  {dow:'Sat',num:'6',short:'Sat 6',event:'Departure — pickup 4:15 AM',breakfast:'—',dinner:'—'},
+];
+const FLOORS = [
+  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1 · Chambre Parentale',type:'Master double',spots:['Kaise',null]}]},
+  {name:'Middle floor',code:'R10 / F21',rooms:[
+    {name:'Bedroom 2 · Chambre 4',type:'Double room',spots:['Amelia Drake','Kristy Kelly']},
+    {name:'Bedroom 3 · Chambre 3',type:'Twin room',spots:['Kristy Khoury','Valeriia Stobolva']},
+    {name:'Bedroom 4 · Chambre enfants',type:'Quad bunk room',spots:['','','','']},
+    {name:'Bedroom 5 · Cabine',type:'Bunk cabin',spots:['','']}]},
+  {name:'Lower floor',code:'R9 / F12',rooms:[
+    {name:'Bedroom 6 · Chambre 1',type:'Double room',spots:['Augustus Shewchuck','Wayne Martindale']},
+    {name:'Bedroom 7 · Chambre 2',type:'Double room',spots:['Olajuwon Jones','Ted Delcima']},
+    {name:'Bedroom 8 · Chambre 3 enfants',type:'Quad bunk room',spots:['','','','']}]},
+];
+const LINKS = [
+  {group:'Chalet',label:'Falcon Lodge F — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f'},
+  {group:'Chalet',label:'Falcon residence — Alpine Resorts',href:'https://www.alpine-resorts.fr/en_US/winter/resort/falcon'},
+  {group:'Ski pass',label:'Méribel / 3 Vallées ski pass',href:'https://www.skipass-meribel.com/en/'},
+  {group:'Ski pass',label:'Epic Pass — Les 3 Vallées access',href:'https://www.epicpass.com/regions/europe/france/les-3-vallees.aspx'},
+  {group:'Mountain',label:'Méribel webcams',href:'https://www.meribel.net/informations-pratiques/webcams/'},
+  {group:'Wellness',label:'Spa Falcon',href:'https://www.alpine-resorts.fr/en_US/destination/alpes-fr/meribel/spa/spa-falcon'},
+  {group:'Hotels',label:'Geneva Marriott (Friday night)',href:'https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/'},
+  {group:'Hotels',label:'Hilton Geneva (Friday night)',href:'https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/'},
+  {group:'Planning',label:'Notion — planning docs',href:'https://tin-bead-142.notion.site/Meribel-Chalet-Falcon-Lodge-F-4f936aba56d783deb94d018f428efb3b'},
+];
+const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Dates Sat 30 Jan – Sat 6 Feb 2027.
+SHUTTLE: Out Sat 30 Jan departs GVA 10:30–11:00 AM. Back Sat 6 Feb chalet pickup 4:15–4:30 AM. 49-seat bus for passengers, luggage, ski equipment. ~2 h each way. Meeting point/driver TBA.
+FLIGHTS: To catch the shuttle land at GVA by 8:30 AM Saturday (aim 8:00 or earlier). Landing after 8:30 → arrange own transport. Return: book from GVA at 11:00 AM or later, never earlier. Optional: arrive Friday, stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
+ROOMS: Upper floor (R11/F21) Bedroom 1 Chambre Parentale master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 Chambre 4 double: Amelia Drake, Kristy Kelly. Bedroom 3 Chambre 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 Chambre enfants quad bunk: 4 available. Bedroom 5 Cabine bunk cabin: 2 available. Lower floor (R9/F12): Bedroom 6 Chambre 1 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 Chambre 2 double: Olajuwon Jones, Ted Delcima. Bedroom 8 Chambre 3 enfants quad bunk: 4 available. 9 confirmed guests, 10 open spots.
+REMAINING SPOTS: 10 bunk spots, €1,690–€1,860 per person all-in (varies by room). Includes room, private chef, group shuttle, taxes, incidentals, tips. Not flights/ski pass/rentals. Contact the organizer to claim.
+CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Wed 3 Feb). No chef dinner Thu 4 or Fri 5 Feb.
+EVENTS: Sat 30 arrival. Sun 31 chill drinks at Le Rond Point des Pistes, Méribel. Mon 1 Feb La Folie Douce Méribel–Courchevel. Tue 2 open. Wed 3 Le Cap Horn, Courchevel 1850. Thu 4 final night out. Fri 5 open. Sat 6 departure.
+CHALET: Central Méribel ~200 m from slopes, 326 m², 3 levels, 8 bedrooms, sleeps 10–20. Two apartments combined: F12 (sleeps 4–8) + F21 (sleeps 6–12). Lounges, two fireplaces, main kitchen + kitchenette, private outdoor hot tub, two saunas, fitness room, shared indoor pool/hammam/sauna/massage rooms, on-site ski shop and rental, ski lockers with boot warmers, underground parking, laundry. Most rooms en-suite with balcony/terrace; some bunk rooms share a shower room, may lack balcony.
+LINKS: ski pass skipass-meribel.com and Epic Pass 3 Vallées; Méribel webcams; Spa Falcon.`;
+const SRC_MAP = [['shuttle','shuttle'],['flight','flights'],['room','rooms'],['spot','spots'],['pric','spots'],['chef','chef'],['event','schedule'],['schedule','schedule'],['chalet','chalet'],['link','links']];
+const TASK_KEY = 'meribel27-tasks';
+const TILE = { base: { textAlign: 'left', border: '1px solid #33332d', background: '#1a1a18', color: '#ffffff', borderRadius: '12px', padding: '16px 16px 14px', font: 'inherit', cursor: 'pointer', display: 'flex', flexDirection: 'column', minHeight: '140px' } };
+
+class Component extends DCLogic {
+  state = { section: 'overview', q: '', messages: [], loading: false, tasks: {}, wide: typeof window !== 'undefined' ? window.innerWidth >= 860 : true };
+  componentDidMount() {
+    try { this.setState({ tasks: JSON.parse(localStorage.getItem(TASK_KEY) || '{}') }); } catch (e) {}
+    this._onResize = () => this.setState({ wide: window.innerWidth >= 860 });
+    window.addEventListener('resize', this._onResize);
+  }
+  componentWillUnmount() { window.removeEventListener('resize', this._onResize); }
+  go(id) { this.setState({ section: id }); window.scrollTo(0, 0); }
+  toggle(key) {
+    this.setState(s => { const t = { ...s.tasks, [key]: !s.tasks[key] }; try { localStorage.setItem(TASK_KEY, JSON.stringify(t)); } catch (e) {} return { tasks: t }; });
+  }
+  parseAnswer(a) {
+    const m = a.match(/\n?\s*Source:\s*(.*)$/i);
+    const body = m ? a.slice(0, m.index).trim() : a;
+    const seen = new Set(); const sources = [];
+    if (m) SRC_MAP.forEach(([k, id]) => { if (m[1].toLowerCase().includes(k) && !seen.has(id)) { seen.add(id); sources.push({ label: SECTIONS.find(s => s[0] === id)[1], id }); } });
+    return { body, sources };
+  }
+  async ask(e, text) {
+    if (e && e.preventDefault) e.preventDefault();
+    const q = (text ?? this.state.q).trim(); if (!q || this.state.loading) return;
+    const history = [...this.state.messages, { role: 'user', text: q }].slice(-8).map(m => ({ role: m.role === 'user' ? 'user' : 'assistant', content: m.text }));
+    this.setState(s => ({ q: '', loading: true, section: 'overview', messages: [...s.messages, { role: 'user', text: q }] }));
+    try {
+      const out = await window.claude.complete({
+        system: `You answer questions for guests of a group ski trip using ONLY the trip notes below. Be brief and concrete (1–3 sentences), friendly, plain text (no markdown). If the notes don't cover it, say "That's not in the trip notes yet — ask the organizer." End every answer with a line "Source: <section name>" naming the note section(s) used (Shuttle, Flights, Rooms, Remaining spots, Chef, Events, Chalet, Links).\n\n${KB}`,
+        messages: history, max_tokens: 400
+      });
+      const { body, sources } = this.parseAnswer(out);
+      this.setState(s => ({ loading: false, messages: [...s.messages, { role: 'assistant', text: body, sources }] }));
+    } catch (err) {
+      this.setState(s => ({ loading: false, messages: [...s.messages, { role: 'assistant', text: 'The assistant needs the online version of this page — open the shared link to ask questions.', sources: [] }] }));
+    }
+  }
+  renderVals() {
+    const sec = this.state.section, wide = this.state.wide;
+    const days = Math.max(0, Math.ceil((TRIP_START - new Date()) / 86400000));
+    const guests = []; let open = 0; const openRooms = [];
+    const floors = FLOORS.map(f => ({ ...f, rooms: f.rooms.map(r => {
+      let o = 0;
+      const spots = r.spots.map((w, i) => {
+        if (w === null) return { n: i + 1, who: 'Not offered', style: { color: '#85837b' } };
+        if (w) { guests.push(w); return { n: i + 1, who: w, style: { fontWeight: 600 } }; }
+        o++; open++; return { n: i + 1, who: 'Available', style: { color: '#75cee1', fontWeight: 600, fontSize: '12px' } };
+      });
+      if (o) openRooms.push({ name: r.name.split(' · ')[0], floor: f.name, open: o });
+      return { ...r, spots, style: { background: '#1a1a18', border: '1px solid ' + (o ? '#75cee1' : '#2c2c28'), borderRadius: '10px', padding: '16px 18px' } };
+    }) }));
+    const navItems = SECTIONS.map(([id, label]) => ({ id, label, go: () => this.go(id),
+      sideStyle: { display: 'block', width: '100%', padding: '8px 10px', border: 0, background: sec === id ? '#2b2b27' : 'none', borderRadius: '8px', font: 'inherit', fontSize: '14px', fontWeight: sec === id ? 600 : 400, color: sec === id ? '#75cee1' : '#cfcdc4', cursor: 'pointer', textAlign: 'left' },
+      chipStyle: { flex: 'none', padding: '6px 12px', border: '1px solid ' + (sec === id ? '#75cee1' : '#3a3a34'), background: sec === id ? '#75cee1' : 'none', color: sec === id ? '#0f0f0e' : '#cfcdc4', borderRadius: '999px', font: 'inherit', fontSize: '13px', fontWeight: sec === id ? 700 : 400, cursor: 'pointer' } }));
+    const tiles = [
+      { kicker: 'Bus leaves Geneva', big: '10:30', sub: 'Saturday 30 Jan, between 10:30 and 11:00', id: 'shuttle' },
+      { kicker: 'Your flight must land by', big: '08:30', sub: 'Saturday morning at Geneva, or you’ll miss the bus', id: 'flights' },
+      { kicker: 'Beds still available', big: String(open), sub: 'from €1,690 per person, everything included', id: 'spots', accent: true },
+      { kicker: 'Meals cooked for us', big: '6 + 5', sub: '6 breakfasts and 5 dinners · no dinner Thu or Fri', id: 'chef' },
+      { kicker: 'Bus back to the airport', big: '04:15', sub: 'Saturday 6 Feb · book flights for 11:00 or later', id: 'shuttle' },
+      { kicker: 'People coming', big: `${guests.length} of 20`, sub: 'see who’s sleeping where', id: 'rooms' },
+    ].map(t => ({ ...t, go: () => this.go(t.id), bigStyle: { fontFamily: "'Hanken Grotesk','Maison Neue',sans-serif", fontWeight: 700, fontSize: '28px', lineHeight: 1, letterSpacing: '-.03em', fontVariantNumeric: 'tabular-nums', color: t.accent ? '#75cee1' : '#ffffff', whiteSpace: 'nowrap' } }));
+    const week = SCHEDULE.map((d, i) => ({ ...d, meals: `B: ${d.breakfast} · D: ${d.dinner}`, style: { flex: 'none', width: '168px', background: i === 0 || i === 7 ? '#161615' : '#1a1a18', border: '1px solid #2c2c28', borderRadius: '10px', padding: '14px 14px 12px' } }));
+    const tasks = this.state.tasks;
+    const cell = on => ({ font: 'inherit', fontSize: '12px', fontWeight: on ? 700 : 400, padding: '5px 11px', border: '1px solid ' + (on ? '#75cee1' : '#3a3a34'), borderRadius: '999px', background: on ? '#75cee1' : 'none', color: on ? '#0f0f0e' : '#a3a199', cursor: 'pointer' });
+    let done = 0;
+    const taskRows = guests.map(name => { const k = t => `${name}|${t}`; const f = !!tasks[k('flight')], p = !!tasks[k('paid')], i = !!tasks[k('info')]; done += f + p + i;
+      return { name, toggleFlight: () => this.toggle(k('flight')), togglePaid: () => this.toggle(k('paid')), toggleInfo: () => this.toggle(k('info')),
+        flightStyle: cell(f), paidStyle: cell(p), infoStyle: cell(i), flightLabel: f ? 'Flight booked' : 'Flight', paidLabel: p ? 'Paid' : 'Payment', infoLabel: i ? 'Details in' : 'Details' }; });
+    const suggestions = ['What time do I need to land?', 'How much are the open spots?', 'Which nights is there no chef dinner?', 'What are we doing Monday?', 'Where am I sleeping?'].map(text => ({ text, go: () => this.ask(null, text) }));
+    const messages = this.state.messages.map(m => m.role === 'user'
+      ? { text: m.text, rowStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }, bubbleStyle: { background: '#2a2a26', borderRadius: '20px', padding: '10px 16px', maxWidth: '80%', fontSize: '15px', whiteSpace: 'pre-wrap' }, hasSources: false, sources: [] }
+      : { text: m.text, rowStyle: { display: 'flex', flexDirection: 'column', alignItems: 'flex-start', borderLeft: '2px solid #75cee1', paddingLeft: '16px' }, bubbleStyle: { padding: '2px 0', fontSize: '17px', lineHeight: 1.55, whiteSpace: 'pre-wrap', fontFamily: "'Hanken Grotesk','Maison Neue',sans-serif", fontWeight: 500 }, hasSources: m.sources.length > 0, sources: m.sources.map(s => ({ label: s.label, go: () => this.go(s.id) })) });
+    const dot = i => React.createElement('span', { key: i, style: { width: 7, height: 7, borderRadius: '50%', background: '#75cee1', display: 'inline-block', animation: `blink 1.2s ${i * 0.2}s infinite` } });
+    const flags = {}; SECTIONS.forEach(([id]) => flags['is' + id[0].toUpperCase() + id.slice(1)] = sec === id);
+    return { ...flags, isPage: sec !== 'overview', isWide: wide, isNarrow: !wide, navItems, daysUntil: days, schedule: SCHEDULE, week, tiles, floors, guests, guestCount: guests.length, openCount: open, openRooms, links: LINKS,
+      taskRows, doneCount: done, totalTasks: guests.length * 3, goSchedule: () => this.go('schedule'),
+      messages, hasMessages: messages.length > 0, noMessages: messages.length === 0, dots: [0, 1, 2].map(dot),
+      newChat: () => this.setState({ messages: [], section: 'overview', q: '' }),
+      q: this.state.q, setQ: e => this.setState({ q: e.target.value }), ask: e => this.ask(e), loading: this.state.loading, suggestions };
+  }
+}
+</script>
+
+
+</body></html>

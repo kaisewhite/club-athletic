@@ -1,0 +1,16 @@
+# Flat CreateMemoryStore body: shared/managed-agents-memory.md.
+# name, description and the seed tree under memory/ are all written for the model.
+# Stable facts only. Volatile rows (spots, occupancy, flights, tasks) stay on live tools.
+name: club-athletic-meribel-2027-facts
+description: >-
+  Stable background facts for the Club Athletic Méribel 2027 ski trip: the dates, the resort,
+  chalet Falcon Lodge F with its address and amenities, the bedroom and bed-type layout, both
+  airport shuttle windows, the flight timing rules and the Friday-arrival option, the private
+  chef meal counts, the eight-day schedule with its venues, the per-person price range with what
+  it includes and excludes, and the trip link list. These facts do not change, so answer stable
+  questions straight from them instead of querying the database. They are background only and
+  never a substitute for live data: how many beds are still available, who is in which bed, the
+  flight table, anyone's booking or payment status and guest task status are deliberately absent
+  and must be read with getOpenSpots, getRoomsByFloor, getFlightTable or getGuestTasks every
+  time. If a tool result disagrees with a file here, the tool wins. Holds no secrets,
+  credentials or booking references.

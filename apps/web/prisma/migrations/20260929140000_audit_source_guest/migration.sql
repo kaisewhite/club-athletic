@@ -1,0 +1,1 @@
+ALTER TYPE "AuditSource" ADD VALUE 'GUEST';

@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" role="img" aria-label="Méribel ’27">
+  <!-- Brand mark from `.brand-mark` in src/styles.css: accent #75cee1 tile, bg #0f0f0e glyph. -->
+  <rect width="32" height="32" rx="7" fill="#75cee1"/>
+  <path fill="#0f0f0e" d="M7 24V8h4l5 7.5L21 8h4v16h-3.5V13.5L16 21l-5.5-7.5V24z"/>
+</svg>

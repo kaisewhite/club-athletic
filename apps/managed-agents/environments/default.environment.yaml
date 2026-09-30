@@ -1,0 +1,11 @@
+# CreateEnvironment body: shared/managed-agents-environments.md.
+# Custom tools execute in apps/web; the sandbox needs no outbound network access.
+name: club-athletic-trip
+description: Restricted cloud environment for Club Athletic trip sessions.
+config:
+  type: cloud
+  networking:
+    type: limited
+    allowed_hosts: []
+    allow_package_managers: false
+    allow_mcp_servers: false

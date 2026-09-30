@@ -1,0 +1,20 @@
+# Build context hygiene. Everything the image needs is produced inside it by
+# `bun install` and `bun run build`; nothing local is copied in.
+node_modules
+build
+.react-router
+.vite
+# Secrets never enter an image. Runtime config comes from Secrets Manager.
+.env*
+.git
+.gitignore
+coverage
+test-results
+playwright-report
+*.tsbuildinfo
+*.log
+.DS_Store
+# Local script state (agent/memory ids written by deploy scripts).
+scripts/.state
+Dockerfile
+.dockerignore
