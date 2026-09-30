@@ -3,7 +3,10 @@
 set -eu
 
 export AWS_REGION="us-east-1"
-AWS_PROFILE="mostrom_mgmt"
+AWS_PROFILE="mostrom_prod"
+export AWS_PROFILE
+export CDK_DEFAULT_ACCOUNT="736548610362"
+export CDK_DEFAULT_REGION="us-east-1"
 CDK_OUTPUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/cdk-out.XXXXXX")"
 STACK_IDS_FILE="$(mktemp "${TMPDIR:-/tmp}/cdk-stacks.XXXXXX")"
 CDK_STACKS_FILE="$(mktemp "${TMPDIR:-/tmp}/cdk-all-stacks.XXXXXX")"

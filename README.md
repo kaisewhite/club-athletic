@@ -20,13 +20,12 @@ that app's directory:
 | --- | --- | --- |
 | `apps/web` | the site: React Router v7 (framework mode) on Bun, Prisma → Neon Postgres, the chat runtime, the ten pages | `cd apps/web && bun install` |
 | `apps/managed-agents` | the trip agent, its cloud environment and its memory store, as YAML applied with the `ant` CLI | `cd apps/managed-agents && bun install` |
-| `apps/aws` | CDK: ECS Fargate behind the shared ALB owned by the `edge` repo | `cd apps/aws && npm install` |
+| `apps/aws` | CDK: ECS Fargate behind the production ALB owned by the `edge` repo | `cd apps/aws && bun install` |
 
 **There is no root `package.json`, and there must never be one.** No workspaces,
-no root lockfile, no cross-app imports. `apps/web` and `apps/managed-agents` are
-Bun projects (`bun.lock`; `apps/web` pins `bun@1.4.0` in `packageManager` and
-`engines`); `apps/aws` is an npm project (`package-lock.json`) because it drives
-the CDK CLI and jest.
+no root lockfile, no cross-app imports. All three apps are Bun projects
+(`bun.lock`; `apps/web` pins `bun@1.4.0` in `packageManager` and `engines`);
+`apps/aws` uses Bun for the CDK CLI.
 
 ## apps/web
 
@@ -134,28 +133,27 @@ redaction, which stay manual.
 
 ## apps/aws
 
-One CDK stack per stage (`dev`, `stage`, `prod`) in
-`lib/club-athletic-trip-stack.ts`, composed of four constructs: shared resources
-(ECR repo, Secrets Manager secret, log group, roles), the Fargate service
-(cluster `club-athletic-<stage>`, service `web`, 512 CPU / 1024 MiB, port 4173,
-FARGATE_SPOT on dev and stage), the load-balancer attachment, and monitoring
-(SNS topic + alarms).
+One CDK stack, `club-athletic-prod-cdk`, deploys the Club Athletic web service to
+Edge's existing production ECS cluster and ALB in account `736548610362`. It
+creates the app's ECR repository, empty Secrets Manager secret, task roles, log
+group, Fargate service, and ALB target group/listener rule. It creates no ALB,
+certificate, or Route 53 record. The public `meribel.xn--tshi-l3a.com` alias is
+created manually in the management account after the production service is healthy.
 
-It creates **no load balancer of its own**. It creates a target group with a
-`/health` check and attaches it to the shared ALB owned by the `edge` repo,
-imported by CloudFormation export name (`mgmt-edge-https-listener-arn` and three
-others). Missing exports fail the deploy by design. The VPC is imported by
-attributes with subnets passed as a deploy-time parameter, so `cdk synth` and the
-tests work offline.
+The stack imports the production HTTPS listener from `prod-edge-*` CloudFormation
+exports and imports the existing ECS cluster by name (`edge`). Its target group
+uses VPC `vpc-00cf2fc1f07003d3b`.
 
 ```sh
 cd apps/aws
-npm install
-npm test                 # jest
-npm run synth
-./scripts/diff.sh dev
-PRIVATE_SUBNET_IDS=subnet-a,subnet-b ./scripts/deploy.sh dev
+bun install
+npx cdk synth InfraStack --profile mostrom_prod
+./scripts/deploy.sh
 ```
+
+The secret is created without placeholder data. Populate it with real values using
+`AWS_PROFILE=mostrom_prod ./scripts/push-secrets.sh web ../web/.env`. Build and push
+the production image and update the service with `../web/scripts/deploy-local.sh prod`.
 
 ## Environment
 

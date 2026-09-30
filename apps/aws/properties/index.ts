@@ -4,10 +4,10 @@ export const project = {
   name: "club-athletic",
   environment: "prod",
   domain: "xn--tshi-l3a.com",
-  hostedZoneId: "Z04794863W4QH5DDAT4AZ",
-  // The shared services this task joins instead of creating: edge's management-account
-  // cluster and load balancer, published by edge as `${environment}-${project}-*` exports.
-  sharedServices: { project: "edge", environment: "mgmt" },
+  // Production Edge services in account 736548610362 publish the listener and ALB exports.
+  // The cluster is imported by its existing ECS name because Edge does not export it.
+  sharedServices: { project: "edge", environment: "prod" },
+  vpcId: "vpc-00cf2fc1f07003d3b",
   service: {
     name: "web",
     description: "Club Athletic trip hub: React Router SSR app with the trip concierge agent",

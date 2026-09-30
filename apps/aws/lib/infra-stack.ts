@@ -1,10 +1,10 @@
-// The one stack this project deploys: the Club Athletic web service on edge's shared
-// management-account cluster and load balancer.
+// The one stack this project deploys: the Club Athletic web service on Edge's
+// production cluster and load balancer in account 736548610362.
 //
 // The constructs, ids and names are edge's (resources/stacks/shared/index.ts and
 // resources/stacks/fargate/platform/fargate.ts), reduced to what one public web
-// service needs. The only imports are edge's shared services — the cluster and the
-// load balancer — published by edge as `mgmt-edge-*` exports.
+// service needs. The production listener and load-balancer security group are
+// imported from Edge's `prod-edge-*` exports; the existing cluster is imported by name.
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
 import * as dotenv from "dotenv";
@@ -14,7 +14,6 @@ import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
-import * as route53 from "aws-cdk-lib/aws-route53";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 
 import { addStandardTags } from "../helpers/tag_resources";
@@ -22,9 +21,8 @@ import { project } from "../properties";
 
 dotenv.config();
 
-// From apps/aws/.env. The service runs in the management account, in the VPC that
-// holds edge's shared cluster and load balancer — a target group cannot reach
-// across VPCs.
+// Account and region are selected by the production AWS profile. The service joins
+// Edge's production VPC because a target group cannot reach across VPCs.
 const required = (name: string): string => {
   const value = process.env[name];
   if (!value) throw new Error(`Missing ${name} in apps/aws/.env`);
@@ -39,7 +37,6 @@ export class InfraStack extends cdk.Stack {
     const { environment, service } = project;
     const account = required("CDK_DEFAULT_ACCOUNT");
     const region = required("CDK_DEFAULT_REGION");
-    const vpcId = required("MGMT_VPC");
 
     super(scope, id, {
       ...props,
@@ -81,7 +78,7 @@ export class InfraStack extends cdk.Stack {
 
     const vpc = ec2.Vpc.fromLookup(this, `importing-${constructorPrefix}-vpc`, {
       isDefault: false,
-      vpcId,
+      vpcId: project.vpcId,
     });
 
     const ecsCluster = ecs.Cluster.fromClusterAttributes(this, `import-${constructorPrefix}-fargate-cluster`, {
@@ -92,15 +89,22 @@ export class InfraStack extends cdk.Stack {
 
     /**************************** SECRET, ROLES, LOGS *****************************/
 
-    const secrets = new secretsmanager.Secret(this, `${constructorPrefix}-secret`, {
-      secretName: resourceName,
-      secretObjectValue: {
-        DUMMY: cdk.SecretValue.unsafePlainText("my_secret"),
-      },
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
+    const secretResource = new secretsmanager.CfnSecret(this, `${constructorPrefix}-secret`, {
+      name: resourceName,
       description: `Environment Variables for ${service.name}`,
+      tags: Object.entries({
+        Project: project.name,
+        Environment: environment,
+        Service: service.name,
+        Stack: "fargate",
+      }).map(([key, value]) => ({ key, value })),
     });
-    addStandardTags(secrets, taggingProps);
+    secretResource.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
+    const secrets = secretsmanager.Secret.fromSecretCompleteArn(
+      this,
+      `${constructorPrefix}-secret-reference`,
+      secretResource.ref,
+    );
 
     // A task role for the app and a separate execution role for the ECS agent
     // (image pull, secret injection, log writes), as edge's web service.
@@ -253,16 +257,7 @@ export class InfraStack extends cdk.Stack {
     });
     addStandardTags(HTTPSListener, taggingProps);
 
-    const aliasRecord = new route53.CfnRecordSet(this, `${constructorPrefix}-route53-alias-record`, {
-      hostedZoneId: project.hostedZoneId,
-      name: hostName,
-      type: "A",
-      aliasTarget: {
-        dnsName: cdk.Fn.importValue(`${sharedPrefix}-load-balancer-dns`),
-        hostedZoneId: cdk.Fn.importValue(`${sharedPrefix}-load-balancer-canonical-hosted-zone-id`),
-        evaluateTargetHealth: false,
-      },
-    });
-    addStandardTags(aliasRecord, taggingProps);
+    // The public alias is created manually in the management account only after
+    // the production service is healthy behind Edge's production ALB.
   }
 }
