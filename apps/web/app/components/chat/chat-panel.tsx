@@ -275,7 +275,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
     finally { if (lifetime.current) setStopping(false); }
   }
 
-  async function handleSend(override?: string, allowDuringTurn = false) {
+  async function handleSend(override?: string, allowDuringTurn = false, retainedUploadId?: string) {
     const text = override ?? (chatUi.draft.trim() ? chatUi.draft : attachment.file ? "Please read this attachment." : chatUi.draft);
     // A second POST must wait for the first acknowledgement. Once acknowledged,
     // suggestion clicks can use the server's queue while the agent is answering.
@@ -304,7 +304,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
       const uploaded = await attachment.prepare(conversationId, controller.signal);
       const targetId = conversationId ?? uploaded?.conversationId;
       if (targetId) {
-        const result = await sendConversationChatMessage(targetId, text, key, { signal: controller.signal, ...(uploaded ? { uploadId: uploaded.uploadId } : {}) });
+        const result = await sendConversationChatMessage(targetId, text, key, { signal: controller.signal, ...(uploaded ? { uploadId: uploaded.uploadId } : retainedUploadId ? { uploadId: retainedUploadId } : {}) });
         if (!lifetime.current || sendAttempt.current !== attempt) return;
         if (!result.ok) throw new ApiError(result.error, result.status ?? 500);
         if ((result.conversationId && result.conversationId !== targetId) || (result.requestId && result.requestId !== key)) throw new ApiError("The trip assistant returned an incomplete response. Please try again.", 500);
@@ -356,7 +356,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
           chrome competing with the answer. The sections remain reachable from
           the sidebar and from an answer's own source links. */}
       {loadingDetail ? <ChatLoading /> : <ChatThread events={thread} live={busy} waiting={waiting} activity={liveActivity.text} notice={notice}
-        onPinnedChange={setPinned} />}
+        canRetryUserMessages={!busy && capability.canSend} onRetryUserMessage={(text, uploadId) => { chatKey.current = null; void handleSend(text, false, uploadId); }} onPinnedChange={setPinned} />}
     </> : children}
     <div className="composer-shell">
       {threadMode && !pinned && <div className="chat-jump-row">

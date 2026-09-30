@@ -164,7 +164,8 @@ describe("ported chat presentation and guest composer", () => {
     expect(container.querySelectorAll(".chat-assistant")).toHaveLength(1); expect(container.textContent).toContain("Arrive early.");
   });
   it("keeps a failed question visible and retries it once from actionable error feedback", async () => {
-    api.start.mockRejectedValueOnce(new ApiError(CHAT_UNAVAILABLE_MESSAGE, 503)).mockResolvedValue({ ok: true, conversationId: "retried-conversation", seq: 0 });
+    let resolveRetry!: (value: unknown) => void;
+    api.start.mockRejectedValueOnce(new ApiError(CHAT_UNAVAILABLE_MESSAGE, 503)).mockReturnValueOnce(new Promise(resolve => { resolveRetry = resolve; }));
     await panel(null); await click(".suggestions button");
     expect(container.querySelector("textarea")?.value).toBe("");
     expect(container.textContent).toContain(CHAT_UNAVAILABLE_MESSAGE);
@@ -173,6 +174,7 @@ describe("ported chat presentation and guest composer", () => {
     expect(container.textContent).not.toContain("Not delivered");
     expect(container.textContent).not.toContain("Edit message");
     expect(container.textContent).not.toContain("Resend");
+    expect(container.querySelector(".chat-user .chat-message-actions")).toBeNull();
     expect(container.textContent).not.toContain(CHAT_FALLBACK);
     expect(vi.getTimerCount()).toBe(0);
     const retry = [...container.querySelectorAll<HTMLButtonElement>(".chat-assistant-notice button")].find(el => /retry/i.test(el.textContent ?? ""))!;
@@ -180,6 +182,20 @@ describe("ported chat presentation and guest composer", () => {
     expect(api.start).toHaveBeenCalledTimes(2);
     expect(api.start.mock.calls[1]?.[0]).toBe("What time do I need to land?");
     expect(api.start.mock.calls[1]?.[1]).not.toBe(api.start.mock.calls[0]?.[1]);
+    await act(async () => resolveRetry({ ok: true, conversationId: "retried-conversation", seq: 0 }));
+  });
+  it("renders one Retry action for a persisted failed row and resends with a fresh key", async () => {
+    const failed = detail(false, [row(0, "user_message", { text: "Retry after reload", delivery: "failed" })]);
+    api.send.mockResolvedValue({ ok: true, seq: 1, conversationId: failed.id });
+    await panel(failed);
+    expect(container.querySelector(".chat-user-bubble")?.textContent).toBe("Retry after reload");
+    expect(container.querySelector(".chat-assistant-notice")).toBeNull();
+    expect([...container.querySelectorAll<HTMLButtonElement>(".chat-user .chat-message-actions button")].map(button => button.textContent)).toEqual(["Retry"]);
+    expect(container.querySelector<HTMLButtonElement>(".chat-user .chat-message-actions button")?.getAttribute("aria-label")).toBe("Retry failed message: Retry after reload");
+    await click(".chat-user .chat-message-actions button");
+    expect(api.send).toHaveBeenCalledTimes(1);
+    expect(api.send.mock.calls[0]?.slice(0, 2)).toEqual([failed.id, "Retry after reload"]);
+    expect(api.send.mock.calls[0]?.[2]).toEqual(expect.any(String));
   });
   it("New question detaches selection, preserves old rows and creates a new conversation on the next ask", async () => {
     const old = detail(false); setConversationSelection(old.id);
