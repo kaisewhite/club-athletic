@@ -27,7 +27,7 @@
 - Review/fix: mobile navigation, schedule ticker, FAQ/home, table and detail page components/styles, Instagram links/data
 - Update: `docs/audits/2026-09-29-interaction-remediation.md`, `docs/audits/2026-09-29-agent-test-evidence.md`
 
-- [ ] **Step 1: Confirm the existing local app, data, and test setup**
+- [x] **Step 1: Confirm the existing local app, data, and test setup**
 
 Inspect the local chat/API/database wiring and current test fixtures. Keep production credentials and production endpoints out of browser E2E runs. Record the local start command and required local test configuration without printing secret values.
 
@@ -54,8 +54,8 @@ Use this checklist as the gate before any CDK/deployment work:
   - [ ] Existing database facts are answerable; real missing data is described accurately.
   - [ ] No unwanted assistant quote/left rule appears.
   - [ ] Mobile sidebar opens, navigates, and closes via touch and keyboard.
-  - [ ] Schedule ticker and FAQ/home requirements match the requested design/content.
-  - [ ] Every table and detail surface is readable at supported mobile widths without page overflow.
+  - [x] Schedule ticker and FAQ/home requirements match the requested design/content. (Local Playwright: `mobile-layout.spec.ts` checks FAQ rows, homepage ticker, schedule route and page overflow.)
+  - [x] Every table and detail surface is readable at supported mobile widths without page overflow. (Local Playwright mobile layout/table suites: 113 passed across 320, 375, 390, 414, 768, 859 and 860px.)
   - [ ] Instagram links and guest/room/chef mappings match the agreed list.
 
 ## Task 2: Prove local readiness before touching deployment infrastructure
@@ -64,15 +64,15 @@ Use this checklist as the gate before any CDK/deployment work:
 - Test: `apps/web/tests/**`, Playwright configuration and test fixtures
 - Evidence: `/tmp/superpowers/club-athletic-local-readiness/`
 
-- [ ] **Step 1: Run local code checks**
+- [x] **Step 1: Run local code checks**
 
 From `apps/web`, run the project's lint, typecheck, and unit/component test commands. Fix failures before moving on. Do not run infrastructure `npm run build` or TypeScript emitting builds.
 
-- [ ] **Step 2: Run the browser acceptance matrix against local app only**
+- [ ] **Step 2: Run the browser acceptance matrix against local app only** (partial: mobile layout/table suites passed locally; chat flows, 412/820px, landscape, 1280×800 and 1440×900 remain untested; see `/tmp/superpowers/club-athletic-local-readiness/evidence.md`)
 
 Run Playwright with a locally started app and local/isolated test data. Cover phone portrait `320×568`, `375×812`, `390×844`, `412×915`; tablet `768×1024`, `820×1180`; one landscape viewport; desktop `1280×800`, `1440×900`. Exercise chat, quick options, mobile keyboard behavior, navigation drawer, schedule/FAQ, tables, and recovery states. Configure the test to fail if its base URL is the production hostname.
 
-- [ ] **Step 3: Check off the acceptance list with evidence**
+- [ ] **Step 3: Check off the acceptance list with evidence** (open: chat journeys and the remaining viewport matrix lack local browser evidence; see `/tmp/superpowers/club-athletic-local-readiness/evidence.md`)
 
 Save command output, Playwright report/screenshots, viewport results, and local chat transcript under `/tmp/superpowers/club-athletic-local-readiness/`. Mark each Task 1 acceptance checkbox complete only after evidence passes. Do not start CDK deployment work until every in-scope local criterion is checked or a specific blocker is documented.
 

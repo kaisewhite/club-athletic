@@ -83,3 +83,10 @@ The mobile drawer, FAQ page and copy, homepage ticker without stop/play, automat
 
 - A user response is pending on whether another process is resetting `apps/aws` during this shared-workspace pass.
 - After that source is stable: complete CDK synth/diff, deploy the management pipeline and service, validate the direct management ALB before changing DNS, verify production traffic and app version, delete the production-account stack, push the final commit, and check that management CodePipeline finishes on that exact revision.
+
+## Local-only follow-up — 2026-09-30
+
+- `bun run lint` passed with 14 warnings; `bun run typecheck` passed; `bun run test` passed 530/530.
+- Local Playwright responsive checks passed 113 cases with 3 skips across 320, 375, 390, 414, 768, 859 and 860px against a disposable loopback PostgreSQL database seeded only from committed Prisma migrations and `prisma/seed.ts`.
+- The repository `.env` points to remote database endpoints, so it was not loaded. The temporary local database and env file were removed after testing. No provider or live-agent requests were run.
+- Browser chat send/quick-option/retry/agent journeys and the full requested viewport matrix remain unverified locally; see `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.
