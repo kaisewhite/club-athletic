@@ -232,11 +232,9 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
   // floating above the composer is reserved for nothing: an assistant's fallback,
   // a lost conversation and a dropped transport are all messages.
   const notice: ChatNotice | null = error
-    ? error === CONVERSATION_GONE || error === STOP_FAILED
-      ? { tone: "error", text: error }
-      : { tone: error === TRANSPORT_ERROR ? "status" : "error", text: error, action: { label: "Try again", onAction: revalidate } }
+    ? { tone: error === TRANSPORT_ERROR ? "status" : "error", text: error, ...(loadError && error === loadError ? { action: { label: "Reload conversation", onAction: revalidate } } : {}) }
     : chatUi.toast
-      ? { tone: "error", text: chatUi.toast }
+      ? { tone: "error", text: chatUi.toast, ...(pending?.failed ? { action: { label: "Retry", onAction: () => void handleSend(pending.text) } } : {}) }
       : conversation && !busy && (conversation.error || conversation.chat.reason === "no_session")
         ? { tone: "error", text: CHAT_FALLBACK }
         : null;
@@ -290,7 +288,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
     const key = chatKey.current.key;
     dispatchChat({ type: "send_started", text });
     // Move the submitted text into the transcript immediately. If it fails, the
-    // bubble stays in place with Edit and Resend actions, as in a normal chat.
+    // question stays visible beside the assistant's actionable error feedback.
     dispatchChat({ type: "draft", text: "" });
     setPending({ key, text, seqFloor: conversationRef.current?.lastEventSeq ?? -1, failed: false });
     setError(null);
@@ -335,7 +333,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
       // A definite provider/server failure is safe to retry as a new request.
       // Reusing its idempotency key would only replay the stored failed result.
       if (error instanceof ApiError && error.status >= 500) chatKey.current = null;
-      // The bubble stays put and says "Not delivered", with Edit and Resend on it.
+      // Keep the question visible; the notice above the composer carries retry.
       setPending(current => current && current.key === key ? { ...current, failed: true } : current);
     } finally {
       controller.abort();
@@ -358,8 +356,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
           chrome competing with the answer. The sections remain reachable from
           the sidebar and from an answer's own source links. */}
       {loadingDetail ? <ChatLoading /> : <ChatThread events={thread} live={busy} waiting={waiting} activity={liveActivity.text} notice={notice}
-        canResend={!busy && capability.canSend} onPinnedChange={setPinned}
-        onEditUserMessage={text => { setPending(current => current?.text === text ? null : current); chatKey.current = null; dispatchChat({ type: "draft", text }); inputRef.current?.focus(); }} onResendUserMessage={text => void handleSend(text)} />}
+        onPinnedChange={setPinned} />}
     </> : children}
     <div className="composer-shell">
       {threadMode && !pinned && <div className="chat-jump-row">

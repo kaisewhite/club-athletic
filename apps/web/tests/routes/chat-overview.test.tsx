@@ -117,6 +117,6 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
 it("clears an initial detail-load error after framework revalidation succeeds", async () => {
   setConversationSelection(conversation.id); mocks.conversation.mockResolvedValueOnce(Response.json({ error: "private failure" }, { status: 503 })); await mount();
   expect(container.textContent).toContain("couldn’t be loaded");
-  await act(async () => [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent === "Try again")!.click());
+  await act(async () => [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent === "Reload conversation")!.click());
   expect(container.textContent).toContain("Stored question"); expect(container.textContent).not.toContain("couldn’t be loaded");
 });

@@ -45,7 +45,7 @@ describe("attachment through the existing panel send controller", () => {
     await mount(); await send();
     expect(container.querySelector('[aria-label="Remove attachment"]')).not.toBeNull(); expect(container.querySelector("textarea")?.value).toBe("");
     expect(container.textContent).toContain("Please read this attachment.");
-    await act(async () => container.querySelector<HTMLButtonElement>(".chat-message-actions button:last-child")!.click());
+    await act(async () => [...container.querySelectorAll<HTMLButtonElement>(".chat-assistant-notice button")].find(button => button.textContent === "Retry")!.click());
     expect(fetcher).toHaveBeenCalledTimes(2); expect(api.send.mock.calls[1]![2]).not.toBe(api.send.mock.calls[0]![2]);
   });
   it("replaces Send with Stop for the turn in flight and aborts an in-flight upload on unmount", async () => {

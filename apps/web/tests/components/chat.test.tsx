@@ -107,15 +107,15 @@ describe("ported chat presentation and guest composer", () => {
     expect(container.querySelector(".chat-tool-group > button")?.getAttribute("aria-expanded")).toBe("true");
     expect(container.textContent).toContain("Trip notes unavailable."); expect(container.textContent).not.toMatch(/secret-value|raw-diagnostic|Show raw/);
   });
-  it("only a failed send gets a status line; queued and pending stay silent", async () => {
+  it("does not add delivery labels to transcript messages", async () => {
     // Owner, 2026-09-28: "There's never a `sent`. It just sends. After the message
     // gets sent, there's no need to display a status underneath the user's
     // message." A message visible in the thread has self-evidently been sent, so
-    // "Sent"/"Sending…"/"Queued" are noise. A FAILURE still needs a line, because
-    // it is the only state the guest has to act on.
+    // "Sent"/"Sending…"/"Queued" are noise. A current send failure gets its
+    // actionable assistant notice from the panel.
     const events = mapSessionEventsToPresentation([row(0, "user_message", { text: "one", delivery: "queued" }), row(1, "user_message", { text: "two", delivery: "failed" }), row(2, "user_message", { text: "three", delivery: "pending" })]).activity;
     await mount(<ChatThread events={events} />);
-    expect(container.textContent).toContain("Not delivered");
+    expect(container.textContent).not.toContain("Not delivered");
     for (const noise of ["Sent", "Sending…", "Queued"]) expect(container.textContent).not.toContain(noise);
   });
   it("shows the grid initially, then thread shortcuts and blink dots as a suggestion sends", async () => {
@@ -163,14 +163,23 @@ describe("ported chat presentation and guest composer", () => {
     await advance(500);
     expect(container.querySelectorAll(".chat-assistant")).toHaveLength(1); expect(container.textContent).toContain("Arrive early.");
   });
-  it("keeps a failed message in the transcript without duplicating it in the composer", async () => {
-    api.start.mockRejectedValue(new ApiError(CHAT_UNAVAILABLE_MESSAGE, 503));
+  it("keeps a failed question visible and retries it once from actionable error feedback", async () => {
+    api.start.mockRejectedValueOnce(new ApiError(CHAT_UNAVAILABLE_MESSAGE, 503)).mockResolvedValue({ ok: true, conversationId: "retried-conversation", seq: 0 });
     await panel(null); await click(".suggestions button");
     expect(container.querySelector("textarea")?.value).toBe("");
     expect(container.textContent).toContain(CHAT_UNAVAILABLE_MESSAGE);
-    expect(container.querySelector(".chat-delivery")?.textContent).toBe("Not delivered");
+    expect(container.querySelectorAll(".chat-user-bubble")).toHaveLength(1);
+    expect(container.querySelector(".chat-user-bubble")?.textContent).toBe("What time do I need to land?");
+    expect(container.textContent).not.toContain("Not delivered");
+    expect(container.textContent).not.toContain("Edit message");
+    expect(container.textContent).not.toContain("Resend");
     expect(container.textContent).not.toContain(CHAT_FALLBACK);
     expect(vi.getTimerCount()).toBe(0);
+    const retry = [...container.querySelectorAll<HTMLButtonElement>(".chat-assistant-notice button")].find(el => /retry/i.test(el.textContent ?? ""))!;
+    await act(async () => { retry.click(); retry.click(); });
+    expect(api.start).toHaveBeenCalledTimes(2);
+    expect(api.start.mock.calls[1]?.[0]).toBe("What time do I need to land?");
+    expect(api.start.mock.calls[1]?.[1]).not.toBe(api.start.mock.calls[0]?.[1]);
   });
   it("New question detaches selection, preserves old rows and creates a new conversation on the next ask", async () => {
     const old = detail(false); setConversationSelection(old.id);
@@ -202,8 +211,7 @@ describe("stream recovery, acknowledgements and lifetime", () => {
     api.recover.mockRejectedValueOnce(new Error("offline")).mockResolvedValueOnce(failed);
     await panel(detail()); await emit(h => h.onError?.());
     expect(container.textContent).toContain("Reconnecting…"); await advance(1999); expect(api.recover).toHaveBeenCalledTimes(1);
-    await advance(1); expect(api.recover).toHaveBeenCalledTimes(2); expect(container.textContent).toContain("Not delivered");
-    expect(container.textContent).not.toContain("Reconnecting…");
+    await advance(1); expect(api.recover).toHaveBeenCalledTimes(2); expect(container.textContent).not.toContain("Reconnecting…");
     await act(async () => root!.unmount()); root = undefined;
     expect(unsubscribes.every(stop => stop.mock.calls.length > 0)).toBe(true); expect(vi.getTimerCount()).toBe(0);
   });
@@ -234,7 +242,8 @@ describe("stream recovery, acknowledgements and lifetime", () => {
     expect(first[2].signal.aborted).toBe(true); expect(container.querySelector("textarea")?.value).toBe("");
     expect(container.querySelectorAll(".chat-user-bubble")).toHaveLength(1);
     expect(container.textContent).toContain("wasn’t acknowledged");
-    await click(".chat-message-actions button:last-child"); expect(api.start.mock.calls[1]![1]).toBe(first[1]);
+    const retry = [...container.querySelectorAll<HTMLButtonElement>(".chat-assistant-notice button")].find(el => /retry/i.test(el.textContent ?? ""))!;
+    await act(async () => retry.click()); expect(api.start.mock.calls[1]![1]).toBe(first[1]);
   });
   it("rejects an acknowledgement for a different conversation without duplicating its bubble", async () => {
     api.send.mockResolvedValue({ ok: true, seq: 1, conversationId: "wrong" }); await panel(detail(false)); await click(".suggestions button");
@@ -350,9 +359,13 @@ describe("streaming experience", () => {
     expect(thread.querySelector(".chat-assistant-notice")).not.toBeNull();
     expect(container.querySelector('[aria-label="Dismiss error"]')).toBeNull();
     expect(container.querySelector(".chat-error")).toBeNull();
-    // The guest's message stays put and says so, with a way to try again.
-    expect(thread.textContent).toContain("Not delivered");
-    expect([...thread.querySelectorAll("button")].map(el => el.textContent)).toContain("Resend");
+    // The message stays visible and retry feedback belongs with the assistant error.
+    expect(thread.querySelector(".chat-user-bubble")?.textContent).toBe("What time do I need to land?");
+    expect(thread.textContent).not.toContain("Not delivered");
+    expect(thread.textContent).not.toContain("Edit message");
+    expect(thread.textContent).not.toContain("Resend");
+    expect([...thread.querySelectorAll(".chat-assistant-notice button")].map(el => el.textContent)).toContain("Retry");
+    expect([...thread.querySelectorAll(".chat-assistant-notice button")].map(el => el.textContent)).not.toContain("Try again");
   });
   it("offers Stop only while a turn is in flight and cancels that conversation", async () => {
     await panel(detail(false));
