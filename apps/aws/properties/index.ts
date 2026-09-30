@@ -1,15 +1,16 @@
-// Deployment properties for the Club Athletic trip app: one service, one environment.
-// Account, region and VPC come from apps/aws/.env, never from here.
+// Club Athletic production service on Edge's production cluster and ALB.
 export const project = {
   name: "club-athletic",
   environment: "prod",
+  productionAccount: "736548610362",
+  region: "us-east-1",
   domain: "xn--tshi-l3a.com",
-  // Production Edge services in account 736548610362 publish the listener and ALB exports.
-  // The cluster is imported by its existing ECS name because Edge does not export it.
+  clusterName: "edge",
   sharedServices: { project: "edge", environment: "prod" },
   vpcId: "vpc-00cf2fc1f07003d3b",
   service: {
     name: "web",
+    resourceName: "club-athletic-web",
     description: "Club Athletic trip hub: React Router SSR app with the trip concierge agent",
     // The image is tagged by the branch it is built from; the push tag and the
     // task's pull tag must agree, or ECS pulls a tag that was never pushed.

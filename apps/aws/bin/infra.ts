@@ -1,20 +1,15 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
-import * as dotenv from "dotenv";
 import { InfraStack } from "../lib/infra-stack";
 import { project } from "../properties";
 
-dotenv.config();
 const app = new cdk.App();
 
 cdk.Tags.of(app).add("Project", project.name);
 
-new InfraStack(app, "InfraStack", {
-  env: {
-    account: process.env.CDK_DEFAULT_ACCOUNT,
-    region: process.env.CDK_DEFAULT_REGION,
-  },
-  tags: {
-    Project: project.name,
-  },
-});
+if (process.env.CDK_DEFAULT_ACCOUNT && process.env.CDK_DEFAULT_ACCOUNT !== project.productionAccount) {
+  throw new Error(`Club Athletic production infrastructure must use account ${project.productionAccount}`);
+}
+
+const environment = { account: project.productionAccount, region: project.region };
+new InfraStack(app, "InfraStack", { env: environment });

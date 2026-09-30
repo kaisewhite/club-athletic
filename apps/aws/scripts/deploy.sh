@@ -7,6 +7,11 @@ AWS_PROFILE="mostrom_prod"
 export AWS_PROFILE
 export CDK_DEFAULT_ACCOUNT="736548610362"
 export CDK_DEFAULT_REGION="us-east-1"
+actual_account="$(aws sts get-caller-identity --profile "$AWS_PROFILE" --query Account --output text)"
+if [ "$actual_account" != "$CDK_DEFAULT_ACCOUNT" ]; then
+  echo "Refusing to deploy: $AWS_PROFILE resolved to account $actual_account; expected production account $CDK_DEFAULT_ACCOUNT" >&2
+  exit 1
+fi
 CDK_OUTPUT_DIR="$(mktemp -d "${TMPDIR:-/tmp}/cdk-out.XXXXXX")"
 STACK_IDS_FILE="$(mktemp "${TMPDIR:-/tmp}/cdk-stacks.XXXXXX")"
 CDK_STACKS_FILE="$(mktemp "${TMPDIR:-/tmp}/cdk-all-stacks.XXXXXX")"
@@ -20,7 +25,7 @@ STACK_PATTERNS_REGEX="club-athletic"
 CDK_LIST_OUTPUT="$(mktemp "${TMPDIR:-/tmp}/cdk-list.XXXXXX")"
 trap 'rm -rf "$CDK_OUTPUT_DIR" "$STACK_IDS_FILE" "$CDK_STACKS_FILE" "$CDK_LIST_OUTPUT"' EXIT
 
-if ! cdk list --profile "$AWS_PROFILE" > "$CDK_LIST_OUTPUT" 2>&1; then
+if ! cdk list --profile "$AWS_PROFILE" --output "$CDK_OUTPUT_DIR" > "$CDK_LIST_OUTPUT" 2>&1; then
   echo "cdk list failed - the app did not synthesise. Output:" >&2
   cat "$CDK_LIST_OUTPUT" >&2
   exit 1

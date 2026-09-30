@@ -1,13 +1,7 @@
-// The one stack this project deploys: the Club Athletic web service on Edge's
-// production cluster and load balancer in account 736548610362.
-//
-// The constructs, ids and names are edge's (resources/stacks/shared/index.ts and
-// resources/stacks/fargate/platform/fargate.ts), reduced to what one public web
-// service needs. The production listener and load-balancer security group are
-// imported from Edge's `prod-edge-*` exports; the existing cluster is imported by name.
+// Club Athletic's production service on Edge's production cluster and ALB.
+// The apex DNS record is managed manually in the management account.
 import * as cdk from "aws-cdk-lib";
 import { Construct } from "constructs";
-import * as dotenv from "dotenv";
 import * as ec2 from "aws-cdk-lib/aws-ec2";
 import * as ecr from "aws-cdk-lib/aws-ecr";
 import * as ecs from "aws-cdk-lib/aws-ecs";
@@ -19,36 +13,23 @@ import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 import { addStandardTags } from "../helpers/tag_resources";
 import { project } from "../properties";
 
-dotenv.config();
-
-// Account and region are selected by the production AWS profile. The service joins
-// Edge's production VPC because a target group cannot reach across VPCs.
-const required = (name: string): string => {
-  const value = process.env[name];
-  if (!value) throw new Error(`Missing ${name} in apps/aws/.env`);
-  return value;
-};
-
 export class InfraStack extends cdk.Stack {
   public readonly service: ecs.FargateService;
   public readonly taskDefinition: ecs.FargateTaskDefinition;
 
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     const { environment, service } = project;
-    const account = required("CDK_DEFAULT_ACCOUNT");
-    const region = required("CDK_DEFAULT_REGION");
-
     super(scope, id, {
       ...props,
       stackName: `${project.name}-${environment}-cdk`,
-      env: { account, region },
+      env: { account: project.productionAccount, region: project.region },
       description: `Stack for ${project.name} in ${environment} environment`,
       terminationProtection: false,
     });
     cdk.Tags.of(this).add("Project", project.name);
 
     const constructorPrefix = `${project.name}-${environment}-${service.name}`;
-    const resourceName = `${project.name}-${service.name}`;
+    const resourceName = service.resourceName;
     const sharedPrefix = `${project.sharedServices.environment}-${project.sharedServices.project}`;
     const hostName = `${service.subdomain}.${project.domain}`;
     const { containerPort, imageTag } = service;
@@ -62,27 +43,21 @@ export class InfraStack extends cdk.Stack {
     };
     addStandardTags(this, taggingProps);
 
-    /************************************ ECR ************************************/
+    const ecrRepository = ecr.Repository.fromRepositoryName(
+      this,
+      `${constructorPrefix}-ecr-repository`,
+      resourceName,
+    );
 
-    const ecrRepository = new ecr.Repository(this, `${project.name}-${service.name}-ecr-repository`, {
-      repositoryName: resourceName,
-      imageScanOnPush: true,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
-    // Keep one image per tracked tag and one untagged image.
-    ecrRepository.addLifecycleRule({ tagPrefixList: [imageTag], maxImageCount: 1 });
-    ecrRepository.addLifecycleRule({ tagStatus: ecr.TagStatus.UNTAGGED, maxImageCount: 1 });
-    addStandardTags(ecrRepository, taggingProps);
-
-    /**************************** SHARED SERVICES (edge) **************************/
+    /**************************** SHARED NETWORK (edge) **************************/
 
     const vpc = ec2.Vpc.fromLookup(this, `importing-${constructorPrefix}-vpc`, {
       isDefault: false,
       vpcId: project.vpcId,
     });
 
-    const ecsCluster = ecs.Cluster.fromClusterAttributes(this, `import-${constructorPrefix}-fargate-cluster`, {
-      clusterName: project.sharedServices.project,
+    const ecsCluster = ecs.Cluster.fromClusterAttributes(this, `${constructorPrefix}-ecs-cluster`, {
+      clusterName: project.clusterName,
       vpc,
       securityGroups: [],
     });
@@ -91,7 +66,7 @@ export class InfraStack extends cdk.Stack {
 
     const secrets = secretsmanager.Secret.fromSecretNameV2(
       this,
-      `${constructorPrefix}-secret-reference`,
+      `${constructorPrefix}-secret`,
       resourceName,
     );
 
@@ -154,7 +129,6 @@ export class InfraStack extends cdk.Stack {
       memoryLimitMiB: service.memoryLimitMiB,
       cpu: service.cpu,
       containerName: constructorPrefix,
-      versionConsistency: ecs.VersionConsistency.DISABLED,
       essential: true,
       logging: ecs.LogDrivers.awsLogs({
         streamPrefix: "ecs",
@@ -184,7 +158,6 @@ export class InfraStack extends cdk.Stack {
     });
 
     this.service = new ecs.FargateService(this, `${constructorPrefix}-fargate-service`, {
-      // Service names are unique per cluster, and this cluster is shared with edge.
       serviceName: resourceName,
       desiredCount: service.desiredCount,
       cluster: ecsCluster,
@@ -206,7 +179,7 @@ export class InfraStack extends cdk.Stack {
     addStandardTags(this.service, taggingProps);
     this.service.applyRemovalPolicy(cdk.RemovalPolicy.DESTROY);
 
-    /****************************** LOAD BALANCER, DNS ****************************/
+    /****************************** LOAD BALANCER ****************************/
 
     const targetGroup = new elbv2.ApplicationTargetGroup(this, `${constructorPrefix}-target-group`, {
       vpc,
@@ -246,7 +219,5 @@ export class InfraStack extends cdk.Stack {
     });
     addStandardTags(HTTPSListener, taggingProps);
 
-    // The public alias is created manually in the management account only after
-    // the production service is healthy behind Edge's production ALB.
   }
 }
