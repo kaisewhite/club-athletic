@@ -16,12 +16,12 @@
 .bm-scale { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; }
 .bm-sheet { position: absolute; left: 0; top: 0; width: 1254px; height: 1254px;
   transform: scale(var(--bm-scale, 1)); transform-origin: 0 0; }
-.bm-room-marker { position: absolute; padding: 6px 14px 7px; background: var(--accent); color: var(--bg); font-family: "Archivo", system-ui, sans-serif; font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; }
+.bm-room-marker { position: absolute; padding: 6px 14px 7px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; }
 .bm-details { margin-top: 16px; }
 .bm-details h3 { margin: 0 0 12px; font-size: 16px; }
 .bm-room-table { width: 100%; border-collapse: collapse; background: var(--surface); color: var(--text); font-size: 14px; }
 .bm-room-table th, .bm-room-table td { padding: 10px 12px; border-bottom: 1px solid var(--border-subtle); text-align: left; vertical-align: top; }
-.bm-room-table thead th { color: var(--text-dim); font-size: 11px; letter-spacing: .06em; text-transform: uppercase; }
+.bm-room-table thead th { color: var(--text-faint); font-size: 11px; letter-spacing: .06em; font-weight: 500; text-transform: uppercase; }
 .bm-mobile-field-label { display: none; }
 
 /* The design-system tokens and element rules the sheet references, scoped to it. */
@@ -82,9 +82,9 @@
 
   /* Elevation — derived from the ground: soft ink-tinted shadows on a
      light theme, a hairline edge + ambient darkness on a dark one. */
-  --shadow-sm: 0 1px 2px color-mix(in srgb, #2d2b2b 14%, transparent);
-  --shadow-md: 0 3px 10px color-mix(in srgb, #2d2b2b 16%, transparent);
-  --shadow-lg: 0 12px 32px color-mix(in srgb, #2d2b2b 22%, transparent);
+  --shadow-sm: 0 1px 3px rgb(0 0 0 / 24%);
+  --shadow-md: 0 2px 8px rgb(0 0 0 / 24%);
+  --shadow-lg: 0 8px 32px rgb(0 0 0 / 32%);
   font-size: 15px; line-height: 1.55; font-weight: 400; color: var(--color-text);
 }
 .bm-sheet *, .bm-sheet *::before, .bm-sheet *::after { box-sizing: border-box; }
@@ -125,8 +125,8 @@
 }
 /* Floor labels: the sheet's dark chip on the dark canvas, as on the reference. */
 .bm-sheet div[style*="background:var(--color-text)"] {
-  background: #16191e !important; color: var(--text) !important;
-  border: 1px solid var(--border-strong);
+  background: var(--surface) !important; color: var(--text) !important;
+  border: 1px solid var(--border);
 }
 /* Bedroom callouts: accent chip, dark lettering — the app's own accent convention. */
 .bm-sheet div[style*="background:var(--color-accent)"] { color: var(--bg) !important; }

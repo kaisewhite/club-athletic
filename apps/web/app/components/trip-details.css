@@ -1,7 +1,7 @@
 .detail-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(260px,1fr)); gap: 12px; }
-.detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 22px; }
-.detail-kicker { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--accent); font-weight: 700; margin: 0 0 10px; }
-.detail-list { margin: 0; padding-left: 18px; list-style: disc; font-size: 14px; line-height: 1.75; color: var(--text-muted); }
+.detail-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 24px; }
+.detail-kicker { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin: 0 0 10px; }
+.detail-list { margin: 0; padding-left: 16px; list-style: disc; font-size: 14px; line-height: 1.75; color: var(--text-muted); }
 .detail-note { font-size: 13px; color: var(--text-dim); margin: 16px 0 0; }
 .price-breakdown-heading { margin: 16px 0 0; }
 .price-breakdown { margin: 12px 0 0; padding: 0; font-size: 13px; }
@@ -12,57 +12,58 @@
 /* Flight recommendations: the Notion guide's shape — a short line, a table, a
    short line. Verdicts are colour-coded once, in the shuttle column, and nowhere
    else, so the tables stay quiet. */
-.flight-recs { margin: 20px 0 24px; display: flex; flex-direction: column; gap: 18px; }
+.flight-recs { margin: 20px 0 24px; display: flex; flex-direction: column; gap: 16px; }
 .flight-rec-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
 .flight-rec-copy { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--text-muted); }
 .flight-rec-outro { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
 .flight-rec-table th[scope="row"] { white-space: nowrap; }
 .flight-rec-route { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .flight-rec-verdict { min-width: 200px; }
-.flight-rec-yes { color: var(--accent); font-weight: 700; }
+.flight-rec-yes { color: var(--brand); font-weight: 700; }
 .flight-rec-no { color: var(--text); font-weight: 700; }
 .flight-rec-note { color: var(--text-dim); }
-.shuttle-outbound { background: var(--accent); color: var(--bg); border: 0; }
-.shuttle-outbound .detail-kicker { color: inherit; }
-.shuttle-time { font-family: var(--font-display); font-weight: 700; font-size: clamp(48px,7vw,72px); line-height: 1; letter-spacing: -.04em; margin: 10px 0 8px; }
+.shuttle-outbound { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
+.shuttle-outbound .detail-kicker { color: var(--brand); }
+.shuttle-time { font-family: var(--font-display); font-weight: 600; font-size: clamp(48px,7vw,72px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 10px 0 8px; }
 .shuttle-copy { font-size: 14px; margin: 0; color: var(--text-muted); }
 .shuttle-outbound .shuttle-copy { color: inherit; font-weight: 500; }
-.chalet-address { display: flex; align-items: center; gap: 12px; padding: 16px 18px; border: 1px solid var(--border-strong); border-radius: 10px; text-decoration: none; color: var(--text); background: var(--surface); margin-bottom: 12px; }
+.chalet-address { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); text-decoration: none; color: var(--text); background: var(--surface); margin-bottom: 12px; transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.chalet-address:hover { background: var(--hover); }
 .chalet-address svg { color: var(--accent); flex: none; }
 .chalet-address > span:first-of-type { flex: 1; font-size: 15px; font-weight: 600; }
 /* Chalet facts strip: the same quiet stat tiles the chef page uses. */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 10px; margin: 0 0 12px; }
-.stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 14px 16px; }
-.stat-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
-.stat-value { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin-top: 4px; letter-spacing: -.02em; }
+.stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 12px 16px; }
+.stat-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+.stat-value { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin-top: 4px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .chalet-listings { margin-top: 24px; }
 .chalet-listings .detail-kicker { margin-bottom: 4px; }
 .chalet-listings-intro { margin: 0 0 8px; font-size: 14px; color: var(--text-muted); }
 .chalet-listings .link-list { border-top: 1px solid var(--border); }
-.room-floors { display: flex; flex-direction: column; gap: 28px; }
+.room-floors { display: flex; flex-direction: column; gap: 32px; }
 .floor-heading { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid var(--border-strong); }
 .floor-heading h3 { font-family: var(--font-display); font-weight: 700; font-size: 20px; letter-spacing: -.02em; margin: 0; }
 .floor-heading > span { font-size: 12px; color: var(--text-dim); }
 .room-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(220px,1fr)); gap: 10px; }
-.room-card { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-.room-card.has-open-spots { border-color: var(--accent); }
-.room-name { font-weight: 600; font-size: 14px; margin: 0; }
+.room-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.room-card.has-open-spots { border-color: var(--brand); }
+.room-name { font-weight: 600; font-size: 14px; line-height: 1.571; margin: 0; }
 .room-type { font-size: 12px; color: var(--text-dim); margin-bottom: 12px; }
 .room-spots { display: flex; flex-direction: column; gap: 6px; }
 .room-spot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
 .spot-number { color: var(--text-faint); font-size: 12px; }
 .spot-assigned { font-weight: 600; }
-.spot-available { color: var(--accent); font-size: 12px; font-weight: 600; }
+.spot-available { color: var(--brand); font-size: 12px; font-weight: 600; }
 .spot-not-offered { color: var(--text-faint); }
 .chalet-gallery { margin: 24px 0 0; }
-.chalet-gallery figcaption { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin-bottom: 10px; }
-.chalet-gallery img { width: 100%; height: auto; border-radius: 12px; display: block; }
+.chalet-gallery figcaption { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin-bottom: 10px; }
+.chalet-gallery img { width: 100%; height: auto; border-radius: var(--radius-md); display: block; }
 
-.spots-hero { background: var(--accent); color: var(--bg); border-radius: 14px; padding: 28px 24px 26px; margin-bottom: 12px; }
-.spots-kicker { font-size: 11px; letter-spacing: .14em; text-transform: uppercase; font-weight: 700; }
+.spots-hero { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; margin-bottom: 12px; }
+.spots-kicker { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500; color: var(--text-faint); }
 .spots-figures { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; }
-.spots-count { font-family: var(--font-display); font-weight: 700; font-size: clamp(96px,20vw,180px); line-height: .9; letter-spacing: -.05em; }
-.spots-price { font-family: var(--font-display); font-weight: 700; font-size: clamp(26px,4vw,40px); letter-spacing: -.03em; line-height: 1; }
+.spots-count { font-family: var(--font-display); font-weight: 600; font-size: clamp(96px,20vw,180px); line-height: .9; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.spots-price { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px,4vw,40px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
 .spots-price-sub { font-size: 14px; font-weight: 500; margin-top: 4px; }
 /* One rhythm per row: name, price, note stacked at a fixed 3px, the count on the
    name's own line. The note used to be a `.detail-note`, whose 16px top margin
@@ -73,54 +74,58 @@
 .open-room-floor { color: var(--text-dim); font-weight: 400; }
 .open-room-price { font-size: 12px; color: var(--text-dim); }
 .open-room-note { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
-.open-room-count { font-family: var(--font-display); font-weight: 700; font-size: 22px; line-height: 1.2; letter-spacing: -.02em; color: var(--accent); }
+.open-room-count { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.02em; color: var(--brand); }
 .chef-stats { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 10px; margin-bottom: 12px; }
-.chef-stat { background: var(--surface); border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; }
-.chef-stat-label { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; }
-.chef-stat-value { font-family: var(--font-display); font-weight: 700; font-size: 20px; margin-top: 4px; }
-.detail-table-wrap, .task-list, .link-list { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; overflow: hidden; }
+.chef-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
+.chef-stat-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+.chef-stat-value { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin-top: 4px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
+.detail-table-wrap, .task-list, .link-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .detail-table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
-.detail-table thead { font-size: 11px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-dim); }
-.detail-table thead th { padding: 10px 18px; font-weight: 600; }
-.detail-table tbody tr { border-top: 1px solid var(--border-subtle); font-size: 14px; }
-.detail-table tbody th, .detail-table tbody td { padding: 12px 18px; }
+.detail-table thead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
+.detail-table thead th { padding: 10px 16px; font-weight: 500; }
+.detail-table tbody tr { border-top: 1px solid var(--border-subtle); font-size: 14px; line-height: 1.571; }
+.detail-table tbody th, .detail-table tbody td { padding: 12px 16px; }
 .detail-table tbody th { font-weight: 600; }
 .detail-table td { color: var(--text-muted); }
 .dietary-cell-button { display: block; width: 100%; min-height: 1.5em; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: text; }
-.dietary-cell-button:focus-visible { outline: 1px solid var(--accent); outline-offset: 3px; }
+.dietary-cell-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 /* The cell is a control: an empty one reads like an input's placeholder — dim,
    italic, with a dashed underline and a pencil — so it is obvious it can be typed
    into (owner, 2026-09-29), and a filled one shows the pencil on hover. */
 .dietary-cell-button { display: flex; align-items: center; gap: 10px; }
 .dietary-cell-empty { color: var(--text-faint); font-style: italic; border-bottom: 1px dashed var(--border-strong); padding-bottom: 1px; }
-.dietary-cell-edit { color: var(--text-faint); font-style: normal; font-size: 13px; opacity: 0; transition: opacity .12s; }
+.dietary-cell-edit { color: var(--text-faint); font-style: normal; font-size: 13px; opacity: 0; transition: opacity 120ms cubic-bezier(.4,0,.2,1); }
 .dietary-cell-edit svg { display: block; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .dietary-cell-button.is-empty .dietary-cell-edit, .dietary-cell-button:hover .dietary-cell-edit, .dietary-cell-button:focus-visible .dietary-cell-edit { opacity: 1; }
-.dietary-cell-button:hover .dietary-cell-empty { color: var(--text-dim); border-bottom-color: var(--accent); }
+.dietary-cell-button:hover .dietary-cell-empty { color: var(--text-dim); border-bottom-color: var(--border-strong); }
 .dietary-cell-editor { display: grid; gap: 4px; }
-.dietary-cell-textarea { display: block; width: 100%; min-height: 1.5em; padding: 0; border: 0; border-bottom: 1px solid var(--accent); border-radius: 0; background: transparent; color: var(--text-muted); font: inherit; line-height: inherit; resize: none; overflow: hidden; }
-.dietary-cell-textarea:focus { outline: none; }
+.dietary-cell-textarea { display: block; width: 100%; min-height: 1.5em; padding: 0; border: 0; border-bottom: 1px solid var(--border-strong); border-radius: 0; background: transparent; color: var(--text-muted); font: inherit; line-height: inherit; resize: none; overflow: hidden; }
+.dietary-cell-textarea:focus { outline: none; border-bottom-color: var(--text); }
 .dietary-cell-hint, .dietary-cell-error { font-size: 12px; color: var(--text-dim); }
 .dietary-cell-error { color: var(--danger); }
-.dietary-heading { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin: 24px 0 10px; }
+.dietary-heading { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin: 24px 0 10px; }
 .chef-dietary-card { position: relative; }
 .chef-dietary-card thead th:last-child { padding-right: 64px; }
-.dietary-copy-button { position: absolute; z-index: 1; top: 0; right: 0; display: inline-flex; width: 44px; min-width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; }
+.dietary-copy-button { transition: background 120ms cubic-bezier(.4,0,.2,1); position: absolute; z-index: 1; top: 0; right: 0; display: inline-flex; width: 44px; min-width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; }
 .dietary-copy-button svg { display: block; width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
-.dietary-copy-button:hover { background: var(--hover); color: var(--accent); }
-.dietary-copy-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
-.task-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 13px 18px; border-top: 1px solid var(--border-subtle); }
-.task-name { font-weight: 600; font-size: 14px; flex: 1; min-width: 140px; }
+.dietary-copy-button:hover { background: var(--hover); color: var(--text); }
+.dietary-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.task-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 16px; border-top: 1px solid var(--border-subtle); }
+.task-name { font-weight: 600; font-size: 14px; line-height: 1.571; flex: 1; min-width: 140px; }
 .task-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.task-pill { font: inherit; font-size: 12px; font-weight: 400; padding: 5px 11px; border: 1px solid #3a3a34; border-radius: 999px; background: none; color: var(--text-dim); }
-.task-pill[data-done="true"] { font-weight: 700; border-color: var(--accent); background: var(--accent); color: var(--bg); }
+.task-pill { font: inherit; font-size: 12px; font-weight: 400; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: none; color: var(--text-dim); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.task-pill[data-done="true"] { font-weight: 700; border-color: var(--brand); background: var(--brand); color: var(--bg); }
 .link-section { margin-top: 24px; }
 .link-section .detail-kicker { margin-bottom: 4px; }
 .link-section .link-list { border-top: 1px solid var(--border); }
-.link-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 14px 18px; border-top: 1px solid var(--border-subtle); text-decoration: none; font-size: 14px; color: var(--text); }
-.link-row:hover { background: #151a22; color: var(--text); }
+.link-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 12px 16px; border-top: 1px solid var(--border-subtle); text-decoration: none; font-size: 14px; line-height: 1.571; color: var(--text); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.link-row:hover { background: var(--hover); color: var(--text); }
 .link-name { font-weight: 600; }
 .link-group { display: block; font-size: 12px; color: var(--text-dim); }
+
+@media (prefers-reduced-motion: reduce) {
+  .chalet-address, .task-pill, .link-row, .dietary-cell-edit, .dietary-copy-button { transition: none; }
+}
 
 /* ==========================================================================
    MOBILE — TODO §2.15. BASE STYLES ABOVE THIS LINE ARE DESKTOP-FROZEN.
