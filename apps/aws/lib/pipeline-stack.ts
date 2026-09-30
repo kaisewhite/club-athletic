@@ -63,6 +63,15 @@ export class PipelineStack extends cdk.Stack {
       roleName: `${resourceName}-e2e-role`,
       assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
     });
+    testRole.addToPolicy(new iam.PolicyStatement({
+      actions: ["ecr-public:GetAuthorizationToken"],
+      resources: ["*"],
+    }));
+    testRole.addToPolicy(new iam.PolicyStatement({
+      actions: ["sts:GetServiceBearerToken"],
+      resources: ["*"],
+      conditions: { StringEquals: { "sts:AWSServiceName": "ecr-public.amazonaws.com" } },
+    }));
 
     const deployRole = new iam.Role(this, "DeployRole", {
       roleName: `${resourceName}-deploy-role`,
