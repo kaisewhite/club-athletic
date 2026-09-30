@@ -9,6 +9,12 @@
 // components*, while this one photographs the *ten real SSR routes* served by
 // `index.ts`, because that is what the mobile pass can break.
 import { defineConfig, devices } from "@playwright/test";
+import { loadExplicitLocalTestEnv } from "./tests/visual/local-env";
+
+// Never inherit the repository's .env for acceptance runs. The explicit file
+// is parsed and both database endpoints are required to be loopback before the
+// runner can configure or start the app server.
+const localTestEnv = loadExplicitLocalTestEnv();
 
 /**
  * Deliberately unusual: this machine is shared, `edge` holds 3000 and 5173, and
@@ -80,12 +86,19 @@ export default defineConfig({
     { name: "desktop-1920", use: { ...devices["Desktop Chrome"], viewport: { width: 1920, height: 1080 } } },
   ],
   webServer: {
-    // Production mode, so the baseline photographs the built assets rather than
-    // Vite's dev transform. `with-env.sh` supplies the existing DATABASE_URL; no
-    // new environment variable is introduced.
+    // Production mode, with the explicitly supplied local test env for both the
+    // build and server process. `reuseExistingServer: false` prevents attaching
+    // to a listener whose database configuration this run cannot verify.
     command: `bun run build && NODE_ENV=production PORT=${PORT} bash scripts/with-env.sh bun index.ts`,
     url: `http://127.0.0.1:${PORT}/`,
-    reuseExistingServer: true,
+    env: {
+      ...process.env,
+      ...localTestEnv.values,
+      CLUB_ATHLETIC_WEB_ENV_FILE: localTestEnv.envFile,
+      NODE_ENV: "production",
+      PORT: String(PORT),
+    },
+    reuseExistingServer: false,
     timeout: 240_000,
     stdout: "pipe",
     stderr: "pipe",

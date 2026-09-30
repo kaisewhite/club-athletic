@@ -33,6 +33,26 @@ Inspect the local chat/API/database wiring and current test fixtures. Keep produ
 
 Local configuration and server command recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`: temporary env used loopback-only `DATABASE_URL` and `DATABASE_URL_POOLED` values for disposable PostgreSQL at `127.0.0.1:5432`, with `PORT=47317`; Playwright starts the app using `bun run build && NODE_ENV=production PORT=47317 bash scripts/with-env.sh bun index.ts` and checks `http://127.0.0.1:47317/`.
 
+Rerunnable local-only setup, from `apps/web` (the Playwright config refuses a missing env file and rejects remote database hosts before starting the server):
+
+```sh
+mkdir -p /tmp/superpowers/club-athletic-local-readiness
+psql -h 127.0.0.1 -d postgres -c 'CREATE DATABASE club_athletic_local_readiness'
+cat > /tmp/superpowers/club-athletic-local-readiness/env.local <<'EOF'
+ANTHROPIC_API_KEY=local-mocked-provider-key
+DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+PORT=47317
+EOF
+export CLUB_ATHLETIC_WEB_ENV_FILE=/tmp/superpowers/club-athletic-local-readiness/env.local
+bash scripts/with-env.sh bunx prisma migrate deploy
+bash scripts/with-env.sh bun prisma/seed.ts
+bunx playwright test tests/visual/mobile-layout.spec.ts tests/visual/mobile-tables.spec.ts --project=desktop-1280
+psql -h 127.0.0.1 -d postgres -c 'DROP DATABASE club_athletic_local_readiness'
+```
+
+The app server uses the parsed values from `CLUB_ATHLETIC_WEB_ENV_FILE`, and the Playwright config starts it on `127.0.0.1:47317` with `reuseExistingServer: false`.
+
 - [ ] **Step 2: Fix chat send and recovery behavior locally**
 
 Verify desktop and mobile sends create one user message, acknowledge promptly, disable duplicate submission while in flight, receive a response, and expose an actionable error/retry state if the request fails. Quick options must send immediately. On mobile, sending closes the keyboard so the conversation is visible. Remove false “Not delivered” states on successful sends and remove the unwanted vertical rule from assistant responses.
