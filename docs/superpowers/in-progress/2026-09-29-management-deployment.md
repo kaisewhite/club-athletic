@@ -104,7 +104,7 @@ Use this checklist as the gate before any CDK/deployment work:
 
 From `apps/web`, run the project's lint, typecheck, and unit/component test commands. Fix failures before moving on. Do not run infrastructure `npm run build` or TypeScript emitting builds.
 
-- [x] **Step 2: Run the browser acceptance matrix against local app only** (local seeded DB, mocked same-origin chat API/SSE; 133 passed, 3 skipped. Phone/tablet portrait matrix, landscape, 1280×800 and 1440×900 checks recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md` and `browser-acceptance-run.log`.)
+- [x] **Step 2: Run the browser acceptance matrix against local app only** (local seeded DB, mocked same-origin chat API/SSE; final run results are recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md` and `browser-review-run.log`. Phone/tablet portrait, landscape, 1280×800 and 1440×900 checks passed. Focus blur is tested in Chromium; physical mobile soft-keyboard behavior remains unverified.)
 
 Run Playwright with a locally started app and local/isolated test data. Cover phone portrait `320×568`, `375×812`, `390×844`, `412×915`; tablet `768×1024`, `820×1180`; one landscape viewport; desktop `1280×800`, `1440×900`. Exercise chat, quick options, mobile keyboard behavior, navigation drawer, schedule/FAQ, tables, and recovery states. Configure the test to fail if its base URL is the production hostname.
 

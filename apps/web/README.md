@@ -96,7 +96,8 @@ navigation, one landscape viewport, and 1280×800/1440×900 overflow checks. It
 intercepts same-origin `/api/chat/**` requests, including completed SSE/detail
 recovery, so the placeholder API key never reaches a provider. The geometry
 matrix checks the required phone and tablet portrait dimensions plus the
-859/860px seam.
+859/860px seam. Composer blur is exercised in Chromium; a physical iOS or
+Android soft keyboard was not tested.
 
 Create an isolated local database and test env file, then run the suite from
 `apps/web`:

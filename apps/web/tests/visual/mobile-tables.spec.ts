@@ -2,7 +2,7 @@ import { expect, test } from "@playwright/test";
 
 import { openFrozen } from "./prepare";
 
-for (const width of [320, 375, 390, 414, 768, 859]) {
+for (const width of [320, 375, 390, 412, 768, 820, 859]) {
   test.describe(`mobile tables at ${width}px`, () => {
     test.use({ viewport: { width, height: 900 } });
 
