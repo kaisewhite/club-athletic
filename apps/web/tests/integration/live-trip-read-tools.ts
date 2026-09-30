@@ -1,7 +1,14 @@
-/** Real trip database smoke test. Run with the app's configured read credential. */
+/** Local seeded database smoke test. Both endpoints must be explicitly loopback. */
 import assert from "node:assert/strict";
 import { z } from "zod";
+import type Anthropic from "@anthropic-ai/sdk";
+import { assertLoopbackDatabaseUrls } from "../visual/local-env";
 import { createReadTools } from "../../src/lib/chat/tools/read-tools.server";
+import { createTripRunnableTools } from "../../src/lib/chat/runtime/tool-runner.server";
+
+// Bun may load the repository .env automatically. Fail closed before the first
+// read so this integration script cannot query a configured remote database.
+assertLoopbackDatabaseUrls(process.env);
 
 const toolResult = z.object({ ok: z.boolean(), sourceSection: z.string().min(1), data: z.unknown() });
 
@@ -62,3 +69,18 @@ for (const tool of tools) {
 
   console.log(`${tool.name}: database read passed`);
 }
+
+// Exercise the exact runnable registered with sessions.events.toolRunner. This
+// catches a wiring regression where the repository read succeeds but the agent
+// runner receives an empty/fallback result instead of the registered tool value.
+const registeredFlightRules = createTripRunnableTools(
+  { tripId: "local-seed", conversationId: "local-seed" },
+  {} as Anthropic,
+).find((tool) => tool.name === "getFlightRules");
+assert.ok(registeredFlightRules, "getFlightRules is registered with the session runner");
+const registeredOutput = await registeredFlightRules.run({});
+assert.equal(typeof registeredOutput, "string", "the read runnable returns its serialized result");
+const registeredResult = toolResult.parse(JSON.parse(registeredOutput as string));
+assert.equal(registeredResult.ok, true);
+assert.equal(flightRules.parse(registeredResult.data).landByLatest, "09:30");
+console.log("registered getFlightRules tool: 09:30 result passed");

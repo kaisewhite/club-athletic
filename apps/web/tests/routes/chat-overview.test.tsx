@@ -58,6 +58,17 @@ it("does not read any chat when there is no valid selection", async () => {
   const data = await loader(request("club-athletic-conversation=../invalid"));
   expect(data.selectedId).toBeNull(); expect(data.chat.conversation).toBeNull(); expect(mocks.conversation).not.toHaveBeenCalled();
 });
+it("shows TBD for open ticker days and keeps scheduled event titles", async () => {
+  mocks.schedule.mockResolvedValue([
+    { id: "planned", dow: "Sun", dayNumber: 31, eventTitle: "Dinner at the chalet", isOpen: false },
+    { id: "tuesday", dow: "Tue", dayNumber: 2, eventTitle: "TBD", isOpen: true },
+    { id: "friday", dow: "Fri", dayNumber: 5, eventTitle: "Open — last ski day", isOpen: true },
+  ]);
+
+  const data = await loader(request());
+
+  expect(data.week.map(({ event }) => event)).toEqual(["Dinner at the chalet", "TBD", "TBD"]);
+});
 it("exposes only safe chat error copy when selected detail fails", async () => {
   setConversationSelection(conversation.id); mocks.conversation.mockRejectedValue(new Error("PrismaClient secret booking PNR"));
   const data = await loader(request());

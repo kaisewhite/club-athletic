@@ -75,6 +75,8 @@ Verify desktop and mobile sends create one user message, acknowledge promptly, d
 
 Trace the question-to-tool/database path for trip facts and correct any missing tool registration, data mapping, or error handling. A question whose answer exists in the database must return that answer. Distinguish an actual missing fact from unavailable infrastructure; do not mask backend errors as “not in trip notes.”
 
+Local read-path remediation: the seeded `getFlightRules` database read and the exact registered runnable both return the 09:30 landing cutoff. Database read exceptions now return a distinct temporary-unavailable result and sanitized `[chat]` diagnostics. Still open: no real Managed Agents API request was made, so an end-user model response from that tool result has not been verified; this step remains unchecked until that local provider path can be verified without using remote/prod data.
+
 - [ ] **Step 4: Finish requested mobile, navigation, content, and data presentation**
 
 Verify the mobile sidebar has accessible open/close controls; all tables remain readable at narrow widths; schedule ticker is compact and continuous without play/pause controls; FAQ is a separate page; homepage content follows the requested chat-first layout; trip date/address details are not redundantly displayed; FAQ location is “Les 3 Vallées · France”; schedule chef indicators are omitted and unknown items display `TBD`; Instagram links map to the agreed people/rooms/chef rows.
@@ -87,10 +89,10 @@ Use this checklist as the gate before any CDK/deployment work:
   - [ ] Mobile free-form chat sends once; keyboard closes; response is visible.
   - [ ] Quick options populate and automatically send once on desktop and mobile.
   - [ ] Loading, success, failure, edit/retry behavior is clear and truthful.
-  - [ ] Existing database facts are answerable; real missing data is described accurately.
+  - [ ] Existing database facts are answerable; real missing data is described accurately. (Seeded local database and registered `getFlightRules` runnable return 09:30; the Managed Agents response itself remains unverified.)
   - [ ] No unwanted assistant quote/left rule appears.
   - [ ] Mobile sidebar opens, navigates, and closes via touch and keyboard.
-  - [ ] Schedule ticker and FAQ/home requirements match the requested design/content. (Partial Playwright coverage only: `mobile-layout.spec.ts` checks FAQ answer line count, page overflow, and ticker scroller geometry; it does not verify the full requested content/design criteria.)
+  - [ ] Schedule ticker and FAQ/home requirements match the requested design/content. The home loader now maps every open schedule day to `TBD` while preserving named event titles; regression coverage is in `tests/routes/chat-overview.test.tsx`. (Partial Playwright coverage only: `mobile-layout.spec.ts` checks FAQ answer line count, page overflow, and ticker scroller geometry; it does not verify the full requested content/design criteria.)
   - [ ] Every table and detail surface is readable at supported mobile widths without page overflow. (Partial Playwright coverage only: mobile layout checks route-level overflow, room/chef/task/flights layouts; mobile table checks cover flight recommendations and chef dietary rows/editors at 320, 375, 390, 414, 768 and 859px. Other tables/details remain unverified.)
   - [ ] Instagram links and guest/room/chef mappings match the agreed list.
 
@@ -100,7 +102,7 @@ Use this checklist as the gate before any CDK/deployment work:
 - Test: `apps/web/tests/**`, Playwright configuration and test fixtures
 - Evidence: `/tmp/superpowers/club-athletic-local-readiness/`
 
-- [x] **Step 1: Run local code checks**
+- [ ] **Step 1: Run local code checks** (focused chat/tool/route/flight-intake tests, lint and typecheck pass; the latest full suite has one separate bedroom-map markup expectation failure in `tests/routes/detail-pages.test.tsx`, recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.)
 
 From `apps/web`, run the project's lint, typecheck, and unit/component test commands. Fix failures before moving on. Do not run infrastructure `npm run build` or TypeScript emitting builds.
 
@@ -193,3 +195,7 @@ Save local and CI test reports, pipeline revision/stage results, AWS management 
 - [ ] **Step 4: Resolve any failed acceptance gate before handoff**
 
 If local tests, the CI E2E stage, deployment, or management health check fails, fix the cause and rerun the affected full gate before reporting completion. Never substitute a production browser test for a failed CI acceptance run.
+
+### Focused mobile table verification addendum — 2026-09-30
+
+Added targeted Playwright geometry assertions to `apps/web/tests/visual/mobile-tables.spec.ts` for the previously unmeasured mobile bedroom-map detail rows and desktop group-flight table. With a fresh loopback-only PostgreSQL database migrated and seeded, the focused assertions passed 5/5: all eight room rows at 320×568, 390×844, 412×915 and 820×1180 expose the bedroom heading and visible Floor / door and Description labels, with values contained below labels and inside their cells; at 1280×800 every flight header/data cell's text geometry stays inside its cell and does not overlap text in a sibling cell. The complete local `mobile-layout.spec.ts` + `mobile-tables.spec.ts` run passed 135 tests with 3 expected seam skips. No UI changes were made; the seeded database and temporary env were cleaned up. See `/tmp/superpowers/club-athletic-local-readiness/evidence.md` for commands and runtime evidence.

@@ -4,8 +4,8 @@ import { withReadDatabase } from "../../db/client.server";
 import { matchGuestCandidates } from "../../db/guest-lookup.server";
 import { publicText } from "../runtime/public-frame.server";
 import { logChatFailure } from "../runtime/chat-debug.server";
-export const TRIP_FALLBACK =
-  "That's not in the trip notes yet — ask the organizer.";
+export const TRIP_UNAVAILABLE = "Trip data is temporarily unavailable. Please try again.";
+const TRIP_INVALID_REQUEST = "The trip data request was invalid. Please try again.";
 export const noArguments = z.strictObject({});
 export const guestNameSchema = z.strictObject({
   firstName: z.string().trim().min(1).max(100),
@@ -251,7 +251,7 @@ export function createReadTools(overrides: Partial<ReadFunctions> = {}) {
         return JSON.stringify({
           ok: false,
           sourceSection,
-          message: TRIP_FALLBACK,
+          message: TRIP_INVALID_REQUEST,
         });
       try {
         return JSON.stringify({
@@ -260,15 +260,13 @@ export function createReadTools(overrides: Partial<ReadFunctions> = {}) {
           data: boundTripData(await functions[name as ReadName]()),
         });
       } catch (error) {
-        // The innermost catch on the read path. It sits inside tool.run, so the
-        // runner's own logging never sees a read failure — unlogged, a broken
-        // read is indistinguishable from a fact the trip simply does not have.
-        // The operator gets the cause; the guest still gets only TRIP_FALLBACK.
+        // A failed read is not evidence that the trip has no such fact. Keep
+        // diagnostics server-side and return a separate unavailable result.
         logChatFailure("readTool.run", error, { tool: name, sourceSection });
         return JSON.stringify({
           ok: false,
           sourceSection,
-          message: TRIP_FALLBACK,
+          message: TRIP_UNAVAILABLE,
         });
       }
     },

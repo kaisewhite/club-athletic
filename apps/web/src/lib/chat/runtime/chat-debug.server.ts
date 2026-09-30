@@ -3,14 +3,30 @@ export function conversationDebugLog(_event: string, _fields: Record<string, unk
   // Intentionally silent on the public trip deployment.
 }
 
-/** Server-side only, and deliberately unredacted. Guests still see PUBLIC_ERROR —
- * the trip page is public and unauthenticated — but a catch that tells nobody
- * anything is how a broken dependency survives in production, so the operator
- * gets the real cause in the process log. Never returned in a response body. */
+/** Server-side diagnostics use error class and safe codes only. Database and SDK
+ * messages/stacks can include URLs, query values or credentials, so never log them. */
 export function logChatFailure(stage: string, error: unknown, fields: Record<string, unknown> = {}): void {
-  const cause = error instanceof Error && error.cause !== undefined ? { cause: String(error.cause) } : {};
-  const detail = error instanceof Error
-    ? { name: error.name, message: error.message, stack: error.stack, ...cause }
-    : { name: "NonError", message: typeof error === "string" ? error : JSON.stringify(error) };
-  console.error(`[chat] ${stage} failed`, { ...fields, ...detail });
+  const code = error && typeof error === "object" && "code" in error ? error.code : undefined;
+  const status = error && typeof error === "object" && "status" in error ? error.status : undefined;
+  const safeCode = typeof code === "string" && /^[A-Z0-9_]{1,32}$/.test(code) ? code : undefined;
+  const safeStatus = typeof status === "number" && Number.isInteger(status) && status >= 100 && status <= 599 ? status : undefined;
+  const safeFields: Record<string, unknown> = {};
+  for (const [key, value] of Object.entries(fields)) {
+    if (["tool", "sourceSection", "kind", "method"].includes(key) &&
+        typeof value === "string" && /^[A-Za-z][A-Za-z0-9_.-]{0,80}$/.test(value)) {
+      safeFields[key] = value;
+    } else if (["conversationId", "requestId", "sessionId"].includes(key) &&
+        typeof value === "string" && /^[A-Za-z0-9_-]{1,128}$/.test(value)) {
+      safeFields[key] = value;
+    } else if (["consumed", "stale"].includes(key) &&
+        typeof value === "number" && Number.isSafeInteger(value) && value >= 0) {
+      safeFields[key] = value;
+    }
+  }
+  const detail = {
+    name: error instanceof Error ? error.name : "NonError",
+    ...(safeCode ? { code: safeCode } : {}),
+    ...(safeStatus ? { status: safeStatus } : {}),
+  };
+  console.error(`[chat] ${stage} failed`, { ...safeFields, ...detail });
 }

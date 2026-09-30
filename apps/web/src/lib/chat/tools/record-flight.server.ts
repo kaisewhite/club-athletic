@@ -7,7 +7,7 @@ import {
 } from "../flight-intake.server";
 import type { ConversationScope } from "../repository.server";
 import { recordFlightSchema, recordFlightDescription } from "./flight-schema";
-import { TRIP_FALLBACK } from "./read-tools.server";
+import { TRIP_UNAVAILABLE } from "./read-tools.server";
 
 export function createRecordFlightTool(
   scope: ConversationScope,
@@ -33,7 +33,7 @@ export function createRecordFlightTool(
           return JSON.stringify({
             committed: false,
             phase: "unavailable",
-            followUp: TRIP_FALLBACK,
+            followUp: TRIP_UNAVAILABLE,
           });
         context.signal.throwIfAborted();
         return JSON.stringify(

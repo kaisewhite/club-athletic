@@ -16,7 +16,7 @@ import {
   lookupTripGuest,
   guestNameSchema,
   boundTripData,
-  TRIP_FALLBACK,
+  TRIP_UNAVAILABLE,
 } from "../tools/read-tools.server";
 import { createRecordFlightTool } from "../tools/record-flight.server";
 import {
@@ -126,13 +126,12 @@ export function createTripRunnableTools(
                 download: (id, signal) => client.files.download(id, { signal }),
               },
             );
-          return JSON.stringify({ ok: false, message: TRIP_FALLBACK });
+          return JSON.stringify({ ok: false, message: TRIP_UNAVAILABLE });
         } catch (error) {
-          // The agent only ever sees TRIP_FALLBACK, so without this the real
-          // cause of a refused answer is invisible to the operator.
+          // Tool execution failure is not evidence that a fact is missing.
           if (!context?.signal?.aborted)
             logChatFailure("tool.run", error, { tool: name, conversationId: scope.conversationId });
-          return JSON.stringify({ ok: false, message: TRIP_FALLBACK });
+          return JSON.stringify({ ok: false, message: TRIP_UNAVAILABLE });
         }
       },
     } satisfies BetaRunnableTool<unknown>;

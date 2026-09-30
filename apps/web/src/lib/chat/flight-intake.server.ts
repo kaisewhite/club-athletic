@@ -26,8 +26,9 @@ import {
   recordFlightSchema,
   type RecordFlightArguments,
 } from "./tools/flight-schema";
-import { listTripGuests, TRIP_FALLBACK } from "./tools/read-tools.server";
+import { listTripGuests, TRIP_UNAVAILABLE } from "./tools/read-tools.server";
 import { conversationEventRelay } from "./runtime/event-relay.server";
+import { logChatFailure } from "./runtime/chat-debug.server";
 import { publicText } from "./runtime/public-frame.server";
 import { uploadService, withUploadDeadline } from "./upload.server";
 
@@ -551,8 +552,13 @@ export function createFlightIntake(deps: IntakeDependencies) {
         return result;
       } catch (error) {
         if (ctx.signal.aborted) throw ctx.signal.reason;
+        if (!(error instanceof FollowUp))
+          logChatFailure("flightIntake.run", error, {
+            conversationId: ctx.scope.conversationId,
+            requestId: ctx.toolCallId,
+          });
         return refusal(
-          error instanceof FollowUp ? error.message : TRIP_FALLBACK,
+          error instanceof FollowUp ? error.message : TRIP_UNAVAILABLE,
         );
       }
     },

@@ -21,7 +21,7 @@ export async function loader(args?: Route.LoaderArgs) {
     chat: await chatDetail,
     selectedId,
     week: schedule.map((day) => ({
-      id: day.id, dow: day.dow, number: day.dayNumber, event: day.eventTitle,
+      id: day.id, dow: day.dow, number: day.dayNumber, event: day.isOpen ? "TBD" : day.eventTitle,
     })),
   };
 }

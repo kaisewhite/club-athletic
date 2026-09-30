@@ -4,7 +4,6 @@ import type { ChatDatabase } from "../../src/lib/db/chat-client.server";
 import {
   createReadTools,
   boundTripData,
-  TRIP_FALLBACK,
 } from "../../src/lib/chat/tools/read-tools.server";
 import { tripToolDefinitions } from "../../src/lib/chat/tools/registry.server";
 import { recordFlightSchema } from "../../src/lib/chat/tools/flight-schema";
@@ -133,7 +132,7 @@ describe("bounded trip registry", () => {
     });
     expect(getFlightTable).toHaveBeenCalledTimes(1);
   });
-  it("returns the honest fallback on a read failure without leaking diagnostics", async () => {
+  it("reports a database read failure as unavailable rather than missing trip data", async () => {
     const tool = createReadTools({
       getSchedule: async () => {
         throw new Error("postgres://private SQLSTATE booking ABC123");
@@ -142,7 +141,7 @@ describe("bounded trip registry", () => {
     expect(JSON.parse(await tool.run({}))).toEqual({
       ok: false,
       sourceSection: "Events",
-      message: TRIP_FALLBACK,
+      message: "Trip data is temporarily unavailable. Please try again.",
     });
   });
   it("logs the real cause of a read failure server-side while still redacting it from the guest", async () => {
@@ -150,15 +149,15 @@ describe("bounded trip registry", () => {
     try {
       const tool = createReadTools({
         getFlightRules: async () => {
-          throw new Error("postgres://private SQLSTATE booking ABC123");
+          throw Object.assign(new Error("postgres://user:supersecret@db.invalid/booking SQLSTATE 08006"), { code: "DB_CONN", status: 503 });
         },
       }).find((t) => t.name === "getFlightRules")!;
       const answer = await tool.run({});
-      // The guest-facing payload is unchanged: fallback only, no diagnostics.
+      // The guest-facing payload says the read failed, without exposing diagnostics.
       expect(JSON.parse(answer)).toEqual({
         ok: false,
         sourceSection: "Flights",
-        message: TRIP_FALLBACK,
+        message: "Trip data is temporarily unavailable. Please try again.",
       });
       expect(answer).not.toMatch(/postgres|SQLSTATE|ABC123/);
       // The operator gets the cause, which is what the bare catch used to eat.
@@ -166,7 +165,8 @@ describe("bounded trip registry", () => {
       const [stage, fields] = logged.mock.calls[0]!;
       expect(String(stage)).toContain("readTool.run");
       expect(JSON.stringify(fields)).toContain("getFlightRules");
-      expect(JSON.stringify(fields)).toMatch(/SQLSTATE/);
+      expect(fields).toMatchObject({ code: "DB_CONN", status: 503 });
+      expect(JSON.stringify(fields)).not.toMatch(/supersecret|db\.invalid|SQLSTATE/);
     } finally {
       logged.mockRestore();
     }
@@ -199,7 +199,11 @@ describe("flight rules are a first-class read, not a shuttle lookup", () => {
     const tool = createReadTools({ getFlightRules }).find(
       (t) => t.name === "getFlightRules",
     )!;
-    expect(JSON.parse(await tool.run({ tripKey: "other" })).ok).toBe(false);
+    expect(JSON.parse(await tool.run({ tripKey: "other" }))).toEqual({
+      ok: false,
+      sourceSection: "Flights",
+      message: "The trip data request was invalid. Please try again.",
+    });
     expect(getFlightRules).not.toHaveBeenCalled();
   });
   it("describes itself as the landing-deadline tool and the shuttle tool as the bus, so the two cannot be confused", () => {

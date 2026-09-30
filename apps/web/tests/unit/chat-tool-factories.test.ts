@@ -4,6 +4,10 @@ const sdk = vi.hoisted(() => ({
   agent: vi.fn(async () => ({ version: "v", multiagent: null })),
   runner: vi.fn(),
 }));
+const readTools = vi.hoisted(() => ({
+  lookupTripGuest: vi.fn(),
+  createReadTools: vi.fn(() => []),
+}));
 vi.mock("@anthropic-ai/sdk", () => ({
   default: class {
     files = {};
@@ -22,6 +26,10 @@ vi.mock("../../src/lib/managed-agents/config.server", () => ({
   }),
   TRIP_AGENT_INSTRUCTIONS: "fixture",
 }));
+vi.mock("../../src/lib/chat/tools/read-tools.server", async (importOriginal) => {
+  const original = await importOriginal<typeof import("../../src/lib/chat/tools/read-tools.server")>();
+  return { ...original, ...readTools };
+});
 import {
   TRIP_AGENT_TOOLSET,
   TRIP_MEMORY_INSTRUCTIONS,
@@ -31,8 +39,12 @@ import {
 } from "../../src/lib/managed-agents/client.server";
 import { createUploadProvider } from "../../src/lib/managed-agents/upload-client.server";
 import { tripToolDefinitions } from "../../src/lib/chat/tools/registry.server";
-import { runWithTripTools } from "../../src/lib/chat/runtime/tool-runner.server";
-afterEach(() => vi.clearAllMocks());
+import { createTripRunnableTools, runWithTripTools } from "../../src/lib/chat/runtime/tool-runner.server";
+afterEach(() => {
+  vi.clearAllMocks();
+  readTools.lookupTripGuest.mockReset();
+  readTools.createReadTools.mockReset().mockReturnValue([]);
+});
 it("both real session factories register the identical full trip tool set", async () => {
   const signal = new AbortController().signal;
   await createManagedAgentsClient().create("hello", "c", signal);
@@ -129,6 +141,7 @@ it("uses sessions.events.toolRunner with all registered schemas and an owned lif
     abort,
     async *[Symbol.asyncIterator]() {
       runnerSignal = options.signal;
+      yield undefined;
       await new Promise<void>((resolve) => {
         if (options.signal.aborted) resolve();
         else
@@ -160,6 +173,23 @@ it("uses sessions.events.toolRunner with all registered schemas and an owned lif
     );
   expect(runnerSignal?.aborted).toBe(true);
   expect(abort).toHaveBeenCalledTimes(1);
+});
+it("reports registered guest lookup infrastructure failures as unavailable", async () => {
+  readTools.lookupTripGuest.mockRejectedValue(new Error("postgres://user:secret@db.invalid/trip"));
+  const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    const tool = createTripRunnableTools(
+      { tripId: "trip", conversationId: "conversation" },
+      {} as import("@anthropic-ai/sdk").default,
+    ).find((candidate) => candidate.name === "findGuestByName")!;
+    const output = await tool.run({ firstName: "Kaise", lastName: null });
+    expect(typeof output).toBe("string");
+    const result = JSON.parse(output as string);
+    expect(result).toEqual({ ok: false, message: "Trip data is temporarily unavailable. Please try again." });
+    expect(JSON.stringify(logged.mock.calls)).not.toMatch(/secret|db\.invalid|postgres/);
+  } finally {
+    logged.mockRestore();
+  }
 });
 it("attaches the trip memory read-only, and omits it entirely when no store is configured", () => {
   // Memory stores attach at session-create time only, so an absent id must simply mean

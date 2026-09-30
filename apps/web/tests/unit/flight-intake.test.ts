@@ -1,4 +1,4 @@
-import { describe, expect, it } from "vitest";
+import { describe, expect, it, vi } from "vitest";
 import { createFlightIntake } from "../../src/lib/chat/flight-intake.server";
 import {
   args,
@@ -369,21 +369,27 @@ it("a six-character flight number remains visible in the public read-back", asyn
   const row = h.tables.message!.find((m) => m.payload.intakeReadback);
   expect(row!.content).toMatch(/LX 1234/);
 });
-it("missing narrow write capability returns the exact fallback and no fabricated success", async () => {
+it("write database failures return unavailable without leaking diagnostics", async () => {
   const h = setup();
   await h.readback();
   await h.user("Yes");
   await h.next("confirm");
   h.deps.recordFlight = async () => {
-    throw new Error("DATABASE_URL_POOLED required sk-secret");
+    throw new Error("postgres://user:sk-secret@db.invalid/trip SQLSTATE 08006");
   };
-  const r = await h.next("commit", { confirmedByGuest: true });
-  expect(r).toMatchObject({
-    committed: false,
-    followUp: "That's not in the trip notes yet — ask the organizer.",
-  });
-  expect(h.tables.flight).toHaveLength(0);
-  expect(JSON.stringify(r)).not.toMatch(/DATABASE_URL|sk-secret/);
+  const logged = vi.spyOn(console, "error").mockImplementation(() => {});
+  try {
+    const r = await h.next("commit", { confirmedByGuest: true });
+    expect(r).toMatchObject({
+      committed: false,
+      followUp: "Trip data is temporarily unavailable. Please try again.",
+    });
+    expect(h.tables.flight).toHaveLength(0);
+    expect(JSON.stringify(r)).not.toMatch(/DATABASE_URL|sk-secret|db\.invalid|SQLSTATE/);
+    expect(JSON.stringify(logged.mock.calls)).not.toMatch(/sk-secret|db\.invalid|SQLSTATE/);
+  } finally {
+    logged.mockRestore();
+  }
 });
 it("prompt-injection fields cannot widen the write surface", async () => {
   const h = intakeHarness();
