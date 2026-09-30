@@ -75,7 +75,7 @@ describe("database-backed read-only detail pages", () => {
     const sheet = page.querySelector(".bm-sheet")!;
     expect(sheet.querySelectorAll("svg")).toHaveLength(5);
     for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) expect(sheet.textContent).toContain(`Bedroom ${n}`);
-    expect(sheet.querySelectorAll("table tbody tr")).toHaveLength(8);
+    expect(page.querySelectorAll(".bm-room-table tbody tr")).toHaveLength(8);
     expect(sheet.innerHTML).not.toMatch(/sc-|\{\{/);
   });
   it("links guest names to Instagram on rooms and chef pages", async () => {
