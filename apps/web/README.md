@@ -90,6 +90,14 @@ and server, so the acceptance run does not use this directory's `.env`. The
 server health URL and Playwright base URL are both loopback. `reuseExistingServer`
 is false; Playwright will fail if it cannot start its own server on port 47317.
 
+`tests/visual/local-chat.spec.ts` adds browser journeys for quick option send,
+mobile typed send and focus dismissal, failed send/retry recovery, touch
+navigation, one landscape viewport, and 1280×800/1440×900 overflow checks. It
+intercepts same-origin `/api/chat/**` requests, including completed SSE/detail
+recovery, so the placeholder API key never reaches a provider. The geometry
+matrix checks the required phone and tablet portrait dimensions plus the
+859/860px seam.
+
 Create an isolated local database and test env file, then run the suite from
 `apps/web`:
 
@@ -120,7 +128,7 @@ EOF
 export CLUB_ATHLETIC_WEB_ENV_FILE="$env_file"
 bash scripts/with-env.sh bunx prisma migrate deploy
 bash scripts/with-env.sh bun prisma/seed.ts
-bun run test:visual
+bunx playwright test tests/visual/local-chat.spec.ts tests/visual/mobile-layout.spec.ts tests/visual/mobile-tables.spec.ts --project=desktop-1280
 ```
 
 The API key above is a placeholder required only for app startup; no provider

@@ -104,11 +104,11 @@ Use this checklist as the gate before any CDK/deployment work:
 
 From `apps/web`, run the project's lint, typecheck, and unit/component test commands. Fix failures before moving on. Do not run infrastructure `npm run build` or TypeScript emitting builds.
 
-- [ ] **Step 2: Run the browser acceptance matrix against local app only** (partial: mobile layout/table suites passed locally; chat flows, 412/820px, landscape, 1280×800 and 1440×900 remain untested; see `/tmp/superpowers/club-athletic-local-readiness/evidence.md`)
+- [x] **Step 2: Run the browser acceptance matrix against local app only** (local seeded DB, mocked same-origin chat API/SSE; 133 passed, 3 skipped. Phone/tablet portrait matrix, landscape, 1280×800 and 1440×900 checks recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md` and `browser-acceptance-run.log`.)
 
 Run Playwright with a locally started app and local/isolated test data. Cover phone portrait `320×568`, `375×812`, `390×844`, `412×915`; tablet `768×1024`, `820×1180`; one landscape viewport; desktop `1280×800`, `1440×900`. Exercise chat, quick options, mobile keyboard behavior, navigation drawer, schedule/FAQ, tables, and recovery states. Configure the test to fail if its base URL is the production hostname.
 
-- [ ] **Step 3: Check off the acceptance list with evidence** (open: chat journeys and the remaining viewport matrix lack local browser evidence; see `/tmp/superpowers/club-athletic-local-readiness/evidence.md`)
+- [ ] **Step 3: Check off the acceptance list with evidence** (browser matrix and chat journey evidence now pass; reconcile the individual Task 1 acceptance checkboxes before closing this step. See `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.)
 
 Save command output, Playwright report/screenshots, viewport results, and local chat transcript under `/tmp/superpowers/club-athletic-local-readiness/`. Mark each Task 1 acceptance checkbox complete only after evidence passes. Do not start CDK deployment work until every in-scope local criterion is checked or a specific blocker is documented.
 

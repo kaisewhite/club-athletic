@@ -19,7 +19,9 @@ import { openFrozen } from "./prepare";
 
 /** The seam. `useWideLayout()` is `>= 860`; the CSS side is `max-width: 859px`. */
 const SEAM = 860;
-const WIDTHS = [320, 375, 390, 414, 768, 859, 860] as const;
+const VIEWPORTS = [
+  [320, 568], [375, 812], [390, 844], [412, 915], [768, 1024], [820, 1180], [859, 780], [860, 780],
+] as const;
 
 const PAGES = [
   ["home", "/"], ["faq", "/faq"], ["schedule", "/schedule"], ["flights", "/flights"], ["shuttle", "/shuttle"],
@@ -69,11 +71,11 @@ async function lineCount(target: Locator) {
   });
 }
 
-for (const width of WIDTHS) {
+for (const [width, height] of VIEWPORTS) {
   const mobile = width < SEAM;
 
   test.describe(`${width}px (${mobile ? "below" : "at/above"} the 860 seam)`, () => {
-    test.use({ viewport: { width, height: 780 } });
+    test.use({ viewport: { width, height } });
 
     test("no page scrolls sideways", async ({ page }) => {
       for (const [name, path] of PAGES) {
