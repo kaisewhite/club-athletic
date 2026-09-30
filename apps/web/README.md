@@ -94,25 +94,40 @@ Create an isolated local database and test env file, then run the suite from
 `apps/web`:
 
 ```sh
+set -eu
 mkdir -p /tmp/superpowers/club-athletic-local-readiness
-psql -h 127.0.0.1 -d postgres -c 'CREATE DATABASE club_athletic_local_readiness'
-cat > /tmp/superpowers/club-athletic-local-readiness/env.local <<'EOF'
+db_name="club_athletic_local_readiness_$(date +%s)_$$"
+env_file="$(mktemp /tmp/superpowers/club-athletic-local-readiness/env.XXXXXX)"
+db_created=0
+cleanup() {
+  result=$?
+  trap - EXIT
+  if [ "$db_created" -eq 1 ]; then
+    psql -h 127.0.0.1 -d postgres -c "DROP DATABASE \"$db_name\"" || result=1
+  fi
+  rm -f "$env_file" || result=1
+  exit "$result"
+}
+trap cleanup EXIT
+psql -h 127.0.0.1 -d postgres -c "CREATE DATABASE \"$db_name\""
+db_created=1
+cat > "$env_file" <<EOF
 ANTHROPIC_API_KEY=local-mocked-provider-key
-DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
-DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/$db_name?sslmode=disable
+DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/$db_name?sslmode=disable
 PORT=47317
 EOF
-export CLUB_ATHLETIC_WEB_ENV_FILE=/tmp/superpowers/club-athletic-local-readiness/env.local
+export CLUB_ATHLETIC_WEB_ENV_FILE="$env_file"
 bash scripts/with-env.sh bunx prisma migrate deploy
 bash scripts/with-env.sh bun prisma/seed.ts
 bun run test:visual
-psql -h 127.0.0.1 -d postgres -c 'DROP DATABASE club_athletic_local_readiness'
 ```
 
 The API key above is a placeholder required only for app startup; no provider
 request is made by the visual suite. Keep both database URLs on loopback and
-remove the temporary env file after the run. Full setup and verification evidence
-is recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.
+the cleanup trap drops only the unique database created by this run and removes
+only its `mktemp` env file. Full setup and verification evidence is recorded in
+`/tmp/superpowers/club-athletic-local-readiness/evidence.md`.
 
 ### What is captured
 

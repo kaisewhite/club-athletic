@@ -36,22 +36,36 @@ Local configuration and server command recorded in `/tmp/superpowers/club-athlet
 Rerunnable local-only setup, from `apps/web` (the Playwright config refuses a missing env file and rejects remote database hosts before starting the server):
 
 ```sh
+set -eu
 mkdir -p /tmp/superpowers/club-athletic-local-readiness
-psql -h 127.0.0.1 -d postgres -c 'CREATE DATABASE club_athletic_local_readiness'
-cat > /tmp/superpowers/club-athletic-local-readiness/env.local <<'EOF'
+db_name="club_athletic_local_readiness_$(date +%s)_$$"
+env_file="$(mktemp /tmp/superpowers/club-athletic-local-readiness/env.XXXXXX)"
+db_created=0
+cleanup() {
+  result=$?
+  trap - EXIT
+  if [ "$db_created" -eq 1 ]; then
+    psql -h 127.0.0.1 -d postgres -c "DROP DATABASE \"$db_name\"" || result=1
+  fi
+  rm -f "$env_file" || result=1
+  exit "$result"
+}
+trap cleanup EXIT
+psql -h 127.0.0.1 -d postgres -c "CREATE DATABASE \"$db_name\""
+db_created=1
+cat > "$env_file" <<EOF
 ANTHROPIC_API_KEY=local-mocked-provider-key
-DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
-DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/$db_name?sslmode=disable
+DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/$db_name?sslmode=disable
 PORT=47317
 EOF
-export CLUB_ATHLETIC_WEB_ENV_FILE=/tmp/superpowers/club-athletic-local-readiness/env.local
+export CLUB_ATHLETIC_WEB_ENV_FILE="$env_file"
 bash scripts/with-env.sh bunx prisma migrate deploy
 bash scripts/with-env.sh bun prisma/seed.ts
 bunx playwright test tests/visual/mobile-layout.spec.ts tests/visual/mobile-tables.spec.ts --project=desktop-1280
-psql -h 127.0.0.1 -d postgres -c 'DROP DATABASE club_athletic_local_readiness'
 ```
 
-The app server uses the parsed values from `CLUB_ATHLETIC_WEB_ENV_FILE`, and the Playwright config starts it on `127.0.0.1:47317` with `reuseExistingServer: false`.
+The app server uses the parsed values from `CLUB_ATHLETIC_WEB_ENV_FILE`, and the Playwright config starts it on `127.0.0.1:47317` with `reuseExistingServer: false`. The EXIT trap removes only this run's env file and drops its unique DB only after CREATE succeeds.
 
 - [ ] **Step 2: Fix chat send and recovery behavior locally**
 
