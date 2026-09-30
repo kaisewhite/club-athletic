@@ -35,12 +35,13 @@ Reviewed the Club Athletic trip site on `main`: homepage chat and weekly schedul
 - `bun run test`: 528 tests passed across 42 files.
 - `bun run typecheck`: passed.
 - `bun run lint`: passed with existing warnings in runtime and test helpers.
-- `bun run test:visual`: 122 passed before the one corrected desktop seam expectation; the affected seven-width scroller case then passed 7/7. Desktop screenshot checks all passed. The suite was not rerun end-to-end after that test-only correction.
+- `bun run test:visual`: 122 passed before the one corrected desktop seam expectation; the affected seven-width scroller case then passed 7/7. Desktop screenshot checks all passed. A full rerun after that test-only correction was interrupted by the execution server restarting after 22 checks, before Playwright reported a final status.
 - `bun run db:seed`: completed; existing rows preserved and counts verified above.
 
 ## Remaining findings and gate
 
 - **High, external dependency:** live agent creation still receives a 503 while the upstream API usage limit is exhausted. The database has the flight answer and the prompt now explicitly calls the correct tool, but a successful live model turn remains unverified until quota is restored.
+- **Medium, verification:** the corrected browser suite passed its affected seven-width check, but a final full suite run was interrupted by the execution server restart. The complete prior run had one test-only failure, now corrected.
 - **Low, local development:** the already-running Vite session on port 4173 reported a stale route HMR update for `routes/chef`. Production build and production route verification passed. Restart that existing local development server to load the updated route manifest; it was not started by this audit.
 
-**Final gate: pass with stated gaps.** The code, data, production build, automated chat coverage, and UI checks pass. A live provider response is the remaining verification gap because of the provider usage cap.
+**Final gate: pass with stated gaps.** The code, data, production build, automated chat coverage, and targeted UI rerun pass. The provider quota and interrupted final visual run remain verification gaps.
