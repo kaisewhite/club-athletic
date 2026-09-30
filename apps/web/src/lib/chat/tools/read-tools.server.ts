@@ -104,6 +104,57 @@ export async function getFlightRules() {
     };
   });
 }
+type ShuttleRecord = Awaited<ReturnType<typeof reads.getShuttles>>[number];
+type ShuttleFields = Pick<ShuttleRecord,
+  "direction" | "seats" | "departWindowStart" | "departWindowEnd" |
+  "pickupLocation" | "dropoffLocation" | "durationMinutes" | "notes">;
+
+/** Give the model guest-facing local times, rather than UTC database instants.
+ * The latter made a 04:00 chalet pickup look like 03:00 in February. */
+function projectShuttles(shuttles: readonly ShuttleFields[], timeZone: string) {
+  const clock = (date: Date) => new Intl.DateTimeFormat("en-GB", {
+    timeZone, hour: "2-digit", minute: "2-digit", hourCycle: "h23",
+  }).format(date);
+  const date = (value: Date) => {
+    const parts = new Intl.DateTimeFormat("en-GB", {
+      timeZone, year: "numeric", month: "2-digit", day: "2-digit",
+    }).formatToParts(value);
+    const part = (name: string) => parts.find(entry => entry.type === name)?.value;
+    return `${part("year")}-${part("month")}-${part("day")}`;
+  };
+  return shuttles.map(shuttle => ({
+      direction: shuttle.direction,
+      seats: shuttle.seats,
+      departureDateLocal: date(shuttle.departWindowStart),
+      departWindowStartLocal: clock(shuttle.departWindowStart),
+      departWindowEndLocal: clock(shuttle.departWindowEnd),
+      timeZone,
+      pickupLocation: shuttle.pickupLocation,
+      dropoffLocation: shuttle.dropoffLocation,
+      durationMinutes: shuttle.durationMinutes,
+      notes: shuttle.notes,
+  }));
+}
+export async function getTripOverview() {
+  const overview = await reads.getTripOverview();
+  return { ...overview, shuttles: projectShuttles(overview.shuttles, overview.timezone) };
+}
+export async function getShuttles() {
+  return withReadDatabase(async (db) => {
+    const trip = await db.trip.findUniqueOrThrow({
+      where: { seedKey: "meribel-2027" },
+      select: {
+        timezone: true,
+        shuttles: { orderBy: { departWindowStart: "asc" }, select: {
+          direction: true, seats: true, departWindowStart: true,
+          departWindowEnd: true, pickupLocation: true, dropoffLocation: true,
+          durationMinutes: true, notes: true,
+        } },
+      },
+    });
+    return projectShuttles(trip.shuttles, trip.timezone);
+  });
+}
 const privateKey =
   /booking|confirmationCode|rawExtraction|secret|password|token|credential|email|phone|emergency|fileId|mountPath|sessionResource|error/i;
 /** Bound recursively AND globally; do not let nested rooms/notes defeat row caps. */
@@ -183,8 +234,10 @@ const readDescriptions: Partial<Record<ReadName, string>> = {
 export function createReadTools(overrides: Partial<ReadFunctions> = {}) {
   const functions: ReadFunctions = {
     ...reads,
+    getTripOverview,
     getNotes,
     getFlightRules,
+    getShuttles,
     ...overrides,
   };
   return Object.entries(readSections).map(([name, sourceSection]) => ({

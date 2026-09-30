@@ -14,6 +14,7 @@
     "typecheck": "react-router typegen && tsc --noEmit",
     "lint": "oxlint app src server tests index.ts vite.config.ts vitest.config.ts react-router.config.ts",
     "test": "vitest run --project unit --project dom --passWithNoTests",
+    "test:agent:live": "bun run build && bun tests/integration/live-trip-read-tools.ts && playwright test --config playwright.live.config.ts",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
     "db:generate": "bash scripts/with-env.sh bunx prisma generate",

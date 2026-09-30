@@ -26,6 +26,27 @@ afterEach(async () => {
 });
 
 describe("DietaryCell", () => {
+  it("expands an existing multiline note as soon as editing opens", async () => {
+    savedNotes = "No nuts.\nNo sesame.\nUse separate utensils.";
+
+    // happy-dom has no layout engine; supply the browser's measured content height.
+    const height = vi.spyOn(HTMLTextAreaElement.prototype, "scrollHeight", "get").mockReturnValue(96);
+
+    try {
+      await act(async () => { await router.revalidate(); });
+      await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
+      await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Edit dietary needs for Ada Lovelace"]')!.click(); });
+
+      const textarea = container.querySelector<HTMLTextAreaElement>("textarea")!;
+
+      expect(textarea.value).toBe(savedNotes);
+      expect(Number.parseFloat(textarea.style.height)).toBeGreaterThanOrEqual(96);
+      expect(submitted).toEqual([]);
+    } finally {
+      height.mockRestore();
+    }
+  });
+
   it("opens on click and submits the edited text with Enter", async () => {
     await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
     await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Edit dietary needs for Ada Lovelace"]')!.click(); });

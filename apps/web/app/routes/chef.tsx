@@ -31,7 +31,7 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <thead><tr><th scope="col">Guest</th><th scope="col">Allergies / dietary needs</th></tr></thead>
       <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row">{guestInstagramUrl(guest.displayName)
         ? <a href={guestInstagramUrl(guest.displayName)} target="_blank" rel="noopener noreferrer">{guest.displayName}</a>
-        : guest.displayName}</th><td><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
+        : guest.displayName}</th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
     </table></div>
   </section>;
 }

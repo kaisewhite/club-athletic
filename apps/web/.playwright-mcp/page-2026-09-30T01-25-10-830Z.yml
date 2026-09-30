@@ -1,0 +1,186 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New chat" [ref=e4]:
+      - img [ref=e5]
+      - text: New chat
+    - generic [ref=e7]: Trip pages
+    - navigation "Trip pages" [ref=e8]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+      - link "FAQ" [ref=e10] [cursor=pointer]:
+        - /url: /faq
+      - link "Schedule" [ref=e11] [cursor=pointer]:
+        - /url: /schedule
+      - link "Flights" [ref=e12] [cursor=pointer]:
+        - /url: /flights
+      - link "Shuttle" [ref=e13] [cursor=pointer]:
+        - /url: /shuttle
+      - link "Chalet" [ref=e14] [cursor=pointer]:
+        - /url: /chalet
+      - link "Rooms" [ref=e15] [cursor=pointer]:
+        - /url: /rooms
+      - link "Pricing" [ref=e16] [cursor=pointer]:
+        - /url: /spots
+      - link "Chef" [ref=e17] [cursor=pointer]:
+        - /url: /chef
+      - link "Tasks" [ref=e18] [cursor=pointer]:
+        - /url: /tasks
+      - link "Links" [ref=e19] [cursor=pointer]:
+        - /url: /links
+  - main [ref=e20]:
+    - region "Chef." [ref=e22]:
+      - heading "Chef." [level=2] [ref=e23]
+      - paragraph [ref=e24]: 6 breakfasts and 5 dinners at the chalet.
+      - generic [ref=e25]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: First meal
+          - generic [ref=e28]: Dinner, Sat 30
+        - generic [ref=e29]:
+          - generic [ref=e30]: Last dinner
+          - generic [ref=e31]: Fri 5 Feb
+        - generic [ref=e32]:
+          - generic [ref=e33]: Last breakfast
+          - generic [ref=e34]: Fri 5 Feb
+      - table "Chef meal schedule" [ref=e36]:
+        - rowgroup [ref=e37]:
+          - row "Day Breakfast Dinner" [ref=e38]:
+            - columnheader "Day" [ref=e39]
+            - columnheader "Breakfast" [ref=e40]
+            - columnheader "Dinner" [ref=e41]
+        - rowgroup [ref=e42]:
+          - row "Sat 30 — Chef" [ref=e43]:
+            - rowheader "Sat 30" [ref=e44]
+            - cell "—" [ref=e45]
+            - cell "Chef" [ref=e46]
+          - row "Sun 31 Chef Chef" [ref=e47]:
+            - rowheader "Sun 31" [ref=e48]
+            - cell "Chef" [ref=e49]
+            - cell "Chef" [ref=e50]
+          - row "Mon 1 Chef Chef" [ref=e51]:
+            - rowheader "Mon 1" [ref=e52]
+            - cell "Chef" [ref=e53]
+            - cell "Chef" [ref=e54]
+          - row "Tue 2 Chef Chef" [ref=e55]:
+            - rowheader "Tue 2" [ref=e56]
+            - cell "Chef" [ref=e57]
+            - cell "Chef" [ref=e58]
+          - row "Wed 3 Chef —" [ref=e59]:
+            - rowheader "Wed 3" [ref=e60]
+            - cell "Chef" [ref=e61]
+            - cell "—" [ref=e62]
+          - row "Thu 4 Chef —" [ref=e63]:
+            - rowheader "Thu 4" [ref=e64]
+            - cell "Chef" [ref=e65]
+            - cell "—" [ref=e66]
+          - row "Fri 5 Chef Chef" [ref=e67]:
+            - rowheader "Fri 5" [ref=e68]
+            - cell "Chef" [ref=e69]
+            - cell "Chef" [ref=e70]
+          - row "Sat 6 — —" [ref=e71]:
+            - rowheader "Sat 6" [ref=e72]
+            - cell "—" [ref=e73]
+            - cell "—" [ref=e74]
+      - paragraph [ref=e75]: Add allergies or dietary needs in the table below before the trip.
+      - generic [ref=e76]:
+        - heading "Guest dietary requirements" [level=3] [ref=e77]
+        - button "Copy dietary requirements" [ref=e78] [cursor=pointer]: Copy
+      - table "Guest dietary requirements" [ref=e80]:
+        - rowgroup [ref=e81]:
+          - row "Guest Allergies / dietary needs" [ref=e82]:
+            - columnheader "Guest" [ref=e83]
+            - columnheader "Allergies / dietary needs" [ref=e84]
+        - rowgroup [ref=e85]:
+          - row "Amelia Drake Edit dietary needs for Amelia Drake" [ref=e86]:
+            - rowheader "Amelia Drake" [ref=e87]:
+              - link "Amelia Drake" [ref=e88] [cursor=pointer]:
+                - /url: https://www.instagram.com/ameliadrake33
+            - cell "Edit dietary needs for Amelia Drake" [ref=e89]:
+              - button "Edit dietary needs for Amelia Drake" [ref=e90]:
+                - generic [ref=e91]: Add allergies or dietary needs
+                - generic [ref=e92]: ✎
+          - row "Augustus Shewchuck Edit dietary needs for Augustus Shewchuck" [ref=e93]:
+            - rowheader "Augustus Shewchuck" [ref=e94]:
+              - link "Augustus Shewchuck" [ref=e95] [cursor=pointer]:
+                - /url: https://www.instagram.com/ashewchuck
+            - cell "Edit dietary needs for Augustus Shewchuck" [ref=e96]:
+              - button "Edit dietary needs for Augustus Shewchuck" [ref=e97]:
+                - generic [ref=e98]: Add allergies or dietary needs
+                - generic [ref=e99]: ✎
+          - row "Christie Navarre Edit dietary needs for Christie Navarre" [ref=e100]:
+            - rowheader "Christie Navarre" [ref=e101]:
+              - link "Christie Navarre" [ref=e102] [cursor=pointer]:
+                - /url: https://www.instagram.com/xtnavarre
+            - cell "Edit dietary needs for Christie Navarre" [ref=e103]:
+              - button "Edit dietary needs for Christie Navarre" [ref=e104]:
+                - generic [ref=e105]: Add allergies or dietary needs
+                - generic [ref=e106]: ✎
+          - row "Christine Calvo Edit dietary needs for Christine Calvo" [ref=e107]:
+            - rowheader "Christine Calvo" [ref=e108]:
+              - link "Christine Calvo" [ref=e109] [cursor=pointer]:
+                - /url: https://www.instagram.com/christinecalvo_
+            - cell "Edit dietary needs for Christine Calvo" [ref=e110]:
+              - button "Edit dietary needs for Christine Calvo" [ref=e111]:
+                - generic [ref=e112]: Add allergies or dietary needs
+                - generic [ref=e113]: ✎
+          - row "Kaise Edit dietary needs for Kaise" [ref=e114]:
+            - rowheader "Kaise" [ref=e115]:
+              - link "Kaise" [ref=e116] [cursor=pointer]:
+                - /url: https://www.instagram.com/kaise.white
+            - cell "Edit dietary needs for Kaise" [ref=e117]:
+              - button "Edit dietary needs for Kaise" [ref=e118]:
+                - generic [ref=e119]: Add allergies or dietary needs
+                - generic [ref=e120]: ✎
+          - row "Kristy Kelly Edit dietary needs for Kristy Kelly" [ref=e121]:
+            - rowheader "Kristy Kelly" [ref=e122]:
+              - link "Kristy Kelly" [ref=e123] [cursor=pointer]:
+                - /url: https://www.instagram.com/kristyke11y
+            - cell "Edit dietary needs for Kristy Kelly" [ref=e124]:
+              - button "Edit dietary needs for Kristy Kelly" [ref=e125]:
+                - generic [ref=e126]: Add allergies or dietary needs
+                - generic [ref=e127]: ✎
+          - row "Kristy Khoury Edit dietary needs for Kristy Khoury" [ref=e128]:
+            - rowheader "Kristy Khoury" [ref=e129]:
+              - link "Kristy Khoury" [ref=e130] [cursor=pointer]:
+                - /url: https://www.instagram.com/kristy.l.khoury
+            - cell "Edit dietary needs for Kristy Khoury" [ref=e131]:
+              - button "Edit dietary needs for Kristy Khoury" [ref=e132]:
+                - generic [ref=e133]: Add allergies or dietary needs
+                - generic [ref=e134]: ✎
+          - row "Olajuwon Jones Edit dietary needs for Olajuwon Jones" [ref=e135]:
+            - rowheader "Olajuwon Jones" [ref=e136]:
+              - link "Olajuwon Jones" [ref=e137] [cursor=pointer]:
+                - /url: https://www.instagram.com/juice_jones1
+            - cell "Edit dietary needs for Olajuwon Jones" [ref=e138]:
+              - button "Edit dietary needs for Olajuwon Jones" [ref=e139]:
+                - generic [ref=e140]: Add allergies or dietary needs
+                - generic [ref=e141]: ✎
+          - row "Pete F. Edit dietary needs for Pete F." [ref=e142]:
+            - rowheader "Pete F." [ref=e143]
+            - cell "Edit dietary needs for Pete F." [ref=e144]:
+              - button "Edit dietary needs for Pete F." [ref=e145]:
+                - generic [ref=e146]: Add allergies or dietary needs
+                - generic [ref=e147]: ✎
+          - row "Ted Delcima Edit dietary needs for Ted Delcima" [ref=e148]:
+            - rowheader "Ted Delcima" [ref=e149]:
+              - link "Ted Delcima" [ref=e150] [cursor=pointer]:
+                - /url: https://www.instagram.com/tedscorner_
+            - cell "Edit dietary needs for Ted Delcima" [ref=e151]:
+              - button "Edit dietary needs for Ted Delcima" [ref=e152]:
+                - generic [ref=e153]: Add allergies or dietary needs
+                - generic [ref=e154]: ✎
+          - row "Valeriia Stobolva Edit dietary needs for Valeriia Stobolva" [ref=e155]:
+            - rowheader "Valeriia Stobolva" [ref=e156]:
+              - link "Valeriia Stobolva" [ref=e157] [cursor=pointer]:
+                - /url: https://www.instagram.com/valeriiastolbova
+            - cell "Edit dietary needs for Valeriia Stobolva" [ref=e158]:
+              - button "Edit dietary needs for Valeriia Stobolva" [ref=e159]:
+                - generic [ref=e160]: Add allergies or dietary needs
+                - generic [ref=e161]: ✎
+          - row "Wayne Martindale Edit dietary needs for Wayne Martindale" [ref=e162]:
+            - rowheader "Wayne Martindale" [ref=e163]:
+              - link "Wayne Martindale" [ref=e164] [cursor=pointer]:
+                - /url: https://www.instagram.com/_wayne.em_
+            - cell "Edit dietary needs for Wayne Martindale" [ref=e165]:
+              - button "Edit dietary needs for Wayne Martindale" [ref=e166]:
+                - generic [ref=e167]: Add allergies or dietary needs
+                - generic [ref=e168]: ✎

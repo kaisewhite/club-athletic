@@ -17,10 +17,10 @@ export function FlightRecommendationsSection({ sections }: { sections: FlightRec
         <thead><tr><th scope="col">Flight</th><th scope="col">Route</th><th scope="col">Departs</th><th scope="col">Arrives</th><th scope="col">Group shuttle</th></tr></thead>
         <tbody>{section.options.map((option) => <tr key={option.id} data-fits={option.fitsShuttle ?? undefined}>
           <th scope="row">{option.carrier}</th>
-          <td className="flight-rec-route">{option.route}</td>
-          <td>{option.departs}</td>
-          <td>{option.arrives}</td>
-          <td className="flight-rec-verdict">
+          <td className="flight-rec-route" data-label="Route">{option.route}</td>
+          <td data-label="Departs">{option.departs}</td>
+          <td data-label="Arrives">{option.arrives}</td>
+          <td className="flight-rec-verdict" data-label="Group shuttle">
             {option.fitsShuttle === true && <span className="flight-rec-yes">Yes</span>}
             {option.fitsShuttle === false && <span className="flight-rec-no">No</span>}
             {option.note && <span className="flight-rec-note">{option.fitsShuttle === null ? "" : " · "}{option.note}</span>}

@@ -1,0 +1,323 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New chat" [ref=e4]:
+      - img [ref=e5]
+      - text: New chat
+    - generic [ref=e7]: Trip pages
+    - navigation "Trip pages" [ref=e8]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+      - link "FAQ" [ref=e10] [cursor=pointer]:
+        - /url: /faq
+      - link "Schedule" [ref=e11] [cursor=pointer]:
+        - /url: /schedule
+      - link "Flights" [ref=e12] [cursor=pointer]:
+        - /url: /flights
+      - link "Shuttle" [ref=e13] [cursor=pointer]:
+        - /url: /shuttle
+      - link "Chalet" [ref=e14] [cursor=pointer]:
+        - /url: /chalet
+      - link "Rooms" [ref=e15] [cursor=pointer]:
+        - /url: /rooms
+      - link "Pricing" [ref=e16] [cursor=pointer]:
+        - /url: /spots
+      - link "Chef" [ref=e17] [cursor=pointer]:
+        - /url: /chef
+      - link "Tasks" [ref=e18] [cursor=pointer]:
+        - /url: /tasks
+      - link "Links" [ref=e19] [cursor=pointer]:
+        - /url: /links
+  - main [ref=e20]:
+    - region "Flights." [ref=e22]:
+      - heading "Flights." [level=2] [ref=e23]
+      - paragraph [ref=e24]: Everything is timed around the group shuttle at Geneva (GVA).
+      - generic [ref=e25]:
+        - article [ref=e26]:
+          - heading "Getting there · Saturday 30 Jan" [level=3] [ref=e27]
+          - generic [ref=e28]: 09:30
+          - generic [ref=e29]: Your flight needs to land in Geneva by 9:30 AM
+          - paragraph [ref=e30]: Aim for 8:30 AM or earlier for bags and delays. Shuttle leaves Geneva Airport (GVA) 10:30–11:00.
+          - paragraph [ref=e31]: Land later and you'll likely miss it — plan your own transfer.
+        - article [ref=e32]:
+          - heading "Going home · Saturday 6 Feb" [level=3] [ref=e33]
+          - generic [ref=e34]: 10:00
+          - generic [ref=e35]: Book a flight leaving Geneva at 10:00 AM or later
+          - paragraph [ref=e36]: Chalet pickup 04:00, ~2.5 h to GVA, then check-in and security.
+          - paragraph [ref=e37]: Anything earlier and you won't make it through security in time.
+        - article [ref=e38]:
+          - heading "Option · Arrive Friday" [level=3] [ref=e39]
+          - generic [ref=e40]: Overnight near GVA
+          - paragraph [ref=e41]: Fly Thursday evening, land Friday morning, sleep by the airport, meet the shuttle Saturday. Flights in the recommendations below.
+          - generic [ref=e42]:
+            - generic [ref=e43]:
+              - link "Geneva Marriott" [ref=e44] [cursor=pointer]:
+                - /url: https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/
+              - generic [ref=e45]: — Airport hotel if you fly in a day early — free shuttle, under 5 min.
+            - generic [ref=e46]:
+              - link "Hilton Geneva" [ref=e47] [cursor=pointer]:
+                - /url: https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/
+              - generic [ref=e48]: — Airport hotel if you fly in a day early — free shuttle every ~20 min, 4:20 AM–11:40 PM.
+      - region "Recommended flights · New York" [ref=e49]:
+        - heading "Recommended flights · New York" [level=3] [ref=e50]
+        - article [ref=e51]:
+          - heading "Option 1 — Fly Friday night, arrive Saturday" [level=4] [ref=e52]
+          - paragraph [ref=e53]: Two nonstops from New York land in time for the group shuttle. Be on the ground at GVA by 9:30 AM.
+          - table "Option 1 — Fly Friday night, arrive Saturday" [ref=e55]:
+            - rowgroup [ref=e56]:
+              - row "Flight Route Departs Arrives Group shuttle" [ref=e57]:
+                - columnheader "Flight" [ref=e58]
+                - columnheader "Route" [ref=e59]
+                - columnheader "Departs" [ref=e60]
+                - columnheader "Arrives" [ref=e61]
+                - columnheader "Group shuttle" [ref=e62]
+            - rowgroup [ref=e63]:
+              - row "United UA956 EWR → GVA 5:30 PM Fri 7:30 AM Sat Yes · Best buffer" [ref=e64]:
+                - rowheader "United UA956" [ref=e65]
+                - cell "EWR → GVA" [ref=e66]
+                - cell "5:30 PM Fri" [ref=e67]
+                - cell "7:30 AM Sat" [ref=e68]
+                - cell "Yes · Best buffer" [ref=e69]:
+                  - text: "Yes"
+                  - generic [ref=e70]: · Best buffer
+              - row "SWISS LX23 JFK → GVA 7:25 PM Fri 9:15 AM Sat Yes · Fits the window; less buffer" [ref=e71]:
+                - rowheader "SWISS LX23" [ref=e72]
+                - cell "JFK → GVA" [ref=e73]
+                - cell "7:25 PM Fri" [ref=e74]
+                - cell "9:15 AM Sat" [ref=e75]
+                - cell "Yes · Fits the window; less buffer" [ref=e76]:
+                  - text: "Yes"
+                  - generic [ref=e77]: · Fits the window; less buffer
+          - paragraph [ref=e78]: If your flight is scheduled to arrive after 9:30 AM, arrange separate transportation to the chalet.
+        - article [ref=e79]:
+          - heading "Option 2 — Arrive Friday for extra buffer" [level=4] [ref=e80]
+          - paragraph [ref=e81]: "Optional, but the usual plan: fly Thursday, sleep by the airport Friday, meet the shuttle Saturday morning. A full day of cover for weather or delays. The organizer is on this one."
+          - table "Option 2 — Arrive Friday for extra buffer" [ref=e83]:
+            - rowgroup [ref=e84]:
+              - row "Flight Route Departs Arrives Group shuttle" [ref=e85]:
+                - columnheader "Flight" [ref=e86]
+                - columnheader "Route" [ref=e87]
+                - columnheader "Departs" [ref=e88]
+                - columnheader "Arrives" [ref=e89]
+                - columnheader "Group shuttle" [ref=e90]
+            - rowgroup [ref=e91]:
+              - row "United UA956 EWR → GVA 5:35 PM Thu 7:25 AM Fri Yes · Stay near GVA, shuttle Saturday" [ref=e92]:
+                - rowheader "United UA956" [ref=e93]
+                - cell "EWR → GVA" [ref=e94]
+                - cell "5:35 PM Thu" [ref=e95]
+                - cell "7:25 AM Fri" [ref=e96]
+                - cell "Yes · Stay near GVA, shuttle Saturday" [ref=e97]:
+                  - text: "Yes"
+                  - generic [ref=e98]: · Stay near GVA, shuttle Saturday
+          - paragraph [ref=e99]: Airport hotels with free shuttles are listed above.
+        - article [ref=e100]:
+          - heading "Return — Saturday 6 February" [level=4] [ref=e101]
+          - paragraph [ref=e102]: Pickup is 4:00 AM, about 2.5 hours to GVA. Book a flight departing GVA at 10:00 AM or later.
+          - table "Return — Saturday 6 February" [ref=e104]:
+            - rowgroup [ref=e105]:
+              - row "Flight Route Departs Arrives Group shuttle" [ref=e106]:
+                - columnheader "Flight" [ref=e107]
+                - columnheader "Route" [ref=e108]
+                - columnheader "Departs" [ref=e109]
+                - columnheader "Arrives" [ref=e110]
+                - columnheader "Group shuttle" [ref=e111]
+            - rowgroup [ref=e112]:
+              - row "SWISS LX22 GVA → JFK 11:40 AM 2:20 PM Yes · Room to spare" [ref=e113]:
+                - rowheader "SWISS LX22" [ref=e114]
+                - cell "GVA → JFK" [ref=e115]
+                - cell "11:40 AM" [ref=e116]
+                - cell "2:20 PM" [ref=e117]
+                - cell "Yes · Room to spare" [ref=e118]:
+                  - text: "Yes"
+                  - generic [ref=e119]: · Room to spare
+              - row "United UA957 GVA → EWR 9:15 AM 12:20 PM No · Separate transfer required" [ref=e120]:
+                - rowheader "United UA957" [ref=e121]
+                - cell "GVA → EWR" [ref=e122]
+                - cell "9:15 AM" [ref=e123]
+                - cell "12:20 PM" [ref=e124]
+                - cell "No · Separate transfer required" [ref=e125]:
+                  - text: "No"
+                  - generic [ref=e126]: · Separate transfer required
+          - paragraph [ref=e127]: Schedules change — confirm exact times when booking.
+      - region "Group flights" [ref=e128]:
+        - heading "Group flights" [level=3] [ref=e129]
+        - paragraph [ref=e130]: 1 of 12 booked · 0 miss the shuttle
+        - paragraph [ref=e131]: Booked means both directions are recorded. Flight times use the airport’s local clock.
+        - table "Group flights" [ref=e133]:
+          - rowgroup [ref=e134]:
+            - row "Arriving Departing" [ref=e135]:
+              - columnheader [ref=e136]
+              - columnheader "Arriving" [ref=e137]
+              - columnheader "Departing" [ref=e138]
+              - columnheader [ref=e139]
+            - row "Sort by Guest Sort by Flight Sort by Departs Sort by Lands GVA, currently ascending Sort by Flight Sort by Departs GVA Sort by Arrives Sort by Status" [ref=e140]:
+              - columnheader "Sort by Guest" [ref=e141]:
+                - button "Sort by Guest" [ref=e142] [cursor=pointer]: Guest ↕
+              - columnheader "Sort by Flight" [ref=e143]:
+                - button "Sort by Flight" [ref=e144] [cursor=pointer]: Flight ↕
+              - columnheader "Sort by Departs" [ref=e145]:
+                - button "Sort by Departs" [ref=e146] [cursor=pointer]: Departs ↕
+              - columnheader "Sort by Lands GVA, currently ascending" [ref=e147]:
+                - button "Sort by Lands GVA, currently ascending" [ref=e148] [cursor=pointer]: Lands GVA ↑
+              - columnheader "Sort by Flight" [ref=e149]:
+                - button "Sort by Flight" [ref=e150] [cursor=pointer]: Flight ↕
+              - columnheader "Sort by Departs GVA" [ref=e151]:
+                - button "Sort by Departs GVA" [ref=e152] [cursor=pointer]: Departs GVA ↕
+              - columnheader "Sort by Arrives" [ref=e153]:
+                - button "Sort by Arrives" [ref=e154] [cursor=pointer]: Arrives ↕
+              - columnheader "Sort by Status" [ref=e155]:
+                - button "Sort by Status" [ref=e156] [cursor=pointer]: Status ↕
+          - rowgroup [ref=e157]:
+            - row "Kaise Arriving Friday EWR → GVA · United UA956 Thu 28 Jan · 17:35 Fri 29 Jan · 07:25 — — — Not booked" [ref=e158]:
+              - rowheader "Kaise Arriving Friday" [ref=e159]:
+                - link "Kaise" [ref=e160] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Kaise%20land%3F
+                - generic [ref=e161]: Arriving Friday
+              - cell "EWR → GVA · United UA956" [ref=e162]:
+                - generic [ref=e163]: EWR → GVA
+                - text: · United UA956
+              - cell "Thu 28 Jan · 17:35" [ref=e164]:
+                - time [ref=e165]: Thu 28 Jan · 17:35
+              - cell "Fri 29 Jan · 07:25" [ref=e166]:
+                - time [ref=e167]: Fri 29 Jan · 07:25
+              - cell "—" [ref=e168]
+              - cell "—" [ref=e169]
+              - cell "—" [ref=e170]
+              - cell "Not booked" [ref=e171]
+            - row "Olajuwon Jones Arriving Friday EWR → GVA · United UA956 Thu 28 Jan · 17:35 Fri 29 Jan · 07:25 GVA → IAD · United UA749 Sat 6 Feb · 11:20 Sat 6 Feb · 14:55 On the shuttle" [ref=e172]:
+              - rowheader "Olajuwon Jones Arriving Friday" [ref=e173]:
+                - link "Olajuwon Jones" [ref=e174] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Olajuwon%20Jones%20land%3F
+                - generic [ref=e175]: Arriving Friday
+              - cell "EWR → GVA · United UA956" [ref=e176]:
+                - generic [ref=e177]: EWR → GVA
+                - text: · United UA956
+              - cell "Thu 28 Jan · 17:35" [ref=e178]:
+                - time [ref=e179]: Thu 28 Jan · 17:35
+              - cell "Fri 29 Jan · 07:25" [ref=e180]:
+                - time [ref=e181]: Fri 29 Jan · 07:25
+              - cell "GVA → IAD · United UA749" [ref=e182]:
+                - generic [ref=e183]: GVA → IAD
+                - text: · United UA749
+              - cell "Sat 6 Feb · 11:20" [ref=e184]:
+                - time [ref=e185]: Sat 6 Feb · 11:20
+              - cell "Sat 6 Feb · 14:55" [ref=e186]:
+                - time [ref=e187]: Sat 6 Feb · 14:55
+              - cell "On the shuttle" [ref=e188]
+            - row "Amelia Drake — — — — — — Not booked" [ref=e189]:
+              - rowheader "Amelia Drake" [ref=e190]:
+                - link "Amelia Drake" [ref=e191] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Amelia%20Drake%20land%3F
+              - cell "—" [ref=e192]
+              - cell "—" [ref=e193]
+              - cell "—" [ref=e194]
+              - cell "—" [ref=e195]
+              - cell "—" [ref=e196]
+              - cell "—" [ref=e197]
+              - cell "Not booked" [ref=e198]
+            - row "Augustus Shewchuck — — — GVA → MIA · SWISS LX64 via ZRH Sat 6 Feb · 10:35 Sat 6 Feb · 17:30 Not booked" [ref=e199]:
+              - rowheader "Augustus Shewchuck" [ref=e200]:
+                - link "Augustus Shewchuck" [ref=e201] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Augustus%20Shewchuck%20land%3F
+              - cell "—" [ref=e202]
+              - cell "—" [ref=e203]
+              - cell "—" [ref=e204]
+              - cell "GVA → MIA · SWISS LX64 via ZRH" [ref=e205]:
+                - generic [ref=e206]: GVA → MIA
+                - text: · SWISS LX64 via ZRH
+              - cell "Sat 6 Feb · 10:35" [ref=e207]:
+                - time [ref=e208]: Sat 6 Feb · 10:35
+              - cell "Sat 6 Feb · 17:30" [ref=e209]:
+                - time [ref=e210]: Sat 6 Feb · 17:30
+              - cell "Not booked" [ref=e211]
+            - row "Christie Navarre — — — — — — Not booked" [ref=e212]:
+              - rowheader "Christie Navarre" [ref=e213]:
+                - link "Christie Navarre" [ref=e214] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Christie%20Navarre%20land%3F
+              - cell "—" [ref=e215]
+              - cell "—" [ref=e216]
+              - cell "—" [ref=e217]
+              - cell "—" [ref=e218]
+              - cell "—" [ref=e219]
+              - cell "—" [ref=e220]
+              - cell "Not booked" [ref=e221]
+            - row "Christine Calvo — — — — — — Not booked" [ref=e222]:
+              - rowheader "Christine Calvo" [ref=e223]:
+                - link "Christine Calvo" [ref=e224] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Christine%20Calvo%20land%3F
+              - cell "—" [ref=e225]
+              - cell "—" [ref=e226]
+              - cell "—" [ref=e227]
+              - cell "—" [ref=e228]
+              - cell "—" [ref=e229]
+              - cell "—" [ref=e230]
+              - cell "Not booked" [ref=e231]
+            - row "Kristy Kelly — — — — — — Not booked" [ref=e232]:
+              - rowheader "Kristy Kelly" [ref=e233]:
+                - link "Kristy Kelly" [ref=e234] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Kristy%20Kelly%20land%3F
+              - cell "—" [ref=e235]
+              - cell "—" [ref=e236]
+              - cell "—" [ref=e237]
+              - cell "—" [ref=e238]
+              - cell "—" [ref=e239]
+              - cell "—" [ref=e240]
+              - cell "Not booked" [ref=e241]
+            - row "Kristy Khoury — — — — — — Not booked" [ref=e242]:
+              - rowheader "Kristy Khoury" [ref=e243]:
+                - link "Kristy Khoury" [ref=e244] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Kristy%20Khoury%20land%3F
+              - cell "—" [ref=e245]
+              - cell "—" [ref=e246]
+              - cell "—" [ref=e247]
+              - cell "—" [ref=e248]
+              - cell "—" [ref=e249]
+              - cell "—" [ref=e250]
+              - cell "Not booked" [ref=e251]
+            - row "Pete F. — — — — — — Not booked" [ref=e252]:
+              - rowheader "Pete F." [ref=e253]:
+                - link "Pete F." [ref=e254] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Pete%20F.%20land%3F
+              - cell "—" [ref=e255]
+              - cell "—" [ref=e256]
+              - cell "—" [ref=e257]
+              - cell "—" [ref=e258]
+              - cell "—" [ref=e259]
+              - cell "—" [ref=e260]
+              - cell "Not booked" [ref=e261]
+            - row "Ted Delcima — — — — — — Not booked" [ref=e262]:
+              - rowheader "Ted Delcima" [ref=e263]:
+                - link "Ted Delcima" [ref=e264] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Ted%20Delcima%20land%3F
+              - cell "—" [ref=e265]
+              - cell "—" [ref=e266]
+              - cell "—" [ref=e267]
+              - cell "—" [ref=e268]
+              - cell "—" [ref=e269]
+              - cell "—" [ref=e270]
+              - cell "Not booked" [ref=e271]
+            - row "Valeriia Stobolva — — — GVA → MIA · SWISS LX64 via ZRH Sat 6 Feb · 10:35 Sat 6 Feb · 17:30 Not booked" [ref=e272]:
+              - rowheader "Valeriia Stobolva" [ref=e273]:
+                - link "Valeriia Stobolva" [ref=e274] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Valeriia%20Stobolva%20land%3F
+              - cell "—" [ref=e275]
+              - cell "—" [ref=e276]
+              - cell "—" [ref=e277]
+              - cell "GVA → MIA · SWISS LX64 via ZRH" [ref=e278]:
+                - generic [ref=e279]: GVA → MIA
+                - text: · SWISS LX64 via ZRH
+              - cell "Sat 6 Feb · 10:35" [ref=e280]:
+                - time [ref=e281]: Sat 6 Feb · 10:35
+              - cell "Sat 6 Feb · 17:30" [ref=e282]:
+                - time [ref=e283]: Sat 6 Feb · 17:30
+              - cell "Not booked" [ref=e284]
+            - row "Wayne Martindale — — — — — — Not booked" [ref=e285]:
+              - rowheader "Wayne Martindale" [ref=e286]:
+                - link "Wayne Martindale" [ref=e287] [cursor=pointer]:
+                  - /url: /?question=When%20does%20Wayne%20Martindale%20land%3F
+              - cell "—" [ref=e288]
+              - cell "—" [ref=e289]
+              - cell "—" [ref=e290]
+              - cell "—" [ref=e291]
+              - cell "—" [ref=e292]
+              - cell "—" [ref=e293]
+              - cell "Not booked" [ref=e294]

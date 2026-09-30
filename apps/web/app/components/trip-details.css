@@ -139,25 +139,91 @@
 
   /* ---- Chef meal table (§2.10). The three-column grid gives each cell ~93px
      at 320px. Below the seam it becomes one row per day in the same shape as a
-     Schedule row (§2.4): the day label in a 96px left column, breakfast and
+     Schedule row (§2.4): the day label in a compact left column, breakfast and
      dinner stacked in the right one, each named by its `data-meal` label since
-     the header row is gone. Only `.chef-meal-table` is restyled — the dietary
-     table on the same page stays a table. */
+     the header row is gone. Dietary records have their own layout below. */
   .chef-meal-table,
   .chef-meal-table tbody { display: block; }
   .chef-meal-table thead { display: none; }
   .chef-meal-table tbody tr {
     display: grid;
-    grid-template-columns: 96px 1fr;
-    gap: 4px 16px;
+    grid-template-columns: 64px minmax(0, 1fr);
+    gap: 8px 12px;
     align-items: baseline;
-    padding: 14px 18px;
+    padding: 16px;
   }
   .chef-meal-table tbody th,
-  .chef-meal-table tbody td { display: block; padding: 0; }
+  .chef-meal-table tbody td { display: block; min-width: 0; padding: 0; overflow-wrap: anywhere; }
   .chef-meal-table tbody th { grid-column: 1; grid-row: 1 / span 2; font-size: 15px; }
   .chef-meal-table tbody td { grid-column: 2; }
   .chef-meal-table tbody td::before { content: attr(data-meal) ": "; color: var(--text-dim); }
+
+  /* Flight recommendations have five narrow desktop columns. On phones each
+     option becomes a readable record: airline and route, paired departure and
+     arrival times, then the shuttle verdict across the bottom. */
+  .flight-rec-table,
+  .flight-rec-table tbody { display: block; }
+  .flight-rec-table thead { display: none; }
+  .flight-rec-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 12px 16px;
+    padding: 14px 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .flight-rec-table tbody th[scope="row"] {
+    grid-column: 1 / -1;
+    padding: 0;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  .flight-rec-table tbody td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+    font-size: 14px;
+  }
+  .flight-rec-table tbody td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .flight-rec-table .flight-rec-verdict { grid-column: 1 / -1; min-width: 0; }
+  .flight-rec-table .flight-rec-route { grid-column: 1 / -1; white-space: normal; }
+
+  /* Dietary notes can be long and editable. Give each guest their own row
+     card, with the editable field below the guest name at every phone width. */
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table),
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody { display: block; }
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) thead { display: none; }
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody tr {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 6px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody th,
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody td {
+    display: block;
+    min-width: 0;
+    padding: 0;
+    overflow-wrap: anywhere;
+  }
+  .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody td::before {
+    content: attr(data-label);
+    display: block;
+    margin-bottom: 4px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
 
   /* ---- Tasks (§2.11). `flex: 1 0 100%` makes the name claim the whole first
      line, so the three pills always wrap underneath it instead of competing
@@ -174,5 +240,8 @@
   .link-row { min-height: 44px; }
   /* §2.15 touch targets for the editable dietary cells and the copy button. */
   .dietary-cell-button { min-height: 44px; }
+  .dietary-cell-empty { min-width: 0; }
+  .dietary-cell-edit { flex: none; opacity: 1; }
+  .dietary-cell-textarea { min-height: 44px; font-size: 16px; line-height: 1.5; overflow-y: auto; }
   .dietary-copy-button { min-height: 44px; min-width: 44px; }
 }

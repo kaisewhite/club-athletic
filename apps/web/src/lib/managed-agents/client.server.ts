@@ -66,7 +66,11 @@ export interface ManagedAgentsProvider {
 }
 export function createManagedAgentsClient(): ManagedAgentsProvider {
   const config = parseManagedAgentsConfig();
-  const client = new Anthropic({ apiKey: config.anthropicApiKey, maxRetries: 0, timeout: 30_000 });
+  // Session creation and event sends are POSTs; the SDK supplies an idempotency
+  // key and retries transient connection, rate-limit, and server errors. Keep
+  // its standard retry budget enabled so a temporary provider blip does not
+  // immediately surface as a failed chat send.
+  const client = new Anthropic({ apiKey: config.anthropicApiKey, maxRetries: 2, timeout: 30_000 });
   const betas = [MANAGED_AGENTS_BETA];
   return {
     async create(text, conversationId, signal) {

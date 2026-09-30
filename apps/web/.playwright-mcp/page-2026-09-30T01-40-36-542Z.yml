@@ -1,0 +1,119 @@
+- generic [ref=e2]:
+  - complementary [ref=e3]:
+    - button "New chat" [ref=e4]:
+      - img [ref=e5]
+      - text: New chat
+    - generic [ref=e7]: Trip pages
+    - navigation "Trip pages" [ref=e8]:
+      - link "Home" [ref=e9] [cursor=pointer]:
+        - /url: /
+      - link "FAQ" [ref=e10] [cursor=pointer]:
+        - /url: /faq
+      - link "Schedule" [ref=e11] [cursor=pointer]:
+        - /url: /schedule
+      - link "Flights" [ref=e12] [cursor=pointer]:
+        - /url: /flights
+      - link "Shuttle" [ref=e13] [cursor=pointer]:
+        - /url: /shuttle
+      - link "Chalet" [ref=e14] [cursor=pointer]:
+        - /url: /chalet
+      - link "Rooms" [ref=e15] [cursor=pointer]:
+        - /url: /rooms
+      - link "Pricing" [ref=e16] [cursor=pointer]:
+        - /url: /spots
+      - link "Chef" [ref=e17] [cursor=pointer]:
+        - /url: /chef
+      - link "Tasks" [ref=e18] [cursor=pointer]:
+        - /url: /tasks
+      - link "Links" [ref=e19] [cursor=pointer]:
+        - /url: /links
+  - main [ref=e20]:
+    - region "How can I help with the trip?" [ref=e22]:
+      - generic [ref=e23]:
+        - region "Schedule for the week" [ref=e24]:
+          - generic [ref=e25]:
+            - generic [ref=e26]: This week
+            - link "Full schedule →" [ref=e28] [cursor=pointer]:
+              - /url: /schedule
+          - list [ref=e29]:
+            - listitem [ref=e30]: "Sat 30: Arrival — shuttle from GVA, settle in."
+            - listitem [ref=e31]: "Sun 31: Chill drinks at Le Rond Point des Pistes."
+            - listitem [ref=e32]: "Mon 1: La Folie Douce, Méribel–Courchevel."
+            - listitem [ref=e33]: "Tue 2: TBD."
+            - listitem [ref=e34]: "Wed 3: Le Cap Horn, Courchevel 1850."
+            - listitem [ref=e35]: "Thu 4: Final night out."
+            - listitem [ref=e36]: "Fri 5: Open — last ski day."
+            - listitem [ref=e37]: "Sat 6: Departure — shuttle to GVA."
+          - generic [ref=e39]:
+            - list [ref=e40]:
+              - listitem [ref=e41]:
+                - generic [ref=e42]: Sat 30
+                - generic [ref=e43]: Arrival — shuttle from GVA, settle in
+              - listitem [ref=e44]:
+                - generic [ref=e45]: Sun 31
+                - generic [ref=e46]: Chill drinks at Le Rond Point des Pistes
+              - listitem [ref=e47]:
+                - generic [ref=e48]: Mon 1
+                - generic [ref=e49]: La Folie Douce, Méribel–Courchevel
+              - listitem [ref=e50]:
+                - generic [ref=e51]: Tue 2
+                - generic [ref=e52]: TBD
+              - listitem [ref=e53]:
+                - generic [ref=e54]: Wed 3
+                - generic [ref=e55]: Le Cap Horn, Courchevel 1850
+              - listitem [ref=e56]:
+                - generic [ref=e57]: Thu 4
+                - generic [ref=e58]: Final night out
+              - listitem [ref=e59]:
+                - generic [ref=e60]: Fri 5
+                - generic [ref=e61]: Open — last ski day
+              - listitem [ref=e62]:
+                - generic [ref=e63]: Sat 6
+                - generic [ref=e64]: Departure — shuttle to GVA
+            - list [ref=e65]:
+              - listitem [ref=e66]:
+                - generic [ref=e67]: Sat 30
+                - generic [ref=e68]: Arrival — shuttle from GVA, settle in
+              - listitem [ref=e69]:
+                - generic [ref=e70]: Sun 31
+                - generic [ref=e71]: Chill drinks at Le Rond Point des Pistes
+              - listitem [ref=e72]:
+                - generic [ref=e73]: Mon 1
+                - generic [ref=e74]: La Folie Douce, Méribel–Courchevel
+              - listitem [ref=e75]:
+                - generic [ref=e76]: Tue 2
+                - generic [ref=e77]: TBD
+              - listitem [ref=e78]:
+                - generic [ref=e79]: Wed 3
+                - generic [ref=e80]: Le Cap Horn, Courchevel 1850
+              - listitem [ref=e81]:
+                - generic [ref=e82]: Thu 4
+                - generic [ref=e83]: Final night out
+              - listitem [ref=e84]:
+                - generic [ref=e85]: Fri 5
+                - generic [ref=e86]: Open — last ski day
+              - listitem [ref=e87]:
+                - generic [ref=e88]: Sat 6
+                - generic [ref=e89]: Departure — shuttle to GVA
+        - generic [ref=e90]:
+          - heading "How can I help with the trip?" [level=1] [ref=e91]
+          - paragraph [ref=e92]: Ask about the schedule, rooms, travel, or anything else you need.
+          - link "Browse frequently asked questions" [ref=e93] [cursor=pointer]:
+            - /url: /faq
+            - text: Browse frequently asked questions
+            - generic [ref=e94]: →
+      - generic [ref=e95]:
+        - button "Choose an image or PDF attachment"
+        - generic [ref=e96]:
+          - button "Attach an image or PDF" [ref=e97] [cursor=pointer]:
+            - img [ref=e98]
+          - textbox "Ask anything about the trip" [ref=e100]:
+            - /placeholder: Ask anything about the trip…
+          - button "Send" [disabled] [ref=e101]:
+            - img [ref=e102]
+        - generic [ref=e104]:
+          - button "What time do I need to land?" [ref=e105] [cursor=pointer]
+          - button "How much are the open spots?" [ref=e106] [cursor=pointer]
+          - button "Which nights is there no chef dinner?" [ref=e107] [cursor=pointer]
+          - button "What are we doing Monday?" [ref=e108] [cursor=pointer]
+          - button "Where am I sleeping?" [ref=e109] [cursor=pointer]

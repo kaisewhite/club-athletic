@@ -277,11 +277,11 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
     finally { if (lifetime.current) setStopping(false); }
   }
 
-  async function handleSend(override?: string) {
+  async function handleSend(override?: string, allowDuringTurn = false) {
     const text = override ?? (chatUi.draft.trim() ? chatUi.draft : attachment.file ? "Please read this attachment." : chatUi.draft);
-    // Q1: gate ALL guest entry points synchronously, including double clicks and
-    // suggestions. The API and shared reducer keep queue/interrupt semantics.
-    if (sendPending.current || busy || !capability.canSend || !text.trim()) return;
+    // A second POST must wait for the first acknowledgement. Once acknowledged,
+    // suggestion clicks can use the server's queue while the agent is answering.
+    if (sendPending.current || chatUi.phase === "sending" || (!allowDuringTurn && busy) || !capability.canSend || !text.trim()) return;
     sendPending.current = true;
     const attempt = ++sendAttempt.current;
     const frameAtSend = stateFrameRevision.current;
@@ -368,7 +368,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
       <ChatComposer attachment={attachment.file} onAttachmentChange={attachment.select} capability={capability} state={chatUi} busy={busy} stopping={stopping}
         inputRef={inputRef} onDraftChange={text => dispatchChat({ type: "draft", text })} onSend={() => void handleSend()}
         onStop={() => void handleStop()} />
-      <div className="suggestions navrow">{CHAT_SUGGESTIONS.map(question => <button type="button" key={question} disabled={busy || !capability.canSend} onClick={() => void handleSend(question)}>{question}</button>)}</div>
+      <div className="suggestions navrow">{CHAT_SUGGESTIONS.map(question => <button type="button" key={question} disabled={sendPending.current || chatUi.phase === "sending" || !capability.canSend} onClick={() => void handleSend(question, true)}>{question}</button>)}</div>
     </div>
   </>;
 }

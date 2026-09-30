@@ -1,54 +1,29 @@
-# `apps/aws` — infrastructure for the Club Athletic trip app
+# Club Athletic AWS infrastructure
 
-One CDK stack, `club-athletic-prod-cdk`, deploying `apps/web` as a Fargate service
-on Edge's shared production cluster and load balancer in account `736548610362`. Standalone project:
-its own `package.json`, `bun.lock`, `node_modules`, `tsconfig.json` and `.env`.
+Club Athletic runs entirely in management AWS account `366394957699` (`mostrom_mgmt`) in `us-east-1`. The workload is labeled `prod` because it serves the trip website; it is not deployed into a separate production or development account.
 
-The constructs, construct ids and resource names are edge's
-(`edge/apps/infrastructure/aws/resources/stacks/{shared,fargate/platform}`). edge
-splits them across devops, shared and fargate stacks because it deploys many apps;
-this is one app, so the same resources live in one stack — `lib/infra-stack.ts` —
-and CloudFormation orders them by dependency.
+## Resources
 
-## Layout
-
-| Path | Role |
+| Resource | Configuration |
 |---|---|
-| `bin/infra.ts` | CDK entry point, as edge's |
-| `lib/infra-stack.ts` | the stack |
-| `properties/index.ts` | project + service properties, edge's shape; one environment, `prod` |
-| `helpers/` | edge's `environment.ts` and `tag_resources`, verbatim |
-| `scripts/deploy.sh`, `scripts/push-secrets.sh` | edge's scripts, project name changed |
+| ECS cluster | `club-athletic` |
+| ECS service | `web` |
+| ECR repository | `club-athletic-web` (existing management repository) |
+| Secrets Manager | `club-athletic-web` (existing management secret) |
+| DNS | `meribel.xn--tshi-l3a.com`, hosted zone configured in `properties/index.ts` |
+| HTTPS listener | Club Athletic's own ALB and ACM certificate in management |
+| CodePipeline | `club-athletic-web`, GitHub `kaisewhite/club-athletic` `main` branch |
 
-## What the stack creates
+The infrastructure stack creates the Club Athletic cluster and web service, its task and execution roles, security groups, log group, target group, internet-facing load balancer, DNS-validated certificate, and DNS alias. It imports only the management VPC and existing management ECR repository and secret. The pipeline has Source, Build (Docker and tests), and Deploy stages, all within management; it has no cross-account roles or dev/prod stages.
 
-| Resource | Name |
-|---|---|
-| ECR repository | `club-athletic-web` |
-| Secrets Manager secret | `club-athletic-web` (created without a placeholder value; populate from `apps/web/.env` using the secure secret workflow) |
-| ECS task + execution roles | `club-athletic-web-ecs-task-role`, `club-athletic-web-ecs-execution-role` |
-| Log group | `ecs/container/club-athletic/prod/web` |
-| Fargate service | `club-athletic-web` on cluster `edge`, container `club-athletic-prod-web` |
-| Target group + listener rule | `club-athletic-web`, priority 20 on edge's HTTPS listener |
-| Public DNS | No Route 53 record is created by this stack. Create the `meribel.xn--tshi-l3a.com` alias manually in the management account after the service is healthy. |
+## Pipeline setup and deployment
 
-Imported from edge's production shared services (`prod-edge-*` exports): the HTTPS
-listener and load-balancer security group. The existing ECS cluster is imported by
-its name, `edge`, and the VPC is `vpc-00cf2fc1f07003d3b`. Nothing here creates a
-load balancer or certificate. No Cloud Map, no EFS, no peer-VPC ingress — one
-service, nothing calls it internally, nothing on disk.
+The management CodePipeline is the only routine application deployment path. Once the management infrastructure and pipeline have been bootstrapped, pushes to `main` start the pipeline. The Docker build publishes the image, the test action runs lint/tests/application build, and the deploy action updates the management ECS service and checks its health endpoint. Pipeline executions are queued so an older build cannot race a newer one.
 
-## Deploy
+The first-time bootstrap is performed with explicit CDK CLI commands from `apps/aws`, after confirming `AWS_PROFILE=mostrom_mgmt` resolves to account `366394957699`:
 
 ```sh
-bun install
-./scripts/deploy.sh                # cdk deploy to account 736548610362, profile mostrom_prod
-AWS_PROFILE=mostrom_prod ./scripts/push-secrets.sh web ../web/.env
-../web/scripts/deploy-local.sh prod
+cdk synth --profile mostrom_mgmt && cdk deploy --profile mostrom_mgmt --all --require-approval never
 ```
 
-Before the first service deployment, provision the production secret with the app's
-real values. The CDK stack creates it without a placeholder. Then deploy `main` to
-the production ECR repository. After the production service is healthy, create
-the public alias in the management account, then remove the old management-account
-service. Do not create that alias through CDK.
+Do not use `npm run build` or run a TypeScript emit build in this directory; use CDK synth and diff. After the initial bootstrap, deploy application changes by pushing to `main`, not with a manual image deployment script. Runtime configuration is read from the existing `club-athletic-web` secret. `scripts/push-secrets.sh` updates that secret when runtime values change.

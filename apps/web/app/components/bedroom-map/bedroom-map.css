@@ -126,3 +126,32 @@
 /* The floor codes drawn inside each plan are the sheet's ink colour, hardcoded;
    on the app's dark canvas they need the app's text colour instead. */
 .bm-sheet svg text[fill="#201e1d"], .bm-sheet svg [style*="fill:#201e1d"] { fill: var(--text) !important; }
+
+/* The authored poster scales to fit the phone; its embedded 11px room key
+   would become unreadable at that scale. Keep the drawing intact and show the
+   same room facts as a normal, labeled table beneath it on small screens. */
+.bm-mobile-details { display: none; }
+@media (max-width: 859px) {
+  .bm-sheet table { display: none; }
+  .bm-mobile-details { display: block; margin-top: 16px; }
+  .bm-mobile-room-table,
+  .bm-mobile-room-table tbody { display: block; width: 100%; }
+  .bm-mobile-room-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; background: var(--surface); }
+  .bm-mobile-room-table thead { display: none; }
+  .bm-mobile-room-table tbody tr {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 10px 14px;
+    padding: 12px 14px;
+    border-top: 1px solid var(--border-subtle);
+  }
+  .bm-mobile-room-table tbody th[scope="row"] { grid-column: 1 / -1; padding: 0; text-align: left; }
+  .bm-mobile-room-table tbody td { display: grid; gap: 3px; min-width: 0; padding: 0; overflow-wrap: anywhere; font-size: 13px; }
+  .bm-mobile-room-table tbody td::before {
+    content: attr(data-label);
+    color: var(--text-dim);
+    font-size: 10px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+}

@@ -43,8 +43,15 @@ function InteractiveDietaryCell({ guestId, guestName, dietaryNotes }: DietaryCel
 
   useEffect(() => {
     if (!editing || saving) return;
-    textarea.current?.focus();
-    textarea.current?.select();
+
+    const input = textarea.current;
+
+    if (!input) return;
+
+    input.style.height = "auto";
+    input.style.height = `${input.scrollHeight + input.offsetHeight - input.clientHeight}px`;
+    input.focus();
+    input.select();
   }, [editing, saving]);
 
   useEffect(() => {

@@ -2,13 +2,9 @@
   "name": "aws",
   "version": "0.1.0",
   "private": true,
-  "description": "CDK infrastructure for the Club Athletic trip app on Edge's production ALB",
+  "description": "Management-account CDK infrastructure for the Club Athletic trip app",
   "scripts": {
-    "build": "node -e \"console.error('Blocked: do not run build in apps/aws. Use build:manual only when intentionally approved.'); process.exit(1)\"",
-    "build:manual": "tsc -b --clean && tsc -b",
-    "watch": "tsc -w",
     "cdk": "cdk",
-    "deploy": "./scripts/deploy.sh",
     "push-secrets": "./scripts/push-secrets.sh"
   },
   "devDependencies": {

@@ -133,27 +133,24 @@ redaction, which stay manual.
 
 ## apps/aws
 
-One CDK stack, `club-athletic-prod-cdk`, deploys the Club Athletic web service to
-Edge's existing production ECS cluster and ALB in account `736548610362`. It
-creates the app's ECR repository, empty Secrets Manager secret, task roles, log
-group, Fargate service, and ALB target group/listener rule. It creates no ALB,
-certificate, or Route 53 record. The public `meribel.xn--tshi-l3a.com` alias is
-created manually in the management account after the production service is healthy.
-
-The stack imports the production HTTPS listener from `prod-edge-*` CloudFormation
-exports and imports the existing ECS cluster by name (`edge`). Its target group
-uses VPC `vpc-00cf2fc1f07003d3b`.
+Club Athletic production runs entirely in management account `366394957699`
+(`mostrom_mgmt`). Its ECS cluster is `club-athletic`, and its ECS service is
+`web`. CDK uses the existing management ECR repository and secret, creates the
+task roles, log group, service, public ALB, DNS-validated certificate and
+hosted-zone alias. It uses the management VPC and does not import production
+account resources.
 
 ```sh
 cd apps/aws
 bun install
-npx cdk synth InfraStack --profile mostrom_prod
-./scripts/deploy.sh
+cdk synth --profile mostrom_mgmt && cdk deploy --profile mostrom_mgmt --all --require-approval never
 ```
 
-The secret is created without placeholder data. Populate it with real values using
-`AWS_PROFILE=mostrom_prod ./scripts/push-secrets.sh web ../web/.env`. Build and push
-the production image and update the service with `../web/scripts/deploy-local.sh prod`.
+These explicit CDK commands are for the one-time management stack and pipeline
+bootstrap. After that, pushing to `main` is the deployment path: the management
+CodePipeline builds and tests the app, pushes to the management ECR repository,
+then updates the management ECS service. There is no manual deployment script.
+The existing `club-athletic-web` secret supplies runtime configuration.
 
 ## Environment
 
@@ -177,23 +174,9 @@ two users.
 
 ## Deploy
 
-Nothing has been deployed yet. There is no live URL, no pushed image and no
-created stack; the hostnames in `apps/aws` (`trip.`, `trip-stage.`, `trip-dev.`)
-are the intended ones, resolved at synth time only.
-
-When it does go out, from `apps/web`:
-
-```sh
-./scripts/push-secrets.sh dev    # mirror .env into the club-athletic-dev-web secret
-./scripts/deploy-local.sh dev    # build, push to ECR, force a new ECS deployment
-```
-
-`push-secrets.sh` prints key names and character counts only, and `DRY_RUN=true`
-writes nothing. `deploy-local.sh` builds with **`--platform linux/amd64`**, and
-that is not optional: the ECS task definition declares no `RuntimePlatform`, so
-ECS runs the task as `LINUX/X86_64`, and an image built on Apple Silicon without
-the flag is pulled and then dies with an exec format error. `PLATFORM`,
-`IMAGE_TAG`, `AWS_PROFILE`, `AWS_REGION` and `DESIRED_COUNT` are overridable.
+The `main` branch pipeline builds, tests, and deploys to the service in
+management account `366394957699`. Push changes to `main`; do not use a manual
+image deployment script.
 
 The container itself (`apps/web/Dockerfile`, Bun 1.4.0, `EXPOSE 4173`) runs
 `bunx prisma migrate deploy && bun run start`, so a deploy migrates before it
