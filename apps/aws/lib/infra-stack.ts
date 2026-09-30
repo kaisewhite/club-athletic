@@ -75,11 +75,8 @@ export class InfraStack extends cdk.Stack {
         operatingSystemFamily: ecs.OperatingSystemFamily.LINUX,
       },
     });
-    const taskLogGroup = new logs.LogGroup(this, "WebLogGroup", {
-      logGroupName: `/ecs/${resourceName}`,
-      retention: logs.RetentionDays.ONE_WEEK,
-      removalPolicy: cdk.RemovalPolicy.RETAIN,
-    });
+    const taskLogGroup = logs.LogGroup.fromLogGroupName(this, "WebLogGroup", `/ecs/${resourceName}`);
+    taskLogGroup.grantWrite(executionRole);
     const containerSecrets: Record<string, ecs.Secret> = {};
     for (const key of service.secrets) {
       containerSecrets[key] = ecs.Secret.fromSecretsManager(runtimeSecret, key);
