@@ -82,13 +82,37 @@ bun run test:visual:update   # re-record it (see "When to re-record" below)
 Kept out of `bun run test` on purpose: the vitest `unit`/`dom` suite stays a
 three-second loop, and nothing in `tests/visual/` is collected by either project.
 
-`playwright.config.ts` builds the app and starts it in production mode on port
-**47317** (`bun run build && NODE_ENV=production PORT=47317 bash scripts/with-env.sh
-bun index.ts`) through Playwright's `webServer`, so the baseline photographs the
-built assets against the real database. No new environment variable is introduced —
-`with-env.sh` supplies the existing one. `reuseExistingServer` is on, so a server you
-already have on 47317 is reused; if it predates your last `bun run build` its asset
-hashes are stale and every page will fail to hydrate, so restart it.
+`playwright.config.ts` builds the app and starts it in production mode on
+`127.0.0.1:47317`. It requires `CLUB_ATHLETIC_WEB_ENV_FILE` to point to an
+explicit local test env file and rejects either database URL unless it is a
+PostgreSQL URL on a loopback host. The validated values are passed to the build
+and server, so the acceptance run does not use this directory's `.env`. The
+server health URL and Playwright base URL are both loopback. `reuseExistingServer`
+is false; Playwright will fail if it cannot start its own server on port 47317.
+
+Create an isolated local database and test env file, then run the suite from
+`apps/web`:
+
+```sh
+mkdir -p /tmp/superpowers/club-athletic-local-readiness
+psql -h 127.0.0.1 -d postgres -c 'CREATE DATABASE club_athletic_local_readiness'
+cat > /tmp/superpowers/club-athletic-local-readiness/env.local <<'EOF'
+ANTHROPIC_API_KEY=local-mocked-provider-key
+DATABASE_URL=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+DATABASE_URL_POOLED=postgresql://kaisewhite@127.0.0.1:5432/club_athletic_local_readiness?sslmode=disable
+PORT=47317
+EOF
+export CLUB_ATHLETIC_WEB_ENV_FILE=/tmp/superpowers/club-athletic-local-readiness/env.local
+bash scripts/with-env.sh bunx prisma migrate deploy
+bash scripts/with-env.sh bun prisma/seed.ts
+bun run test:visual
+psql -h 127.0.0.1 -d postgres -c 'DROP DATABASE club_athletic_local_readiness'
+```
+
+The API key above is a placeholder required only for app startup; no provider
+request is made by the visual suite. Keep both database URLs on loopback and
+remove the temporary env file after the run. Full setup and verification evidence
+is recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.
 
 ### What is captured
 
