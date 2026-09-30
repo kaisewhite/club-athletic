@@ -102,7 +102,7 @@ Use this checklist as the gate before any CDK/deployment work:
 - Test: `apps/web/tests/**`, Playwright configuration and test fixtures
 - Evidence: `/tmp/superpowers/club-athletic-local-readiness/`
 
-- [ ] **Step 1: Run local code checks** (focused chat/tool/route/flight-intake tests, lint and typecheck pass; the latest full suite has one separate bedroom-map markup expectation failure in `tests/routes/detail-pages.test.tsx`, recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`.)
+- [x] **Step 1: Run local code checks** (`bun run test` passes 538/538 across 45 files; `bun run typecheck` and scoped lint exit 0. The earlier bedroom-map markup expectation failure was reconciled by its owner.)
 
 From `apps/web`, run the project's lint, typecheck, and unit/component test commands. Fix failures before moving on. Do not run infrastructure `npm run build` or TypeScript emitting builds.
 

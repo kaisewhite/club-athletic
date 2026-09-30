@@ -5,7 +5,7 @@ import { matchGuestCandidates } from "../../db/guest-lookup.server";
 import { publicText } from "../runtime/public-frame.server";
 import { logChatFailure } from "../runtime/chat-debug.server";
 export const TRIP_UNAVAILABLE = "Trip data is temporarily unavailable. Please try again.";
-const TRIP_INVALID_REQUEST = "The trip data request was invalid. Please try again.";
+export const TRIP_INVALID_REQUEST = "The trip data request was invalid. Please try again.";
 export const noArguments = z.strictObject({});
 export const guestNameSchema = z.strictObject({
   firstName: z.string().trim().min(1).max(100),

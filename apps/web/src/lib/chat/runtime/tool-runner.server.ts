@@ -16,6 +16,7 @@ import {
   lookupTripGuest,
   guestNameSchema,
   boundTripData,
+  TRIP_INVALID_REQUEST,
   TRIP_UNAVAILABLE,
 } from "../tools/read-tools.server";
 import { createRecordFlightTool } from "../tools/record-flight.server";
@@ -100,7 +101,7 @@ export function createTripRunnableTools(
       },
       parse: (raw: unknown) => {
         const result = schema.safeParse(raw);
-        if (!result.success) throw new Error("Invalid trip tool arguments.");
+        if (!result.success) throw new Error(TRIP_INVALID_REQUEST);
         return result.data;
       },
       async run(input: unknown, context) {
@@ -108,24 +109,30 @@ export function createTripRunnableTools(
           context?.signal?.throwIfAborted();
           const section = sectionTools.get(name);
           if (section) return await section.run(input);
-          if (name === "findGuestByName")
+          if (name === "findGuestByName") {
+            const parsed = guestNameSchema.safeParse(input);
+            if (!parsed.success)
+              return JSON.stringify({ ok: false, message: TRIP_INVALID_REQUEST });
             return JSON.stringify({
               ok: true,
               sourceSection: "Guests",
-              data: boundTripData(
-                await lookupTripGuest(guestNameSchema.parse(input)),
-              ),
+              data: boundTripData(await lookupTripGuest(parsed.data)),
             });
-          if (name === "readTripAttachment" && context?.signal)
+          }
+          if (name === "readTripAttachment" && context?.signal) {
+            const parsed = attachmentSchema.safeParse(input);
+            if (!parsed.success)
+              return JSON.stringify({ ok: false, message: TRIP_INVALID_REQUEST });
             return await readTripAttachment(
               scope,
-              attachmentSchema.parse(input).mountPath,
+              parsed.data.mountPath,
               context.signal,
               {
                 find: findSubmittedAttachment,
                 download: (id, signal) => client.files.download(id, { signal }),
               },
             );
+          }
           return JSON.stringify({ ok: false, message: TRIP_UNAVAILABLE });
         } catch (error) {
           // Tool execution failure is not evidence that a fact is missing.

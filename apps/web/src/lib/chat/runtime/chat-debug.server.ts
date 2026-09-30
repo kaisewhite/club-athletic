@@ -3,6 +3,21 @@ export function conversationDebugLog(_event: string, _fields: Record<string, unk
   // Intentionally silent on the public trip deployment.
 }
 
+const failureStages = new Set([
+  "deliverQueued.send", "sendMessage.interrupt", "sendMessage.send", "cancel.interrupt",
+  "stream.recover", "stream.pumpRecover", "read.pumpRecover", "read.pumpRecoverForced",
+  "route", "pump.attachment", "flightIntake.run", "tool.run", "readTool.run",
+]);
+const errorNames = new Set([
+  "Error", "TypeError", "RangeError", "SyntaxError", "ReferenceError", "URIError",
+  "AggregateError", "AbortError", "ZodError", "DatabaseError", "PostgresError",
+  "PrismaClientKnownRequestError", "PrismaClientUnknownRequestError",
+  "PrismaClientInitializationError", "PrismaClientValidationError", "PrismaClientRustPanicError",
+  "APIError", "APIConnectionError", "APIConnectionTimeoutError", "APIUserAbortError",
+  "AuthenticationError", "PermissionDeniedError", "NotFoundError", "ConflictError",
+  "UnprocessableEntityError", "RateLimitError", "BadRequestError", "InternalServerError",
+]);
+
 /** Server-side diagnostics use error class and safe codes only. Database and SDK
  * messages/stacks can include URLs, query values or credentials, so never log them. */
 export function logChatFailure(stage: string, error: unknown, fields: Record<string, unknown> = {}): void {
@@ -24,9 +39,9 @@ export function logChatFailure(stage: string, error: unknown, fields: Record<str
     }
   }
   const detail = {
-    name: error instanceof Error ? error.name : "NonError",
+    name: error instanceof Error && errorNames.has(error.name) ? error.name : error instanceof Error ? "Error" : "NonError",
     ...(safeCode ? { code: safeCode } : {}),
     ...(safeStatus ? { status: safeStatus } : {}),
   };
-  console.error(`[chat] ${stage} failed`, { ...safeFields, ...detail });
+  console.error(`[chat] ${failureStages.has(stage) ? stage : "unknown"} failed`, { ...safeFields, ...detail });
 }

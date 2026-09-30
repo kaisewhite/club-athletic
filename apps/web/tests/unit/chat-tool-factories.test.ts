@@ -191,6 +191,34 @@ it("reports registered guest lookup infrastructure failures as unavailable", asy
     logged.mockRestore();
   }
 });
+it("classifies malformed guest and attachment inputs as invalid requests", async () => {
+  const tools = createTripRunnableTools(
+    { tripId: "trip", conversationId: "conversation" },
+    {} as import("@anthropic-ai/sdk").default,
+  );
+  const guest = tools.find((candidate) => candidate.name === "findGuestByName")!;
+  const attachment = tools.find((candidate) => candidate.name === "readTripAttachment")!;
+  expect(() => guest.parse({ firstName: "", lastName: null })).toThrow(
+    "The trip data request was invalid. Please try again.",
+  );
+  expect(() => attachment.parse({ mountPath: "" })).toThrow(
+    "The trip data request was invalid. Please try again.",
+  );
+  const guestOutput = await guest.run({ firstName: "", lastName: null });
+  const attachmentOutput = await attachment.run(
+    { mountPath: "" },
+    { signal: new AbortController().signal } as never,
+  );
+  expect(JSON.parse(guestOutput as string)).toEqual({
+    ok: false,
+    message: "The trip data request was invalid. Please try again.",
+  });
+  expect(JSON.parse(attachmentOutput as string)).toEqual({
+    ok: false,
+    message: "The trip data request was invalid. Please try again.",
+  });
+  expect(readTools.lookupTripGuest).not.toHaveBeenCalled();
+});
 it("attaches the trip memory read-only, and omits it entirely when no store is configured", () => {
   // Memory stores attach at session-create time only, so an absent id must simply mean
   // no resource rather than a thrown request: tool-only answers still work.
