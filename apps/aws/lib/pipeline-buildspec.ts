@@ -48,7 +48,8 @@ export const testBuildSpec = (sourcePath: string) => codebuild.BuildSpec.fromObj
     },
     build: {
       commands: [[
-        "set -euo pipefail",
+        // CodeBuild's default command shell is /bin/sh, so use POSIX options.
+        "set -eu",
         `cd ${sourcePath}`,
         "export PATH=\"$HOME/.bun/bin:$PATH\"",
         "docker run --detach --name club-athletic-e2e-postgres --env POSTGRES_USER=clubathletic --env POSTGRES_PASSWORD=e2e-only-password --env POSTGRES_DB=club_athletic_test --publish 5432:5432 postgres:16-alpine",
@@ -69,6 +70,13 @@ export const testBuildSpec = (sourcePath: string) => codebuild.BuildSpec.fromObj
         "bash scripts/with-env.sh \"$HOME/.bun/bin/bun\" run test",
         "bash scripts/with-env.sh env CLUB_ATHLETIC_E2E_REPORTS=true \"$HOME/.bun/bin/bunx\" playwright test tests/visual/local-chat.spec.ts tests/visual/mobile-layout.spec.ts tests/visual/mobile-tables.spec.ts --project=desktop-1280",
       ].join("\n")],
+    },
+    post_build: {
+      commands: [
+        "mkdir -p playwright-report test-results",
+        "printf 'End-to-end build status: %s\\n' \"${CODEBUILD_BUILD_SUCCEEDING:-unknown}\" > playwright-report/codebuild-status.txt",
+        "printf 'End-to-end build status: %s\\n' \"${CODEBUILD_BUILD_SUCCEEDING:-unknown}\" > test-results/codebuild-status.txt",
+      ],
     },
   },
   artifacts: {
