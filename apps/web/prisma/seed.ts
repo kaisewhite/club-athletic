@@ -50,12 +50,12 @@ const FLOORS = [
   {name:'Middle floor',code:'R10 / F21',rooms:[
     {name:'Bedroom 2',type:'Double room',rate:1340,allIn:2060,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Kristy Kelly']},
     {name:'Bedroom 3',type:'Twin room',rate:1290,allIn:2010,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
-    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1810,description:"Women's quad bunk — shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','Christie Navarre','','']},
+    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1810,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','Christie Navarre','','']},
     {name:'Bedroom 5',type:'Bunk cabin',rate:970,allIn:1690,description:"Men's bunk cabin — shared shower",ensuite:false,balcony:false,spots:['Pete F.','']}]},
   {name:'Lower floor',code:'R9 / F12',rooms:[
     {name:'Bedroom 6',type:'Double room',rate:1305,allIn:2025,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
     {name:'Bedroom 7',type:'Double room',rate:1305,allIn:2025,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Olajuwon Jones','Ted Delcima']},
-    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,allIn:1860,description:"Women's quad bunk — en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
+    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,allIn:1860,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
 ];
 const LINKS: Array<{ group: string; label: string; href: string; note: string | null }> = [
   {group:'Chalet',label:'Falcon Lodge F — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f',note:'The whole chalet: photos, layout and what it comes with.'},

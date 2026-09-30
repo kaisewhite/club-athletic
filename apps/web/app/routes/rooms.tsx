@@ -1,6 +1,7 @@
 import { getRoomsByFloor } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { BedroomMap } from "../components/bedroom-map/bedroom-map";
+import { RoomSharingFaq } from "../components/room-sharing-faq";
 import { guestInstagramUrl } from "../lib/guest-instagrams";
 import type { Route } from "./+types/rooms";
 
@@ -41,6 +42,7 @@ export default function Rooms({ loaderData: data }: Route.ComponentProps) {
         </div>)}</div>
       </article>)}</div>
     </section>)}</div>
-    <BedroomMap />
+    <BedroomMap floors={data.floors} />
+    <RoomSharingFaq />
   </section>;
 }

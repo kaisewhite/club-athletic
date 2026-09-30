@@ -1,6 +1,7 @@
 import { z } from "zod";
 import { getChalet } from "@/lib/db/repository.server";
 import { DetailList, PageHeading } from "../components/trip-details";
+import { RoomSharingFaq } from "../components/room-sharing-faq";
 import type { Route } from "./+types/chalet";
 
 const amenitiesSchema = z.object({ private: z.array(z.string()), shared: z.array(z.string()) });
@@ -36,6 +37,7 @@ export default function Chalet({ loaderData: { property, amenities, listings } }
       <div className="detail-card"><h3 className="detail-kicker">Shared in the residence</h3><DetailList items={amenities.shared} /></div>
     </div>
     {(roomsNote ?? property.description) && <p className="detail-note">{roomsNote ?? property.description}</p>}
+    <RoomSharingFaq />
     <section className="chalet-listings" aria-labelledby="chalet-listings-heading">
       <h3 id="chalet-listings-heading" className="detail-kicker">Listings</h3>
       <p className="chalet-listings-intro">The chalet as a whole, each apartment, and the residence, on the operators’ own sites.</p>

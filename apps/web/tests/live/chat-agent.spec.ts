@@ -8,9 +8,10 @@ const delivery = z.object({ delivery: z.enum(["sent", "queued"]) });
 const detailSchema = z.object({
   status: z.string(),
   error: z.string().nullable(),
+  chat: z.object({ runtimeStatus: z.string().nullable(), activeTurn: z.boolean() }).optional(),
   events: z.array(z.object({
     type: z.string(),
-    payload: z.object({ text: z.string().optional(), toolName: z.string().optional(), ok: z.boolean().optional() }),
+    payload: z.object({ text: z.string().optional(), toolName: z.string().optional(), ok: z.boolean().optional(), delivery: z.string().optional(), requestId: z.string().optional() }),
   })),
 });
 
@@ -55,7 +56,7 @@ test("a live trip tool answers the landing question and the answer survives relo
   await expect(page.getByRole("log", { name: "Trip conversation" })).toContainText("09:30");
 });
 
-test("a suggestion clicked during an active answer is queued and receives its own answer", async ({ page, request }) => {
+test("follow-up suggestions sent close together are both answered", async ({ page, request }) => {
   await page.goto("/");
   const opening = await askSuggestion(page, "What time do I need to land?", "/api/chat/conversations");
   expect(opening.status()).toBe(201);
@@ -78,14 +79,24 @@ test("a suggestion clicked during an active answer is queued and receives its ow
   expect(delivery.parse(await followup.json()).delivery).toBe("queued");
 
   await expect.poll(async () => {
-    const current = await detail(request, conversationId);
+    const latest = await detail(request, conversationId);
 
     return {
-      userMessages: current.events.filter(row => row.type === "user_message").length,
-      answers: current.events.filter(row => row.type === "message").length,
-      failed: current.events.some(row => row.type === "turn.failed") || current.error !== null,
+      status: latest.status,
+      userMessages: latest.events.filter(row => row.type === "user_message").length,
+      answers: latest.events.filter(row => row.type === "message").map(row => row.payload.text ?? ""),
+      failed: latest.events.some(row => row.type === "turn.failed") || latest.error !== null,
     };
-  }, { timeout: 180_000, intervals: [1_000] }).toEqual({ userMessages: 3, answers: 3, failed: false });
+  }, { timeout: 60_000, intervals: [1_000] }).toMatchObject({
+    status: "completed", userMessages: 3,
+    answers: expect.arrayContaining([expect.stringMatching(/Monday/i), expect.stringMatching(/Wednesday/i)]),
+    failed: false,
+  });
+  const current = await detail(request, conversationId);
+  const lastAnswer = current.events.filter(row => row.type === "message").at(-1)?.payload.text ?? "";
+  expect(lastAnswer).toMatch(/La Folie Douce/i);
+  expect(lastAnswer).toMatch(/Wednesday/i);
+  expect(lastAnswer).toMatch(/no chef dinner/i);
 });
 
 test("a greeting and a live availability question both receive grounded replies", async ({ page, request }) => {

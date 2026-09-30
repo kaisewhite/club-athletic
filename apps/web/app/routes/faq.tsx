@@ -2,6 +2,7 @@ import { Link } from "react-router";
 import { getTripOverview } from "@/lib/db/repository.server";
 import { faqTiles } from "../lib/faq-content.server";
 import { PageHeading } from "../components/trip-details";
+import { RoomSharingFaq } from "../components/room-sharing-faq";
 import type { Route } from "./+types/faq";
 
 export async function loader() {
@@ -21,5 +22,6 @@ export default function FAQ({ loaderData: data }: Route.ComponentProps) {
         </div>
       </Link>)}
     </div>
+    <RoomSharingFaq />
   </section>;
 }

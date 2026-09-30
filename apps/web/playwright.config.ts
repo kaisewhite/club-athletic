@@ -32,7 +32,9 @@ export default defineConfig({
   retries: 0,
   // `list` only. The `html` reporter starts a web server on failure, which would
   // outlive the run.
-  reporter: [["list"]],
+  reporter: process.env.CLUB_ATHLETIC_E2E_REPORTS === "true"
+    ? [["list"], ["html", { outputFolder: "playwright-report", open: "never" }]]
+    : [["list"]],
   // `{platform}` is kept on purpose: pixel output is OS-specific, so a Linux CI
   // run must record its own set rather than silently diffing against darwin PNGs.
   // `{testDir}` is the absolute `tests/visual`; `{testFileDir}` would be relative
