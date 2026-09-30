@@ -89,21 +89,10 @@ export class InfraStack extends cdk.Stack {
 
     /**************************** SECRET, ROLES, LOGS *****************************/
 
-    const secretResource = new secretsmanager.CfnSecret(this, `${constructorPrefix}-secret`, {
-      name: resourceName,
-      description: `Environment Variables for ${service.name}`,
-      tags: Object.entries({
-        Project: project.name,
-        Environment: environment,
-        Service: service.name,
-        Stack: "fargate",
-      }).map(([key, value]) => ({ key, value })),
-    });
-    secretResource.applyRemovalPolicy(cdk.RemovalPolicy.RETAIN);
-    const secrets = secretsmanager.Secret.fromSecretCompleteArn(
+    const secrets = secretsmanager.Secret.fromSecretNameV2(
       this,
       `${constructorPrefix}-secret-reference`,
-      secretResource.ref,
+      resourceName,
     );
 
     // A task role for the app and a separate execution role for the ECS agent
