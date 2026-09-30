@@ -91,6 +91,14 @@ export class InfraStack extends cdk.Stack {
       logging: ecs.LogDrivers.awsLogs({ streamPrefix: service.name, logGroup: taskLogGroup }),
       secrets: containerSecrets,
       portMappings: [{ containerPort: service.containerPort, protocol: ecs.Protocol.TCP }],
+      ...(service.disableIpv6
+        ? {
+            systemControls: [
+              { namespace: "net.ipv6.conf.all.disable_ipv6", value: "1" },
+              { namespace: "net.ipv6.conf.default.disable_ipv6", value: "1" },
+            ],
+          }
+        : {}),
     });
 
     const loadBalancerSecurityGroup = new ec2.SecurityGroup(this, "LoadBalancerSecurityGroup", {
