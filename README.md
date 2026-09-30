@@ -133,24 +133,29 @@ redaction, which stay manual.
 
 ## apps/aws
 
-Club Athletic production runs entirely in management account `366394957699`
-(`mostrom_mgmt`). Its ECS cluster is `club-athletic`, and its ECS service is
-`web`. CDK uses the existing management ECR repository and secret, creates the
-task roles, log group, service, public ALB, DNS-validated certificate and
-hosted-zone alias. It uses the management VPC and does not import production
-account resources.
+Club Athletic's production web service runs in production account `736548610362`
+(`mostrom_prod`) on Edge's existing ECS cluster and HTTPS load balancer. CDK
+creates the Club Athletic ECS service and target group in that account, imports
+Edge's VPC, cluster, and HTTPS listener, and adds the host rule for
+`meribel.xn--tshi-l3a.com`. Edge's production infrastructure supplies the ALB
+and TLS certificate.
+
+The domain's public hosted zone is in the management account. DNS records there
+are managed manually and point the Club Athletic hostname to Edge's existing
+production ALB. CDK does not create or update Route 53 records. Club Athletic
+has no management-account ECS service, ALB, ACM certificate, or deployment
+pipeline.
 
 ```sh
 cd apps/aws
 bun install
-cdk synth --profile mostrom_mgmt && cdk deploy --profile mostrom_mgmt --all --require-approval never
+cdk synth --profile mostrom_prod
+cdk deploy InfraStack --profile mostrom_prod --require-approval never
 ```
 
-These explicit CDK commands are for the one-time management stack and pipeline
-bootstrap. After that, pushing to `main` is the deployment path: the management
-CodePipeline builds and tests the app, pushes to the management ECR repository,
-then updates the management ECS service. There is no manual deployment script.
-The existing `club-athletic-web` secret supplies runtime configuration.
+Synthesis with `mostrom_mgmt` is rejected. This CDK app creates no ALB, ACM
+certificate, Route 53 record, or CodePipeline. The existing
+`club-athletic-web` production secret supplies runtime configuration.
 
 ## Environment
 
@@ -174,9 +179,9 @@ two users.
 
 ## Deploy
 
-The `main` branch pipeline builds, tests, and deploys to the service in
-management account `366394957699`. Push changes to `main`; do not use a manual
-image deployment script.
+Club Athletic has no `main`-branch CodePipeline. Its CDK stack and deployment
+target are in Edge's production account and reuse Edge's existing ALB listener.
+Domain DNS remains a manual change in the Route 53 management account.
 
 The container itself (`apps/web/Dockerfile`, Bun 1.4.0, `EXPOSE 4173`) runs
 `bunx prisma migrate deploy && bun run start`, so a deploy migrates before it
