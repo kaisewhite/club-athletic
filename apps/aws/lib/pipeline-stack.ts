@@ -70,7 +70,6 @@ export class PipelineStack extends cdk.Stack {
     testRole.addToPolicy(new iam.PolicyStatement({
       actions: ["sts:GetServiceBearerToken"],
       resources: ["*"],
-      conditions: { StringEquals: { "sts:AWSServiceName": "ecr-public.amazonaws.com" } },
     }));
 
     const deployRole = new iam.Role(this, "DeployRole", {
