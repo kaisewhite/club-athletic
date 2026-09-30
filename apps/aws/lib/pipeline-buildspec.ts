@@ -121,7 +121,7 @@ export const serviceDeploymentBuildSpec = ({
     },
     build: {
       commands: [[
-        "set -euo pipefail",
+        "set -eu",
         `SERVICE_JSON=$(aws ecs describe-services --cluster ${cluster} --services ${service} --region ${region} --output json)`,
         "CURRENT_TASK_DEFINITION=$(echo \"$SERVICE_JSON\" | jq -er '.services[0].taskDefinition')",
         `aws ecs describe-task-definition --task-definition "$CURRENT_TASK_DEFINITION" --region ${region} --query taskDefinition --output json > /tmp/club-athletic-current-task.json`,
