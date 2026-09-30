@@ -31,6 +31,8 @@
 
 Inspect the local chat/API/database wiring and current test fixtures. Keep production credentials and production endpoints out of browser E2E runs. Record the local start command and required local test configuration without printing secret values.
 
+Local configuration and server command recorded in `/tmp/superpowers/club-athletic-local-readiness/evidence.md`: temporary env used loopback-only `DATABASE_URL` and `DATABASE_URL_POOLED` values for disposable PostgreSQL at `127.0.0.1:5432`, with `PORT=47317`; Playwright starts the app using `bun run build && NODE_ENV=production PORT=47317 bash scripts/with-env.sh bun index.ts` and checks `http://127.0.0.1:47317/`.
+
 - [ ] **Step 2: Fix chat send and recovery behavior locally**
 
 Verify desktop and mobile sends create one user message, acknowledge promptly, disable duplicate submission while in flight, receive a response, and expose an actionable error/retry state if the request fails. Quick options must send immediately. On mobile, sending closes the keyboard so the conversation is visible. Remove false “Not delivered” states on successful sends and remove the unwanted vertical rule from assistant responses.
