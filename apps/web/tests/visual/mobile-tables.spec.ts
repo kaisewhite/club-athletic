@@ -78,7 +78,7 @@ for (const width of [320, 375, 390, 412, 768, 820, 859]) {
   });
 }
 
-for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] as const) {
+for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [768, 1024], [820, 1180]] as const) {
   test.describe(`bedroom map mobile detail rows at ${width}px`, () => {
     test.use({ viewport: { width, height } });
 
@@ -103,6 +103,11 @@ for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] 
           fields: cells.map((cell) => {
             const label = cell.querySelector<HTMLElement>(".bm-mobile-field-label");
             const value = cell.querySelector<HTMLElement>(".bm-mobile-field-value");
+            const valueRange = document.createRange();
+            if (value) valueRange.selectNodeContents(value);
+            const valueTextRects = [...valueRange.getClientRects()]
+              .filter((rect) => rect.width > 0.5 && rect.height > 0.5)
+              .map((rect) => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom }));
             return {
               name: cell.dataset.label ?? "",
               valueText: value?.textContent?.trim() ?? "",
@@ -110,7 +115,10 @@ for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] 
               labelText: label?.textContent?.trim() ?? "",
               label: rect(label),
               labelVisible: !!label && getComputedStyle(label).display !== "none" && getComputedStyle(label).visibility !== "hidden",
+              labelAccessible: !!label && label.getAttribute("aria-hidden") !== "true" && !label.closest('[aria-hidden="true"]'),
               value: rect(value),
+              valueVisible: !!value && getComputedStyle(value).display !== "none" && getComputedStyle(value).visibility !== "hidden",
+              valueTextRects,
               cellDisplay: getComputedStyle(cell).display,
               scrolls: !!cell && (cell.scrollWidth > cell.clientWidth + 1 || cell.scrollHeight > cell.clientHeight + 1),
             };
@@ -126,10 +134,11 @@ for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] 
         expect(row.bedroomRect).not.toBeNull();
         expect(row.fields.map((field) => field.name)).toEqual(["Floor / door", "Description"]);
         expect(row.fields.map((field) => field.labelText)).toEqual(["Floor / door", "Description"]);
-        expect(row.fields.every((field) => field.labelVisible && field.cellDisplay === "grid" && !field.scrolls)).toBe(true);
+        expect(row.fields.every((field) => field.labelVisible && field.labelAccessible && field.cellDisplay === "grid" && !field.scrolls)).toBe(true);
         for (const field of row.fields) {
           expect(field.label).not.toBeNull();
           expect(field.value).not.toBeNull();
+          expect(field.valueVisible).toBe(true);
           expect(field.label!.height).toBeGreaterThan(0);
           expect(field.cell!.width).toBeGreaterThan(0);
           expect(field.cell!.left).toBeGreaterThanOrEqual(row.row!.left - 1);
@@ -137,6 +146,25 @@ for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] 
           expect(intersects(field.label!, field.value!)).toBe(false);
           expect(intersects(row.bedroomRect!, field.label!)).toBe(false);
           expect(intersects(row.bedroomRect!, field.value!)).toBe(false);
+          expect(field.value!.left).toBeGreaterThanOrEqual(field.cell!.left - 1);
+          expect(field.value!.right).toBeLessThanOrEqual(field.cell!.right + 1);
+          expect(field.value!.top).toBeGreaterThanOrEqual(field.cell!.top - 1);
+          expect(field.value!.bottom).toBeLessThanOrEqual(field.cell!.bottom + 1);
+          if (field.valueText) {
+            expect(field.value!.width).toBeGreaterThan(0);
+            expect(field.value!.height).toBeGreaterThan(0);
+            expect(field.valueTextRects.length).toBeGreaterThan(0);
+            for (const textRect of field.valueTextRects) {
+              expect(textRect.left).toBeGreaterThanOrEqual(field.cell!.left - 1);
+              expect(textRect.right).toBeLessThanOrEqual(field.cell!.right + 1);
+              expect(textRect.top).toBeGreaterThanOrEqual(field.cell!.top - 1);
+              expect(textRect.bottom).toBeLessThanOrEqual(field.cell!.bottom + 1);
+              expect(textRect.left).toBeGreaterThanOrEqual(row.row!.left - 1);
+              expect(textRect.right).toBeLessThanOrEqual(row.row!.right + 1);
+              expect(textRect.top).toBeGreaterThanOrEqual(row.row!.top - 1);
+              expect(textRect.bottom).toBeLessThanOrEqual(row.row!.bottom + 1);
+            }
+          }
         }
         expect(intersects(row.fields[0]!.cell!, row.fields[1]!.cell!)).toBe(false);
       }
