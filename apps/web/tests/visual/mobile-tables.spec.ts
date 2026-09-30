@@ -89,71 +89,66 @@ for (const [width, height] of [[320, 568], [390, 844], [412, 915], [820, 1180]] 
       expect(await rows.count()).toBe(8);
 
       const results = await rows.evaluateAll((elements) => elements.map((row) => {
-        const rowBox = row.getBoundingClientRect();
-        const bedroom = row.querySelector<HTMLElement>('th[scope="row"]')!;
-        const cells = [
-          row.querySelector<HTMLElement>('td[data-label="Floor / door"]')!,
-          row.querySelector<HTMLElement>('td[data-label="Description"]')!,
-        ];
-        const bedroomBox = bedroom.getBoundingClientRect();
-        const values = cells.map((cell) => {
-          const box = cell.getBoundingClientRect();
-          const label = getComputedStyle(cell, "::before");
-          const range = document.createRange();
-          range.selectNodeContents(cell);
-          const textRects = [...range.getClientRects()]
-            .filter((rect) => rect.width > 0.5 && rect.height > 0.5)
-            .map((rect) => ({ top: rect.top, right: rect.right, bottom: rect.bottom, left: rect.left }));
-          return {
-            label: label.content.replace(/^['"]|['"]$/g, ""),
-            labelVisible: label.content !== "none" && label.visibility !== "hidden" && Number.parseFloat(label.fontSize) >= 10,
-            value: cell.textContent?.trim() ?? "",
-            box: { top: box.top, right: box.right, bottom: box.bottom, left: box.left, width: box.width },
-            scroll: { width: cell.scrollWidth, clientWidth: cell.clientWidth, height: cell.scrollHeight, clientHeight: cell.clientHeight },
-            textRects,
-          };
-        });
+        const rect = (element: Element | null) => {
+          if (!element) return null;
+          const box = element.getBoundingClientRect();
+          return { left: box.left, right: box.right, top: box.top, bottom: box.bottom, width: box.width, height: box.height };
+        };
+        const bedroom = row.querySelector<HTMLElement>('th[scope="row"]');
+        const cells = [...row.querySelectorAll<HTMLElement>("td[data-label]")];
         return {
-          bedroom: bedroom.textContent?.trim() ?? "",
-          bedroomVisible: getComputedStyle(bedroom).display !== "none" && getComputedStyle(bedroom).visibility !== "hidden",
-          bedroomBox: { left: bedroomBox.left, right: bedroomBox.right, top: bedroomBox.top, bottom: bedroomBox.bottom },
-          rowBox: { left: rowBox.left, right: rowBox.right, top: rowBox.top, bottom: rowBox.bottom },
-          values,
+          row: rect(row),
+          bedroom: bedroom?.textContent?.trim() ?? "",
+          bedroomRect: rect(bedroom),
+          fields: cells.map((cell) => {
+            const label = cell.querySelector<HTMLElement>(".bm-mobile-field-label");
+            const value = cell.querySelector<HTMLElement>(".bm-mobile-field-value");
+            return {
+              name: cell.dataset.label ?? "",
+              valueText: value?.textContent?.trim() ?? "",
+              cell: rect(cell),
+              labelText: label?.textContent?.trim() ?? "",
+              label: rect(label),
+              labelVisible: !!label && getComputedStyle(label).display !== "none" && getComputedStyle(label).visibility !== "hidden",
+              value: rect(value),
+              cellDisplay: getComputedStyle(cell).display,
+              scrolls: !!cell && (cell.scrollWidth > cell.clientWidth + 1 || cell.scrollHeight > cell.clientHeight + 1),
+            };
+          }),
         };
       }));
 
+      const intersects = (a: NonNullable<typeof results[number]["row"]>, b: NonNullable<typeof results[number]["row"]>) =>
+        Math.min(a.right, b.right) - Math.max(a.left, b.left) > 1 && Math.min(a.bottom, b.bottom) - Math.max(a.top, b.top) > 1;
+
       for (const row of results) {
         expect(row.bedroom, "row heading must identify the bedroom").toMatch(/^Bedroom\s+\d+/);
-        expect(row.bedroomVisible).toBe(true);
-        expect(row.bedroomBox.left).toBeGreaterThanOrEqual(row.rowBox.left - 1);
-        expect(row.bedroomBox.right).toBeLessThanOrEqual(row.rowBox.right + 1);
-        expect(row.values.map((cell) => cell.label)).toEqual(["Floor / door", "Description"]);
-        for (const cell of row.values) {
-          expect(cell.labelVisible, `${row.bedroom}: ${cell.label} label is hidden`).toBe(true);
-          expect(cell.value, `${row.bedroom}: ${cell.label} value is empty`).not.toBe("");
-          expect(cell.box.left).toBeGreaterThanOrEqual(row.rowBox.left - 1);
-          expect(cell.box.right).toBeLessThanOrEqual(row.rowBox.right + 1);
-          expect(cell.scroll.width).toBeLessThanOrEqual(cell.scroll.clientWidth + 1);
-          expect(cell.scroll.height).toBeLessThanOrEqual(cell.scroll.clientHeight + 1);
-          expect(cell.textRects.length).toBeGreaterThan(0);
-          // The pseudo-label is the first grid row; actual value text must start
-          // below its 10px label line plus the CSS grid's 3px row gap.
-          expect(cell.textRects[0]!.top).toBeGreaterThanOrEqual(cell.box.top + 12);
-          for (const rect of cell.textRects) {
-            expect(rect.left).toBeGreaterThanOrEqual(cell.box.left - 1);
-            expect(rect.right).toBeLessThanOrEqual(cell.box.right + 1);
-            expect(rect.bottom).toBeLessThanOrEqual(cell.box.bottom + 1);
-          }
+        expect(row.bedroomRect).not.toBeNull();
+        expect(row.fields.map((field) => field.name)).toEqual(["Floor / door", "Description"]);
+        expect(row.fields.map((field) => field.labelText)).toEqual(["Floor / door", "Description"]);
+        expect(row.fields.every((field) => field.labelVisible && field.cellDisplay === "grid" && !field.scrolls)).toBe(true);
+        for (const field of row.fields) {
+          expect(field.label).not.toBeNull();
+          expect(field.value).not.toBeNull();
+          expect(field.label!.height).toBeGreaterThan(0);
+          expect(field.cell!.width).toBeGreaterThan(0);
+          expect(field.cell!.left).toBeGreaterThanOrEqual(row.row!.left - 1);
+          expect(field.cell!.right).toBeLessThanOrEqual(row.row!.right + 1);
+          expect(intersects(field.label!, field.value!)).toBe(false);
+          expect(intersects(row.bedroomRect!, field.label!)).toBe(false);
+          expect(intersects(row.bedroomRect!, field.value!)).toBe(false);
         }
+        expect(intersects(row.fields[0]!.cell!, row.fields[1]!.cell!)).toBe(false);
       }
     });
   });
 }
 
-test.describe("desktop group flight table at 1280px", () => {
-  test.use({ viewport: { width: 1280, height: 800 } });
+for (const width of [1280, 1440]) {
+  test.describe(`desktop group flight table at ${width}px`, () => {
+    test.use({ viewport: { width, height: 800 } });
 
-  test("every header and data cell contains its text without clipping or adjacent overlap", async ({ page }) => {
+    test("every header and data cell contains its text without clipping or adjacent overlap", async ({ page }) => {
     await openFrozen(page, "/flights");
 
     const table = page.locator("table.flight-table");
@@ -161,9 +156,9 @@ test.describe("desktop group flight table at 1280px", () => {
     const audit = await table.evaluate((element) => {
       const tableBox = element.getBoundingClientRect();
       const rows = [...element.querySelectorAll("tr")];
+      const bodyRows = [...element.querySelectorAll("tbody tr")];
+      const headerRowCount = element.querySelectorAll("thead tr").length;
       const failures: string[] = [];
-      const checkedCells: { row: number; text: string; rects: { top: number; right: number; bottom: number; left: number }[] }[] = [];
-
       rows.forEach((row, rowIndex) => {
         const cells = [...row.querySelectorAll<HTMLElement>("th, td")];
         const rowCells = cells.map((cell) => {
@@ -197,13 +192,15 @@ test.describe("desktop group flight table at 1280px", () => {
             }
           }
         }
-        checkedCells.push(...rowCells);
       });
-      return { rowCount: rows.length, cellCount: checkedCells.length, failures };
+      return { rowCount: rows.length, headerRowCount, bodyRowCount: bodyRows.length, bodyColumnCounts: bodyRows.map((row) => row.querySelectorAll("th, td").length), failures };
     });
 
-    expect(audit.rowCount).toBeGreaterThan(1);
-    expect(audit.cellCount).toBeGreaterThan(20);
-    expect(audit.failures).toEqual([]);
+      expect(audit.rowCount).toBe(14);
+      expect(audit.headerRowCount).toBe(2);
+      expect(audit.bodyRowCount).toBe(12);
+      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 12 }, () => 8));
+      expect(audit.failures).toEqual([]);
+    });
   });
-});
+}
