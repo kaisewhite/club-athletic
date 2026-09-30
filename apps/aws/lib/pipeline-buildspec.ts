@@ -50,7 +50,7 @@ export const testBuildSpec = (sourcePath: string) => codebuild.BuildSpec.fromObj
       commands: [[
         // CodeBuild's default command shell is /bin/sh, so use POSIX options.
         "set -eu",
-        `cd ${sourcePath}`,
+        `cd "$CODEBUILD_SRC_DIR/${sourcePath}"`,
         "export PATH=\"$HOME/.bun/bin:$PATH\"",
         "docker run --detach --name club-athletic-e2e-postgres --env POSTGRES_USER=clubathletic --env POSTGRES_PASSWORD=e2e-only-password --env POSTGRES_DB=club_athletic_test --publish 5432:5432 postgres:16-alpine",
         "cleanup() { docker rm --force club-athletic-e2e-postgres >/dev/null 2>&1 || true; }",
