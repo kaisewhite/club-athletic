@@ -55,8 +55,8 @@ export function chatUiReducer(state: ConversationChatUiState, event: Conversatio
       // though the agent may still be working — that is the point of this change.
       return { ...state, phase: "idle", draft: "", submittedDraft: null };
     case "send_failed":
-      // The transcript keeps the failed bubble with Edit and Resend. Keep any
-      // newer text the guest typed while the request was in flight.
+      // Keep the failed question in the transcript. Preserve any newer text the
+      // guest typed while the request was in flight.
       return { ...state, phase: "idle", submittedDraft: null, toast: event.message };
     case "state_frame": {
       // session.waiting is the sole success signal: the turn is over (completed

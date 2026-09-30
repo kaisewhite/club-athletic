@@ -191,7 +191,7 @@ describe("ported chat presentation and guest composer", () => {
     expect(container.querySelector(".chat-user-bubble")?.textContent).toBe("Retry after reload");
     expect(container.querySelector(".chat-assistant-notice")).toBeNull();
     expect([...container.querySelectorAll<HTMLButtonElement>(".chat-user .chat-message-actions button")].map(button => button.textContent)).toEqual(["Retry"]);
-    expect(container.querySelector<HTMLButtonElement>(".chat-user .chat-message-actions button")?.getAttribute("aria-label")).toBe("Retry failed message: Retry after reload");
+    expect(container.querySelector<HTMLButtonElement>(".chat-user .chat-message-actions button")?.getAttribute("aria-label")).toBe("Retry failed message");
     await click(".chat-user .chat-message-actions button");
     expect(api.send).toHaveBeenCalledTimes(1);
     expect(api.send.mock.calls[0]?.slice(0, 2)).toEqual([failed.id, "Retry after reload"]);

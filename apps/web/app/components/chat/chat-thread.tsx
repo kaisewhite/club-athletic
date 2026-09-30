@@ -61,7 +61,7 @@ function ChatEvent({ event, live, onRetryUserMessage, canRetryUserMessage }: {
     case "user": return <div className="chat-user">
       <div className="chat-user-bubble">{event.text}<AttachmentLabel value={event.upload} /></div>
       {event.failed && !event.id.startsWith("pending:") && onRetryUserMessage && <div className="chat-message-actions">
-        <button type="button" aria-label={`Retry failed message: ${event.text}`} disabled={!canRetryUserMessage} onClick={() => onRetryUserMessage(event.text, event.upload?.id)}>Retry</button>
+        <button type="button" aria-label="Retry failed message" disabled={!canRetryUserMessage} onClick={() => onRetryUserMessage(event.text, event.upload?.id)}>Retry</button>
       </div>}
     </div>;
   }
