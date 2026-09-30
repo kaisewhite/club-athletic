@@ -11,21 +11,29 @@ export function DietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }) {
 }
 
 function InteractiveDietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }) {
-  const [label, setLabel] = useState("Copy");
+  const [status, setStatus] = useState<"idle" | "copied" | "failed">("idle");
   const resetTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   useEffect(() => () => { if (resetTimer.current) clearTimeout(resetTimer.current); }, []);
   const copy = async () => {
     const text = guests.map(({ displayName, dietaryNotes }) => `${displayName}: ${dietaryNotes ?? "—"}`).join("\n");
     try {
       await navigator.clipboard.writeText(text);
-      setLabel("Copied");
+      setStatus("copied");
       if (resetTimer.current) clearTimeout(resetTimer.current);
-      resetTimer.current = setTimeout(() => setLabel("Copy"), 2_000);
+      resetTimer.current = setTimeout(() => setStatus("idle"), 2_000);
     } catch {
-      setLabel("Copy failed");
+      setStatus("failed");
     }
   };
-  return <button type="button" className="dietary-copy-button" aria-label="Copy dietary requirements" onClick={() => void copy()}>{label}</button>;
+  const label = status === "copied" ? "Dietary requirements copied" : status === "failed" ? "Could not copy dietary requirements" : "Copy dietary requirements";
+  return <>
+    <button type="button" className="dietary-copy-button" aria-label={label} title={label} onClick={() => void copy()}>
+      {status === "copied" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
+        : status === "failed" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5m0 3h.01M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z" /></svg>
+          : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2" /></svg>}
+    </button>
+    <span className="sr-only" role="status" aria-live="polite">{status === "copied" ? "Dietary requirements copied to clipboard." : status === "failed" ? "Could not copy dietary requirements." : ""}</span>
+  </>;
 }
 
 export function DietaryCell(props: DietaryCellProps) {
@@ -90,7 +98,7 @@ function InteractiveDietaryCell({ guestId, guestName, dietaryNotes }: DietaryCel
 
   if (!editing) return <button type="button" className={`dietary-cell-button${dietaryNotes ? "" : " is-empty"}`} aria-label={`Edit dietary needs for ${guestName}`} onClick={begin} onDoubleClick={begin}>
     {dietaryNotes ?? <span className="dietary-cell-empty">Add allergies or dietary needs</span>}
-    <span className="dietary-cell-edit" aria-hidden="true">✎</span>
+    <span className="dietary-cell-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20h9" /><path d="m16.5 3.5 4 4L8 20l-5 1 1-5Z" /></svg></span>
   </button>;
 
   return <div className="dietary-cell-editor">

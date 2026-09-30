@@ -26,12 +26,15 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <tbody>{data.scheduleDays.map((day) => <tr key={day.id}><th scope="row">{day.dow} {day.dayNumber}</th><td data-meal="Breakfast">{mealLabel[day.breakfast]}</td><td data-meal="Dinner">{mealLabel[day.dinner]}</td></tr>)}</tbody>
     </table></div>
     <p className="detail-note">Add allergies or dietary needs in the table below before the trip.</p>
-    <div className="dietary-title-row"><h3 className="dietary-heading">Guest dietary requirements</h3><DietaryCopyButton guests={data.guests} /></div>
-    <div className="detail-table-wrap"><table className="detail-table" aria-label="Guest dietary requirements">
+    <h3 className="dietary-heading">Guest dietary requirements</h3>
+    <div className="detail-table-wrap chef-dietary-card">
+      <DietaryCopyButton guests={data.guests} />
+      <table className="detail-table" aria-label="Guest dietary requirements">
       <thead><tr><th scope="col">Guest</th><th scope="col">Allergies / dietary needs</th></tr></thead>
       <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row">{guestInstagramUrl(guest.displayName)
         ? <a href={guestInstagramUrl(guest.displayName)} target="_blank" rel="noopener noreferrer">{guest.displayName}</a>
         : guest.displayName}</th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
-    </table></div>
+      </table>
+    </div>
   </section>;
 }

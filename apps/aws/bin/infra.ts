@@ -1,18 +1,22 @@
 #!/usr/bin/env node
 import * as cdk from "aws-cdk-lib";
 import { InfraStack } from "../lib/infra-stack";
+import { PipelineStack } from "../lib/pipeline-stack";
 import { project } from "../properties";
 
 const app = new cdk.App();
 
 cdk.Tags.of(app).add("Project", project.name);
 
-if (
-  process.env.AWS_PROFILE === "mostrom_mgmt"
-  || (process.env.CDK_DEFAULT_ACCOUNT && process.env.CDK_DEFAULT_ACCOUNT !== project.productionAccount)
-) {
-  throw new Error(`Club Athletic production infrastructure must use mostrom_prod / account ${project.productionAccount}`);
-}
+const managementEnvironment = {
+  account: process.env.CDK_DEFAULT_ACCOUNT,
+  region: process.env.CDK_DEFAULT_REGION,
+};
 
-const environment = { account: project.productionAccount, region: project.region };
-new InfraStack(app, "InfraStack", { env: environment });
+const infrastructureStack = new InfraStack(app, `${project.name}-mgmt-${project.service.name}-fargate`, {
+  env: managementEnvironment,
+});
+const pipelineStack = new PipelineStack(app, `${project.name}-${project.service.name}-pipeline`, {
+  env: managementEnvironment,
+});
+pipelineStack.node.addDependency(infrastructureStack);

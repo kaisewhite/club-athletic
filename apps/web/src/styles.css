@@ -373,14 +373,14 @@ a:focus-visible { outline: 2px solid var(--accent); outline-offset: -2px; }
      every inset is floored at the design's own padding so a device without
      insets renders exactly the spacing the source specifies. */
   .mobile-header { display: block; position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px); background: rgba(15,15,14,.94); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-subtle); }
-  .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: space-between; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
-  .mobile-brand { color: var(--text); font: 600 14px/1 "Maison Neue", sans-serif; letter-spacing: .04em; }
-  .mobile-nav-toggle { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: transparent; color: var(--text); font: inherit; font-size: 13px; }
+  .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
+  .mobile-brand { min-width: 0; color: var(--text); font: 600 14px/1 "Maison Neue", sans-serif; letter-spacing: .04em; white-space: nowrap; }
+  .mobile-nav-toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; margin-left: auto; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text); }
   .mobile-nav-layer { position: fixed; z-index: 10; inset: 0; }
   .mobile-nav-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(0,0,0,.58); }
   .mobile-drawer { position: absolute; inset: 0 auto 0 0; width: min(84vw, 320px); padding: max(16px, env(safe-area-inset-top, 0px)) 12px max(20px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: var(--sidebar); border-right: 1px solid var(--border-subtle); box-shadow: 16px 0 40px rgba(0,0,0,.28); animation: drawer-in .2s ease-out; }
   .mobile-drawer-heading { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px 18px 10px; color: var(--text-faint); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
-  .mobile-drawer-close { min-height: 44px; padding: 0 10px; border: 1px solid var(--border-strong); border-radius: 8px; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; letter-spacing: normal; text-transform: none; }
+  .mobile-drawer-close { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-muted); }
   .mobile-drawer .side-nav { gap: 2px; }
   .mobile-drawer .side-item { min-height: 44px; padding: 11px 12px; }
   @keyframes drawer-in { from { opacity: .7; transform: translateX(-12px); } to { opacity: 1; transform: translateX(0); } }

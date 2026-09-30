@@ -5,7 +5,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 REPO_ROOT="$(cd "${SCRIPT_DIR}/../../.." && pwd)"
 
-AWS_PROFILE="${AWS_PROFILE:-mostrom_prod}"
+AWS_PROFILE="${AWS_PROFILE:-mostrom_mgmt}"
 AWS_REGION="${AWS_REGION:-us-east-1}"
 DRY_RUN="${DRY_RUN:-false}"
 SERVICE_NAME="${1:?usage: push-secrets.sh <service-name> <env-file>}"

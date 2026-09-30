@@ -94,6 +94,7 @@
 .dietary-cell-button { display: flex; align-items: center; gap: 10px; }
 .dietary-cell-empty { color: var(--text-faint); font-style: italic; border-bottom: 1px dashed var(--border-strong); padding-bottom: 1px; }
 .dietary-cell-edit { color: var(--text-faint); font-style: normal; font-size: 13px; opacity: 0; transition: opacity .12s; }
+.dietary-cell-edit svg { display: block; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
 .dietary-cell-button.is-empty .dietary-cell-edit, .dietary-cell-button:hover .dietary-cell-edit, .dietary-cell-button:focus-visible .dietary-cell-edit { opacity: 1; }
 .dietary-cell-button:hover .dietary-cell-empty { color: var(--text-dim); border-bottom-color: var(--accent); }
 .dietary-cell-editor { display: grid; gap: 4px; }
@@ -102,10 +103,11 @@
 .dietary-cell-hint, .dietary-cell-error { font-size: 12px; color: var(--text-dim); }
 .dietary-cell-error { color: var(--danger); }
 .dietary-heading { font-size: 11px; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-weight: 600; margin: 24px 0 10px; }
-.dietary-title-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
-.dietary-title-row .dietary-heading { margin: 24px 0 10px; }
-.dietary-copy-button { display: inline-flex; align-items: center; justify-content: center; min-height: 30px; padding: 4px 11px; border: 1px solid var(--border-strong); border-radius: 999px; background: none; color: var(--text); font: inherit; font-size: 12px; cursor: pointer; }
-.dietary-copy-button:hover { border-color: var(--accent); color: var(--accent); }
+.chef-dietary-card { position: relative; }
+.chef-dietary-card thead th:last-child { padding-right: 64px; }
+.dietary-copy-button { position: absolute; z-index: 1; top: 0; right: 0; display: inline-flex; width: 44px; min-width: 44px; height: 44px; align-items: center; justify-content: center; padding: 0; border: 0; border-radius: 8px; background: transparent; color: var(--text-muted); cursor: pointer; }
+.dietary-copy-button svg { display: block; width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.dietary-copy-button:hover { background: var(--hover); color: var(--accent); }
 .dietary-copy-button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 .task-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 13px 18px; border-top: 1px solid var(--border-subtle); }
 .task-name { font-weight: 600; font-size: 14px; flex: 1; min-width: 140px; }
@@ -198,6 +200,7 @@
 
   /* Dietary notes can be long and editable. Give each guest their own row
      card, with the editable field below the guest name at every phone width. */
+  .chef-dietary-card { padding-top: 44px; }
   .detail-table:not(.chef-meal-table):not(.flight-rec-table),
   .detail-table:not(.chef-meal-table):not(.flight-rec-table) tbody { display: block; }
   .detail-table:not(.chef-meal-table):not(.flight-rec-table) thead { display: none; }
@@ -243,5 +246,4 @@
   .dietary-cell-empty { min-width: 0; }
   .dietary-cell-edit { flex: none; opacity: 1; }
   .dietary-cell-textarea { min-height: 44px; font-size: 16px; line-height: 1.5; overflow-y: auto; }
-  .dietary-copy-button { min-height: 44px; min-width: 44px; }
 }
