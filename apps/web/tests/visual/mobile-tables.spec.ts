@@ -108,6 +108,11 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
             const valueTextRects = [...valueRange.getClientRects()]
               .filter((rect) => rect.width > 0.5 && rect.height > 0.5)
               .map((rect) => ({ left: rect.left, right: rect.right, top: rect.top, bottom: rect.bottom }));
+            let effectiveOpacity = 1;
+            for (let ancestor = value; ancestor; ancestor = ancestor.parentElement) {
+              effectiveOpacity *= Number.parseFloat(getComputedStyle(ancestor).opacity);
+              if (ancestor === cell) break;
+            }
             return {
               name: cell.dataset.label ?? "",
               valueText: value?.textContent?.trim() ?? "",
@@ -118,7 +123,9 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
               labelAccessible: !!label && label.getAttribute("aria-hidden") !== "true" && !label.closest('[aria-hidden="true"]'),
               value: rect(value),
               valueVisible: !!value && getComputedStyle(value).display !== "none" && getComputedStyle(value).visibility !== "hidden",
+              valueOpacity: effectiveOpacity,
               valueTextRects,
+              valueScrolls: !!value && (value.scrollWidth > value.clientWidth + 1 || value.scrollHeight > value.clientHeight + 1),
               cellDisplay: getComputedStyle(cell).display,
               scrolls: !!cell && (cell.scrollWidth > cell.clientWidth + 1 || cell.scrollHeight > cell.clientHeight + 1),
             };
@@ -139,6 +146,8 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
           expect(field.label).not.toBeNull();
           expect(field.value).not.toBeNull();
           expect(field.valueVisible).toBe(true);
+          expect(field.valueOpacity).toBeGreaterThan(0);
+          expect(field.valueScrolls).toBe(false);
           expect(field.label!.height).toBeGreaterThan(0);
           expect(field.cell!.width).toBeGreaterThan(0);
           expect(field.cell!.left).toBeGreaterThanOrEqual(row.row!.left - 1);
@@ -159,6 +168,10 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
               expect(textRect.right).toBeLessThanOrEqual(field.cell!.right + 1);
               expect(textRect.top).toBeGreaterThanOrEqual(field.cell!.top - 1);
               expect(textRect.bottom).toBeLessThanOrEqual(field.cell!.bottom + 1);
+              expect(textRect.left).toBeGreaterThanOrEqual(field.value!.left - 1);
+              expect(textRect.right).toBeLessThanOrEqual(field.value!.right + 1);
+              expect(textRect.top).toBeGreaterThanOrEqual(field.value!.top - 1);
+              expect(textRect.bottom).toBeLessThanOrEqual(field.value!.bottom + 1);
               expect(textRect.left).toBeGreaterThanOrEqual(row.row!.left - 1);
               expect(textRect.right).toBeLessThanOrEqual(row.row!.right + 1);
               expect(textRect.top).toBeGreaterThanOrEqual(row.row!.top - 1);
