@@ -13,7 +13,18 @@
 /* The sheet is authored at 1254px and scaled to whatever width it is given, as
    one piece — the owner's composition, not a responsive re-flow of it. */
 .bm { margin: 32px 0 0; }
+.bm-map-wrap { position: relative; }
 .bm-scale { position: relative; width: 100%; aspect-ratio: 1; overflow: hidden; }
+.bm-expand { position: absolute; z-index: 1; top: 12px; right: 12px; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 14px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--bg); color: var(--text); font: 600 13px var(--font-sans); cursor: pointer; }
+.bm-expand:hover, .bm-dialog-bar button:hover { background: var(--hover); }
+.bm-expand:focus-visible, .bm-dialog-bar button:focus-visible, .bm-dialog-scroll:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+.bm-dialog { position: fixed; inset: 0; width: 100vw; max-width: none; height: 100dvh; max-height: none; margin: 0; padding: 0; border: 0; background: var(--bg); color: var(--text); }
+.bm-dialog::backdrop { background: rgb(0 0 0 / 75%); }
+.bm-dialog[open] { display: flex; flex-direction: column; }
+.bm-dialog-bar { display: flex; flex: none; align-items: center; justify-content: space-between; min-height: 56px; padding: 6px 16px; border-bottom: 1px solid var(--border); font: 600 15px var(--font-sans); }
+.bm-dialog-bar button { min-width: 44px; min-height: 44px; padding: 0 12px; border: 1px solid var(--border-strong); border-radius: 8px; background: var(--surface); color: var(--text); font: inherit; cursor: pointer; }
+.bm-dialog-scroll { flex: 1; min-height: 0; overflow: auto; overscroll-behavior: contain; }
+.bm-expanded-canvas { position: relative; width: 1254px; height: 1254px; margin: 0 auto; }
 .bm-sheet { position: absolute; left: 0; top: 0; width: 1254px; height: 1254px;
   transform: scale(var(--bm-scale, 1)); transform-origin: 0 0; }
 .bm-room-marker { position: absolute; padding: 6px 14px 7px; background: var(--accent); color: var(--bg); font-family: var(--font-sans); font-size: 17px; font-weight: 800; line-height: 1.15; white-space: nowrap; }

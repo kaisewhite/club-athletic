@@ -1,4 +1,4 @@
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import { SHEET_HTML, SHEET_SIZE } from "./sheet";
 import "./bedroom-map.css";
 
@@ -21,9 +21,21 @@ const roomPositions = [
   { left: 250, top: 560 },
 ] as const;
 
+function MapDrawing({ rooms }: { rooms: { id: string; name: string }[] }) {
+  return <div className="bm-sheet">
+    <div dangerouslySetInnerHTML={{ __html: SHEET_HTML }} />
+    {rooms.map((room, index) => roomPositions[index] && (
+      <div className="bm-room-marker" style={roomPositions[index]} key={room.id}>{room.name}</div>
+    ))}
+  </div>;
+}
+
 /** Scale the authored drawing and label it with room rows from the loader. */
 export function BedroomMap({ floors }: { floors: BedroomMapFloor[] }) {
   const box = useRef<HTMLDivElement>(null);
+  const dialog = useRef<HTMLDialogElement>(null);
+  const closeButton = useRef<HTMLButtonElement>(null);
+  const [expanded, setExpanded] = useState(false);
   const rooms = floors.flatMap((floor) => floor.rooms.map((room) => ({ ...room, floor })));
   useEffect(() => {
     const el = box.current;
@@ -34,16 +46,28 @@ export function BedroomMap({ floors }: { floors: BedroomMapFloor[] }) {
     ro.observe(el);
     return () => ro.disconnect();
   }, []);
+  useEffect(() => {
+    if (!expanded || !dialog.current) return;
+    const element = dialog.current;
+    element.showModal();
+    closeButton.current?.focus();
+    return () => { if (element.open) element.close(); };
+  }, [expanded]);
   return (
     <figure className="bm" aria-label="Chalet F bedroom map">
-      <div className="bm-scale" ref={box}>
-        <div className="bm-sheet">
-          <div dangerouslySetInnerHTML={{ __html: SHEET_HTML }} />
-          {rooms.map((room, index) => roomPositions[index] && (
-            <div className="bm-room-marker" style={roomPositions[index]} key={room.id}>{room.name}</div>
-          ))}
+      <div className="bm-map-wrap">
+        <button className="bm-expand" type="button" onClick={() => setExpanded(true)} aria-label="Enlarge bedroom map">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5" /></svg>
+          <span>Enlarge map</span>
+        </button>
+        <div className="bm-scale" ref={box}>
+          <MapDrawing rooms={rooms} />
         </div>
       </div>
+      {expanded && <dialog className="bm-dialog" ref={dialog} aria-label="Enlarged chalet bedroom map" onClose={() => setExpanded(false)}>
+        <div className="bm-dialog-bar"><span>Chalet F bedroom map</span><button ref={closeButton} type="button" onClick={() => setExpanded(false)} aria-label="Close enlarged map">Close</button></div>
+        <div className="bm-dialog-scroll" tabIndex={0}><div className="bm-expanded-canvas"><MapDrawing rooms={rooms} /></div></div>
+      </dialog>}
       <figcaption className="bm-details">
         <h3>Bedroom details</h3>
         <table className="bm-room-table">

@@ -21,7 +21,7 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
   const node = document.createElement("div");
   // These pure route components only consume loaderData; router metadata is unused.
   node.innerHTML = renderToStaticMarkup(Component({ loaderData: data } as P));
-  expect(node.querySelectorAll("form, input:not([disabled]), button, select, textarea")).toHaveLength(0);
+  expect(node.querySelectorAll("form, input:not([disabled]), button:not(.bm-expand), select, textarea")).toHaveLength(0);
   // The accent-dot convention is the app's own page headings. The bedroom map
   // sheet is the owner's authored artwork, embedded as-is, and keeps its own.
   for (const heading of [...node.querySelectorAll("h2")].filter((h) => !h.closest(".bm-sheet"))) {
@@ -75,6 +75,8 @@ describe("database-backed read-only detail pages", () => {
     // sheet, three floor drawings and the leader-line overlay, every bedroom
     // called out, and the mapping table.
     const sheet = page.querySelector(".bm-sheet")!;
+    expect(page.querySelector<HTMLButtonElement>(".bm-expand")?.getAttribute("aria-label")).toBe("Enlarge bedroom map");
+    expect(page.querySelector(".bm-dialog")).toBeNull();
     expect(sheet.querySelectorAll("svg")).toHaveLength(5);
     for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) expect(sheet.textContent).toContain(`Bedroom ${n}`);
     expect(page.querySelectorAll(".bm-room-table tbody tr")).toHaveLength(8);
@@ -198,7 +200,7 @@ describe("database-backed read-only detail pages", () => {
   it("preserves all nine link destinations and the six source groups in order", async () => {
     const links = [
       ["Chalet", "Falcon Lodge F — Ski in Luxury", "https://www.skiinluxury.com/france/meribel/falcon-lodge-f"],
-      ["Chalet", "Falcon residence — Alpine Resorts", "https://www.alpine-resorts.fr/en_US/winter/resort/falcon"],
+      ["Chalet", "Chalet F — Alpine Resorts", "https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f"],
       ["Ski pass", "Méribel / 3 Vallées ski pass", "https://www.skipass-meribel.com/en/"],
       ["Ski pass", "Epic Pass — Les 3 Vallées access", "https://www.epicpass.com/regions/europe/france/les-3-vallees.aspx"],
       ["Mountain", "Méribel webcams", "https://www.meribel.net/informations-pratiques/webcams/"],

@@ -58,7 +58,10 @@ describe("DietaryCell", () => {
       textarea.dispatchEvent(new KeyboardEvent("keydown", { key: "Enter", bubbles: true }));
     });
     expect(submitted).toEqual([{ guestId: "guest-1", dietaryNotes: "Updated note" }]);
-    expect(container.textContent).toContain("Updated note");
+    expect(container.querySelector<HTMLTextAreaElement>("textarea")).toBeNull();
+    expect(container.querySelector<HTMLButtonElement>('[aria-label="Edit dietary needs for Ada Lovelace"]')?.textContent).toContain("Updated note");
+    await act(async () => { await router.revalidate(); });
+    expect(container.querySelector<HTMLButtonElement>('[aria-label="Edit dietary needs for Ada Lovelace"]')?.textContent).toContain("Updated note");
   });
 
   it("copies one guest per line as plain text", async () => {
