@@ -112,6 +112,19 @@ const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {
   "Christie Navarre": { firstName: "Christie", lastName: "Navarre" },
 };
 
+// Payment status is organizer-provided positive seed content. A guest omitted
+// from this list has an unknown status, so seeding must preserve their row.
+const PAID_GUESTS = new Set([
+  "Kaise",
+  "Amelia Drake",
+  "Kristy Khoury",
+  "Valeriia Stobolva",
+  "Christie Navarre",
+  "Pete F.",
+  "Augustus Shewchuck",
+  "Olajuwon Jones",
+]);
+
 const ROOM_TYPES: Record<string, RoomType> = {
   "Master double": "MASTER_DOUBLE",
   "Double room": "DOUBLE",
@@ -195,6 +208,9 @@ function validateSnapshot(): void {
   }
   if (names.some((name) => !GUEST_NAMES[name]) || Object.keys(GUEST_NAMES).length !== names.length) {
     throw new Error("Every source guest must have exactly one reviewed name mapping.");
+  }
+  if ([...PAID_GUESTS].some((name) => !names.includes(name))) {
+    throw new Error("Every paid guest must match a confirmed guest in the seed snapshot.");
   }
   for (const room of rooms) {
     if (!ROOM_TYPES[room.type]) throw new Error("Unmapped source room type.");
@@ -295,9 +311,12 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
           guestId = guest.id;
           for (const type of ["FLIGHT", "PAYMENT", "DETAILS"] as const) {
             const taskKey = { guestId: guest.id, type };
-            await ensure(tx, "GuestTask",
+            const task = await ensure(tx, "GuestTask",
               () => tx.guestTask.findUnique({ where: { guestId_type: taskKey } }),
               () => tx.guestTask.create({ data: { id: createId(), ...taskKey, done: false } }));
+            if (type === "PAYMENT" && PAID_GUESTS.has(displayName) && !task.done) {
+              await tx.guestTask.update({ where: { id: task.id }, data: { done: true } });
+            }
           }
         }
         const spotKey = { roomId: room.id, index: spotIndex + 1 };

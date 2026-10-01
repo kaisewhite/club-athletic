@@ -22,11 +22,6 @@ function subscribeMobile(onChange: () => void) {
 }
 const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
 const serverSnapshot = () => false;
-const statusColor: Record<GuestFlight["status"], string> = {
-  "On the shuttle": "var(--accent)", "Tight": "var(--warn)",
-  "Misses the shuttle": "var(--danger)", "Not booked": "var(--text-faint)",
-};
-
 function Missing() { return <span style={{ color: "var(--text-faint)" }}>—</span>; }
 
 function FlightName({ leg }: { leg: Leg | null }) {
@@ -49,9 +44,7 @@ function FlightTime({ local }: { local: string | undefined }) {
 function GuestName({ guest }: { guest: GuestFlight }) {
   // §2.13 will consume this question in the Home chat composer.
   const question = `When does ${guest.displayName} land?`;
-  return <><a href={`/?question=${encodeURIComponent(question)}`}>{guest.displayName}</a>
-    {guest.arrivalMarker && <small className="flight-friday">{guest.arrivalMarker}</small>}
-  </>;
+  return <a href={`/?question=${encodeURIComponent(question)}`}>{guest.displayName}</a>;
 }
 
 const columns: ColumnDef<typeof features, GuestFlight>[] = [
@@ -72,7 +65,6 @@ const columns: ColumnDef<typeof features, GuestFlight>[] = [
     { id: "outArrival", header: "Arrives", accessorFn: (guest) => guest.outbound?.scheduledArrival.getTime(),
       sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightTime local={row.original.outbound?.arrivalLocal} /> },
   ] },
-  { id: "status", accessorKey: "status", header: "Status", sortFn: "text", cell: ({ row }) => <span className="flight-status" style={{ color: statusColor[row.original.status] }}>{row.original.status}</span> },
 ];
 
 function SortButton({ column }: { column: Column<typeof features, GuestFlight, unknown> }) {
@@ -91,7 +83,6 @@ function GuestCard({ row }: { row: Row<typeof features, GuestFlight> }) {
   };
   return <li className="flight-guest-card">
     <h4>{renderCell("guest")}</h4>
-    <div>{renderCell("status")}</div>
     <div className="flight-card-leg"><h5>Arriving</h5><dl>
       <dt>Flight</dt><dd>{renderCell("inFlight")}</dd>
       <dt>Departs</dt><dd>{renderCell("inDeparture")}</dd>
@@ -112,18 +103,14 @@ export function GroupFlightTable({ flights }: { flights: FlightTable }) {
     initialState: { sorting: [{ id: "arrival", desc: false }] }, enableSortingRemoval: false,
   });
   const rows = table.getRowModel().rows;
-  const booked = flights.filter((guest) => guest.inbound && guest.outbound).length;
-  const misses = flights.filter((guest) => guest.status === "Misses the shuttle").length;
   return <section className="group-flights" aria-labelledby="group-flights-heading">
     <style>{styles}</style>
-    <h3 id="group-flights-heading">Group flights</h3>
-    <p id="flight-summary">{booked} of {flights.length} booked · {misses} miss the shuttle</p>
-    <p className="flight-help">Booked means both directions are recorded. Flight times use the airport’s local clock.</p>
+    <h3 id="group-flights-heading">Group Flights</h3>
     {!flights.some((guest) => guest.inbound || guest.outbound) && <p className="flight-help">No flights recorded yet. Everyone is listed below.</p>}
     {mobile ? <>
-      <div className="flight-mobile-sorting" aria-label="Sort group flights">{table.getAllLeafColumns().map((column) => <SortButton key={column.id} column={column} />)}</div>
-      <ul className="flight-cards" aria-label="Group flights" aria-describedby="flight-summary">{rows.map((row) => <GuestCard key={row.id} row={row} />)}</ul>
-    </> : <div className="flight-table-frame"><table className="flight-table" aria-label="Group flights" aria-describedby="flight-summary">
+      <div className="flight-mobile-sorting" aria-label="Sort Group Flights">{table.getAllLeafColumns().map((column) => <SortButton key={column.id} column={column} />)}</div>
+      <ul className="flight-cards" aria-label="Group Flights">{rows.map((row) => <GuestCard key={row.id} row={row} />)}</ul>
+    </> : <div className="flight-table-frame"><table className="flight-table" aria-label="Group Flights">
       <thead>{table.getHeaderGroups().map((group) => <tr key={group.id}>{group.headers.map((header) => <th key={header.id} colSpan={header.colSpan}
         scope={header.column.columns.length ? "colgroup" : "col"}
         aria-sort={!header.isPlaceholder && header.column.getCanSort() ? header.column.getIsSorted() === "asc" ? "ascending" : header.column.getIsSorted() === "desc" ? "descending" : "none" : undefined}>
@@ -154,8 +141,6 @@ const styles = `
 .flight-sort:hover { color: var(--accent); }
 .group-flights :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 .flight-route { font-weight: 600; color: var(--text); }
-.flight-friday { display: block; width: fit-content; color: var(--accent); border: 1px solid var(--border-strong); border-radius: 999px; font-size: 11px; padding: 2px 8px; margin-top: 8px; }
-.flight-status { font-weight: 600; }
 .flight-mobile-sorting { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text-dim); }
 .flight-mobile-sorting button { min-height: 44px; }
 /* TODO §2.15 mobile pass. This block and the .flight-* card rules above it are
@@ -163,7 +148,7 @@ const styles = `
    the seam is the matchMedia("(width < 860px)") switch in this file, so the
    desktop branch is untouched. The media query is belt and braces. */
 @media (max-width: 859px) {
-  /* "Status ↕" measures 43.3px; the shortest sort button must still be a 44px box. */
+  /* The shortest sort button must still be a 44px box. */
   .flight-mobile-sorting button { min-width: 44px; padding-inline: 2px; }
   /* The guest name is the card's one action (it asks the chat about that guest),
      so it gets a 44px box rather than the 16px line box a short name like

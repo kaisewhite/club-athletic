@@ -126,24 +126,23 @@ describe("Flights route", () => {
   });
   it("keeps all nine guests, grouped headers and missing cells when no flights exist", () => {
     const page = staticPage(names.map((name) => guest(name)));
-    expect(page.textContent).toContain("0 of 9 booked · 0 miss the shuttle");
+    expect(page.querySelector("#group-flights-heading")?.textContent).toBe("Group Flights");
+    expect(page.querySelector("#flight-summary")).toBeNull();
+    expect(page.textContent).not.toContain("Booked means both directions are recorded");
     expect(page.textContent).toContain("No flights recorded yet");
     expect(page.querySelectorAll(".flight-table tbody tr")).toHaveLength(9);
     expect([...page.querySelectorAll(".flight-table tbody th")].map((node) => node.textContent)).toEqual(names);
-    expect([...page.querySelectorAll(".flight-status")].map((node) => node.textContent)).toEqual(Array(9).fill("Not booked"));
+    expect(page.querySelectorAll(".flight-status")).toHaveLength(0);
     expect([...page.querySelectorAll(".flight-table tbody td")].filter((node) => node.textContent === "—")).toHaveLength(54);
     expect([...page.querySelectorAll('th[colspan="3"]')].map((node) => node.textContent)).toEqual(["Arriving", "Departing"]);
     expect(page.querySelectorAll(".flight-guest-card")).toHaveLength(0);
   });
 
-  it("displays supplied statuses, Friday and per-leg provenance without deriving them again", () => {
-    // Deliberately share timestamps across all statuses: the query's status must win.
+  it("displays flight details without status cells or Friday badges", () => {
     const statuses: Guest["status"][] = ["On the shuttle", "Tight", "Misses the shuttle", "Not booked"];
     const page = staticPage(statuses.map((status) => guest(status, { status, inbound: leg(), outbound: outbound(), arrivingFriday: true, arrivalMarker: "Arriving Friday" })));
-    expect([...page.querySelectorAll(".flight-status")].map((node) => node.getAttribute("style"))).toEqual([
-      "color:var(--accent)", "color:var(--warn)", "color:var(--danger)", "color:var(--text-faint)",
-    ]);
-    expect(page.querySelectorAll(".flight-friday")).toHaveLength(4);
+    expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
+    expect(page.querySelectorAll(".flight-table tbody tr:first-child td")).toHaveLength(6);
     expect(page.textContent).not.toContain("from screenshot");
     expect(page.textContent).not.toContain("entered by organizer");
     expect(page.textContent).toContain("EWR → GVA");
@@ -152,12 +151,12 @@ describe("Flights route", () => {
     expect(page.textContent).toContain("Sat 6 Feb · 11:00");
     const link = page.querySelector<HTMLAnchorElement>("tbody th a")!;
     expect(new URL(link.href).searchParams.get("question")).toBe("When does On the shuttle land?");
-    expect(page.textContent).toContain("4 of 4 booked · 1 miss the shuttle");
+    expect(page.querySelector("#flight-summary")).toBeNull();
   });
 
   it("handles partial bookings and nullable flight details without inventing values", () => {
     const page = staticPage([guest("Partial", { inbound: leg({ airline: null, flightNumber: null, confirmedAt: null }) }), guest("Absent")]);
-    expect(page.textContent).toContain("0 of 2 booked");
+    expect(page.querySelector("#flight-summary")).toBeNull();
     expect(page.textContent).not.toContain("No flights recorded yet");
     // A leg with no airline or number still shows its route, and nothing else.
     expect(page.querySelector(".flight-route")?.textContent).toBe("EWR → GVA");
@@ -185,7 +184,7 @@ describe("Flights route", () => {
     expect(page.querySelector("table")).toBeNull();
     expect([...page.querySelectorAll(".flight-guest-card h4 a")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
     expect(page.querySelectorAll(".flight-card-leg")).toHaveLength(4);
-    expect(page.querySelectorAll(".flight-status")).toHaveLength(2);
+    expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
     await clickSort(page, "Guest");
     expect([...page.querySelectorAll(".flight-guest-card h4 a")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
     await act(async () => { narrow = false; listeners.forEach((fn) => fn()); });
