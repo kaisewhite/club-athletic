@@ -61,7 +61,7 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
   {group:'Chalet',label:'Falcon Lodge F — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f',note:'The whole chalet: photos, layout and what it comes with.'},
   {group:'Chalet',label:'Apartment F12 — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f12',note:'The lower apartment on its own (sleeps 4–8). Ours is F12 and F21 combined.'},
   {group:'Chalet',label:'Apartment F21 — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f21',note:'The upper apartment on its own (sleeps 6–12).'},
-  {group:'Chalet',label:'Falcon residence — Alpine Resorts',href:'https://www.alpine-resorts.fr/en_US/winter/resort/falcon',note:'The residence the chalet is in: the shared pool, hammam, spa and ski shop.'},
+  {group:'Chalet',label:'Chalet F — Alpine Resorts',href:'https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f',note:'The chalet’s official listing: photos, floor plan and amenities.'},
   {group:'Ski pass',label:'Méribel / 3 Vallées ski pass',href:'https://www.skipass-meribel.com/en/',note:'Buy your lift pass before you go — Méribel only, or the whole 3 Vallées.'},
   {group:'Ski pass',label:'Epic Pass — Les 3 Vallées access',href:'https://www.epicpass.com/regions/europe/france/les-3-vallees.aspx',note:'Epic Pass holders: how your pass covers days in Les 3 Vallées.'},
   {group:'Mountain',label:'Méribel webcams',href:'https://www.meribel.net/informations-pratiques/webcams/',note:'Live pictures of the slopes and weather before you head out.'},
