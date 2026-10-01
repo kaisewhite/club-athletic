@@ -67,7 +67,8 @@ describe("DietaryCell", () => {
     await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
     await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Copy dietary requirements"]')!.click(); await Promise.resolve(); });
     expect(writeText).toHaveBeenCalledWith("Ada Lovelace: No nuts\nGrace Hopper: —");
-    expect(container.querySelector('[aria-label="Copy dietary requirements"]')?.textContent).toBe("Copied");
+    expect(container.querySelector<HTMLButtonElement>(".dietary-copy-button")?.getAttribute("aria-label")).toBe("Dietary requirements copied");
+    expect(container.querySelector('[role="status"]')?.textContent).toBe("Dietary requirements copied to clipboard.");
   });
 });
 

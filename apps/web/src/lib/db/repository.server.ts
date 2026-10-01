@@ -2,7 +2,7 @@
 import { withReadDatabase } from "./client.server";
 import type { Prisma } from "../../../prisma/generated/client";
 import { buildFlightTable, flightSelect } from "./flights";
-import { countOpenSpots, getTripPricing, summarizeTasks } from "./projections";
+import { countOpenSpots, getTripPricing } from "./projections";
 
 // A lookup key, not a duplicate of editable trip facts.
 const DEFAULT_TRIP_KEY = "meribel-2027";
@@ -202,13 +202,36 @@ export async function getGuestTasks(tripKey = DEFAULT_TRIP_KEY) {
   return withReadDatabase(async (db) => {
     const trip = await db.trip.findUniqueOrThrow({
       where: { seedKey: tripKey }, select: {
+        startDate: true, endDate: true, timezone: true,
+        flightArrivalTarget: true, flightArrivalCutoff: true, flightReturnCutoff: true,
         guests: {
           where: { status: "CONFIRMED" }, orderBy: [...guestOrder],
-          select: { ...guestIdentity, tasks: { orderBy: { type: "asc" } } },
+          select: {
+            ...guestIdentity,
+            tasks: { where: { type: "PAYMENT" }, select: { done: true } },
+            flights: {
+              where: { supersededById: null, confirmedByGuest: true },
+              select: flightSelect,
+            },
+          },
         },
       },
     });
-    return summarizeTasks(trip.guests);
+    const flightRows = buildFlightTable(trip.guests, trip);
+    const flightByGuest = new Map(flightRows.map((row) => [row.id, row]));
+    const guests = trip.guests.map((guest) => ({
+      id: guest.id,
+      firstName: guest.firstName,
+      lastName: guest.lastName,
+      displayName: guest.displayName,
+      hasFlights: Boolean(flightByGuest.get(guest.id)?.inbound || flightByGuest.get(guest.id)?.outbound),
+      paid: guest.tasks[0]?.done ?? false,
+    }));
+    return {
+      guests,
+      guestCount: guests.length,
+      paidCount: guests.filter((guest) => guest.paid).length,
+    };
   });
 }
 

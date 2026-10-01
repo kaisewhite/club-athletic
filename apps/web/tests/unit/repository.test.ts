@@ -115,16 +115,37 @@ describe("read section repository", () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors: [], sleepsMax: null }, _count: { guests: 0 } });
     expect(await getRoomsByFloor()).toEqual({ floors: [], guestCount: 0, openCount: 0, capacity: null });
   });
-  it("derives overall and per-guest task completion from confirmed guests' tasks", async () => {
-    findUniqueOrThrow.mockResolvedValue({ guests: [
-      { id: "one", tasks: [{ done: true }, { done: false }, { done: true }] },
-      { id: "two", tasks: [{ done: false }, { done: false }, { done: true }] },
-    ] });
+  it("combines confirmed flight records with payment status from one guest query", async () => {
+    const inbound = {
+      id: "in", direction: "INBOUND", airline: "Swiss", flightNumber: "LX23", origin: "EWR", destination: "GVA",
+      scheduledDeparture: new Date("2027-01-29T22:35:00Z"), scheduledArrival: new Date("2027-01-30T06:25:00Z"),
+      terminal: null, source: "ORGANIZER", confirmedAt: new Date("2026-09-01T00:00:00Z"),
+      supersededById: null, confirmedByGuest: true,
+    };
+    const outbound = {
+      ...inbound, id: "out", direction: "OUTBOUND", origin: "GVA", destination: "EWR",
+      scheduledDeparture: new Date("2027-02-06T10:00:00Z"), scheduledArrival: new Date("2027-02-06T18:00:00Z"),
+    };
+    findUniqueOrThrow.mockResolvedValue({
+      startDate: new Date("2027-01-30T00:00:00Z"), endDate: new Date("2027-02-06T00:00:00Z"), timezone: "Europe/Paris",
+      flightArrivalTarget: "08:00", flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00",
+      guests: [
+        { id: "one", firstName: "One", lastName: "", displayName: "One", tasks: [{ done: true }], flights: [inbound, outbound] },
+        { id: "two", firstName: "Two", lastName: "", displayName: "Two", tasks: [{ done: false }], flights: [inbound] },
+        { id: "three", firstName: "Three", lastName: "", displayName: "Three", tasks: [], flights: [] },
+      ],
+    });
     const result = await getGuestTasks();
-    expect(result).toMatchObject({ doneCount: 3, totalTasks: 6 });
-    expect(result.guests[0]).toMatchObject({ doneCount: 2, totalTasks: 3 });
+    expect(result).toMatchObject({ guestCount: 3, paidCount: 1 });
+    expect(result.guests).toMatchObject([
+      { displayName: "One", hasFlights: true, paid: true },
+      { displayName: "Two", hasFlights: true, paid: false },
+      { displayName: "Three", hasFlights: false, paid: false },
+    ]);
     expect(findUniqueOrThrow).toHaveBeenCalledTimes(1);
     expect(findUniqueOrThrow.mock.calls[0]?.[0].select.guests.where).toEqual({ status: "CONFIRMED" });
+    expect(findUniqueOrThrow.mock.calls[0]?.[0].select.guests.select.tasks.where).toEqual({ type: "PAYMENT" });
+    expect(findUniqueOrThrow.mock.calls[0]?.[0].select.guests.select.flights.where).toEqual({ supersededById: null, confirmedByGuest: true });
   });
   it("filters flight provenance in the database query and keeps guests without flights", async () => {
     findUniqueOrThrow.mockResolvedValue({

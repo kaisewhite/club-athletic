@@ -4,7 +4,7 @@
 //
 // It asserts geometry rather than pixels, because what §2.15 asks for is
 // measurable: no horizontal overflow, single-column rooms, one chef row per
-// day, pills under the name, 44px targets, contained overscroll — and, most
+// day, readable task cards, 44px controls, contained overscroll — and, most
 // importantly, that all of it switches at 859/860 and nothing leaks upward.
 //
 // §2.15: "Test the real matrix: 320 (iPhone SE), 375, 390, 414, 768 (iPad
@@ -179,25 +179,17 @@ for (const [width, height] of VIEWPORTS) {
       expect(await dietary.evaluate((el) => getComputedStyle(el).display)).toBe(mobile ? "grid" : "table-row");
     });
 
-    test("task pills wrap under the guest name below the seam", async ({ page }) => {
+    test("task statuses use the shared responsive table layout", async ({ page }) => {
       await openFrozen(page, "/tasks");
-      const row = page.locator(".task-row", { hasText: LONGEST.guest });
+      const row = page.locator(".task-table tbody tr", { hasText: LONGEST.guest });
       await expect(row).toHaveCount(1);
-      const geometry = await row.evaluate((el) => {
-        const name = el.querySelector(".task-name")!.getBoundingClientRect();
-        const pills = el.querySelector(".task-pills")!.getBoundingClientRect();
-        const pill = el.querySelector(".task-pill")!.getBoundingClientRect();
-        return { nameBottom: name.bottom, nameWidth: name.width, pillsTop: pills.top, pillHeight: pill.height };
-      });
+      const display = await row.evaluate((el) => getComputedStyle(el).display);
       if (mobile) {
-        // §2.15: "verify the pills wrap under the guest name rather than
-        // squeezing it, and that the row stays scannable."
-        expect(geometry.pillsTop, `pills at ${width}px must start below the name`).toBeGreaterThanOrEqual(geometry.nameBottom - 1);
-        expect(geometry.pillHeight, "task pills are on §2.15's 44px list").toBeGreaterThanOrEqual(44);
-        // The name never wraps: it owns the whole first line.
-        expect(await lineCount(row.locator(".task-name"))).toBe(1);
+        expect(display).toBe("grid");
+        await expect(row.locator('td[data-label="Flight"]')).toBeVisible();
+        await expect(row.locator('td[data-label="Payment"]')).toBeVisible();
       } else {
-        expect(geometry.pillHeight).toBeLessThan(44); // desktop geometry preserved
+        expect(display).toBe("table-row");
       }
     });
 
@@ -316,13 +308,13 @@ for (const [width, height] of VIEWPORTS) {
     test("every control §2.15 names is a 44px box below the seam", async ({ page }) => {
       test.skip(!mobile, "44px minimums are a touch requirement, not a pointer one");
       // §2.15: "Minimum 44×44px touch targets for every button: nav chips,
-      // tiles, paperclip, send, task pills. Several source controls are smaller
+      // tiles, paperclip, and send. Several source controls are smaller
       // than that." Named explicitly so this check cannot be satisfied by the
       // sweep below simply declining to look at something.
       const CONTROLS: [string, string][] = [
         ["/", ".mobile-nav-toggle"], ["/faq", ".overview-tile"], ["/", ".week-heading a"],
         ["/", ".suggestions button"], ["/", ".send"], ["/", ".chat-attach"],
-        ["/tasks", ".task-pill"], ["/links", ".link-row"], ["/chalet", ".chalet-listings a"],
+        ["/links", ".link-row"], ["/chalet", ".chalet-listings a"],
         ["/flights", ".flight-mobile-sorting button"], ["/flights", ".flight-guest-card h4 a"],
       ];
       const offenders: string[] = [];
@@ -400,7 +392,7 @@ for (const [width, height] of VIEWPORTS) {
       await openFrozen(page, "/rooms");
       await expect(page.locator(".room-name", { hasText: LONGEST.room })).toHaveCount(1);
       await openFrozen(page, "/tasks");
-      await expect(page.locator(".task-name", { hasText: LONGEST.guest })).toHaveCount(1);
+      await expect(page.locator(".task-table tbody th", { hasText: LONGEST.guest })).toHaveCount(1);
       await openFrozen(page, "/schedule");
       await expect(page.locator(".schedule-entry-title", { hasText: LONGEST.event })).toHaveCount(1);
       const lines = await lineCount(page.locator(".schedule-entry-title", { hasText: LONGEST.event }));

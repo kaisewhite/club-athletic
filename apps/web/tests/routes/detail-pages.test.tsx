@@ -161,26 +161,26 @@ describe("database-backed read-only detail pages", () => {
     expect(rows[5]?.textContent).not.toContain("On your own");
     expect(rows[5]?.querySelector('td[data-meal="Dinner"]')?.textContent).toBe("—");
   });
-  it("renders all 27 seeded task flags as incomplete spans without localStorage", async () => {
+  it("renders flight and payment status in the shared table without a Details column", async () => {
     const storage = vi.spyOn(Storage.prototype, "getItem");
     try {
-      findUniqueOrThrow.mockResolvedValue({ guests: names.map((displayName) => ({ id: displayName, displayName,
-        tasks: ["DETAILS", "FLIGHT", "PAYMENT"].map((type) => ({ id: `${displayName}-${type}`, type, done: false })),
-      })) });
+      findUniqueOrThrow.mockResolvedValue({
+        startDate: new Date("2027-01-30T00:00:00Z"), endDate: new Date("2027-02-06T00:00:00Z"), timezone: "Europe/Paris",
+        flightArrivalTarget: "08:00", flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00",
+        guests: names.map((displayName) => ({ id: displayName, firstName: displayName, lastName: "", displayName,
+          tasks: [{ done: displayName === "Amelia Drake" }], flights: [],
+        })),
+      });
       const page = renderPage(Tasks, await tasksLoader());
-      expect(page.textContent).toContain("0 of 27 complete");
-      expect(page.querySelectorAll(".task-row")).toHaveLength(9);
-      expect(page.querySelectorAll('span.task-pill[data-done="false"]')).toHaveLength(27);
-      expect(page.querySelectorAll('[data-done="true"]')).toHaveLength(0);
-      expect([...page.querySelectorAll(".task-pill")].map((node) => node.textContent)).toEqual(names.flatMap(() => ["Flight", "Payment", "Details"]));
+      expect(page.textContent).toContain("1 paid");
+      expect(page.querySelectorAll('table[aria-label="Guest flight and payment status"] tbody tr')).toHaveLength(9);
+      expect(page.querySelectorAll('td[data-label="Flight"] .task-status[data-done="false"]')).toHaveLength(9);
+      expect(page.querySelector('[data-label="Payment"] .task-status[data-done="true"]')?.textContent).toBe("Paid");
+      expect([...page.querySelectorAll("thead th")].map((node) => node.textContent)).toEqual(["Guest", "Flight", "Payment"]);
+      expect(page.textContent).not.toContain("Details");
+      expect(page.querySelector('[data-label="Payment"] .task-status[data-done="false"]')?.textContent).toBe("—");
       expect(storage).not.toHaveBeenCalled();
     } finally { storage.mockRestore(); }
-  });
-  it("renders changed task flags as completed status, never as controls", async () => {
-    findUniqueOrThrow.mockResolvedValue({ guests: [{ id: "kaise", displayName: "Kaise", tasks: ["FLIGHT", "PAYMENT", "DETAILS"].map((type) => ({ id: type, type, done: true })) }] });
-    const page = renderPage(Tasks, await tasksLoader());
-    expect(page.textContent).toContain("3 of 3 complete");
-    expect([...page.querySelectorAll('[data-done="true"]')].map((node) => node.textContent)).toEqual(["Flight booked", "Paid", "Details in"]);
   });
   it("preserves all nine link destinations and the six source groups in order", async () => {
     const links = [

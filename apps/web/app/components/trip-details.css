@@ -79,7 +79,7 @@
 .chef-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
 .chef-stat-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .chef-stat-value { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin-top: 4px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.detail-table-wrap, .task-list, .link-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.detail-table-wrap, .link-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
 .detail-table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
 .detail-table thead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .detail-table thead th { padding: 10px 16px; font-weight: 500; }
@@ -110,11 +110,8 @@
 .dietary-copy-button svg { display: block; width: 19px; height: 19px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .dietary-copy-button:hover { background: var(--hover); color: var(--text); }
 .dietary-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
-.task-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 12px; padding: 12px 16px; border-top: 1px solid var(--border-subtle); }
-.task-name { font-weight: 600; font-size: 14px; line-height: 1.571; flex: 1; min-width: 140px; }
-.task-pills { display: flex; gap: 6px; flex-wrap: wrap; }
-.task-pill { font: inherit; font-size: 12px; font-weight: 400; padding: 4px 12px; border: 1px solid var(--border); border-radius: var(--radius-pill); background: none; color: var(--text-dim); transition: background 120ms cubic-bezier(.4,0,.2,1); }
-.task-pill[data-done="true"] { font-weight: 700; border-color: var(--brand); background: var(--brand); color: var(--bg); }
+.task-status { color: var(--text-dim); }
+.task-status[data-done="true"] { color: var(--text); font-weight: 600; }
 .link-section { margin-top: 24px; }
 .link-section .detail-kicker { margin-bottom: 4px; }
 .link-section .link-list { border-top: 1px solid var(--border); }
@@ -124,7 +121,7 @@
 .link-group { display: block; font-size: 12px; color: var(--text-dim); }
 
 @media (prefers-reduced-motion: reduce) {
-  .chalet-address, .task-pill, .link-row, .dietary-cell-edit, .dietary-copy-button { transition: none; }
+  .chalet-address, .link-row, .dietary-cell-edit, .dietary-copy-button { transition: none; }
 }
 
 /* ==========================================================================
@@ -231,17 +228,6 @@
     font-size: 11px;
     letter-spacing: .06em;
     text-transform: uppercase;
-  }
-
-  /* ---- Tasks (§2.11). `flex: 1 0 100%` makes the name claim the whole first
-     line, so the three pills always wrap underneath it instead of competing
-     with it for width. 44px pills per §2.15's touch-target list. */
-  .task-row { gap: 8px; }
-  .task-name { flex: 1 0 100%; }
-  .task-pill {
-    display: inline-flex;
-    align-items: center;
-    min-height: 44px;
   }
 
   /* ---- Standalone link chips get a 44px box; inline links do not (WCAG 2.5.8). */
