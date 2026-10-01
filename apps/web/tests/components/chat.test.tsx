@@ -10,11 +10,10 @@ import { canSubmitChat, chatUiReducer, initialChatUiState } from "@/lib/chat/cha
 import { mapSessionEventsToPresentation } from "@/lib/chat/event-projection";
 import type { ConversationDetails, ConversationSessionStateFrame, SessionEventRow } from "@/lib/chat/contracts";
 import type { ConversationStreamHandlers } from "../../app/lib/chat/api";
-import { readConversationSelection, setConversationSelection } from "../../app/lib/chat/detail-loader";
 import { isAutoScrollFollowSuspended, isPinnedToBottom } from "../../app/lib/chat/use-auto-scroll";
 
-const api = vi.hoisted(() => ({ subscribe: vi.fn(), recover: vi.fn(), send: vi.fn(), start: vi.fn(), cancel: vi.fn() }));
-vi.mock("../../app/lib/chat/api", async importOriginal => ({ ...await importOriginal<object>(), subscribeToConversationStream: api.subscribe, fetchConversationDetailsAfterStatus: api.recover, sendConversationChatMessage: api.send, startConversation: api.start, cancelConversation: api.cancel }));
+const api = vi.hoisted(() => ({ subscribe: vi.fn(), recover: vi.fn(), detail: vi.fn(), send: vi.fn(), start: vi.fn(), cancel: vi.fn() }));
+vi.mock("../../app/lib/chat/api", async importOriginal => ({ ...await importOriginal<object>(), subscribeToConversationStream: api.subscribe, fetchConversationDetails: api.detail, fetchConversationDetailsAfterStatus: api.recover, sendConversationChatMessage: api.send, startConversation: api.start, cancelConversation: api.cancel }));
 const row = (seq: number, type: string, payload: SessionEventRow["payload"]): SessionEventRow => ({ id: `row-${seq}`, seq, type, payload });
 const opening = row(0, "user_message", { text: "When do I land?", delivery: "sent" });
 function detail(active = true, events = [opening]): ConversationDetails {
@@ -31,7 +30,7 @@ let observers: { disconnect: ReturnType<typeof vi.fn>; callback: ResizeObserverC
 
 beforeEach(() => {
   vi.useFakeTimers(); vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
-  api.subscribe.mockReset(); api.recover.mockReset(); api.send.mockReset(); api.start.mockReset(); api.cancel.mockReset().mockResolvedValue(undefined);
+  api.subscribe.mockReset(); api.recover.mockReset(); api.detail.mockReset(); api.send.mockReset(); api.start.mockReset(); api.cancel.mockReset().mockResolvedValue(undefined);
   handlers = []; unsubscribes = []; observers = [];
   api.subscribe.mockImplementation((_id, _seq, callbacks: ConversationStreamHandlers) => {
     handlers.push(callbacks); const stop = Object.assign(vi.fn(), { finished: Promise.resolve() }); unsubscribes.push(stop); return stop;
@@ -44,7 +43,7 @@ beforeEach(() => {
 });
 afterEach(async () => {
   await act(async () => root?.unmount()); root = undefined; router?.dispose(); router = undefined;
-  setConversationSelection(null); document.body.innerHTML = "";
+  document.body.innerHTML = "";
   vi.useRealTimers(); vi.restoreAllMocks(); vi.unstubAllGlobals();
 });
 async function mount(element: React.ReactNode) {
@@ -54,12 +53,12 @@ async function mount(element: React.ReactNode) {
 async function panel(initial: ConversationDetails | null, loader = vi.fn(async () => initial)) {
   function Surface() {
     const loaded = useLoaderData<ConversationDetails | null>();
-    const [reset, setReset] = useState(false);
+    const [reset, setReset] = useState(false); const [selectedId, setSelectedId] = useState(loaded?.id ?? null);
     // Stands in for AppShell's sidebar button: starting over is the shell's job,
     // and the panel renders no such control inside the conversation thread.
     return <>
-      <button type="button" onClick={() => { setConversationSelection(null); setReset(true); }}>New question</button>
-      <ChatPanel key={String(reset)} initialConversation={reset ? null : loaded}><div className="overview-tiles">Home tile grid</div></ChatPanel>
+      <button type="button" onClick={() => { setSelectedId(null); setReset(true); }}>New question</button>
+      <ChatPanel key={String(reset)} initialConversation={reset ? null : loaded} selectedId={reset ? null : selectedId} onConversationIdChange={setSelectedId}><div className="overview-tiles">Home tile grid</div></ChatPanel>
     </>;
   }
   router = createMemoryRouter([{ path: "/", loader, element: <Surface /> }]);
@@ -141,6 +140,20 @@ describe("ported chat presentation and guest composer", () => {
     expect(api.start.mock.calls[0]?.[0]).toBe("What time do I need to land?");
     expect(document.activeElement).not.toBe(container.querySelector("textarea"));
   });
+  it("reloads a selected conversation with an actionable error after a transient fetch failure", async () => {
+    let rejectFirst!: (error: Error) => void;
+    api.detail.mockImplementationOnce(() => new Promise((_resolve, reject) => { rejectFirst = reject; })).mockResolvedValue(detail(false));
+    await mount(<ChatPanel initialConversation={null} selectedId="conversation-1"><div>Home</div></ChatPanel>);
+    expect(api.detail).toHaveBeenCalledOnce();
+    expect((api.detail.mock.calls[0]?.[1] as AbortSignal).aborted).toBe(false);
+    await act(async () => rejectFirst(new Error("offline")));
+    await expect.poll(() => container.textContent).toContain("couldn’t be loaded");
+    const reload = [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent === "Reload conversation")!;
+    await act(async () => reload.click());
+    expect(api.detail).toHaveBeenCalledTimes(2);
+    await expect.poll(() => container.textContent).toContain("When do I land?");
+    expect(container.textContent).not.toContain("couldn’t be loaded");
+  });
   it("closes the mobile keyboard after sending a typed message", async () => {
     vi.stubGlobal("matchMedia", vi.fn((query: string) => ({ media: query, matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
     api.start.mockReturnValue(new Promise(() => {}));
@@ -198,15 +211,14 @@ describe("ported chat presentation and guest composer", () => {
     expect(api.send.mock.calls[0]?.[2]).toEqual(expect.any(String));
   });
   it("New question detaches selection, preserves old rows and creates a new conversation on the next ask", async () => {
-    const old = detail(false); setConversationSelection(old.id);
+    const old = detail(false);
     api.start.mockResolvedValue({ ok: true, conversationId: "new-conversation", seq: 0 });
     await panel(old);
     await act(async () => button("New question").click());
-    expect(readConversationSelection(document.cookie)).toBeNull(); expect(container.querySelector(".overview-tiles")).not.toBeNull();
+    expect(container.querySelector(".overview-tiles")).not.toBeNull();
     expect(unsubscribes[0]).toHaveBeenCalledTimes(1); expect(old.events).toEqual([opening]);
     await click(".suggestions button");
     expect(api.start).toHaveBeenCalledTimes(1); expect(api.send).not.toHaveBeenCalled();
-    expect(readConversationSelection(document.cookie)).toBe("new-conversation");
     expect(api.subscribe.mock.calls.at(-1)?.slice(0, 2)).toEqual(["new-conversation", -1]);
   });
 });
@@ -250,7 +262,7 @@ describe("stream recovery, acknowledgements and lifetime", () => {
     await act(async () => root!.unmount()); root = undefined;
     expect(signal.aborted).toBe(true); expect(vi.getTimerCount()).toBe(0);
     await act(async () => resolve({ ok: true, conversationId: "late-conversation", seq: 0 }));
-    expect(readConversationSelection(document.cookie)).toBeNull(); expect(api.subscribe).not.toHaveBeenCalled();
+    expect(api.subscribe).not.toHaveBeenCalled();
   });
   it("times out after 15s, keeps one failed bubble and reuses its request key on retry", async () => {
     api.start.mockReturnValue(new Promise(() => {})); await panel(null); await click(".suggestions button");

@@ -4,13 +4,11 @@ import { createMemoryRouter, RouterContextProvider, RouterProvider, useLoaderDat
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Overview, { loader } from "../../app/routes/overview";
 import { AppShell } from "../../app/components/app-shell";
-import { readConversationSelection, setConversationSelection } from "../../app/lib/chat/detail-loader";
 import type { ConversationDetails } from "@/lib/chat/contracts";
 
-const mocks = vi.hoisted(() => ({ trip: vi.fn(), schedule: vi.fn(), conversation: vi.fn(), subscribe: vi.fn(), start: vi.fn() }));
+const mocks = vi.hoisted(() => ({ trip: vi.fn(), schedule: vi.fn(), subscribe: vi.fn(), start: vi.fn(), detail: vi.fn() }));
 vi.mock("@/lib/db/repository.server", () => ({ getTripOverview: mocks.trip, getSchedule: mocks.schedule }));
-vi.mock("../../app/routes/api.chat.conversation", () => ({ loader: mocks.conversation }));
-vi.mock("../../app/lib/chat/api", async original => ({ ...await original<object>(), subscribeToConversationStream: mocks.subscribe, startConversation: mocks.start }));
+vi.mock("../../app/lib/chat/api", async original => ({ ...await original<object>(), subscribeToConversationStream: mocks.subscribe, startConversation: mocks.start, fetchConversationDetails: mocks.detail }));
 const conversation: ConversationDetails = { id: "selected-conversation", tripId: "trip", status: "completed", createdAt: "", finishedAt: null, error: null, events: [{ id: "user", seq: 0, type: "user_message", payload: { text: "Stored question", delivery: "sent" } }, { id: "answer", seq: 1, type: "message", payload: { text: "Arrive by 08:30.\nSource: flights" } }], eventsTruncated: false, eventsCursor: null, lastEventSeq: 1, agentSessionId: null, pendingWakeupAt: null, chat: { canSend: true, activeTurn: false, runtimeStatus: "waiting", reason: null, waitingOnApproval: false, pendingWakeupAt: null } };
 let root: Root | undefined;
 let router: ReturnType<typeof createMemoryRouter> | undefined;
@@ -23,13 +21,13 @@ beforeEach(() => {
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
   mocks.trip.mockResolvedValue({ destination: "Méribel, France", resort: "Les 3 Vallées", startDate: new Date("2027-01-30Z"), endDate: new Date("2027-02-06Z"), timezone: "Europe/Paris", currency: "EUR", pricing: { minPerPerson: 1690, maxPerPerson: 1860 }, openCount: 10, guestCount: 9, capacity: 20, chefBreakfastCount: 6, chefDinnerCount: 5, flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00", property: { name: "Falcon", address: "269 Test, France", mapsUrl: "https://maps.google.com", description: "~200 m from slopes" }, shuttles: [] });
   mocks.schedule.mockResolvedValue([]);
-  mocks.conversation.mockReset().mockImplementation(async () => Response.json(conversation));
+  mocks.detail.mockReset().mockResolvedValue(conversation);
   cleanup = vi.fn(); mocks.subscribe.mockReset().mockReturnValue(Object.assign(cleanup, { finished: Promise.resolve() }));
   mocks.start.mockReset(); container = document.createElement("div"); document.body.append(container);
 });
 afterEach(async () => {
   await act(async () => root?.unmount()); root = undefined; router?.dispose(); router = undefined;
-  setConversationSelection(null); document.body.innerHTML = ""; vi.restoreAllMocks(); vi.unstubAllGlobals();
+  document.body.innerHTML = ""; vi.restoreAllMocks(); vi.unstubAllGlobals();
 });
 function request(cookie = document.cookie) {
   // happy-dom applies browser forbidden-header filtering in Request's ctor;
@@ -48,15 +46,14 @@ async function mount() {
   await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router!} />); });
 }
 
-it("loads initial selected detail through Task 2's redacted resource loader", async () => {
-  setConversationSelection(conversation.id);
-  const data = await loader(request());
-  expect(mocks.conversation.mock.calls[0]![0].params).toEqual({ conversationId: conversation.id });
-  expect(data.chat.conversation).toEqual(conversation); expect(data.week).toBeDefined();
+it("does not restore a prior visitor's conversation from a browser-wide cookie", async () => {
+  const data = await loader(request(`club-athletic-conversation=${conversation.id}`));
+  expect(data.week).toBeDefined(); expect(mocks.detail).not.toHaveBeenCalled();
 });
-it("does not read any chat when there is no valid selection", async () => {
-  const data = await loader(request("club-athletic-conversation=../invalid"));
-  expect(data.selectedId).toBeNull(); expect(data.chat.conversation).toBeNull(); expect(mocks.conversation).not.toHaveBeenCalled();
+it("clears the legacy conversation cookie when a fresh app session mounts", async () => {
+  document.cookie = `club-athletic-conversation=${conversation.id}; Path=/; Max-Age=2592000`;
+  await mount();
+  expect(document.cookie).not.toContain("club-athletic-conversation=");
 });
 it("shows TBD for open ticker days and keeps scheduled event titles", async () => {
   mocks.schedule.mockResolvedValue([
@@ -69,30 +66,21 @@ it("shows TBD for open ticker days and keeps scheduled event titles", async () =
 
   expect(data.week.map(({ event }) => event)).toEqual(["Dinner at the chalet", "TBD", "TBD"]);
 });
-it("exposes only safe chat error copy when selected detail fails", async () => {
-  setConversationSelection(conversation.id); mocks.conversation.mockRejectedValue(new Error("PrismaClient secret booking PNR"));
-  const data = await loader(request());
-  expect(data.chat.error).toBe("The conversation couldn’t be loaded. Please try again.");
-  expect(JSON.stringify(data)).not.toMatch(/PrismaClient|PNR|secret/);
-});
-it("hydrates the thread instead of tiles, navigates source routes, and restores selection on returning Home", async () => {
-  setConversationSelection(conversation.id); await mount();
-  // The thread replaces the home content entirely — no tile grid and no chip row
-  // above it (owner, 2026-09-28: the conversation "should take up everything on
-  // that screen. There should not be an additional header").
-  expect(container.querySelector(".overview-tiles")).toBeNull(); expect(container.querySelectorAll(".chat-tile-chips a")).toHaveLength(0);
-  expect(container.textContent).toContain("Stored question");
-  await act(async () => container.querySelector<HTMLAnchorElement>('.chat-sources a[href="/flights"]')!.click());
-  expect(router!.state.location.pathname).toBe("/flights"); expect(cleanup).toHaveBeenCalled();
-  expect(readConversationSelection(document.cookie)).toBe(conversation.id);
+it("keeps the active conversation only in this app session across SPA navigation", async () => {
+  mocks.start.mockResolvedValue({ ok: true, conversationId: conversation.id, seq: 0 }); await mount();
+  await act(async () => container.querySelector<HTMLButtonElement>(".suggestions button")!.click());
+  expect(container.textContent).toContain("What time do I need to land?");
+  await act(async () => { await router!.navigate("/flights"); });
+  expect(router!.state.location.pathname).toBe("/flights");
   await act(async () => { await router!.navigate("/"); });
-  expect(container.textContent).toContain("Stored question"); expect(mocks.conversation).toHaveBeenCalledTimes(2);
+  expect(mocks.detail).toHaveBeenCalledWith(conversation.id, expect.any(AbortSignal));
+  expect(container.textContent).toContain("Stored question");
 });
 it("sidebar New question detaches from any section and next ask creates a fresh conversation", async () => {
-  setConversationSelection(conversation.id); await mount();
+  await mount();
   await act(async () => { await router!.navigate("/flights"); });
   await act(async () => container.querySelector<HTMLButtonElement>(".new-chat")!.click());
-  expect(router!.state.location.pathname).toBe("/"); expect(readConversationSelection(document.cookie)).toBeNull();
+  expect(router!.state.location.pathname).toBe("/");
   expect(container.querySelectorAll(".overview-tile")).toHaveLength(0); expect(container.textContent).not.toContain("Stored question");
   expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("Browse frequently asked questions");
   mocks.start.mockRejectedValue(new Error("unavailable"));
@@ -125,9 +113,6 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
   expect(container.querySelector('.home-welcome a[href="/faq"]')).not.toBeNull();
 });
 
-it("clears an initial detail-load error after framework revalidation succeeds", async () => {
-  setConversationSelection(conversation.id); mocks.conversation.mockResolvedValueOnce(Response.json({ error: "private failure" }, { status: 503 })); await mount();
-  expect(container.textContent).toContain("couldn’t be loaded");
-  await act(async () => [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent === "Reload conversation")!.click());
-  expect(container.textContent).toContain("Stored question"); expect(container.textContent).not.toContain("couldn’t be loaded");
+it("starts a fresh chat view on a document load", async () => {
+  await mount(); expect(container.textContent).toContain("How can I help with the trip?");
 });

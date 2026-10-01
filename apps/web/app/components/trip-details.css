@@ -59,12 +59,15 @@
 .chalet-gallery figcaption { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin-bottom: 10px; }
 .chalet-gallery img { width: 100%; height: auto; border-radius: var(--radius-md); display: block; }
 
-.spots-hero { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 32px 24px; margin-bottom: 12px; }
-.spots-kicker { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; font-weight: 500; color: var(--text-faint); }
-.spots-figures { display: flex; flex-wrap: wrap; align-items: baseline; gap: 8px 24px; }
-.spots-count { font-family: var(--font-display); font-weight: 600; font-size: clamp(96px,20vw,180px); line-height: .9; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
-.spots-price { font-family: var(--font-display); font-weight: 600; font-size: clamp(26px,4vw,40px); letter-spacing: -.02em; font-variant-numeric: tabular-nums; line-height: 1; }
-.spots-price-sub { font-size: 14px; font-weight: 500; margin-top: 4px; }
+.spots-hero { background: var(--surface); color: var(--text); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 24px; margin-bottom: 12px; }
+.spots-heading { display: flex; align-items: baseline; gap: 10px; margin: 0 0 20px; font: 600 20px/1.3 var(--font-display); }
+.spots-count { font-size: 28px; font-variant-numeric: tabular-nums; }
+.spots-currencies { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 220px), 1fr)); gap: 16px 24px; margin: 0; }
+.spots-currency { min-width: 0; }
+.spots-currency dt { color: var(--text-dim); font-size: 12px; }
+.spots-price { margin: 6px 0 0; font: 600 20px/1.3 var(--font-display); letter-spacing: -.01em; font-variant-numeric: tabular-nums; }
+.spots-rate-date { display: block; margin-top: 4px; color: var(--text-dim); font: 400 12px/1.4 var(--font-sans); letter-spacing: normal; }
+.spots-usd-unavailable { color: var(--text-dim); font: 400 14px/1.4 var(--font-sans); }
 /* One rhythm per row: name, price, note stacked at a fixed 3px, the count on the
    name's own line. The note used to be a `.detail-note`, whose 16px top margin
    was the odd gap out (owner, 2026-09-29: "spacing … very inconsistent"). */

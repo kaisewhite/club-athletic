@@ -69,18 +69,3 @@ export async function loadConversationDetailsAfterStatusWithRetry(
   }
   throw lastError;
 }
-
-const selectionCookie = "club-athletic-conversation";
-const validConversationId = /^[A-Za-z0-9_-]{1,128}$/;
-
-/** The cookie selects an opaque trip-scoped row; it carries no transcript data. */
-export function readConversationSelection(cookie: string | null): string | null {
-  const value = cookie?.split(";").map((part) => part.trim()).find((part) => part.startsWith(`${selectionCookie}=`))?.slice(selectionCookie.length + 1);
-  return value && validConversationId.test(value) ? value : null;
-}
-
-export function setConversationSelection(id: string | null): void {
-  if (id !== null && !validConversationId.test(id)) throw new Error("Invalid conversation selection.");
-  if (typeof document === "undefined") return;
-  document.cookie = `${selectionCookie}=${id ?? ""}; Path=/; SameSite=Lax; Max-Age=${id === null ? 0 : 30 * 24 * 60 * 60}${location.protocol === "https:" ? "; Secure" : ""}`;
-}

@@ -2,7 +2,7 @@
   "name": "aws",
   "version": "0.1.0",
   "private": true,
-  "description": "CDK infrastructure for Club Athletic on Edge's production cluster",
+  "description": "Management-account CDK infrastructure for the Club Athletic trip app",
   "scripts": {
     "cdk": "cdk",
     "push-secrets": "./scripts/push-secrets.sh"

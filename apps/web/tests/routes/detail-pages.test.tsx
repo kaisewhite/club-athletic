@@ -11,9 +11,11 @@ import Tasks, { loader as tasksLoader } from "../../app/routes/tasks";
 import Links, { loader as linksLoader } from "../../app/routes/links";
 
 const { findUniqueOrThrow } = vi.hoisted(() => ({ findUniqueOrThrow: vi.fn() }));
+const { getEurUsdRate } = vi.hoisted(() => ({ getEurUsdRate: vi.fn() }));
 vi.mock("../../src/lib/db/client.server", () => ({
   withReadDatabase: (read: (db: ReadDatabase) => Promise<unknown>) => read({ trip: { findUniqueOrThrow } }),
 }));
+vi.mock("../../app/lib/exchange-rates.server", () => ({ getEurUsdRate }));
 
 function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => ReactNode, data: P["loaderData"]) {
   const node = document.createElement("div");
@@ -56,7 +58,7 @@ const pricing = { minPerPerson: 1690, maxPerPerson: 1860, currency: "EUR", descr
   excludes: ["flights", "ski pass", "rentals", "nights out"],
 };
 
-beforeEach(() => { findUniqueOrThrow.mockReset(); });
+beforeEach(() => { findUniqueOrThrow.mockReset(); getEurUsdRate.mockReset(); getEurUsdRate.mockResolvedValue({ rate: 1.2, date: "2026-10-01" }); });
 
 describe("database-backed read-only detail pages", () => {
   it("renders eight rooms, nine named guests, ten available beds and one not-offered bed", async () => {
@@ -110,8 +112,12 @@ describe("database-backed read-only detail pages", () => {
         .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE") })),
     })) } });
     const page = renderPage(Spots, await spotsLoader());
+    expect(page.querySelector(".spots-heading")?.textContent).toBe("Spots still open 10");
     expect(page.querySelector(".spots-count")?.textContent).toBe("10");
     expect(page.textContent).toContain("€1,690–€1,860");
+    expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "USD estimate · per person, all-in"]);
+    expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $2,028–$2,232");
+    expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
     expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent)).toEqual(["4", "2", "4"]);
     expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);
@@ -121,6 +127,13 @@ describe("database-backed read-only detail pages", () => {
     expect(breakdown?.getAttribute("aria-label")).toBe("How the all-in price is built");
     expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
     expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["varies by room", "€33.60", "€178", "€100", "€408"]);
+  });
+  it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
+    getEurUsdRate.mockResolvedValue(null);
+    findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [] } });
+    const page = renderPage(Spots, await spotsLoader());
+    expect(page.querySelector(".spots-price")?.textContent).toBe("€1,690–€1,860");
+    expect(page.querySelector(".spots-price-usd")?.textContent).toBe("Temporarily unavailable");
   });
   it("renders both shuttle windows in local time and editable driver and meeting notes", async () => {
     findUniqueOrThrow.mockResolvedValue({ shuttles: [

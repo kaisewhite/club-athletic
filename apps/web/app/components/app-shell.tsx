@@ -1,8 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { NavLink, Outlet, useLocation, useNavigate } from "react-router";
 
-import { setConversationSelection } from "../lib/chat/detail-loader";
-
 const SECTIONS = [
   ["/", "Home"], ["/faq", "FAQ"], ["/schedule", "Schedule"], ["/flights", "Flights"],
   ["/shuttle", "Shuttle"], ["/chalet", "Chalet"], ["/rooms", "Rooms"],
@@ -43,12 +41,18 @@ export function AppShell(_props?: { daysUntil?: number }) {
   const navigate = useNavigate();
   const [resettingChat, setResettingChat] = useState(false);
   const [chatResetVersion, setChatResetVersion] = useState(0);
+  const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
   const wasMobileNavOpen = useRef(false);
   const mobileNavButton = useRef<HTMLButtonElement>(null);
   const mobileDrawer = useRef<HTMLElement>(null);
+  useEffect(() => {
+    // Remove the prior 30-day selector cookie. The new selection is held in
+    // memory only, so another tab or a fresh document starts with a clean chat.
+    document.cookie = `club-athletic-conversation=; Path=/; SameSite=Lax; Max-Age=0${window.location.protocol === "https:" ? "; Secure" : ""}`;
+  }, []);
   const newChat = () => {
-    setConversationSelection(null);
+    setSelectedConversationId(null);
     setResettingChat(true);
     // Immediately unmount the consumer (aborting sends/recovery) before routing.
     setChatResetVersion(value => value + 1);
@@ -106,7 +110,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
           </aside>
         </div>}
         <div key={location.key} className={location.pathname === "/" ? "route-content home-route" : "route-content page-route"}>
-          <Outlet context={{ chatResetVersion, newChat, resettingChat }} />
+          <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId }} />
         </div>
       </main>
     </div>

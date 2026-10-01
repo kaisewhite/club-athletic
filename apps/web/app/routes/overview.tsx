@@ -4,22 +4,11 @@ import type { Route } from "./+types/overview";
 
 import { ChatPanel } from "../components/chat/chat-panel";
 import { ChatErrorBoundary } from "../components/chat/chat-error-boundary";
-import { readConversationSelection } from "../lib/chat/detail-loader";
-import { loader as conversationLoader } from "./api.chat.conversation";
-import type { ConversationDetails } from "@/lib/chat/contracts";
 
-export async function loader(args?: Route.LoaderArgs) {
-  const selectedId = readConversationSelection(args?.request.headers.get("Cookie") ?? null);
-  // Reuse Task 2's redacted resource boundary. No direct raw chat reads reach SSR.
-  const chatDetail = selectedId && args ? conversationLoader({ request: args.request, params: { conversationId: selectedId } })
-    .then(async response => response.ok ? { conversation: await response.json() as ConversationDetails, error: null } : { conversation: null, error: "The conversation couldn’t be loaded. Please try again." })
-    .catch(() => ({ conversation: null, error: "The conversation couldn’t be loaded. Please try again." }))
-    : Promise.resolve({ conversation: null, error: null });
+export async function loader(_args?: Route.LoaderArgs) {
   const schedule = await getSchedule();
   // Return display data only; Prisma Decimal fields must not cross the loader boundary.
   return {
-    chat: await chatDetail,
-    selectedId,
     week: schedule.map((day) => ({
       id: day.id, dow: day.dow, number: day.dayNumber, event: day.isOpen ? "TBD" : day.eventTitle,
     })),
@@ -27,10 +16,13 @@ export async function loader(args?: Route.LoaderArgs) {
 }
 
 export default function Overview({ loaderData: data }: Route.ComponentProps) {
-  const { chatResetVersion, resettingChat } = useOutletContext<{ chatResetVersion: number; newChat: () => void; resettingChat: boolean }>();
+  const { chatResetVersion, resettingChat, selectedConversationId, selectConversation } = useOutletContext<{
+    chatResetVersion: number; newChat: () => void; resettingChat: boolean;
+    selectedConversationId: string | null; selectConversation: (id: string | null) => void;
+  }>();
   return (
     <section className="overview" aria-labelledby="overview-heading">
-      <ChatErrorBoundary key={chatResetVersion}><ChatPanel initialConversation={resettingChat ? null : data.chat.conversation} selectedId={resettingChat ? null : data.selectedId} loadError={resettingChat ? null : data.chat.error}>
+      <ChatErrorBoundary key={chatResetVersion}><ChatPanel initialConversation={null} selectedId={resettingChat ? null : selectedConversationId} onConversationIdChange={selectConversation}>
       <div className="overview-content">
         <section className="home-schedule" aria-label="Schedule for the week">
           <div className="week-heading">

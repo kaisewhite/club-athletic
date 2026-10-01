@@ -24,11 +24,9 @@ export const imageBuildSpec = ({ imageUri, imageTag, region, sourcePath }: Image
     },
     post_build: {
       commands: [
-        `docker push ${imageUri}:${imageTag} | tee /tmp/club-athletic-image-push.log`,
-        "IMAGE_DIGEST=$(awk '/digest: sha256:/ { print $3 }' /tmp/club-athletic-image-push.log | tail -1)",
-        "test -n \"$IMAGE_DIGEST\"",
+        `docker push ${imageUri}:${imageTag}`,
         "test -n \"$CODEBUILD_RESOLVED_SOURCE_VERSION\"",
-        `printf '{"imageUri":"${imageUri}@%s","sourceRevision":"%s"}' "$IMAGE_DIGEST" "$CODEBUILD_RESOLVED_SOURCE_VERSION" > image-detail.json`,
+        `printf '{"imageUri":"${imageUri}:${imageTag}","sourceRevision":"%s"}' "$CODEBUILD_RESOLVED_SOURCE_VERSION" > image-detail.json`,
       ],
     },
   },
@@ -89,6 +87,7 @@ export const testBuildSpec = (sourcePath: string) => codebuild.BuildSpec.fromObj
 
 interface DeploymentProps {
   readonly region: string;
+  readonly imageTag: string;
   readonly cluster: string;
   readonly service: string;
   readonly containerName: string;
@@ -100,6 +99,7 @@ interface DeploymentProps {
 
 export const serviceDeploymentBuildSpec = ({
   region,
+  imageTag,
   cluster,
   service,
   containerName,
@@ -115,7 +115,7 @@ export const serviceDeploymentBuildSpec = ({
         "test -s image-detail.json",
         "IMAGE_URI=$(jq -er '.imageUri' image-detail.json)",
         "SOURCE_REVISION=$(jq -er '.sourceRevision' image-detail.json)",
-        "case \"$IMAGE_URI\" in *@sha256:*) ;; *) echo 'Build artifact lacks an immutable image digest' >&2; exit 1;; esac",
+        `case "$IMAGE_URI" in *:${imageTag}) ;; *) echo 'Build artifact does not reference the expected ECR image tag' >&2; exit 1;; esac`,
         "test -n \"$SOURCE_REVISION\"",
       ],
     },

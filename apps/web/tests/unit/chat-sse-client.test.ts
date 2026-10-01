@@ -6,7 +6,7 @@ import {
 } from "../../app/lib/chat/api";
 import {
   conversationLookupRetryPolicy, loadConversationDetailsAfterStatusWithRetry,
-  loadConversationDetailsWithRetry, readConversationSelection, setConversationSelection,
+  loadConversationDetailsWithRetry,
 } from "../../app/lib/chat/detail-loader";
 import { upsertSessionEventRow } from "../../src/lib/chat/event-projection";
 import type { ConversationDetails, ConversationStatusSnapshot, SessionEventRow } from "../../src/lib/chat/contracts";
@@ -191,14 +191,4 @@ describe("ported detail recovery and stable selection", () => {
     expect(loadStatus).toHaveBeenCalledOnce(); expect(loadDetail).toHaveBeenCalledOnce();
   });
 
-  it("reads a validated selection across navigation and resets only the cookie for New question", () => {
-    expect(readConversationSelection("other=1; club-athletic-conversation=conv_123-AbC; next=2")).toBe("conv_123-AbC");
-    expect(readConversationSelection("club-athletic-conversation=../private")).toBeNull(); expect(readConversationSelection(null)).toBeNull();
-    expect(readConversationSelection(`club-athletic-conversation=${"a".repeat(129)}`)).toBeNull();
-    const document = { cookie: "" }; vi.stubGlobal("document", document); vi.stubGlobal("location", { protocol: "https:" });
-    const fetchMock = vi.fn(); vi.stubGlobal("fetch", fetchMock);
-    setConversationSelection("chat"); expect(document.cookie).toBe("club-athletic-conversation=chat; Path=/; SameSite=Lax; Max-Age=2592000; Secure");
-    setConversationSelection(null); expect(document.cookie).toBe("club-athletic-conversation=; Path=/; SameSite=Lax; Max-Age=0; Secure"); expect(fetchMock).not.toHaveBeenCalled();
-    expect(() => setConversationSelection("bad; cookie=value")).toThrow("Invalid conversation selection.");
-  });
 });

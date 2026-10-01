@@ -3,7 +3,6 @@ import { createRoot, type Root } from "react-dom/client";
 import { createMemoryRouter, RouterProvider } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { ChatPanel } from "../../app/components/chat/chat-panel";
-import { setConversationSelection } from "../../app/lib/chat/detail-loader";
 const api = vi.hoisted(() => ({ send: vi.fn(), subscribe: vi.fn(), stop: vi.fn() }));
 vi.mock("../../app/lib/chat/api", async original => ({ ...await original<object>(), sendConversationChatMessage: api.send, subscribeToConversationStream: api.subscribe }));
 let root: Root | undefined;
@@ -16,7 +15,7 @@ beforeEach(() => {
   container = document.createElement("div"); document.body.append(container);
 });
 afterEach(async () => {
-  await act(async () => root?.unmount()); root = undefined; router.dispose(); container.remove(); setConversationSelection(null);
+  await act(async () => root?.unmount()); root = undefined; router.dispose(); container.remove();
   expect(vi.getTimerCount()).toBe(0); vi.useRealTimers(); vi.unstubAllGlobals(); vi.restoreAllMocks();
 });
 async function mount() {

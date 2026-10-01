@@ -9,8 +9,8 @@ import { CHAT_SEND_ACK_TIMEOUT_MS, chatUiReducer, initialChatUiState } from "@/l
 import { mapSessionEventsToPresentation, projectCurrentAgentActivityText, upsertSessionEventRow } from "@/lib/chat/event-projection";
 import { applyStreamDelta, streamingBlockToEvent, unreconciledStreamingBlocks } from "@/lib/chat/stream-blocks";
 import { resolveConversationLiveActivity } from "@/lib/chat/chat-live-activity";
-import { ApiError, CHAT_UNAVAILABLE_MESSAGE, cancelConversation, createConversationStreamCursor, fetchConversationDetailsAfterStatus, sendConversationChatMessage, startConversation, subscribeToConversationStream } from "../../lib/chat/api";
-import { isConversationNotFound, setConversationSelection } from "../../lib/chat/detail-loader";
+import { ApiError, CHAT_UNAVAILABLE_MESSAGE, cancelConversation, createConversationStreamCursor, fetchConversationDetails, fetchConversationDetailsAfterStatus, sendConversationChatMessage, startConversation, subscribeToConversationStream } from "../../lib/chat/api";
+import { isConversationNotFound } from "../../lib/chat/detail-loader";
 import { scrollToLatest } from "../../lib/chat/use-auto-scroll";
 import { useChatAttachment, AttachmentRequestError } from "../../lib/chat/use-chat-attachment";
 import { ChatComposer } from "./chat-composer";
@@ -35,10 +35,10 @@ function applyStateFrame(current: ConversationDetails, frame: ConversationSessio
 }
 
 // Starting over is the sidebar's job (`AppShell.newChat`), which clears the
-// selection cookie and remounts this panel — so the panel takes no such prop and
+// in-memory selection and remounts this panel — so the panel takes no such prop and
 // renders no header of its own inside the thread.
-export function ChatPanel({ initialConversation, selectedId = null, loadError = null, children }: {
-  initialConversation: ConversationDetails | null; selectedId?: string | null; loadError?: string | null;
+export function ChatPanel({ initialConversation, selectedId = null, onConversationIdChange, loadError = null, children }: {
+  initialConversation: ConversationDetails | null; selectedId?: string | null; onConversationIdChange?: (id: string | null) => void; loadError?: string | null;
   children: ReactNode;
 }) {
   const attachment = useChatAttachment();
@@ -46,6 +46,8 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
   const revalidateRef = useRef(revalidator.revalidate);
   revalidateRef.current = revalidator.revalidate;
   const [conversation, setConversation] = useState(initialConversation);
+  const [selectionLoadFailed, setSelectionLoadFailed] = useState(false);
+  const [selectionLoadAttempt, setSelectionLoadAttempt] = useState(0);
   const [streamingBlocks, setStreamingBlocks] = useState<StreamDelta[]>([]);
   const [error, setError] = useState<string | null>(loadError);
   const [chatUi, dispatchChat] = useReducer(chatUiReducer, undefined, initialChatUiState);
@@ -98,6 +100,21 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
       return { ...current, events: current.events.reduce(upsertSessionEventRow, initialConversation.events), lastEventSeq: Math.max(current.lastEventSeq, initialConversation.lastEventSeq) };
     });
   }, [initialConversation]);
+
+  // The selected ID lives only in AppShell memory. Reloading the document starts
+  // a clean visitor session; returning Home through SPA navigation reloads the
+  // active conversation from the API using that in-memory ID.
+  useEffect(() => {
+    if (!selectedId || conversation?.id === selectedId) return;
+    let cancelled = false;
+    const abort = new AbortController();
+    void fetchConversationDetails(selectedId, abort.signal).then(detail => {
+      if (!cancelled) { setConversation(detail); setError(null); setSelectionLoadFailed(false); }
+    }).catch(() => {
+      if (!cancelled) { setError("The conversation couldn’t be loaded. Please try again."); setSelectionLoadFailed(true); }
+    });
+    return () => { cancelled = true; abort.abort(); };
+  }, [selectedId, conversation?.id, selectionLoadAttempt]);
 
   useEffect(() => {
     if (!conversationId) return;
@@ -232,7 +249,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
   // floating above the composer is reserved for nothing: an assistant's fallback,
   // a lost conversation and a dropped transport are all messages.
   const notice: ChatNotice | null = error
-    ? { tone: error === TRANSPORT_ERROR ? "status" : "error", text: error, ...(loadError && error === loadError ? { action: { label: "Reload conversation", onAction: revalidate } } : {}) }
+    ? { tone: error === TRANSPORT_ERROR ? "status" : "error", text: error, ...(selectionLoadFailed ? { action: { label: "Reload conversation", onAction: () => { setError(null); setSelectionLoadFailed(false); setSelectionLoadAttempt(value => value + 1); } } } : loadError && error === loadError ? { action: { label: "Reload conversation", onAction: revalidate } } : {}) }
     : chatUi.toast
       ? { tone: "error", text: chatUi.toast, ...(pending?.failed ? { action: { label: "Retry", onAction: () => void handleSend(pending.text) } } : {}) }
       : conversation && !busy && (conversation.error || conversation.chat.reason === "no_session")
@@ -244,7 +261,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
   const awaitingOwnRow = pending !== null && !pendingSettled && !pending.failed;
   const visibleToken = visibleBlocks.length > 0 || (!awaitingOwnRow && chatUi.phase !== "sending" && Boolean(conversation?.events.some(row => row.seq > latestUserSeq && (row.type === "message" || row.type === "summary") && row.payload.text?.trim())));
   const waiting = busy && !visibleToken;
-  const loadingDetail = Boolean(selectedId) && !conversation && !loadError;
+  const loadingDetail = Boolean(selectedId) && !conversation && !error;
   // 1:1 with the design's `hasMessages` switch: the tile grid gives way to the
   // thread only once the thread has something in it, which is what keeps a
   // screen-high void from ever opening between the chip row and the composer.
@@ -309,7 +326,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
         if (!result.ok) throw new ApiError(result.error, result.status ?? 500);
         if ((result.conversationId && result.conversationId !== targetId) || (result.requestId && result.requestId !== key)) throw new ApiError("The trip assistant returned an incomplete response. Please try again.", 500);
         if (!conversationId) {
-          setConversationSelection(targetId);
+          onConversationIdChange?.(targetId);
           setConversation({ id: targetId, tripId: "", createdAt: "", finishedAt: null, error: null, status: "running", events: [], eventsTruncated: false, eventsCursor: null, lastEventSeq: -1, agentSessionId: null, pendingWakeupAt: null, chat: { ...NEW_CHAT, activeTurn: true, runtimeStatus: "starting" } });
         }
         // A fast provider boundary can precede its slower POST acknowledgement.
@@ -320,7 +337,7 @@ export function ChatPanel({ initialConversation, selectedId = null, loadError = 
       } else {
         const result = await startConversation(text, key, { signal: controller.signal });
         if (!lifetime.current || sendAttempt.current !== attempt) return;
-        setConversationSelection(result.conversationId);
+        onConversationIdChange?.(result.conversationId);
         // No fabricated row: start replay at -1 until the loader/stream supplies
         // the durable opening message. The POST acknowledgement is not a row.
         setConversation({ id: result.conversationId, tripId: "", createdAt: "", finishedAt: null, error: null, status: "running", events: [], eventsTruncated: false, eventsCursor: null, lastEventSeq: -1, agentSessionId: null, pendingWakeupAt: null, chat: { ...NEW_CHAT, activeTurn: true, runtimeStatus: "starting" } });

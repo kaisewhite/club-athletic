@@ -1,4 +1,5 @@
 import { getOpenSpots } from "@/lib/db/repository.server";
+import { getEurUsdRate } from "../lib/exchange-rates.server";
 import { DetailList } from "../components/trip-details";
 import type { Route } from "./+types/spots";
 
@@ -6,6 +7,7 @@ export async function loader() {
   const data = await getOpenSpots();
   return {
     pricing: data.pricing, openCount: data.openCount,
+    usdRate: data.pricing.currency === "EUR" ? await getEurUsdRate() : null,
     openRooms: data.openRooms.map(({ id, shortName, floorName, openCount, priceLabel, description }) => ({
       id, shortName, floorName, openCount, priceLabel, description,
     })),
@@ -17,13 +19,20 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     style: "currency", currency: data.pricing.currency,
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2,
   }).format(amount);
+  const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
+  const usdRange = data.usdRate && `${usd.format(data.pricing.minPerPerson * data.usdRate.rate)}–${usd.format(data.pricing.maxPerPerson * data.usdRate.rate)}`;
+  const rateDate = data.usdRate && new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+    .format(new Date(`${data.usdRate.date}T00:00:00Z`));
 
   return <section aria-label="Pricing">
     <div className="spots-hero">
-      <div className="spots-kicker">Spots still open</div>
-      <div className="spots-figures"><div className="spots-count">{data.openCount}</div>
-        <div><div className="spots-price">{data.pricing.rangeLabel}</div><div className="spots-price-sub">{data.pricing.description}</div></div>
-      </div>
+      <div className="spots-heading">Spots still open <span className="spots-count">{data.openCount}</span></div>
+      <dl className="spots-currencies">
+        <div className="spots-currency"><dt>{data.pricing.currency} · {data.pricing.description}</dt><dd className="spots-price">{data.pricing.rangeLabel}</dd></div>
+        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>USD estimate · {data.pricing.description}</dt>
+          <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">Temporarily unavailable</span>}</dd>
+        </div>}
+      </dl>
     </div>
     <div className="detail-grid">
       <div className="detail-card"><h3 className="detail-kicker">Included</h3><DetailList items={data.pricing.includes} />
