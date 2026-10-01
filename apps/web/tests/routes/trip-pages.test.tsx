@@ -114,6 +114,10 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
     await resizeTo(859);
     expect(container.querySelector(".sidebar")).toBeNull();
     expect(container.querySelector(".mobile-header")).not.toBeNull();
+    const brand = container.querySelector<HTMLAnchorElement>(".mobile-brand");
+    expect(brand?.getAttribute("href")).toBe("/");
+    await act(async () => brand?.click());
+    expect(container.querySelector(".home-route")).not.toBeNull();
   } finally {
     await act(async () => { root?.unmount(); });
     expect(listeners.size).toBe(0);
