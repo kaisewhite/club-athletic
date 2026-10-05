@@ -35,7 +35,7 @@ export function dayEntries(day: {
     value !== "CHEF" ? null : {
       key: `${day.id}:${kind}`,
       time: at ?? null,
-      title: kind === "breakfast" ? "Breakfast" : "Dinner",
+      title: kind === "breakfast" ? "Breakfast" : "Dinner at the chalet",
     };
   const entries: (ScheduleEntry | null)[] = [
     meal("breakfast", day.breakfastAt, day.breakfast),

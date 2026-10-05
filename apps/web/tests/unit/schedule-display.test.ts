@@ -15,7 +15,7 @@ const shape = (over?: Partial<Parameters<typeof dayEntries>[0]>) =>
 describe("a schedule day lists only what happens on it", () => {
   it("renders a full day as breakfast, event, dinner in that order", () => {
     expect(shape()).toEqual([
-      ["07:00", "Breakfast"], ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner"],
+      ["07:00", "Breakfast"], ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner at the chalet"],
     ]);
   });
 
@@ -23,7 +23,7 @@ describe("a schedule day lists only what happens on it", () => {
     // NONE and OWN both mean the trip is not serving it. Which of the two it is
     // belongs on the chef page, which already lists every day's meals.
     expect(shape({ breakfast: "NONE", breakfastAt: null })).toEqual([
-      ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner"],
+      ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner at the chalet"],
     ]);
     expect(shape({ dinner: "OWN", dinnerAt: null })).toEqual([
       ["07:00", "Breakfast"], ["TBD", "Le Cap Horn, Courchevel 1850"],
@@ -32,7 +32,7 @@ describe("a schedule day lists only what happens on it", () => {
 
   it("drops the event row on an open day, because an open day has no event", () => {
     expect(shape({ isOpen: true, eventTitle: "Open — last ski day" })).toEqual([
-      ["07:00", "Breakfast"], ["19:30", "Dinner"],
+      ["07:00", "Breakfast"], ["19:30", "Dinner at the chalet"],
     ]);
   });
 
@@ -45,7 +45,7 @@ describe("a schedule day lists only what happens on it", () => {
 
   it("keeps the order fixed even when a clock time would sort differently", () => {
     expect(shape({ eventAt: "03:00" }).map(([, title]) => title)).toEqual([
-      "Breakfast", "Le Cap Horn, Courchevel 1850", "Dinner",
+      "Breakfast", "Le Cap Horn, Courchevel 1850", "Dinner at the chalet",
     ]);
   });
 
@@ -53,7 +53,7 @@ describe("a schedule day lists only what happens on it", () => {
     // A row with no time is a real commitment awaiting a time — that is what TBD
     // means. A meal that is not served has no row to put a placeholder in.
     expect(shape({ breakfastAt: null })).toEqual([
-      ["TBD", "Breakfast"], ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner"],
+      ["TBD", "Breakfast"], ["TBD", "Le Cap Horn, Courchevel 1850"], ["19:30", "Dinner at the chalet"],
     ]);
   });
 
