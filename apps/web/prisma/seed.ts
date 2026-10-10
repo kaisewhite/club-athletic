@@ -94,6 +94,8 @@ const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; a
   { guest: "Augustus Shewchuck", direction: "OUTBOUND", airline: "SWISS", flightNumber: "LX64 via ZRH", origin: "GVA", destination: "MIA", departs: "2027-02-06T10:35:00+01:00", arrives: "2027-02-06T17:30:00-05:00" },
   { guest: "Valeriia Stobolva", direction: "OUTBOUND", airline: "SWISS", flightNumber: "LX64 via ZRH", origin: "GVA", destination: "MIA", departs: "2027-02-06T10:35:00+01:00", arrives: "2027-02-06T17:30:00-05:00" },
   { guest: "Kaise",             direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
+  { guest: "Kristy Khoury",     direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
+  { guest: "Kristy Khoury",     direction: "OUTBOUND", airline: "United", flightNumber: "UA957", origin: "GVA", destination: "EWR", departs: "2027-02-06T09:15:00+01:00", arrives: "2027-02-06T12:30:00-05:00" },
 ];
 
 const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {

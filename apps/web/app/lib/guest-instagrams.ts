@@ -12,6 +12,8 @@ const guestInstagrams: Record<string, string> = {
   "Christie Navarre": "https://www.instagram.com/xtnavarre",
 };
 
+export const guestInstagramProfiles = Object.entries(guestInstagrams).map(([displayName, href]) => ({ displayName, href }));
+
 export function guestInstagramUrl(displayName: string): string | undefined {
   return guestInstagrams[displayName];
 }

@@ -1,5 +1,7 @@
 import { getLinks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
+import { GuestInstagramAffordance } from "../components/guest-instagram-link";
+import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/links";
 
 export async function loader() {
@@ -24,5 +26,14 @@ export default function Links({ loaderData }: Route.ComponentProps) {
         </a>)}
       </div>
     </section>)}
+    <section className="link-section" aria-labelledby="links-guests">
+      <h3 id="links-guests" className="detail-kicker">Guests</h3>
+      <div className="link-list">
+        {guestInstagramProfiles.map(({ displayName, href }) => <a className="link-row" key={displayName} href={href} target="_blank" rel="noopener noreferrer" data-group="Guests" aria-label={`${displayName} on Instagram`}>
+          <span><GuestInstagramAffordance displayName={displayName} className="link-name" /><span className="link-group">Instagram profile</span></span>
+          <span className="text-accent" aria-hidden="true">↗</span>
+        </a>)}
+      </div>
+    </section>
   </section>;
 }

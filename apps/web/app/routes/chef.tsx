@@ -3,7 +3,7 @@ import { PageHeading } from "../components/trip-details";
 import { mealLabel, tripDate } from "../lib/schedule-display";
 import type { Route } from "./+types/chef";
 import { DietaryCell, DietaryCopyButton } from "../components/dietary-cell";
-import { guestInstagramUrl } from "../lib/guest-instagrams";
+import { GuestInstagramLink } from "../components/guest-instagram-link";
 
 export async function loader() {
   return getChefSummary();
@@ -31,9 +31,7 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <DietaryCopyButton guests={data.guests} />
       <table className="detail-table" aria-label="Guest dietary requirements">
       <thead><tr><th scope="col">Guest</th><th scope="col">Allergies / dietary needs</th></tr></thead>
-      <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row">{guestInstagramUrl(guest.displayName)
-        ? <a href={guestInstagramUrl(guest.displayName)} target="_blank" rel="noopener noreferrer">{guest.displayName}</a>
-        : guest.displayName}</th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
+      <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row"><GuestInstagramLink displayName={guest.displayName} /></th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
       </table>
     </div>
   </section>;

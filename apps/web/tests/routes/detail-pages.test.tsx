@@ -89,7 +89,7 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors: roomFloors, sleepsMax: 20 }, _count: { guests: 12 } });
     const roomsPage = renderPage(Rooms, await roomsLoader());
     for (const [name, handle] of [["Christie Navarre", "xtnavarre"], ["Christine Calvo", "christinecalvo_"], ["Valeriia Stobolva", "valeriiastolbova"], ["Wayne Martindale", "_wayne.em_"]] as const) {
-      const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".spot-assigned a")].find((anchor) => anchor.textContent === name);
+      const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".spot-assigned a")].find((anchor) => anchor.querySelector("span")?.textContent === name);
       expect(link?.getAttribute("href")).toBe(`https://www.instagram.com/${handle}`);
       expect(link?.target).toBe("_blank");
       expect(link?.rel).toContain("noopener");
@@ -194,6 +194,7 @@ describe("database-backed read-only detail pages", () => {
       expect([...page.querySelectorAll("thead th")].map((node) => node.textContent)).toEqual(["Guest", "Flight", "Payment"]);
       expect(page.textContent).not.toContain("Details");
       expect(page.querySelector('[data-label="Payment"] .task-status[data-done="false"]')?.textContent).toBe("—");
+      expect(page.querySelector('table[aria-label="Guest flight and payment status"] tbody th a')?.getAttribute("aria-label")).toBe("Kaise on Instagram");
       expect(storage).not.toHaveBeenCalled();
     } finally { storage.mockRestore(); }
   });
@@ -210,9 +211,14 @@ describe("database-backed read-only detail pages", () => {
     ].map(([group, label, href], index) => ({ id: String(index), group, label, href }));
     findUniqueOrThrow.mockResolvedValue({ links });
     const page = renderPage(Links, await linksLoader());
-    const anchors = [...page.querySelectorAll<HTMLAnchorElement>(".link-row")];
+    const anchors = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group]:not([data-group="Guests"])')];
     expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.map((link) => link.href));
     expect(anchors.map((link) => link.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
     for (const link of anchors) { expect(link.target).toBe("_blank"); expect(link.rel).toContain("noopener"); }
+    const guestRows = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group="Guests"]')];
+    expect(guestRows).toHaveLength(11);
+    expect(guestRows[0]?.querySelector(".guest-instagram-label")?.textContent).toContain("Kaise");
+    expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
+    expect(guestRows.every((link) => link.querySelector(".guest-instagram-arrow"))).toBe(true);
   });
 });

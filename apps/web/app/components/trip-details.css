@@ -53,6 +53,10 @@
 .room-spot { display: flex; justify-content: space-between; align-items: center; gap: 8px; font-size: 13px; }
 .spot-number { color: var(--text-faint); font-size: 12px; }
 .spot-assigned { font-weight: 600; }
+.guest-instagram-link, .guest-instagram-label { display: inline-flex; align-items: baseline; gap: .35em; color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
+.guest-instagram-link:hover { color: var(--text); text-decoration-color: var(--accent); }
+.guest-instagram-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.guest-instagram-arrow { color: var(--accent); flex: none; text-decoration: none; }
 .spot-available { color: var(--brand); font-size: 12px; font-weight: 600; }
 .spot-not-offered { color: var(--text-faint); }
 .chalet-gallery { margin: 24px 0 0; }

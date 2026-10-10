@@ -5,6 +5,7 @@ import {
   type Column, type ColumnDef, type Row,
 } from "@tanstack/react-table";
 import type { FlightTable } from "@/lib/db/repository.server";
+import { GuestInstagramLink } from "./guest-instagram-link";
 
 type GuestFlight = FlightTable[number];
 type Leg = NonNullable<GuestFlight["inbound"]>;
@@ -42,9 +43,7 @@ function FlightTime({ local }: { local: string | undefined }) {
 }
 
 function GuestName({ guest }: { guest: GuestFlight }) {
-  // §2.13 will consume this question in the Home chat composer.
-  const question = `When does ${guest.displayName} land?`;
-  return <a href={`/?question=${encodeURIComponent(question)}`}>{guest.displayName}</a>;
+  return <GuestInstagramLink displayName={guest.displayName} />;
 }
 
 const columns: ColumnDef<typeof features, GuestFlight>[] = [

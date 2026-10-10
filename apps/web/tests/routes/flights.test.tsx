@@ -140,7 +140,7 @@ describe("Flights route", () => {
 
   it("displays flight details without status cells or Friday badges", () => {
     const statuses: Guest["status"][] = ["On the shuttle", "Tight", "Misses the shuttle", "Not booked"];
-    const page = staticPage(statuses.map((status) => guest(status, { status, inbound: leg(), outbound: outbound(), arrivingFriday: true, arrivalMarker: "Arriving Friday" })));
+    const page = staticPage(statuses.map((status, index) => guest(index === 0 ? "Kaise" : status, { status, inbound: leg(), outbound: outbound(), arrivingFriday: true, arrivalMarker: "Arriving Friday" })));
     expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
     expect(page.querySelectorAll(".flight-table tbody tr:first-child td")).toHaveLength(6);
     expect(page.textContent).not.toContain("from screenshot");
@@ -150,7 +150,8 @@ describe("Flights route", () => {
     expect(page.textContent).toContain("Fri 29 Jan · 07:25");
     expect(page.textContent).toContain("Sat 6 Feb · 11:00");
     const link = page.querySelector<HTMLAnchorElement>("tbody th a")!;
-    expect(new URL(link.href).searchParams.get("question")).toBe("When does On the shuttle land?");
+    expect(link.href).toBe("https://www.instagram.com/kaise.white");
+    expect(link.getAttribute("aria-label")).toBe("Kaise on Instagram");
     expect(page.querySelector("#flight-summary")).toBeNull();
   });
 
@@ -167,7 +168,7 @@ describe("Flights route", () => {
 
   it("sorts arrivals chronologically with missing flights last in either direction", async () => {
     const page = await mount([guest("Missing"), guest("Later", { inbound: leg({ scheduledArrival: new Date("2027-01-30T07:00:00Z") }) }), guest("Earlier", { inbound: leg() })]);
-    const order = () => [...page.querySelectorAll("tbody th a")].map((node) => node.textContent);
+    const order = () => [...page.querySelectorAll("tbody th")].map((node) => node.textContent);
     expect(order()).toEqual(["Earlier", "Later", "Missing"]);
     expect(page.querySelector('[aria-sort="ascending"]')?.textContent).toContain("Lands GVA");
     await clickSort(page, "Lands GVA");
@@ -178,17 +179,17 @@ describe("Flights route", () => {
   it("switches to cards below 860px, retaining the same model and sorting state", async () => {
     const page = await mount([guest("Zoe"), guest("Amy")]);
     await clickSort(page, "Guest");
-    expect([...page.querySelectorAll("tbody th a")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
+    expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
     await act(async () => { narrow = true; listeners.forEach((fn) => fn()); });
     expect(window.matchMedia).toHaveBeenCalledWith("(width < 860px)");
     expect(page.querySelector("table")).toBeNull();
-    expect([...page.querySelectorAll(".flight-guest-card h4 a")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
+    expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
     expect(page.querySelectorAll(".flight-card-leg")).toHaveLength(4);
     expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
     await clickSort(page, "Guest");
-    expect([...page.querySelectorAll(".flight-guest-card h4 a")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
+    expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
     await act(async () => { narrow = false; listeners.forEach((fn) => fn()); });
     expect(page.querySelectorAll(".flight-guest-card")).toHaveLength(0);
-    expect([...page.querySelectorAll("tbody th a")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
+    expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
   });
 });
