@@ -376,7 +376,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
       {threadMode && !pinned && <div className="chat-jump-row">
         <button type="button" className="chat-jump" onClick={scrollToLatest}>Jump to latest ↓</button>
       </div>}
-      <div className="suggestions navrow">{CHAT_SUGGESTIONS.map(question => <button type="button" key={question} disabled={sendPending.current || chatUi.phase === "sending" || !capability.canSend} onClick={() => void handleSend(question, true)}>{question}</button>)}</div>
+      {!threadMode && <div className="suggestions navrow">{CHAT_SUGGESTIONS.map(question => <button type="button" key={question} disabled={sendPending.current || chatUi.phase === "sending" || !capability.canSend} onClick={() => void handleSend(question, true)}>{question}</button>)}</div>}
       <ChatComposer attachment={attachment.file} onAttachmentChange={attachment.select} capability={capability} state={chatUi} busy={busy} stopping={stopping}
         inputRef={inputRef} onDraftChange={text => dispatchChat({ type: "draft", text })} onSend={() => void handleSend()}
         onStop={() => void handleStop()} />

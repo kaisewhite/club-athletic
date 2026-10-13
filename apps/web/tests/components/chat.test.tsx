@@ -66,6 +66,14 @@ async function panel(initial: ConversationDetails | null, loader = vi.fn(async (
   return loader;
 }
 async function click(selector: string) { await act(async () => { container.querySelector<HTMLButtonElement>(selector)!.click(); }); }
+async function sendTyped(text = "Follow-up question") {
+  const input = container.querySelector<HTMLTextAreaElement>("textarea")!;
+  await act(async () => {
+    Object.getOwnPropertyDescriptor(HTMLTextAreaElement.prototype, "value")!.set!.call(input, text);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+  });
+  await click(".send");
+}
 async function emit(callback: (value: ConversationStreamHandlers) => void, index = handlers.length - 1) { await act(async () => callback(handlers[index]!)); }
 async function advance(ms: number) { await act(async () => { await vi.advanceTimersByTimeAsync(ms); }); }
 function button(text: string) { return [...container.querySelectorAll<HTMLButtonElement>("button")].find(el => el.textContent === text)!; }
@@ -118,7 +126,7 @@ describe("ported chat presentation and guest composer", () => {
     expect(container.textContent).not.toContain("Not delivered");
     for (const noise of ["Sent", "Sending…", "Queued"]) expect(container.textContent).not.toContain(noise);
   });
-  it("shows the grid initially, then thread shortcuts and blink dots as a suggestion sends", async () => {
+  it("shows quick prompts only on a new chat, then removes them after sending", async () => {
     api.start.mockReturnValue(new Promise(() => {}));
     await panel(null);
     expect(container.querySelector(".overview-tiles")).not.toBeNull();
@@ -128,10 +136,11 @@ describe("ported chat presentation and guest composer", () => {
     // row above the conversation either (owner, 2026-09-28 — the thread "should
     // take up everything on that screen. There should not be an additional header").
     expect(container.querySelector(".overview-tiles")).toBeNull(); expect(container.querySelectorAll(".chat-tile-chips a")).toHaveLength(0);
+    expect(container.querySelectorAll(".suggestions button")).toHaveLength(0);
     expect(container.querySelectorAll(".chat-dots span")).toHaveLength(3);
     expect([...container.querySelectorAll<HTMLElement>(".chat-dots span")].map(el => el.style.animationDelay)).toEqual(["0s", "0.2s", "0.4s"]);
     expect(api.start).toHaveBeenCalledTimes(1);
-    await click(".suggestions button"); expect(api.start).toHaveBeenCalledTimes(1);
+    expect(api.start).toHaveBeenCalledTimes(1);
   });
   it("sends the selected quick option and closes the mobile keyboard", async () => {
     vi.stubGlobal("matchMedia", vi.fn((query: string) => ({ media: query, matches: true, addEventListener: vi.fn(), removeEventListener: vi.fn() })));
@@ -275,7 +284,7 @@ describe("stream recovery, acknowledgements and lifetime", () => {
     await act(async () => retry.click()); expect(api.start.mock.calls[1]![1]).toBe(first[1]);
   });
   it("rejects an acknowledgement for a different conversation without duplicating its bubble", async () => {
-    api.send.mockResolvedValue({ ok: true, seq: 1, conversationId: "wrong" }); await panel(detail(false)); await click(".suggestions button");
+    api.send.mockResolvedValue({ ok: true, seq: 1, conversationId: "wrong" }); await panel(detail(false)); await sendTyped();
     expect(container.querySelector("textarea")?.value).toBe(""); expect(container.querySelectorAll(".chat-user-bubble")).toHaveLength(2);
     expect(container.textContent).toContain("The trip assistant returned an incomplete response."); expect(container.textContent).not.toContain(CHAT_FALLBACK);
   });
@@ -317,22 +326,22 @@ describe("stream recovery, acknowledgements and lifetime", () => {
   });
   it("keeps Send and suggestions disabled if a waiting frame arrives before the POST acknowledgement", async () => {
     api.send.mockReturnValue(new Promise(() => {}));
-    await panel(detail(false)); await click(".suggestions button");
+    await panel(detail(false)); await sendTyped();
     await emit(h => h.onState?.({ ...frame("waiting"), activeRequestIdPresent: true }));
     // A turn in flight puts Stop where Send was, rather than a dead Send button.
     expect(container.querySelector(".send")).toBeNull();
     expect(container.querySelector(".stop")).not.toBeNull();
-    expect([...container.querySelectorAll(".suggestions button")].every(el => el.hasAttribute("disabled"))).toBe(true);
+    expect(container.querySelectorAll(".suggestions button")).toHaveLength(0);
     expect(api.send).toHaveBeenCalledTimes(1);
   });
   it("does not let a late acknowledgement reactivate a turn already settled by SSE", async () => {
     let resolve!: (value: unknown) => void;
     api.send.mockReturnValue(new Promise(next => { resolve = next; }));
     const loader = vi.fn().mockResolvedValueOnce(detail(false)).mockResolvedValue(null);
-    await panel(detail(false), loader); await click(".suggestions button");
+    await panel(detail(false), loader); await sendTyped();
     await emit(h => h.onState?.(frame("waiting")));
     await act(async () => resolve({ ok: true, seq: 1, conversationId: "conversation-1" }));
-    expect([...container.querySelectorAll(".suggestions button")].every(el => !el.hasAttribute("disabled"))).toBe(true);
+    expect(container.querySelectorAll(".suggestions button")).toHaveLength(0);
     expect(container.querySelector(".chat-dots")).toBeNull();
   });
   it("stops polling a confirmed missing conversation and offers New question", async () => {
@@ -371,11 +380,11 @@ describe("streaming experience", () => {
   });
   it("retires the optimistic bubble on its own durable row without showing the message twice", async () => {
     api.send.mockResolvedValue({ ok: true, seq: 1, conversationId: "conversation-1" });
-    await panel(detail(false)); await click(".suggestions button");
+    await panel(detail(false)); await sendTyped();
     expect(container.querySelectorAll(".chat-user-bubble")).toHaveLength(2);
-    await emit(h => h.onActivity(1, row(1, "user_message", { text: "What time do I need to land?", delivery: "sent" })));
+    await emit(h => h.onActivity(1, row(1, "user_message", { text: "Follow-up question", delivery: "sent" })));
     expect(container.querySelectorAll(".chat-user-bubble")).toHaveLength(2);
-    expect([...container.querySelectorAll(".chat-user-bubble")].at(-1)?.textContent).toBe("What time do I need to land?");
+    expect([...container.querySelectorAll(".chat-user-bubble")].at(-1)?.textContent).toBe("Follow-up question");
     expect(container.querySelector(".chat-thread")?.textContent).not.toContain("Sending…");
   });
   it("puts a failed send in the thread as a message with no dismissible strip", async () => {

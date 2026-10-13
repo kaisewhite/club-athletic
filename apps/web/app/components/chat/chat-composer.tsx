@@ -71,6 +71,9 @@ export function ChatComposer({ capability, state, busy, onDraftChange, onSend, o
       <textarea ref={ref} rows={1} maxLength={8192} aria-label="Ask anything about the trip" placeholder="Ask anything about the trip…"
         value={state.draft} onChange={event => onDraftChange(event.target.value)}
         onKeyDown={event => {
+          // Browser editing commands (select all, copy, cut, paste, undo) must
+          // remain native textarea behavior. Only an unmodified Enter submits.
+          if (event.metaKey || event.ctrlKey || event.altKey) return;
           if (event.key === "Enter" && !event.shiftKey && !event.nativeEvent.isComposing) {
             event.preventDefault(); if (submitReady) onSend();
           }
