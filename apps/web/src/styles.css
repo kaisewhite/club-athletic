@@ -1,5 +1,15 @@
 @import "tailwindcss";
 
+/* Club Athletic app typography: Hanken Grotesk is the shared face for both
+   interface copy and display headings. */
+@font-face {
+  font-family: "Hanken Grotesk";
+  src: url("/fonts/hanken-grotesk/HankenGrotesk.ttf") format("truetype");
+  font-style: normal;
+  font-weight: 100 900;
+  font-display: swap;
+}
+
 @custom-variant dark (&:is(.dark *));
 
 @font-face {
@@ -39,26 +49,26 @@
 }
 
 :root {
-  color-scheme: dark;
-  --bg: #212121;
-  --surface: #303030;
-  --surface-alt: #2f2f2f;
-  --sidebar: #171717;
-  --hover: #2f2f2f;
-  --border: #3e3e42;
-  --border-strong: #4d4d52;
-  --border-subtle: #2a2a2e;
-  --accent: #ececec;
-  --accent-hover: #ffffff;
-  --brand: #10a37f;
-  --brand-dim: #1a7f64;
-  --text: #ececec;
-  --text-muted: #cdcdcd;
-  --text-dim: #b4b4b4;
-  --text-faint: #9b9b9b;
+  color-scheme: light;
+  --bg: #ffffff;
+  --surface: #ffffff;
+  --surface-alt: #f4f4f2;
+  --sidebar: #ffffff;
+  --hover: #f0f0ed;
+  --border: #111111;
+  --border-strong: #111111;
+  --border-subtle: rgb(17 17 17 / 16%);
+  --accent: #8dfc82;
+  --accent-hover: #b5ffad;
+  --brand: #218c25;
+  --brand-dim: #17691b;
+  --text: #111111;
+  --text-muted: #3f3f3f;
+  --text-dim: #5c5c5c;
+  --text-faint: #8a8a8a;
   --paper: #ffffff;
-  --warn: #f5a623;
-  --danger: #ef4146;
+  --warn: #ffea00;
+  --danger: #d62828;
 
   /* shadcn semantic variables share the trip palette. */
   --background: var(--bg);
@@ -85,7 +95,16 @@
   --sidebar-accent-foreground: var(--accent);
   --sidebar-border: var(--border-subtle);
   --sidebar-ring: var(--accent);
-  --radius: 12px;
+  --radius: 0px;
+  --space-1: 4px;
+  --space-2: 8px;
+  --space-3: 12px;
+  --space-4: 16px;
+  --space-5: 24px;
+  --space-6: 32px;
+  --space-7: 48px;
+  --space-8: 64px;
+  --content-max: 1180px;
 }
 
 @theme inline {
@@ -132,12 +151,13 @@
   --color-sidebar-accent-foreground: var(--sidebar-accent-foreground);
   --color-sidebar-border: var(--sidebar-border);
   --color-sidebar-ring: var(--sidebar-ring);
-  --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Helvetica, Arial, sans-serif;
-  --font-display: Inter, ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-heading: "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
   --font-mono: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-  --radius-sm: 8px;
-  --radius-md: 12px;
-  --radius-lg: 16px;
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
   --radius-pill: 9999px;
 }
 
@@ -154,10 +174,10 @@
     background: var(--bg);
     color: var(--text);
     font-family: var(--font-sans);
-    font-size: 15px;
-    line-height: 1.6;
+    font-size: 16px;
+    line-height: 1.45;
     font-optical-sizing: auto;
-    letter-spacing: -0.011em;
+    letter-spacing: 0;
     -webkit-font-smoothing: antialiased;
   }
   ::selection { background: rgb(255 255 255 / 16%); }
@@ -170,10 +190,11 @@
   h2 {
     margin: 0 0 8px;
     font-family: var(--font-display);
-    font-weight: 600;
-    font-size: clamp(28px, 4vw, 32px);
-    letter-spacing: -.01em;
-    line-height: 1.25;
+    font-weight: 400;
+    font-size: clamp(40px, 6vw, 64px);
+    letter-spacing: 0;
+    line-height: .95;
+    text-transform: uppercase;
   }
 }
 
@@ -189,22 +210,22 @@
 
 /* App shell and read-only trip pages, matching the decoded trip design. */
 .app-shell { display: flex; min-height: 100vh; }
-.sidebar { width: 260px; flex: none; background: var(--sidebar); border-right: 1px solid var(--border-subtle); display: flex; flex-direction: column; padding: 12px 12px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-.new-chat { display: flex; align-items: center; min-height: 44px; gap: 8px; padding: 8px 12px; margin-top: 8px; border: 1px solid var(--border-strong); background: none; border-radius: var(--radius-md); font: inherit; font-size: 14px; color: var(--text); text-align: left; }
-.nav-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); padding: 20px 12px 8px; font-weight: 500; }
+.sidebar { width: 240px; flex: none; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 16px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
+.new-chat { display: flex; align-items: center; min-height: 44px; gap: 8px; padding: 8px 12px; margin-top: 8px; border: 1px solid var(--text); background: var(--text); border-radius: var(--radius-md); font: inherit; font-size: 14px; color: var(--surface); text-align: left; }
+.nav-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); padding: 32px 12px 10px; font-weight: 700; }
 .side-nav { display: flex; flex-direction: column; gap: 2px; }
-.side-item { display: block; width: 100%; min-height: 36px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 500; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.side-item { display: block; width: 100%; min-height: 36px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .side-item:hover { background: var(--hover); }
-.side-item.active { background: var(--surface); color: var(--text); font-weight: 500; }
+.side-item.active { background: var(--accent); color: var(--text); font-weight: 700; }
 .shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .mobile-header { display: none; }
-.route-content { max-width: 768px; width: 100%; margin: 0 auto; }
-.page-route { padding: 32px 24px 80px; animation: rise .3s ease-out; }
+.route-content { max-width: var(--content-max); width: 100%; margin: 0 auto; }
+.page-route { padding: 56px 40px 96px; animation: rise .3s ease-out; }
 .home-route { display: flex; flex: 1; padding: 0 20px; }
 .overview { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .overview-content { flex: 1; padding: 40px 0 8px; animation: rise .4s ease-out; }
 .home-welcome { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: min(44vh, 360px); padding: 16px 0 40px; }
-.home-welcome h1 { margin: 0; font: 600 clamp(28px, 4vw, 32px)/1.25 var(--font-display); letter-spacing: -.01em; }
+.home-welcome h1 { margin: 0; font: 400 clamp(48px, 8vw, 88px)/.9 var(--font-display); letter-spacing: 0; text-transform: uppercase; }
 .home-welcome p { margin: 12px 0 16px; color: var(--text-dim); font-size: 15px; line-height: 1.5; }
 .home-welcome a { display: inline-flex; gap: 4px; min-height: 44px; align-items: center; color: var(--text); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
 .home-welcome a:hover { color: var(--text); }
@@ -259,10 +280,10 @@
    quiet register as the dateline — it is context, not a call to action, and as a
    bottom-of-page card it was covered by the sticky composer. */
 .maps-label { font-size: 12px; color: var(--text); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
-.composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgb(33 33 33 / 0), var(--bg) 40%); padding: 20px 0 16px; }
-.composer { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 26px; padding: 12px 12px 12px 16px; background: var(--surface); box-shadow: 0 2px 8px rgb(0 0 0 / 24%); }
+.composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgb(255 255 255 / 0), var(--bg) 40%); padding: 14px 0 12px; }
+.composer { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 26px; padding: 8px 10px 8px 14px; background: var(--surface); box-shadow: 0 2px 8px rgb(0 0 0 / 24%); }
 .composer:focus-within { border-color: var(--border-strong); }
-.composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 8px 0; resize: none; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 4px 0; resize: none; }
 .composer textarea::placeholder { color: var(--text-faint); }
 .send { width: 40px; height: 40px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; flex: none; }
 /* Same pill geometry as Send so the composer does not resize mid-turn; the
@@ -373,7 +394,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   /* ---- Safe areas. The sticky top bar and the page gutters clear the notch;
      every inset is floored at the design's own padding so a device without
      insets renders exactly the spacing the source specifies. */
-  .mobile-header { display: block; position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px); background: rgb(33 33 33 / 94%); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border-subtle); }
+  .mobile-header { display: block; position: sticky; top: 0; z-index: 5; padding-top: env(safe-area-inset-top, 0px); background: rgb(255 255 255 / 94%); backdrop-filter: blur(10px); border-bottom: 1px solid var(--border); }
   .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: flex-start; gap: 12px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
   .mobile-brand { display: inline-flex; align-items: center; min-width: 0; min-height: 44px; color: var(--text); font: 600 14px/1 var(--font-sans); letter-spacing: .04em; white-space: nowrap; }
   .mobile-brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }

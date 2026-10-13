@@ -57,9 +57,9 @@ export default defineConfig({
   use: {
     baseURL: `http://127.0.0.1:${PORT}`,
     deviceScaleFactor: 1,
-    // The app hard-codes `class="dark"`; pinning these three stops the host
-    // machine's appearance, locale and timezone from leaking into the capture.
-    colorScheme: "dark",
+    // Pin the source site's light canvas, locale and timezone so the visual
+    // baseline is independent of the host machine.
+    colorScheme: "light",
     // 1.62 exposes `reducedMotion` through `contextOptions` rather than as a
     // top-level `use` key. This is the switch that makes `src/styles.css`'s own
     // `prefers-reduced-motion` block turn `rise` and `blink` off at the source,

@@ -52,7 +52,7 @@ export async function openFrozen(page: Page, path: string): Promise<number> {
     const hydrated = shell !== null && Object.keys(shell).some((key) => key.startsWith("__reactFiber$"));
     const fonts = document.fonts.status === "loaded" &&
       document.fonts.check('700 34px "Hanken Grotesk"') &&
-      document.fonts.check('400 15px "Maison Neue"') &&
+      document.fonts.check('400 45px "Hanken Grotesk"') &&
       // The bedroom map sheet on /rooms is set in Archivo (its own face, shipped
       // with it); a capture before it swaps in photographs the fallback.
       (!document.querySelector(".bm-sheet") || document.fonts.check('800 54px "Archivo"'));

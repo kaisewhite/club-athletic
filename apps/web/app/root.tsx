@@ -6,7 +6,7 @@ import "@/styles.css";
 
 export function Layout({ children }: { children: ReactNode }) {
   return (
-    <html lang="en" className="dark">
+    <html lang="en">
       <head>
         <meta charSet="utf-8" />
         {/* TODO §2.15 mobile mechanics. `viewport-fit=cover` is what makes the
