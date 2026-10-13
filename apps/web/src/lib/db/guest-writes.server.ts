@@ -43,7 +43,7 @@ export async function updateGuestDietaryNotes(
 }
 
 export async function createGuestWithDietaryNotes(
-  { firstName, lastName, dietaryNotes, tripKey = "meribel-2027" }: { firstName: string; lastName: string; dietaryNotes: string | null; tripKey?: string },
+  { firstName, lastName, dietaryNotes, instagramUrl, tripKey = "meribel-2027" }: { firstName: string; lastName: string; dietaryNotes: string | null; instagramUrl: string; tripKey?: string },
   deps: CreateDependencies = {},
 ): Promise<{ id: string; displayName: string }> {
   return (deps.withDatabase ?? withGuestWriteDatabase)((db) => db.transaction(async (tx) => {
@@ -54,11 +54,11 @@ export async function createGuestWithDietaryNotes(
     if (existing) throw new GuestAlreadyExistsError("A guest with that name already exists.");
     const id = (deps.createId ?? createId)();
     await tx.guest.create({ data: {
-      id, tripId: trip.id, firstName, lastName, displayName, status: "CONFIRMED", dietaryNotes, createdVia: "AGENT",
+      id, tripId: trip.id, firstName, lastName, displayName, status: "CONFIRMED", dietaryNotes, instagramUrl, createdVia: "AGENT",
     }, select: { id: true } });
     await tx.auditLog.create({ data: {
       id: (deps.createId ?? createId)(), action: "GUEST_CREATE", entity: "Guest", entityId: id,
-      after: { firstName, lastName, displayName, dietaryNotes }, source: "GUEST",
+      after: { firstName, lastName, displayName, dietaryNotes, instagramUrl }, source: "GUEST",
     } });
     return { id, displayName };
   }));

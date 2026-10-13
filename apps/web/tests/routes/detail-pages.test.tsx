@@ -17,7 +17,7 @@ vi.mock("../../src/lib/db/client.server", () => ({
 }));
 vi.mock("../../app/lib/exchange-rates.server", () => ({ getEurUsdRate }));
 
-function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => ReactNode, data: P["loaderData"]) {
+function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => ReactNode, data: P["loaderData"], expectedQueries = 1) {
   const node = document.createElement("div");
   // These pure route components only consume loaderData; router metadata is unused.
   node.innerHTML = renderToStaticMarkup(Component({ loaderData: data } as P));
@@ -27,7 +27,7 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
   for (const heading of [...node.querySelectorAll("h2")].filter((h) => !h.closest(".bm-sheet"))) {
     expect(heading.querySelector(".text-accent")?.textContent).toBe(".");
   }
-  expect(findUniqueOrThrow).toHaveBeenCalledTimes(1);
+  expect(findUniqueOrThrow).toHaveBeenCalledTimes(expectedQueries);
   expect(findUniqueOrThrow.mock.calls[0]?.[0].where).toEqual({ seedKey: "meribel-2027" });
   return node;
 }
@@ -209,8 +209,8 @@ describe("database-backed read-only detail pages", () => {
       ["Hotels", "Geneva Marriott (Friday night)", "https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/"],
       ["Hotels", "Hilton Geneva (Friday night)", "https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/"],
     ].map(([group, label, href], index) => ({ id: String(index), group, label, href }));
-    findUniqueOrThrow.mockResolvedValue({ links });
-    const page = renderPage(Links, await linksLoader());
+    findUniqueOrThrow.mockResolvedValueOnce({ links }).mockResolvedValueOnce({ guests: [] });
+    const page = renderPage(Links, await linksLoader(), 2);
     const anchors = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group]:not([data-group="Guests"])')];
     expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.map((link) => link.href));
     expect(anchors.map((link) => link.getAttribute("data-group"))).toEqual(links.map((link) => link.group));

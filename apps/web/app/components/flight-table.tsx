@@ -43,7 +43,7 @@ function FlightTime({ local }: { local: string | undefined }) {
 }
 
 function GuestName({ guest }: { guest: GuestFlight }) {
-  return <GuestInstagramLink displayName={guest.displayName} />;
+  return <GuestInstagramLink displayName={guest.displayName} instagramUrl={guest.instagramUrl} />;
 }
 
 const columns: ColumnDef<typeof features, GuestFlight>[] = [

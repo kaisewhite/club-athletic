@@ -6,7 +6,7 @@ import { countOpenSpots, getTripPricing } from "./projections";
 
 // A lookup key, not a duplicate of editable trip facts.
 const DEFAULT_TRIP_KEY = "meribel-2027";
-const guestIdentity = { id: true, firstName: true, lastName: true, displayName: true } as const;
+const guestIdentity = { id: true, firstName: true, lastName: true, displayName: true, instagramUrl: true } as const;
 const guestOrder = [{ displayName: "asc" }, { id: "asc" }] as const;
 const roomSelection = {
   orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
@@ -224,6 +224,7 @@ export async function getGuestTasks(tripKey = DEFAULT_TRIP_KEY) {
       firstName: guest.firstName,
       lastName: guest.lastName,
       displayName: guest.displayName,
+      instagramUrl: guest.instagramUrl,
       hasFlights: Boolean(flightByGuest.get(guest.id)?.inbound || flightByGuest.get(guest.id)?.outbound),
       paid: guest.tasks[0]?.done ?? false,
     }));
@@ -247,6 +248,13 @@ export async function getLinks(tripKey = DEFAULT_TRIP_KEY) {
   return withReadDatabase(async (db) => (await db.trip.findUniqueOrThrow({
     where: { seedKey: tripKey }, select: { links: { orderBy: [{ sortOrder: "asc" }, { id: "asc" }] } },
   })).links);
+}
+
+export async function getGuestInstagramProfiles(tripKey = DEFAULT_TRIP_KEY) {
+  return withReadDatabase(async (db) => (await db.trip.findUniqueOrThrow({
+    where: { seedKey: tripKey },
+    select: { guests: { where: { status: "CONFIRMED", instagramUrl: { not: null } }, orderBy: [...guestOrder], select: { displayName: true, instagramUrl: true } } },
+  })).guests.map(({ displayName, instagramUrl }) => ({ displayName, href: instagramUrl! })));
 }
 
 export type TripOverview = Awaited<ReturnType<typeof getTripOverview>>;

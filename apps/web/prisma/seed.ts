@@ -115,6 +115,20 @@ const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {
   "Christie Navarre": { firstName: "Christie", lastName: "Navarre" },
 };
 
+const GUEST_INSTAGRAMS: Record<string, string> = {
+  Kaise: "https://www.instagram.com/kaise.white",
+  "Amelia Drake": "https://www.instagram.com/ameliadrake33",
+  "Kristy Kelly": "https://www.instagram.com/kristyke11y",
+  "Kristy Khoury": "https://www.instagram.com/kristy.l.khoury",
+  "Valeriia Stobolva": "https://www.instagram.com/valeriiastolbova",
+  "Augustus Shewchuck": "https://www.instagram.com/ashewchuck",
+  "Wayne Martindale": "https://www.instagram.com/_wayne.em_",
+  "Olajuwon Jones": "https://www.instagram.com/juice_jones1",
+  "Ted Delcima": "https://www.instagram.com/tedscorner_",
+  "Christine Calvo": "https://www.instagram.com/christinecalvo_",
+  "Christie Navarre": "https://www.instagram.com/xtnavarre",
+};
+
 // Payment status is organizer-provided positive seed content. A guest omitted
 // from this list has an unknown status, so seeding must preserve their row.
 const PAID_GUESTS = new Set([
@@ -326,6 +340,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
               ...GUEST_NAMES[displayName]!, displayName, dietaryNotes: DIETARY_NOTES[displayName] ?? null,
               status: "CONFIRMED", createdVia: "SEED",
             } }));
+          await tx.guest.update({ where: { id: guest.id }, data: { instagramUrl: GUEST_INSTAGRAMS[displayName] ?? null } });
           guestId = guest.id;
           for (const type of ["FLIGHT", "PAYMENT", "DETAILS"] as const) {
             const taskKey = { guestId: guest.id, type };

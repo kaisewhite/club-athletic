@@ -6,6 +6,7 @@ export const guestCreateSchema = z.object({
   firstName: z.string().trim().min(1).max(80),
   lastName: z.string().trim().min(1).max(80),
   dietaryNotes: z.string().max(500).transform((value) => value.trim()).transform((value) => value || null),
+  instagramUrl: z.string().trim().max(2048).url().refine((value) => /^https:\/\/(www\.)?instagram\.com\//i.test(value), "Enter an Instagram profile URL."),
 }).strict();
 
 const writeLimiter = createTextLimiter();
@@ -18,13 +19,13 @@ export async function action({ request }: { request: Request }) {
     if (contentType.includes("application/json")) payload = await request.json();
     else if (contentType.includes("application/x-www-form-urlencoded") || contentType.includes("multipart/form-data")) {
       const form = await request.formData();
-      payload = { firstName: form.get("firstName"), lastName: form.get("lastName"), dietaryNotes: form.get("dietaryNotes") };
+      payload = { firstName: form.get("firstName"), lastName: form.get("lastName"), dietaryNotes: form.get("dietaryNotes"), instagramUrl: form.get("instagramUrl") };
     } else return Response.json({ ok: false, error: "Expected JSON or form data." }, { status: 400 });
   } catch {
     return Response.json({ ok: false, error: "Invalid request body." }, { status: 400 });
   }
   const parsed = guestCreateSchema.safeParse(payload);
-  if (!parsed.success) return Response.json({ ok: false, error: "Enter your first name, last name, and dietary requirements." }, { status: 400 });
+  if (!parsed.success) return Response.json({ ok: false, error: "Enter your name and a valid Instagram profile URL." }, { status: 400 });
   if (writeLimiter.take("guest-create-writes") > 0) return Response.json({ ok: false, error: "Too many sign-ups. Try again shortly." }, { status: 429 });
   try {
     const guest = await createGuestWithDietaryNotes(parsed.data);

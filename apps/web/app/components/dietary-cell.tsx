@@ -83,6 +83,7 @@ function InteractiveDietaryGuestAdd() {
         <label>First name<input ref={firstName} name="firstName" required maxLength={80} autoComplete="given-name" disabled={saving} /></label>
         <label>Last name<input name="lastName" required maxLength={80} autoComplete="family-name" disabled={saving} /></label>
       </div>
+      <label>Instagram profile<input name="instagramUrl" type="url" required placeholder="https://instagram.com/yourname" maxLength={2048} autoComplete="url" disabled={saving} /></label>
       <label>Allergies / dietary needs <span>(optional)</span><textarea name="dietaryNotes" maxLength={500} rows={2} placeholder="For example: vegetarian, gluten-free, no pork" disabled={saving} /></label>
       {error && <p className="dietary-add-error" role="alert">{error}</p>}
       <div className="dietary-add-actions">

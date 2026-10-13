@@ -31,6 +31,7 @@ export type GuestMinAggregateOutputType = {
   firstName: string | null
   lastName: string | null
   displayName: string | null
+  instagramUrl: string | null
   email: string | null
   phone: string | null
   status: $Enums.GuestStatus | null
@@ -46,6 +47,7 @@ export type GuestMaxAggregateOutputType = {
   firstName: string | null
   lastName: string | null
   displayName: string | null
+  instagramUrl: string | null
   email: string | null
   phone: string | null
   status: $Enums.GuestStatus | null
@@ -61,6 +63,7 @@ export type GuestCountAggregateOutputType = {
   firstName: number
   lastName: number
   displayName: number
+  instagramUrl: number
   email: number
   phone: number
   status: number
@@ -79,6 +82,7 @@ export type GuestMinAggregateInputType = {
   firstName?: true
   lastName?: true
   displayName?: true
+  instagramUrl?: true
   email?: true
   phone?: true
   status?: true
@@ -94,6 +98,7 @@ export type GuestMaxAggregateInputType = {
   firstName?: true
   lastName?: true
   displayName?: true
+  instagramUrl?: true
   email?: true
   phone?: true
   status?: true
@@ -109,6 +114,7 @@ export type GuestCountAggregateInputType = {
   firstName?: true
   lastName?: true
   displayName?: true
+  instagramUrl?: true
   email?: true
   phone?: true
   status?: true
@@ -198,6 +204,7 @@ export type GuestGroupByOutputType = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl: string | null
   email: string | null
   phone: string | null
   status: $Enums.GuestStatus
@@ -235,6 +242,7 @@ export type GuestWhereInput = {
   firstName?: Prisma.StringFilter<"Guest"> | string
   lastName?: Prisma.StringFilter<"Guest"> | string
   displayName?: Prisma.StringFilter<"Guest"> | string
+  instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
@@ -258,6 +266,7 @@ export type GuestOrderByWithRelationInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  instagramUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -284,6 +293,7 @@ export type GuestWhereUniqueInput = Prisma.AtLeast<{
   firstName?: Prisma.StringFilter<"Guest"> | string
   lastName?: Prisma.StringFilter<"Guest"> | string
   displayName?: Prisma.StringFilter<"Guest"> | string
+  instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
@@ -307,6 +317,7 @@ export type GuestOrderByWithAggregationInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  instagramUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -329,6 +340,7 @@ export type GuestScalarWhereWithAggregatesInput = {
   firstName?: Prisma.StringWithAggregatesFilter<"Guest"> | string
   lastName?: Prisma.StringWithAggregatesFilter<"Guest"> | string
   displayName?: Prisma.StringWithAggregatesFilter<"Guest"> | string
+  instagramUrl?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusWithAggregatesFilter<"Guest"> | $Enums.GuestStatus
@@ -344,6 +356,7 @@ export type GuestCreateInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -367,6 +380,7 @@ export type GuestUncheckedCreateInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -388,6 +402,7 @@ export type GuestUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -411,6 +426,7 @@ export type GuestUncheckedUpdateInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -433,6 +449,7 @@ export type GuestCreateManyInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -448,6 +465,7 @@ export type GuestUpdateManyMutationInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -464,6 +482,7 @@ export type GuestUncheckedUpdateManyInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -495,6 +514,7 @@ export type GuestCountOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -511,6 +531,7 @@ export type GuestMaxOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -526,6 +547,7 @@ export type GuestMinOrderByAggregateInput = {
   firstName?: Prisma.SortOrder
   lastName?: Prisma.SortOrder
   displayName?: Prisma.SortOrder
+  instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -685,6 +707,7 @@ export type GuestCreateWithoutTripInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -706,6 +729,7 @@ export type GuestUncheckedCreateWithoutTripInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -757,6 +781,7 @@ export type GuestScalarWhereInput = {
   firstName?: Prisma.StringFilter<"Guest"> | string
   lastName?: Prisma.StringFilter<"Guest"> | string
   displayName?: Prisma.StringFilter<"Guest"> | string
+  instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
@@ -772,6 +797,7 @@ export type GuestCreateWithoutSpotInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -794,6 +820,7 @@ export type GuestUncheckedCreateWithoutSpotInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -830,6 +857,7 @@ export type GuestUpdateWithoutSpotInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -852,6 +880,7 @@ export type GuestUncheckedUpdateWithoutSpotInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -872,6 +901,7 @@ export type GuestCreateWithoutTasksInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -894,6 +924,7 @@ export type GuestUncheckedCreateWithoutTasksInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -930,6 +961,7 @@ export type GuestUpdateWithoutTasksInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -952,6 +984,7 @@ export type GuestUncheckedUpdateWithoutTasksInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -972,6 +1005,7 @@ export type GuestCreateWithoutPaymentsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -994,6 +1028,7 @@ export type GuestUncheckedCreateWithoutPaymentsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1030,6 +1065,7 @@ export type GuestUpdateWithoutPaymentsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1052,6 +1088,7 @@ export type GuestUncheckedUpdateWithoutPaymentsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1072,6 +1109,7 @@ export type GuestCreateWithoutFlightsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1094,6 +1132,7 @@ export type GuestUncheckedCreateWithoutFlightsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1130,6 +1169,7 @@ export type GuestUpdateWithoutFlightsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1152,6 +1192,7 @@ export type GuestUncheckedUpdateWithoutFlightsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1172,6 +1213,7 @@ export type GuestCreateWithoutPendingExtractionsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1194,6 +1236,7 @@ export type GuestUncheckedCreateWithoutPendingExtractionsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1219,6 +1262,7 @@ export type GuestCreateWithoutCreatedForExtractionsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1241,6 +1285,7 @@ export type GuestUncheckedCreateWithoutCreatedForExtractionsInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1277,6 +1322,7 @@ export type GuestUpdateWithoutPendingExtractionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1299,6 +1345,7 @@ export type GuestUncheckedUpdateWithoutPendingExtractionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1330,6 +1377,7 @@ export type GuestUpdateWithoutCreatedForExtractionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1352,6 +1400,7 @@ export type GuestUncheckedUpdateWithoutCreatedForExtractionsInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1372,6 +1421,7 @@ export type GuestCreateManyTripInput = {
   firstName: string
   lastName: string
   displayName: string
+  instagramUrl?: string | null
   email?: string | null
   phone?: string | null
   status: $Enums.GuestStatus
@@ -1387,6 +1437,7 @@ export type GuestUpdateWithoutTripInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1408,6 +1459,7 @@ export type GuestUncheckedUpdateWithoutTripInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1429,6 +1481,7 @@ export type GuestUncheckedUpdateManyWithoutTripInput = {
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
@@ -1512,6 +1565,7 @@ export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   firstName?: boolean
   lastName?: boolean
   displayName?: boolean
+  instagramUrl?: boolean
   email?: boolean
   phone?: boolean
   status?: boolean
@@ -1536,6 +1590,7 @@ export type GuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   firstName?: boolean
   lastName?: boolean
   displayName?: boolean
+  instagramUrl?: boolean
   email?: boolean
   phone?: boolean
   status?: boolean
@@ -1553,6 +1608,7 @@ export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   firstName?: boolean
   lastName?: boolean
   displayName?: boolean
+  instagramUrl?: boolean
   email?: boolean
   phone?: boolean
   status?: boolean
@@ -1570,6 +1626,7 @@ export type GuestSelectScalar = {
   firstName?: boolean
   lastName?: boolean
   displayName?: boolean
+  instagramUrl?: boolean
   email?: boolean
   phone?: boolean
   status?: boolean
@@ -1579,7 +1636,7 @@ export type GuestSelectScalar = {
   createdVia?: boolean
 }
 
-export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "email" | "phone" | "status" | "dietaryNotes" | "emergencyContact" | "notes" | "createdVia", ExtArgs["result"]["guest"]>
+export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "instagramUrl" | "email" | "phone" | "status" | "dietaryNotes" | "emergencyContact" | "notes" | "createdVia", ExtArgs["result"]["guest"]>
 export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   spot?: boolean | Prisma.Guest$spotArgs<ExtArgs>
@@ -1615,6 +1672,7 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     firstName: string
     lastName: string
     displayName: string
+    instagramUrl: string | null
     email: string | null
     phone: string | null
     status: $Enums.GuestStatus
@@ -2058,6 +2116,7 @@ export interface GuestFieldRefs {
   readonly firstName: Prisma.FieldRef<"Guest", 'String'>
   readonly lastName: Prisma.FieldRef<"Guest", 'String'>
   readonly displayName: Prisma.FieldRef<"Guest", 'String'>
+  readonly instagramUrl: Prisma.FieldRef<"Guest", 'String'>
   readonly email: Prisma.FieldRef<"Guest", 'String'>
   readonly phone: Prisma.FieldRef<"Guest", 'String'>
   readonly status: Prisma.FieldRef<"Guest", 'GuestStatus'>

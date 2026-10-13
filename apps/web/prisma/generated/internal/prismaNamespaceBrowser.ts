@@ -180,6 +180,7 @@ export const GuestScalarFieldEnum = {
   firstName: 'firstName',
   lastName: 'lastName',
   displayName: 'displayName',
+  instagramUrl: 'instagramUrl',
   email: 'email',
   phone: 'phone',
   status: 'status',

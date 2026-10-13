@@ -34,7 +34,7 @@ export default function Rooms({ loaderData: data }: Route.ComponentProps) {
           {spot.status === "NOT_OFFERED" ? <span className="spot-not-offered">not offered</span>
             : spot.status === "AVAILABLE" ? <span className="spot-available">Available</span>
             : <span className="spot-assigned">{spot.guest ? (() => {
-              return <GuestInstagramLink displayName={spot.guest.displayName} />;
+              return <GuestInstagramLink displayName={spot.guest.displayName} instagramUrl={spot.guest.instagramUrl} />;
             })() : "Assignment unavailable"}</span>}
         </div>)}</div>
       </article>)}</div>

@@ -14,6 +14,6 @@ const guestInstagrams: Record<string, string> = {
 
 export const guestInstagramProfiles = Object.entries(guestInstagrams).map(([displayName, href]) => ({ displayName, href }));
 
-export function guestInstagramUrl(displayName: string): string | undefined {
-  return guestInstagrams[displayName];
+export function guestInstagramUrl(displayName: string, instagramUrl?: string | null): string | undefined {
+  return instagramUrl ?? guestInstagrams[displayName];
 }

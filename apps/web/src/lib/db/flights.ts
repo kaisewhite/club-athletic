@@ -15,6 +15,7 @@ export type FlightRules = Pick<Trip,
   "startDate" | "endDate" | "timezone" | "flightArrivalTarget" | "flightArrivalCutoff" | "flightReturnCutoff"
 >;
 export type FlightGuest = Pick<Guest, "id" | "firstName" | "lastName" | "displayName"> & {
+  instagramUrl?: Guest["instagramUrl"];
   flights: readonly FlightRecord[];
 };
 export type FlightStatus = "On the shuttle" | "Tight" | "Misses the shuttle" | "Not booked";

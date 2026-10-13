@@ -178,6 +178,7 @@ model Guest {
   // Empty for the explicitly reviewed mononym Kaise; never invent a surname.
   lastName              String
   displayName           String
+  instagramUrl          String?
   email                 String?
   phone                 String?
   status                GuestStatus

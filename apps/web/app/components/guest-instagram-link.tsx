@@ -2,6 +2,7 @@ import { guestInstagramUrl } from "../lib/guest-instagrams";
 
 type GuestInstagramLinkProps = {
   displayName: string;
+  instagramUrl?: string | null;
   className?: string;
 };
 
@@ -12,8 +13,8 @@ export function GuestInstagramAffordance({ displayName, className }: GuestInstag
 }
 
 /** The shared guest-name treatment: the arrow makes the external profile action explicit. */
-export function GuestInstagramLink({ displayName, className }: GuestInstagramLinkProps) {
-  const href = guestInstagramUrl(displayName);
+export function GuestInstagramLink({ displayName, instagramUrl, className }: GuestInstagramLinkProps) {
+  const href = guestInstagramUrl(displayName, instagramUrl);
   if (!href) return <>{displayName}</>;
   return <a className={`guest-instagram-link${className ? ` ${className}` : ""}`} href={href} target="_blank" rel="noopener noreferrer" aria-label={`${displayName} on Instagram`}>
     <GuestInstagramAffordance displayName={displayName} />

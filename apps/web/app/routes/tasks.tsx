@@ -13,7 +13,7 @@ export default function Tasks({ loaderData: data }: Route.ComponentProps) {
     <div className="detail-table-wrap"><table className="detail-table task-table" aria-label="Guest flight and payment status">
       <thead><tr><th scope="col">Guest</th><th scope="col">Flight</th><th scope="col">Payment</th></tr></thead>
       <tbody>{data.guests.map((guest) => <tr key={guest.id}>
-        <th scope="row"><GuestInstagramLink displayName={guest.displayName} /></th>
+        <th scope="row"><GuestInstagramLink displayName={guest.displayName} instagramUrl={guest.instagramUrl} /></th>
         <td data-label="Flight"><span className="task-status" data-done={guest.hasFlights}>{guest.hasFlights ? "Booked" : "—"}</span></td>
         <td data-label="Payment"><span className="task-status" data-done={guest.paid}>{guest.paid ? "Paid" : "—"}</span></td>
       </tr>)}</tbody>

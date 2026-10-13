@@ -31,7 +31,7 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <DietaryCopyButton guests={data.guests} />
       <table className="detail-table" aria-label="Guest dietary requirements">
       <thead><tr><th scope="col">Guest</th><th scope="col">Allergies / dietary needs</th></tr></thead>
-      <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row"><GuestInstagramLink displayName={guest.displayName} /></th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
+      <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row"><GuestInstagramLink displayName={guest.displayName} instagramUrl={guest.instagramUrl} /></th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td></tr>)}</tbody>
       </table>
       <div className="dietary-add-area">
         <DietaryGuestAdd />
