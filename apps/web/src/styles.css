@@ -262,7 +262,7 @@
 .schedule-ticker-window { min-width: 0; overflow: hidden; border-block: 1px solid var(--border-subtle); -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); }
 .schedule-ticker-track { display: flex; width: max-content; animation: schedule-ticker-scroll 72s linear infinite; }
 .schedule-ticker-sequence { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
-.schedule-ticker-item { display: flex; flex: none; align-items: center; gap: 10px; min-height: 46px; padding: 0 16px; white-space: nowrap; }
+.schedule-ticker-item { display: flex; flex: none; align-items: baseline; gap: 10px; min-height: 46px; padding: 0 16px; white-space: nowrap; }
 .schedule-ticker-item + .schedule-ticker-item { border-left: 1px solid var(--border-subtle); }
 .ticker-date { color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
 .ticker-event { color: var(--text); font-size: 13px; }
@@ -283,7 +283,7 @@
 .composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgb(255 255 255 / 0), var(--bg) 40%); padding: 10px 0 8px; }
 .composer { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 26px; padding: 6px 8px 6px 12px; background: var(--surface); box-shadow: 0 2px 8px rgb(0 0 0 / 24%); }
 .composer:focus-within { border-color: var(--border-strong); }
-.composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 2px 0; resize: none; }
+.composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 6px 0; resize: none; }
 .composer textarea::placeholder { color: var(--text-faint); }
 .send { width: 32px; height: 32px; border-radius: 50%; border: 0; background: var(--accent); color: var(--bg); display: grid; place-items: center; flex: none; }
 /* Same pill geometry as Send so the composer does not resize mid-turn; the
@@ -295,8 +295,10 @@
 .chat-jump-row { display: flex; justify-content: center; padding-bottom: 10px; }
 .chat-jump { border: 1px solid var(--border-strong); background: var(--surface-alt); border-radius: var(--radius-pill); padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); cursor: pointer; transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .chat-jump:hover { background: var(--hover); color: var(--text); }
-.suggestions { display: flex; gap: 6px; overflow-x: auto; margin-top: 10px; }
-.suggestions button { flex: none; border: 1px solid var(--border-strong); background: none; border-radius: var(--radius-pill); padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.suggestions { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px 10px; width: min(760px, 100%); margin: 0 auto 12px; overflow: visible; }
+.suggestions button { min-height: 40px; border: 1px solid var(--border-strong); background: none; border-radius: var(--radius-pill); padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.suggestions button:nth-child(2n) { transform: translateY(3px) rotate(-1deg); }
+.suggestions button:nth-child(3n) { transform: translateY(-2px) rotate(1deg); }
 
 /* Chat geometry and motion follow meribel-source-decoded.html. */
 /* flex:1 anchors the composer to the bottom of the viewport while messages flow
@@ -431,9 +433,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   }
   .schedule-ticker-window::-webkit-scrollbar,
   .suggestions::-webkit-scrollbar { display: none; }
-  /* Right-edge bleed: chat suggestions extend to the gutter so the last chip
-     is visibly clipped rather than looking like the row simply ends. */
-  .suggestions { margin-inline: -20px; padding-inline: 20px; }
+  /* Keep prompts centered in a compact, two-column grid above the composer. */
+  .suggestions { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; margin: 0 auto 12px; padding-inline: 0; overflow: visible; }
 
   /* ---- Touch targets, 44×44 minimum (TODO §2.15; Fitts). Links sitting
      inline inside a sentence are deliberately left alone — padding them to

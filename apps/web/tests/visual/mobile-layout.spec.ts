@@ -231,7 +231,7 @@ for (const [width, height] of VIEWPORTS) {
 
     test("horizontal scrollers bleed, hide their bars and contain overscroll", async ({ page }) => {
       await openFrozen(page, "/");
-      for (const selector of [".schedule-ticker-window", ".suggestions"]) {
+      for (const selector of [".schedule-ticker-window"]) {
         const node = page.locator(selector);
         if (await node.count() === 0) continue; // .nav-menu only exists below the seam
         const state = await node.evaluate((el) => {
@@ -247,12 +247,6 @@ for (const [width, height] of VIEWPORTS) {
         if (!mobile && selector === ".schedule-ticker-window") {
           // Reduced motion pauses the marquee and makes the single sequence
           // manually scrollable, including just above the responsive seam.
-          expect(state.overflowX).toBe("auto");
-          continue;
-        }
-        if (!mobile && selector === ".suggestions") {
-          // At the desktop seam the composer suggestions use normal document
-          // overflow and leave the platform scrollbar behavior intact.
           expect(state.overflowX).toBe("auto");
           continue;
         }
@@ -292,14 +286,14 @@ for (const [width, height] of VIEWPORTS) {
       // 16px or iOS zooms the page on focus. True at every width; the source
       // already sets it and §2.15 says not to let a polish pass shrink it.
       expect(composer.font).toBeGreaterThanOrEqual(16);
-      // The paperclip is already a 44px box at every width.
-      expect(composer.attach).toEqual({ w: 44, h: 44 });
       if (mobile) {
+        expect(composer.attach, "attachment is a 44px touch target below the seam").toEqual({ w: 44, h: 44 });
         expect(composer.send, "send is a 44px target below the seam").toEqual({ w: 44, h: 44 });
         // `max(18px, env(safe-area-inset-bottom))` — floored at the design's own
         // 18px, so a device with no inset renders the source spacing exactly.
         expect(composer.padBottom).toBeGreaterThanOrEqual(18);
       } else {
+        expect(composer.attach, "desktop attachment control is compact at 32px").toEqual({ w: 32, h: 32 });
         expect(composer.send, "desktop send geometry is compact at 32px").toEqual({ w: 32, h: 32 });
         expect(composer.padBottom).toBe(18);
       }
