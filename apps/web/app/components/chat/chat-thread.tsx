@@ -7,7 +7,6 @@ import { parseAnswerSources } from "@/lib/chat/sources";
 import { useAutoScroll } from "../../lib/chat/use-auto-scroll";
 import { AttachmentLabel } from "./chat-attachment";
 import { ChatActivity } from "./chat-activity";
-import { ChatToolGroup } from "./chat-tool-group";
 
 export const CHAT_FALLBACK = "That's not in the trip notes yet — ask the organizer.";
 
@@ -47,8 +46,8 @@ function Notice({ notice }: { notice: ChatNotice }) {
   </div>;
 }
 
-function ChatEvent({ event, live, onRetryUserMessage, canRetryUserMessage }: {
-  event: ActivityEvent; live: boolean; onRetryUserMessage?: (text: string, uploadId?: string) => void; canRetryUserMessage: boolean;
+function ChatEvent({ event, onRetryUserMessage, canRetryUserMessage }: {
+  event: ActivityEvent; onRetryUserMessage?: (text: string, uploadId?: string) => void; canRetryUserMessage: boolean;
 }) {
   switch (event.kind) {
     case "instructions": return null;
@@ -56,8 +55,10 @@ function ChatEvent({ event, live, onRetryUserMessage, canRetryUserMessage }: {
     case "reasoning": return <div className="chat-notice">Thinking through the next step…</div>;
     case "summary": return <Answer text={[event.text, ...event.bullets.map(bullet => `${bullet.label}: ${bullet.text}`)].join("\n")} />;
     case "error": return <Answer text={CHAT_FALLBACK} />;
-    case "group": return <ChatToolGroup group={event} live={live} />;
-    case "subagent": return <>{event.events.map((child, index) => <ChatEvent key={`${child.id}:${index}`} event={child} live={live} onRetryUserMessage={onRetryUserMessage} canRetryUserMessage={canRetryUserMessage} />)}</>;
+    // Tool activity remains in the projected session for diagnostics, but it is
+    // implementation detail and should never become guest-facing transcript UI.
+    case "group": return null;
+    case "subagent": return <>{event.events.map((child, index) => <ChatEvent key={`${child.id}:${index}`} event={child} onRetryUserMessage={onRetryUserMessage} canRetryUserMessage={canRetryUserMessage} />)}</>;
     case "user": return <div className="chat-user">
       <div className="chat-user-bubble">{event.text}<AttachmentLabel value={event.upload} /></div>
       {event.failed && !event.id.startsWith("pending:") && onRetryUserMessage && <div className="chat-message-actions">
@@ -73,8 +74,8 @@ function ChatEvent({ event, live, onRetryUserMessage, canRetryUserMessage }: {
  * owns following the stream and reporting whether the reader is still pinned to
  * the bottom — a second scroll listener here would be able to disagree with it.
  */
-export function ChatThread({ events, live = false, waiting = false, activity = null, notice = null, onRetryUserMessage, canRetryUserMessages = false, onPinnedChange }: {
-  events: ActivityEvent[]; live?: boolean; waiting?: boolean; activity?: string | null;
+export function ChatThread({ events, live = false, waiting = false, notice = null, onRetryUserMessage, canRetryUserMessages = false, onPinnedChange }: {
+  events: ActivityEvent[]; live?: boolean; waiting?: boolean;
   notice?: ChatNotice | null;
   onRetryUserMessage?: (text: string, uploadId?: string) => void; canRetryUserMessages?: boolean;
   onPinnedChange?: (pinned: boolean) => void;
@@ -84,8 +85,8 @@ export function ChatThread({ events, live = false, waiting = false, activity = n
   // is why this needs no second effect counting events.
   useAutoScroll({ contentRef: ref, active: live, followWhenPinned: true, onPinnedChange });
   return <div className="chat-thread" role="log" aria-live="polite" aria-label="Trip conversation" ref={ref}>
-    {events.map((event, index) => <ChatEvent key={`${event.id}:${index}`} event={event} live={live} onRetryUserMessage={onRetryUserMessage} canRetryUserMessage={canRetryUserMessages} />)}
-    {waiting && <ChatActivity currentActivity={activity} indicatorOnly />}
+    {events.map((event, index) => <ChatEvent key={`${event.id}:${index}`} event={event} onRetryUserMessage={onRetryUserMessage} canRetryUserMessage={canRetryUserMessages} />)}
+    {waiting && <ChatActivity currentActivity="Thinking through the next step…" />}
     {notice && <Notice notice={notice} />}
   </div>;
 }

@@ -81,6 +81,16 @@ function payloadToolName(payload: SessionEventRow["payload"]): string {
   return asString(payload.toolName) ?? asString(payload.tool) ?? "tool";
 }
 
+function memoryReadLabel(input: SharedInput): string {
+  if (!isNonNullObject(input) || !hasProperty(input, "file_path") || !isString(input.file_path)) return "Read trip notes";
+  const path = input.file_path;
+  const relative = path.split("/club-athletic-meribel-2027-facts/")[1] ?? path.split("/").at(-1) ?? "trip notes";
+  const name = relative.replace(/\.txt$/i, "").replace(/\/README$/i, "").replace(/\/+/g, "/");
+  if (!name || name.toLowerCase() === "readme") return "Trip notes index";
+  const leaf = name.split("/").at(-1) ?? name;
+  return leaf.replace(/[_-]+/g, " ").replace(/\b\w/g, char => char.toUpperCase());
+}
+
 function payloadInvocationId(payload: SessionEventRow["payload"]): string | null {
   return asString(payload.invocationId) ?? asString(payload.callId);
 }
@@ -111,7 +121,9 @@ function toolItemFor(event: SessionEventRow): ActivityGroupItem {
     }
     const args = formatArgs(event.payload.input);
     const command = meta.kind === "command" ? extractCommand(event.payload.input) : undefined;
-    const presentation = summarizeToolCall(toolName, meta, event.payload.input);
+    const presentation = toolName.toLowerCase() === "read"
+      ? { label: memoryReadLabel(event.payload.input), params: [], input: event.payload.input }
+      : summarizeToolCall(toolName, meta, event.payload.input);
     // A call starts pending; its paired result later resolves it to ok/error.
     const callItem: ActivityGroupItem = {
       tool: toolName,
@@ -405,7 +417,6 @@ export function mapSessionEventsToConversationActivity(
     }
 
     if (event.type === "thinking") {
-      flushGroup();
       continue;
     }
 
@@ -479,7 +490,9 @@ export function mapSessionEventsToConversationActivity(
     }
 
     if (event.type === "agent_activity" || isProgressOnlyEvent(event, finalMessageKeys)) {
-      flushGroup();
+      // Progress rows describe the work between tool calls. Keep the current
+      // group open so a long run renders one counted summary instead of one
+      // "Used Tool" row per call.
       continue;
     }
 

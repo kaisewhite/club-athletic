@@ -310,7 +310,7 @@
    never leave a screen-high gap between the chip row and the composer. */
 .chat-thread { flex: 1 1 auto; display: flex; flex-direction: column; justify-content: flex-start; gap: 28px; padding: 32px 0 16px; min-width: 0; min-height: 0; }
 .chat-user { display: flex; flex-direction: column; align-items: flex-end; }
-.chat-user-bubble { background: var(--surface); border-radius: 18px; padding: 10px 16px; max-width: 80%; font-size: 16px; white-space: pre-wrap; overflow-wrap: anywhere; }
+.chat-user-bubble { background: #000; color: #fff; border-radius: 18px; padding: 10px 16px; max-width: 80%; font-size: 16px; white-space: pre-wrap; overflow-wrap: anywhere; }
 /* No left rail. Owner, 2026-09-28: "we have lines that are on the left-hand
    side … which makes it difficult to see." The answer is the longest thing on
    screen; it does not need a rule to say so, and the user bubble already marks
@@ -333,8 +333,8 @@
 .chat-message-actions button, .chat-error button, .chat-tool-group button { background: none; border: 0; color: var(--text-dim); font: inherit; font-size: 13px; cursor: pointer; }
 .chat-message-actions { display: flex; gap: 12px; padding-top: 6px; }
 .chat-error { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 12px 0; color: var(--text-muted); overflow-wrap: anywhere; }
-.chat-tool-group { border: 1px solid var(--border); border-radius: var(--radius-md); padding: 10px 14px; }
-.chat-tool-group > button { width: 100%; display: flex; justify-content: space-between; text-align: left; }
+.chat-tool-group { border: 0; border-radius: 0; padding: 0; }
+.chat-tool-group > button { width: auto; display: inline-flex; gap: 8px; justify-content: flex-start; padding: 0; text-align: left; }
 .chat-tool-row { display: flex; flex-direction: column; gap: 4px; padding-top: 12px; font-size: 13px; color: var(--text-dim); }
 .chat-tool-row[data-status="error"] { color: var(--danger); }
 .chat-loading { display: flex; flex-direction: column; gap: 12px; padding: 32px 0; }

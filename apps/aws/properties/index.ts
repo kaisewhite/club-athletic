@@ -3,11 +3,11 @@ export const project = {
   environment: "mgmt",
   managementAccount: "366394957699",
   region: "us-east-1",
-  domain: "xn--tshi-l3a.com",
-  hostedZoneId: "Z04794863W4QH5DDAT4AZ",
+  domain: "clubathletic.org",
+  hostedZoneId: "Z095753820XFD3PPJR9GB",
   certificate: {
     certificateArn: {
-      mgmt: "arn:aws:acm:us-east-1:366394957699:certificate/90ec2073-35b8-4569-91f8-5db8c1fe1af2",
+      mgmt: "arn:aws:acm:us-east-1:366394957699:certificate/2eff1030-c8c3-4bf0-8021-e615e2c191ee",
     },
   },
   vpcId: "vpc-01386cc23ddfbbb97",

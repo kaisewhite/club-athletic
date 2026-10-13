@@ -6,9 +6,8 @@ import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from
 import { useRevalidator } from "react-router";
 import type { ActivityEvent, ConversationChatCapability, ConversationDetails, ConversationSessionStateFrame, SessionEventRow, StreamDelta } from "@/lib/chat/contracts";
 import { CHAT_SEND_ACK_TIMEOUT_MS, chatUiReducer, initialChatUiState } from "@/lib/chat/chat-state";
-import { mapSessionEventsToPresentation, projectCurrentAgentActivityText, upsertSessionEventRow } from "@/lib/chat/event-projection";
+import { mapSessionEventsToPresentation, upsertSessionEventRow } from "@/lib/chat/event-projection";
 import { applyStreamDelta, streamingBlockToEvent, unreconciledStreamingBlocks } from "@/lib/chat/stream-blocks";
-import { resolveConversationLiveActivity } from "@/lib/chat/chat-live-activity";
 import { ApiError, CHAT_UNAVAILABLE_MESSAGE, cancelConversation, createConversationStreamCursor, fetchConversationDetails, fetchConversationDetailsAfterStatus, sendConversationChatMessage, startConversation, subscribeToConversationStream } from "../../lib/chat/api";
 import { isConversationNotFound } from "../../lib/chat/detail-loader";
 import { scrollToLatest } from "../../lib/chat/use-auto-scroll";
@@ -235,8 +234,6 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
   // Q7: CMA commentary metadata also accompanies visible message tokens.
   const visibleBlocks = startedBlocks.filter(block => block.variant === "message");
   const latestUserSeq = Math.max(-1, ...(conversation?.events.filter(row => row.type === "user_message").map(row => row.seq) ?? []));
-  const liveActivity = resolveConversationLiveActivity({ isLive: busy, projectedActivity: projectCurrentAgentActivityText(conversation?.events ?? [], startedBlocks), runtimeStatus: capability.runtimeStatus, lastEventSeq: conversation?.lastEventSeq ?? -1, optimisticLastEventSeq: null });
-
   // The optimistic bubble stands only until its own persisted row lands, so the
   // swap is a delivery-label change and never a message appearing twice.
   const pendingSettled = pending !== null && Boolean(conversation?.events.some(row => row.type === "user_message" && row.seq > pending.seqFloor && row.payload.text === pending.text));
@@ -372,7 +369,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
           beds) are the FAQ's job on the home screen; in a conversation they are
           chrome competing with the answer. The sections remain reachable from
           the sidebar and from an answer's own source links. */}
-      {loadingDetail ? <ChatLoading /> : <ChatThread events={thread} live={busy} waiting={waiting} activity={liveActivity.text} notice={notice}
+      {loadingDetail ? <ChatLoading /> : <ChatThread events={thread} live={busy} waiting={waiting} notice={notice}
         canRetryUserMessages={!busy && capability.canSend} onRetryUserMessage={(text, uploadId) => { chatKey.current = null; void handleSend(text, false, uploadId); }} onPinnedChange={setPinned} />}
     </> : children}
     <div className={`composer-shell${threadMode ? "" : " home-composer"}`}>

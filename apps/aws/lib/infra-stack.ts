@@ -7,6 +7,8 @@ import * as ecs from "aws-cdk-lib/aws-ecs";
 import * as elbv2 from "aws-cdk-lib/aws-elasticloadbalancingv2";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as logs from "aws-cdk-lib/aws-logs";
+import * as route53 from "aws-cdk-lib/aws-route53";
+import * as targets from "aws-cdk-lib/aws-route53-targets";
 import * as secretsmanager from "aws-cdk-lib/aws-secretsmanager";
 
 import { addStandardTags } from "../helpers/tag_resources";
@@ -31,6 +33,10 @@ export class InfraStack extends cdk.Stack {
     });
 
     const vpc = ec2.Vpc.fromLookup(this, `${constructorPrefix}-vpc`, { vpcId: project.vpcId });
+    const hostedZone = route53.HostedZone.fromHostedZoneAttributes(this, `${constructorPrefix}-hosted-zone`, {
+      hostedZoneId: project.hostedZoneId,
+      zoneName: project.domain,
+    });
     const certificate = acm.Certificate.fromCertificateArn(
       this,
       `${constructorPrefix}-certificate`,
@@ -155,6 +161,12 @@ export class InfraStack extends cdk.Stack {
       protocol: elbv2.ApplicationProtocol.HTTP,
       defaultAction: elbv2.ListenerAction.redirect({ protocol: "HTTPS", port: "443", permanent: true }),
       open: false,
+    });
+
+    new route53.ARecord(this, `${constructorPrefix}-alias-record`, {
+      zone: hostedZone,
+      recordName: hostName,
+      target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
     });
 
     new cdk.CfnOutput(this, `${constructorPrefix}-load-balancer-name`, { value: loadBalancer.loadBalancerName });

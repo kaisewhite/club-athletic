@@ -10,7 +10,7 @@ import { canSubmitChat, chatUiReducer, initialChatUiState } from "@/lib/chat/cha
 import { mapSessionEventsToPresentation } from "@/lib/chat/event-projection";
 import type { ConversationDetails, ConversationSessionStateFrame, SessionEventRow } from "@/lib/chat/contracts";
 import type { ConversationStreamHandlers } from "../../app/lib/chat/api";
-import { isAutoScrollFollowSuspended, isPinnedToBottom } from "../../app/lib/chat/use-auto-scroll";
+import { isPinnedToBottom } from "../../app/lib/chat/use-auto-scroll";
 
 const api = vi.hoisted(() => ({ subscribe: vi.fn(), recover: vi.fn(), detail: vi.fn(), send: vi.fn(), start: vi.fn(), cancel: vi.fn() }));
 vi.mock("../../app/lib/chat/api", async importOriginal => ({ ...await importOriginal<object>(), subscribeToConversationStream: api.subscribe, fetchConversationDetails: api.detail, fetchConversationDetailsAfterStatus: api.recover, sendConversationChatMessage: api.send, startConversation: api.start, cancelConversation: api.cancel }));
@@ -95,16 +95,17 @@ describe("ported chat presentation and guest composer", () => {
     await mount(<ChatThread events={events} />);
     expect(container.querySelector(".chat-sources a")?.getAttribute("href")).toBe("/flights");
   });
-  it("pairs tools across narration, preserves accordion state during streaming and never shows diagnostics", async () => {
-    const rows = [opening, row(1, "tool_call", { toolName: "getRooms", invocationId: "call", input: { secret: "secret-value" } }), row(2, "message", { text: "Checking." })];
-    const events = mapSessionEventsToPresentation(rows).activity;
-    function ToolSurface() { const [done, setDone] = useState(false); return <><ChatThread live events={done ? mapSessionEventsToPresentation([...rows, row(3, "tool_result", { toolName: "getRooms", invocationId: "call", ok: false, error: "raw-diagnostic" })]).activity : events} /><button onClick={() => setDone(true)}>Finish tool</button></>; }
-    await mount(<ToolSurface />);
-    await click(".chat-tool-group > button"); expect(container.textContent).toContain("Checking trip notes…");
-    expect(isAutoScrollFollowSuspended()).toBe(true);
-    await act(async () => button("Finish tool").click());
-    expect(container.querySelector(".chat-tool-group > button")?.getAttribute("aria-expanded")).toBe("true");
-    expect(container.textContent).toContain("Trip notes unavailable."); expect(container.textContent).not.toMatch(/secret-value|raw-diagnostic|Show raw/);
+  it("keeps projected tool activity out of the guest transcript", async () => {
+    const events = [{
+      id: "tools", kind: "group" as const, label: "Used 2 tools", items: [
+        { tool: "tool", kind: "tool" as const, label: "Used Tool", connector: null, status: "ok" as const, detail: "" },
+        { tool: "tool", kind: "tool" as const, label: "Used Tool", connector: null, status: "ok" as const, detail: "" },
+      ],
+    }];
+    await mount(<ChatThread events={events} waiting />);
+    expect(container.querySelector(".chat-tool-group")).toBeNull();
+    expect(container.textContent).not.toContain("Used 2 tools");
+    expect(container.textContent).toContain("Thinking through the next step…");
   });
   it("does not add delivery labels to transcript messages", async () => {
     // Owner, 2026-09-28: "There's never a `sent`. It just sends. After the message

@@ -32,6 +32,22 @@ describe("edge row projection and Q7 regressions", () => {
     expect(mapSessionEventsToPresentation(live).activity).toMatchObject([{ kind: "group", items: [{ status: "ok", outcome: "1 item returned." }] }, { kind: "prose" }]);
   });
 
+  it("aggregates tool calls separated by progress events into one expandable summary", () => {
+    const rows = [
+      row(1, "tool_call", { toolName: "getRooms", invocationId: "rooms", input: {} }),
+      row(2, "agent_activity", { activityKind: "model_request", activityLabel: "Thinking…" }),
+      row(3, "tool_result", { toolName: "getRooms", invocationId: "rooms", ok: true, result: [] }),
+      row(4, "agent_activity", { activityKind: "model_request", activityLabel: "Thinking…" }),
+      row(5, "tool_call", { toolName: "getSchedule", invocationId: "schedule", input: {} }),
+      row(6, "tool_result", { toolName: "getSchedule", invocationId: "schedule", ok: true, result: [] }),
+      row(7, "message", { text: "Here is the answer." }),
+    ];
+    expect(mapSessionEventsToPresentation(rows).activity).toMatchObject([
+      { kind: "group", label: "Used 2 tools", items: [{ tool: "getRooms" }, { tool: "getSchedule" }] },
+      { kind: "prose", text: "Here is the answer." },
+    ]);
+  });
+
   it("replaces cumulative previews and reconciles only canonical matches", () => {
     const first = { blockId: "preview", canonicalEventId: "answer", variant: "message" as const, text: "Land", done: false };
     const blocks = applyStreamDelta(applyStreamDelta([], first), { ...first, text: "Land by 08:30." });
@@ -67,6 +83,21 @@ describe("edge row projection and Q7 regressions", () => {
   it("honors a mapper tool failure even when no error message was supplied", () => {
     const rows = [row(1, "tool_call", { toolName: "getRooms", invocationId: "call" }), row(2, "tool_result", { toolName: "getRooms", invocationId: "call", ok: false })];
     expect(mapSessionEventsToPresentation(rows).activity).toMatchObject([{ kind: "group", items: [{ status: "error", outcome: "Tool reported an error." }] }]);
+  });
+
+  it("gives built-in memory reads specific expandable labels", () => {
+    const rows = [
+      row(1, "tool_call", { toolName: "read", invocationId: "read-1", input: { file_path: "/mnt/memory/club-athletic-meribel-2027-facts/README.txt" } }),
+      row(2, "tool_result", { toolName: "read", invocationId: "read-1", ok: true }),
+      row(3, "tool_call", { toolName: "read", invocationId: "overview", input: { file_path: "/mnt/memory/club-athletic-meribel-2027-facts/trip/overview.txt" } }),
+      row(4, "tool_result", { toolName: "read", invocationId: "overview", ok: true }),
+      row(5, "message", { text: "Here is the answer." }),
+    ];
+    const presentation = mapSessionEventsToPresentation(rows);
+    expect(presentation.activity).toMatchObject([
+      { kind: "group", label: "Used 2 tools", items: [{ label: "Trip notes index" }, { label: "Overview" }] },
+      { kind: "prose", text: "Here is the answer." },
+    ]);
   });
 
   it("uses canonical thread-qualified identity before a reused provider event id", () => {

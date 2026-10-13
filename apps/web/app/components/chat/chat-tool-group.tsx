@@ -8,17 +8,25 @@ export type ToolGroup = Extract<ActivityEvent, { kind: "group" }>;
 export function ChatToolGroup({ group, live = false }: { group: ToolGroup; live?: boolean }) {
   const [open, setOpen] = useState(false);
   const id = useId();
+  const details = [...group.items.reduce((result, item) => {
+    const existing = result.get(item.label);
+    if (existing) {
+      existing.count += 1;
+      if (item.status === "error") existing.status = "error";
+      if (item.status === "pending" && existing.status === "ok") existing.status = "pending";
+    } else {
+      result.set(item.label, { label: item.label, count: 1, status: item.status });
+    }
+    return result;
+  }, new Map<string, { label: string; count: number; status: "ok" | "error" | "pending" }>()).values()]
+    .filter(item => !(item.label === "Used Tool" && item.status === "ok"));
   return <section className="chat-tool-group" aria-label="Trip note activity">
     <button type="button" aria-expanded={open} aria-controls={id} onClick={() => {
       suspendAutoScrollFollow(); setOpen(value => !value);
     }}>{group.label}<span aria-hidden="true">{open ? " −" : " +"}</span></button>
-    {/* A single-tool group's header already IS the tool's name, so repeating it on
-        the row read as "Read / Read / Checked trip notes." (owner, 2026-09-28:
-        "Is there any reason why it says 'read' twice?"). The row label only earns
-        its place when it says something the header does not. */}
-    {open && <div id={id}>{group.items.map((item, index) => <div key={`${group.id}:${index}`} className="chat-tool-row" data-status={item.status}>
-      {item.label !== group.label && <strong>{item.label}</strong>}
-      <span>{item.status === "error" ? "Trip notes unavailable." : item.status === "pending" ? live ? "Checking trip notes…" : "No result received." : "Checked trip notes."}</span>
+    {open && <div id={id}>{details.map(item => <div key={`${group.id}:${item.label}`} className="chat-tool-row" data-status={item.status}>
+      <strong>{item.label}{item.count > 1 ? ` ×${item.count}` : ""}</strong>
+      {item.status !== "ok" && <span>{item.status === "error" ? "Trip notes unavailable." : live ? "Checking trip notes…" : "No result received."}</span>}
     </div>)}</div>}
   </section>;
 }
