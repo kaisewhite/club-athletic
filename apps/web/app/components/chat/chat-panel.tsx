@@ -375,7 +375,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
       {loadingDetail ? <ChatLoading /> : <ChatThread events={thread} live={busy} waiting={waiting} activity={liveActivity.text} notice={notice}
         canRetryUserMessages={!busy && capability.canSend} onRetryUserMessage={(text, uploadId) => { chatKey.current = null; void handleSend(text, false, uploadId); }} onPinnedChange={setPinned} />}
     </> : children}
-    <div className="composer-shell">
+    <div className={`composer-shell${threadMode ? "" : " home-composer"}`}>
       {threadMode && !pinned && <div className="chat-jump-row">
         <button type="button" className="chat-jump" onClick={scrollToLatest}>Jump to latest ↓</button>
       </div>}

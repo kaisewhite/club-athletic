@@ -222,7 +222,7 @@
 .route-content { max-width: var(--content-max); width: 100%; margin: 0 auto; }
 .page-route { padding: 56px 40px 96px; animation: rise .3s ease-out; }
 .home-route { display: flex; flex: 1; padding: 0 20px; }
-.overview { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.overview { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .overview-content { flex: 1; padding: 40px 0 8px; animation: rise .4s ease-out; }
 .home-welcome { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: min(44vh, 360px); padding: 16px 0 40px; }
 .home-welcome h1 { margin: 0; font: 400 clamp(48px, 8vw, 88px)/.9 var(--font-display); letter-spacing: 0; text-transform: uppercase; }
@@ -281,6 +281,9 @@
    bottom-of-page card it was covered by the sticky composer. */
 .maps-label { font-size: 12px; color: var(--text); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 .composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgb(255 255 255 / 0), var(--bg) 40%); padding: 10px 0 8px; }
+.home-composer { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 48px; pointer-events: none; }
+.home-composer .suggestions { position: absolute; top: 50%; left: 50%; width: min(760px, calc(100% - 40px)); margin: 0; transform: translate(-50%, -50%); pointer-events: auto; }
+.home-composer .composer { width: 100%; pointer-events: auto; }
 .composer { display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 26px; padding: 6px 8px 6px 12px; background: var(--surface); box-shadow: 0 2px 8px rgb(0 0 0 / 24%); }
 .composer:focus-within { border-color: var(--border-strong); }
 .composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 6px 0; resize: none; }
@@ -467,6 +470,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
+  .home-composer { padding-bottom: max(56px, env(safe-area-inset-bottom, 0px)); }
+  .home-composer .suggestions { width: calc(100% - 40px); }
 
   /* ---- Pressed feedback. Hover does nothing on touch, so `:active` is the
      only feedback there is, and the grey tap flash is replaced by it. */
