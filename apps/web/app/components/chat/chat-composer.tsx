@@ -50,7 +50,7 @@ export function ChatComposer({ capability, state, busy, onDraftChange, onSend, o
       if (el.clientWidth === 0) return;
       el.style.height = "auto";
       const height = el.scrollHeight;
-      el.style.height = `${Math.max(38, Math.min(height, 160))}px`;
+      el.style.height = `${Math.max(32, Math.min(height, 160))}px`;
       el.style.overflowY = height > 160 ? "auto" : "hidden";
     };
     fit();

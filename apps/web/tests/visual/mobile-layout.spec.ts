@@ -300,7 +300,7 @@ for (const [width, height] of VIEWPORTS) {
         // 18px, so a device with no inset renders the source spacing exactly.
         expect(composer.padBottom).toBeGreaterThanOrEqual(18);
       } else {
-        expect(composer.send, "desktop send geometry is frozen at 40px").toEqual({ w: 40, h: 40 });
+        expect(composer.send, "desktop send geometry is compact at 32px").toEqual({ w: 32, h: 32 });
         expect(composer.padBottom).toBe(18);
       }
     });
