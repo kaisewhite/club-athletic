@@ -41,8 +41,10 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
               {[false, true].map(copy => (
                 <ol className="schedule-ticker-sequence" key={String(copy)} data-copy={copy ? "true" : undefined}>
                   {data.week.map(day => <li className="schedule-ticker-item" key={day.id}>
-                    <span className="ticker-date">{day.dow} {day.number}</span>
-                    <span className="ticker-event">{day.event}</span>
+                    <div className="ticker-line">
+                      <span className="ticker-date">{day.dow} {day.number}</span>
+                      <span className="ticker-event">{day.event}</span>
+                    </div>
                   </li>)}
                 </ol>
               ))}
