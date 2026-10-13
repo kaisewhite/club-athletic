@@ -6,6 +6,7 @@ export default [
   // Unlisted trip page: ask crawlers not to index it. See routes/robots.ts.
   route("robots.txt", "routes/robots.ts"),
   route("api/chat/uploads", "routes/api.chat.uploads.ts"),
+  route("api/guests", "routes/api.guests.ts"),
   route("api/guests/dietary", "routes/api.guests.dietary.ts"),
   route("api/chat/conversations", "routes/api.chat.conversations.ts"),
   route("api/chat/conversations/:conversationId", "routes/api.chat.conversation.ts"),

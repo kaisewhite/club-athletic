@@ -2,6 +2,7 @@ import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useFetcher, useInRouterContext } from "react-router";
 
 type DietaryResponse = { ok: boolean; dietaryNotes?: string | null; error?: string };
+type GuestCreateResponse = { ok: boolean; guest?: { displayName: string }; error?: string };
 
 type DietaryCellProps = { guestId: string; guestName: string; dietaryNotes: string | null };
 export type DietaryCopyGuest = { displayName: string; dietaryNotes: string | null };
@@ -38,6 +39,58 @@ function InteractiveDietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }
 
 export function DietaryCell(props: DietaryCellProps) {
   return useInRouterContext() ? <InteractiveDietaryCell {...props} /> : props.dietaryNotes ?? <span className="dietary-cell-empty">Add allergies or dietary needs</span>;
+}
+
+export function DietaryGuestAdd() {
+  return useInRouterContext() ? <InteractiveDietaryGuestAdd /> : null;
+}
+
+function InteractiveDietaryGuestAdd() {
+  const fetcher = useFetcher<GuestCreateResponse>();
+  const [open, setOpen] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const firstName = useRef<HTMLInputElement>(null);
+  const saving = fetcher.state !== "idle";
+  const submitted = useRef(false);
+
+  useEffect(() => {
+    if (!open || saving) return;
+    firstName.current?.focus();
+  }, [open, saving]);
+
+  useEffect(() => {
+    if (fetcher.state !== "idle" || !submitted.current) return;
+    submitted.current = false;
+    if (fetcher.data?.ok) {
+      setOpen(false);
+      setError(null);
+    } else {
+      setError(fetcher.data?.error ?? "Could not add your name. Try again.");
+    }
+  }, [fetcher.state, fetcher.data]);
+
+  if (!open) return <button type="button" className="dietary-add-button" onClick={() => { setError(null); setOpen(true); }}>
+    <span className="dietary-add-icon" aria-hidden="true">+</span> Add yourself
+  </button>;
+
+  return <div className="dietary-add-form">
+    <div className="dietary-add-heading">
+      <strong>Add yourself to the guest list</strong>
+      <span>Share your dietary requirements with the chef.</span>
+    </div>
+    <fetcher.Form method="post" action="/api/guests" onSubmit={() => { submitted.current = true; setError(null); }}>
+      <div className="dietary-add-fields">
+        <label>First name<input ref={firstName} name="firstName" required maxLength={80} autoComplete="given-name" disabled={saving} /></label>
+        <label>Last name<input name="lastName" required maxLength={80} autoComplete="family-name" disabled={saving} /></label>
+      </div>
+      <label>Allergies / dietary needs <span>(optional)</span><textarea name="dietaryNotes" maxLength={500} rows={2} placeholder="For example: vegetarian, gluten-free, no pork" disabled={saving} /></label>
+      {error && <p className="dietary-add-error" role="alert">{error}</p>}
+      <div className="dietary-add-actions">
+        <button type="button" className="dietary-add-cancel" disabled={saving} onClick={() => { setError(null); setOpen(false); }}>Cancel</button>
+        <button type="submit" className="dietary-add-submit" disabled={saving}>{saving ? "Adding…" : "Add me"}</button>
+      </div>
+    </fetcher.Form>
+  </div>;
 }
 
 function InteractiveDietaryCell({ guestId, guestName, dietaryNotes }: DietaryCellProps) {
