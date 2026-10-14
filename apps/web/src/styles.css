@@ -228,7 +228,7 @@
 .overview { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .overview-content { flex: 1; padding: 40px 0 8px; animation: rise .4s ease-out; }
 .home-welcome { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: min(44vh, 360px); padding: 16px 0 40px; }
-.home-welcome h1 { margin: 0; font: 400 clamp(48px, 8vw, 88px)/.9 var(--font-display); letter-spacing: 0; text-transform: uppercase; }
+.home-welcome h1 { margin: 0; font: 400 clamp(40px, 7vw, 72px)/.9 var(--font-display); letter-spacing: 0; text-transform: uppercase; }
 .home-welcome p { margin: 12px 0 16px; color: var(--text-dim); font-size: 15px; line-height: 1.5; }
 .home-welcome a { display: inline-flex; gap: 4px; min-height: 44px; align-items: center; color: var(--text); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
 .home-welcome a:hover { color: var(--text); }
