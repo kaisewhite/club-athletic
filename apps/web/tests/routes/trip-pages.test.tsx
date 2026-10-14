@@ -103,7 +103,7 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
     expect(container.querySelectorAll(".mobile-drawer nav a")).toHaveLength(11);
     // One seam, subscribed to the query rather than to `resize`.
     expect(seamQueries.length).toBeGreaterThan(0);
-    expect([...new Set(seamQueries)]).toEqual(["(width < 860px)"]);
+    expect([...new Set(seamQueries)]).toEqual(["(max-width: 859px)"]);
     expect(listeners.size).toBe(1);
     await resizeTo(860);
     expect(container.querySelector(".sidebar")).not.toBeNull();

@@ -181,7 +181,7 @@ describe("Flights route", () => {
     await clickSort(page, "Guest");
     expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
     await act(async () => { narrow = true; listeners.forEach((fn) => fn()); });
-    expect(window.matchMedia).toHaveBeenCalledWith("(width < 860px)");
+    expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 859px)");
     expect(page.querySelector("table")).toBeNull();
     expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
     expect(page.querySelectorAll(".flight-card-leg")).toHaveLength(4);

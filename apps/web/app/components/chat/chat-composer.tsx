@@ -68,7 +68,7 @@ export function ChatComposer({ capability, state, busy, onDraftChange, onSend, o
     {disabledReason && <p className="chat-notice" role="status">{disabledReason}</p>}
     <ChatAttachment file={attachment ?? null} disabled={busy || !capability.canSend} onChange={onAttachmentChange ?? (() => {})}>{control => <form className="composer" onSubmit={event => { event.preventDefault(); if (submitReady) onSend(); }}>
       {control}
-      <textarea ref={ref} rows={1} maxLength={8192} aria-label="Ask anything about the trip" placeholder="Ask anything about the trip…"
+      <textarea ref={ref} rows={1} maxLength={8192} aria-label="Ask anything" placeholder="Ask anything"
         value={state.draft} onChange={event => onDraftChange(event.target.value)}
         onKeyDown={event => {
           // Browser editing commands (select all, copy, cut, paste, undo) must

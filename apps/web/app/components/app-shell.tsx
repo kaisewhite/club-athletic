@@ -12,7 +12,7 @@ const SECTIONS = [
    sidebar in a band where `@media (max-width: 859px)` was still applying the
    mobile rules. This is the same string as `app/components/flight-table.tsx`
    and the CSS side of the seam in `src/styles.css`, so there is one seam. */
-const narrowQuery = "(width < 860px)";
+const narrowQuery = "(max-width: 859px)";
 
 function subscribeToSeam(onChange: () => void) {
   const media = window.matchMedia(narrowQuery);

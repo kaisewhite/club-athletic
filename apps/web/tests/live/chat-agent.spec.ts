@@ -103,7 +103,7 @@ test("a greeting and a live availability question both receive grounded replies"
   await page.setViewportSize({ width: 390, height: 780 });
   await page.goto("/");
   const opening = page.waitForResponse(value => value.url().endsWith("/api/chat/conversations") && value.request().method() === "POST");
-  await page.getByRole("textbox", { name: "Ask anything about the trip" }).fill("Hello, what can you help me with?");
+  await page.getByRole("textbox", { name: "Ask anything" }).fill("Hello, what can you help me with?");
   await page.getByRole("button", { name: "Send" }).click();
   await expect.poll(async () => page.evaluate(() => document.activeElement?.tagName)).not.toBe("TEXTAREA");
   const response = await opening;
@@ -135,7 +135,7 @@ test("a greeting and a live availability question both receive grounded replies"
 test("the deployed trip facts give the current departure shuttle pickup", async ({ page, request }) => {
   await page.goto("/");
   const opening = page.waitForResponse(value => value.url().endsWith("/api/chat/conversations") && value.request().method() === "POST");
-  await page.getByRole("textbox", { name: "Ask anything about the trip" }).fill("What time does the shuttle pick us up at the chalet on departure day?");
+  await page.getByRole("textbox", { name: "Ask anything" }).fill("What time does the shuttle pick us up at the chalet on departure day?");
   await page.getByRole("button", { name: "Send" }).click();
   const response = await opening;
   expect(response.status()).toBe(201);

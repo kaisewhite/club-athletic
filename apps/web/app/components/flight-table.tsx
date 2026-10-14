@@ -15,7 +15,7 @@ const features = tableFeatures({
   sortedRowModel: createSortedRowModel(),
   sortFns: { alphanumeric: sortFn_alphanumeric, basic: sortFn_basic, text: sortFn_text },
 });
-const mobileQuery = "(width < 860px)";
+const mobileQuery = "(max-width: 859px)";
 function subscribeMobile(onChange: () => void) {
   const media = window.matchMedia(mobileQuery);
   media.addEventListener("change", onChange);
@@ -144,7 +144,7 @@ const styles = `
 .flight-mobile-sorting button { min-height: 44px; }
 /* TODO §2.15 mobile pass. This block and the .flight-* card rules above it are
    reached only by the sub-860px card renderer, never by the desktop <table> —
-   the seam is the matchMedia("(width < 860px)") switch in this file, so the
+   the seam is the matchMedia("(max-width: 859px)") switch in this file, so the
    desktop branch is untouched. The media query is belt and braces. */
 @media (max-width: 859px) {
   /* The shortest sort button must still be a 44px box. */

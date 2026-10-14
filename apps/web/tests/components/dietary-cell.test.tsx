@@ -2,7 +2,7 @@ import { act } from "react";
 import { createRoot, type Root } from "react-dom/client";
 import { createMemoryRouter, RouterProvider, useLoaderData } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { DietaryCell, DietaryCopyButton } from "../../app/components/dietary-cell";
+import { DietaryCell, DietaryCopyButton, DietaryGuestAdd } from "../../app/components/dietary-cell";
 
 let root: Root | undefined;
 let router: ReturnType<typeof createMemoryRouter>;
@@ -26,6 +26,14 @@ afterEach(async () => {
 });
 
 describe("DietaryCell", () => {
+  it("aligns the add-yourself icon with its label", async () => {
+    await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
+    const icon = container.querySelector<HTMLElement>(".dietary-add-icon")!;
+    expect(icon).not.toBeNull();
+    expect(icon.parentElement?.className).toBe("dietary-add-button");
+    expect(icon.parentElement?.textContent).toContain("Add yourself");
+  });
+
   it("expands an existing multiline note as soon as editing opens", async () => {
     savedNotes = "No nuts.\nNo sesame.\nUse separate utensils.";
 
@@ -77,7 +85,7 @@ describe("DietaryCell", () => {
 
 function DietaryRoute() {
   const data = useLoaderData() as { dietaryNotes: string };
-  return <><DietaryCopyButton guests={[
+  return <><DietaryGuestAdd /><DietaryCopyButton guests={[
     { displayName: "Ada Lovelace", dietaryNotes: data.dietaryNotes },
     { displayName: "Grace Hopper", dietaryNotes: null },
   ]} /><table><tbody><tr><td><DietaryCell guestId="guest-1" guestName="Ada Lovelace" dietaryNotes={data.dietaryNotes} /></td></tr></tbody></table></>;

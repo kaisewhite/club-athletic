@@ -136,6 +136,32 @@ describe("mobile CSS convention (TODO §2.15)", () => {
     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(16);
   });
 
+  it("keeps the mobile home composer in document flow", () => {
+    const { mobile } = split(read("src/styles.css"));
+    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*relative/);
+    expect(mobile).toMatch(/\.home-composer\s+\.suggestions\s*\{[^}]*position:\s*static/);
+  });
+
+  it("separates mobile home prompts from the composer", () => {
+    const { mobile } = split(read("src/styles.css"));
+    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*gap:\s*var\(--space-5\)/);
+  });
+
+  it("keeps mobile prompt pills content-sized instead of stretching every column", () => {
+    const { mobile } = split(read("src/styles.css"));
+    expect(mobile).toMatch(/\.suggestions\s*\{[^}]*display:\s*flex/);
+    expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*width:\s*auto/);
+    expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*padding:\s*4px 10px/);
+    expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*white-space:\s*nowrap/);
+    expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*max-width:\s*calc\(100% - 16px\)/);
+  });
+
+  it("keeps the mobile prompt hit area tall while making the visible pill thinner", () => {
+    const { mobile } = split(read("src/styles.css"));
+    expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*border:\s*0/);
+    expect(mobile).toMatch(/\.suggestions button::before\s*\{[^}]*inset:\s*4px 0/);
+  });
+
   it("declares viewport-fit=cover and interactive-widget=resizes-content", () => {
     const root = read("app/root.tsx");
     const meta = /<meta name="viewport" content="([^"]+)"/.exec(root)?.[1];
@@ -166,7 +192,7 @@ describe("mobile CSS convention (TODO §2.15)", () => {
     expect(seams.length, "both components resolve a matchMedia query").toBeGreaterThanOrEqual(2);
     // The single seam, and the CSS side of it (`max-width: 859px`) is asserted
     // against the stylesheets above.
-    expect([...new Set(seams)]).toEqual(["(width < 860px)"]);
+    expect([...new Set(seams)]).toEqual(["(max-width: 859px)"]);
   });
 
   it("has no visualViewport JS, which the viewport meta replaces", () => {

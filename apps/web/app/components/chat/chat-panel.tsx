@@ -306,7 +306,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
     dispatchChat({ type: "draft", text: "" });
     setPending({ key, text, seqFloor: conversationRef.current?.lastEventSeq ?? -1, failed: false });
     setError(null);
-    if (window.matchMedia("(width < 860px)").matches) inputRef.current?.blur();
+    if (window.matchMedia("(max-width: 859px)").matches) inputRef.current?.blur();
     else inputRef.current?.focus();
     ackTimer.current = setTimeout(() => {
       if (!lifetime.current || sendAttempt.current !== attempt) return;

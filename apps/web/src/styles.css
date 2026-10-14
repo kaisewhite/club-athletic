@@ -217,6 +217,9 @@
 .side-item { display: block; width: 100%; min-height: 36px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .side-item:hover { background: var(--hover); }
 .side-item.active { background: var(--accent); color: var(--text); font-weight: 700; }
+/* The active fill already communicates the current page; don't stack the
+   global focus outline on top of it when the active link receives focus. */
+.side-item.active:focus-visible { outline: none; }
 .shell-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
 .mobile-header { display: none; }
 .route-content { max-width: var(--content-max); width: 100%; margin: 0 auto; }
@@ -383,7 +386,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
         instead. If an override cannot express the fix, it is a layout
         restructure — raise it, do not do it quietly.
      3. 860px is the ONE seam, matching `useWideLayout()` in
-        `app/components/app-shell.tsx` and `matchMedia("(width < 860px)")` in
+        `app/components/app-shell.tsx` and `matchMedia("(max-width: 859px)")` in
         `app/components/flight-table.tsx`. Do not add a second breakpoint unless
         a screen genuinely needs three layouts.
      4. `100dvh`, never `100vh`. Composer input never below 16px (iOS zooms).
@@ -437,10 +440,15 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   }
   .schedule-ticker-window::-webkit-scrollbar,
   .suggestions::-webkit-scrollbar { display: none; }
-  /* Keep prompts centered in a compact, two-column grid above the composer. */
-  .suggestions { grid-template-columns: repeat(2, minmax(0, 1fr)); width: 100%; margin: 0 auto 12px; padding-inline: 0; overflow: visible; }
-  .suggestions button { grid-column: auto; }
-  .suggestions button:last-child { grid-column: 1 / -1; justify-self: center; width: calc(50% - 5px); }
+  /* Keep prompts compact and content-sized on touch screens. The row can wrap,
+     but each pill keeps its own measure instead of stretching to a fake card
+     column. */
+  .suggestions { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px 10px; width: 100%; margin: 0 auto; padding-inline: 0; overflow: visible; }
+  .suggestions button,
+  .suggestions button:nth-child(4),
+  .suggestions button:nth-child(5) { position: relative; grid-column: auto; width: auto; max-width: calc(100% - 16px); flex: 0 0 auto; justify-content: center; padding: 4px 10px; border: 0; background: transparent; font-size: 12px; line-height: 1.35; text-align: center; white-space: nowrap; }
+  .suggestions button::before { content: ""; position: absolute; z-index: 0; inset: 4px 0; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); pointer-events: none; }
+  .suggestions button > * { position: relative; z-index: 1; }
 
   /* ---- Touch targets, 44×44 minimum (TODO §2.15; Fitts). Links sitting
      inline inside a sentence are deliberately left alone — padding them to
@@ -474,8 +482,9 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  .home-composer { padding-bottom: max(56px, env(safe-area-inset-bottom, 0px)); }
-  .home-composer .suggestions { width: calc(100% - 40px); }
+  .home-composer { position: relative; inset: auto; gap: var(--space-5); padding-bottom: max(56px, env(safe-area-inset-bottom, 0px)); }
+  /* Keep the prompt group below the home intro and FAQ link on small screens. */
+  .home-composer .suggestions { position: static; width: 100%; transform: none; }
 
   /* ---- Pressed feedback. Hover does nothing on touch, so `:active` is the
      only feedback there is, and the grey tap flash is replaced by it. */

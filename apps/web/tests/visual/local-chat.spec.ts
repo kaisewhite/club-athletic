@@ -70,7 +70,7 @@ test.describe("local chat browser journeys", () => {
     await page.setViewportSize({ width: 390, height: 844 });
     const chat = await mockChat(page);
     await page.goto("/");
-    const composer = page.getByRole("textbox", { name: "Ask anything about the trip" });
+    const composer = page.getByRole("textbox", { name: "Ask anything" });
     const prompt = "Typed local question";
     await composer.fill(prompt);
     await composer.focus();
@@ -87,7 +87,7 @@ test.describe("local chat browser journeys", () => {
     const chat = await mockChat(page, true);
     await page.goto("/");
     const prompt = "Recover this question";
-    await page.getByRole("textbox", { name: "Ask anything about the trip" }).fill(prompt);
+    await page.getByRole("textbox", { name: "Ask anything" }).fill(prompt);
     await page.getByRole("button", { name: "Send" }).tap();
     await expect(page.getByRole("alert")).toBeVisible();
     await expect(page.getByRole("button", { name: "Retry", exact: true })).toBeVisible();
@@ -138,7 +138,7 @@ test.describe("local chat browser journeys", () => {
     const chat = await mockChat(page);
     await page.goto("/");
     const prompt = "Desktop typed prompt";
-    await page.getByRole("textbox", { name: "Ask anything about the trip" }).fill(prompt);
+    await page.getByRole("textbox", { name: "Ask anything" }).fill(prompt);
     await page.getByRole("button", { name: "Send" }).click();
     await expect(page.locator(".chat-user-bubble").getByText(prompt, { exact: true })).toBeVisible();
     await expect(page.getByText(answer)).toBeVisible();
