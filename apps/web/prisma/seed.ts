@@ -10,6 +10,7 @@ const SECTIONS = [
   ['chalet','Chalet'],['rooms','Rooms'],['spots','Spots & pricing'],['chef','Chef'],['tasks','Tasks'],['links','Links']
 ];
 const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;venue?:string;breakfast:string;dinner:string;at?:string}[] = [
+  {dow:'Fri',num:'29',short:'Fri 29',event:'Arrive in Geneva',detail:'Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Hotel shuttles make it easy to get back to GVA for Saturday morning’s Méribel transfer.',venue:'Geneva',breakfast:'—',dinner:'—'},
   {dow:'Sat',num:'30',short:'Sat 30',event:'Arrive & settle in',detail:'Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax. Optional group viewing of NFL playoff games upon arrival.',venue:'Geneva → Méribel',breakfast:'—',dinner:'Chef'},
   {dow:'Sun',num:'31',short:'Sun 31',event:'Slopes & Rond Point',detail:'Skiing and après drinks at Rond Point. Club Athletic buys rounds.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
   {dow:'Mon',num:'1',short:'Mon 1',event:'Croissant, ski, repeat',detail:'La Folie Douce, 3–5 p.m.',venue:'La Folie Douce',breakfast:'Chef',dinner:'Chef',at:'15:00'},
@@ -69,13 +70,13 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
   {group:'Hotels',label:'Geneva Marriott (Friday night)',href:'https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/',note:'Airport hotel if you fly in a day early — free shuttle, under 5 min.'},
   {group:'Hotels',label:'Hilton Geneva (Friday night)',href:'https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/',note:'Airport hotel if you fly in a day early — free shuttle every ~20 min, 4:20 AM–11:40 PM.'},
 ];
-const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Dates Sat 30 Jan – Sat 6 Feb 2027.
+const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Official trip dates Sat 30 Jan – Sat 6 Feb 2027; optional early arrival in Geneva Fri 29 Jan.
 SHUTTLE: Out Sat 30 Jan departs GVA 10:30–11:00 AM. Back Sat 6 Feb chalet pickup 4:00 AM, confirmed with Alps2Alps 2026-09-24. 49-seat bus for passengers, luggage, ski equipment. ~2 h to the chalet, ~2.5 h back to GVA. Meeting point at GVA: right outside baggage claim. Return pickup at the chalet.
-FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
+FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, spend the day in Geneva, and stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
 ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Kristy Kelly. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, Christie Navarre, 2 available. Bedroom 5 bunk cabin: Pete F., Tim Kurdi. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 13 confirmed guests, 6 open spots.
 REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,810 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,860 per person all-in. All-in = room rate + €33.60 taxes + €178 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
-EVENTS: Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
+EVENTS: Fri 29 Jan — Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
 CHALET: Central Méribel ~200 m from slopes, 326 m², 3 levels, 8 bedrooms, sleeps 10–20. Two apartments combined: F12 (sleeps 4–8) + F21 (sleeps 6–12). Lounges, two fireplaces, main kitchen + kitchenette, private outdoor hot tub, two saunas, fitness room, shared indoor pool/hammam/sauna/massage rooms, on-site ski shop and rental, ski lockers with boot warmers, underground parking, laundry. Most rooms en-suite with balcony/terrace; some bunk rooms share a shower room, may lack balcony.
 LINKS: ski pass skipass-meribel.com and Epic Pass 3 Vallées; Méribel webcams; Spa Falcon.`;
 
@@ -235,7 +236,7 @@ function validateSnapshot(): void {
   const names = spots.filter((name): name is string => name !== null && name !== "");
   if (FLOORS.length !== 3 || rooms.length !== 8 || names.length !== 13 ||
       new Set(names).size !== 13 || spots.filter((s) => s === "").length !== 6 ||
-      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 8 || LINKS.length !== 10) {
+      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 10) {
     throw new Error("Decoded seed snapshot counts do not match the reviewed source.");
   }
   if (names.some((name) => !GUEST_NAMES[name]) || Object.keys(GUEST_NAMES).length !== names.length) {
@@ -247,7 +248,8 @@ function validateSnapshot(): void {
   for (const room of rooms) {
     if (!ROOM_TYPES[room.type]) throw new Error("Unmapped source room type.");
   }
-  SCHEDULE.forEach((day, offset) => {
+  SCHEDULE.forEach((day, index) => {
+    const offset = index - 1;
     if (!MEALS[day.breakfast] || !MEALS[day.dinner] ||
         scheduleDate(offset).getUTCDate() !== Number(day.num)) {
       throw new Error("Unmapped meal or inconsistent source schedule date.");
@@ -298,7 +300,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
     () => tx.trip.create({ data: {
       id: createId(), seedKey: SEED_KEY, name: "Méribel 2027",
       destination: "Méribel, France", resort: "Les 3 Vallées",
-      startDate: scheduleDate(0), endDate: scheduleDate(SCHEDULE.length - 1),
+      startDate: scheduleDate(0), endDate: scheduleDate(SCHEDULE.length - 2),
       timezone: "Europe/Paris", currency: "EUR", propertyId: property.id,
       chefBreakfastCount: SCHEDULE.filter((day) => day.breakfast === "Chef").length,
       chefDinnerCount: SCHEDULE.filter((day) => day.dinner === "Chef").length,
@@ -370,7 +372,9 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
   }
 
   for (const [index, day] of SCHEDULE.entries()) {
-    const dayKey = { tripId: trip.id, date: scheduleDate(index) };
+    // The first schedule row is an optional pre-trip Geneva arrival day; the
+    // official trip start and shuttle remain Saturday, January 30.
+    const dayKey = { tripId: trip.id, date: scheduleDate(index - 1) };
     const day_row = await ensure(tx, "ScheduleDay",
       () => tx.scheduleDay.findUnique({ where: { tripId_date: dayKey } }),
       () => tx.scheduleDay.create({ data: {
