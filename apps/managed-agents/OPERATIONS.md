@@ -14,7 +14,7 @@ The 400-token guidance is a prompt instruction, not an enforced API limit;
 Managed Agents exposes no per-session token ceiling to set.
 
 The prompt makes answering the job and the fallback sentence the last resort.
-The model answers from memory when it can, otherwise calls the trip read tools,
+The model calls the trip read tools for every trip fact, using memory only as background context,
 and only says `That's not in the trip notes yet — ask the organizer.` after
 looking and genuinely finding nothing. Social turns (a greeting, a thank-you)
 get a warm reply with no `Source:` line, because they state no trip fact.
@@ -52,7 +52,7 @@ affected versions (`ant beta:memory-stores:memory-versions redact`).
 The mount is attached `read_only`, so a guest conversation cannot rewrite the
 shared trip facts; the seed tree in this repo is the only writer.
 
-Refreshing the facts means editing `memory/` and re-deploying: seeds are
+Refreshing the background facts means editing `memory/` and letting the pipeline sync them: seeds are
 reconciled by path, content compared by SHA-256, and unchanged files are left
 alone. A changed file is updated under a `content_sha256` precondition, so a
 concurrent writer is never clobbered silently. Paths this app does not own are

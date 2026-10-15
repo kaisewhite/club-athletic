@@ -1,6 +1,6 @@
 What this store is
-These files are stable background facts about the Club Athletic Méribel 2027 ski trip.
-They do not change, so answer stable questions straight from them instead of querying the database.
+These files are background context about the Club Athletic Méribel 2027 ski trip.
+Query the trip database before answering every trip fact; these files are never a substitute for live data.
 
 What is deliberately NOT here, because it changes
 How many beds are still available. Who is in which bed. The flight table and anyone's

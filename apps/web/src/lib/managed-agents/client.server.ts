@@ -32,14 +32,14 @@ export const TRIP_AGENT_TOOLSET: BetaManagedAgentsAgentToolset20260401Params = {
  * would only surface during a real ingestion. */
 export const tripSessionTools = [TRIP_AGENT_TOOLSET, ...tripToolDefinitions];
 /** Written for the model, not for us: it is rendered into the session's system prompt.
- * Memory holds the stable trip facts so simple questions need no query; everything that
- * can change stays on the live read tools, and a tool result always beats a memory file. */
+ * Memory is background context only; every trip fact is checked against the live read tools,
+ * and a tool result always beats a memory file. */
 export const TRIP_MEMORY_INSTRUCTIONS =
   "Stable background facts about the Méribel 2027 trip are mounted here: the dates, the chalet, " +
   "the bedroom and bed-type layout, both shuttle windows, the flight timing rules, the chef meal " +
-  "counts, the eight-day schedule, the price range and the trip links. Read /README.txt first, " +
-  "then answer stable questions straight from these files instead of calling a tool. They are " +
-  "accurate background, never live state. Anything that can change since seeding is deliberately " +
+  "counts, the schedule, the price range and the trip links. Read /README.txt for context, then " +
+  "call the relevant trip database read tool before answering any trip fact. These files are " +
+  "background only, never live state, and never a substitute for a database read. Anything that can change since seeding is deliberately " +
   "absent: how many beds are still available, who is in which bed, the flight table, anyone's " +
   "booking or payment status, and guest task status. Call getOpenSpots, getRoomsByFloor, " +
   "getFlightTable or getGuestTasks for those every time, and if a tool result disagrees with a " +

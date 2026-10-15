@@ -8,7 +8,7 @@ import * as logs from "aws-cdk-lib/aws-logs";
 
 import { addStandardTags } from "../helpers/tag_resources";
 import { project } from "../properties";
-import { imageBuildSpec, serviceDeploymentBuildSpec, testBuildSpec } from "./pipeline-buildspec";
+import { imageBuildSpec, memorySyncBuildSpec, serviceDeploymentBuildSpec, testBuildSpec } from "./pipeline-buildspec";
 
 export class PipelineStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -89,6 +89,15 @@ export class PipelineStack extends cdk.Stack {
     deployRole.addToPolicy(new iam.PolicyStatement({ actions: ["route53:ChangeResourceRecordSets"], resources: [hostedZoneArn] }));
     deployRole.addToPolicy(new iam.PolicyStatement({ actions: ["route53:GetChange"], resources: ["*"] }));
 
+    const memorySyncRole = new iam.Role(this, `${constructorPrefix}-memory-sync-role`, {
+      roleName: `${resourceName}-memory-sync-role`,
+      assumedBy: new iam.ServicePrincipal("codebuild.amazonaws.com"),
+    });
+    memorySyncRole.addToPolicy(new iam.PolicyStatement({
+      actions: ["secretsmanager:GetSecretValue"],
+      resources: [`arn:aws:secretsmanager:${project.region}:${this.account}:secret:${resourceName}-*`],
+    }));
+
     const buildLogGroup = new logs.LogGroup(this, `${constructorPrefix}-build-log-group`, {
       logGroupName: `/aws/codebuild/${resourceName}-build`,
       retention: logs.RetentionDays.ONE_WEEK,
@@ -104,7 +113,12 @@ export class PipelineStack extends cdk.Stack {
       retention: logs.RetentionDays.ONE_WEEK,
       removalPolicy: cdk.RemovalPolicy.DESTROY,
     });
-    for (const [role, logGroup] of [[imageBuildRole, buildLogGroup], [testRole, e2eLogGroup], [deployRole, deployLogGroup]] as const) {
+    const memorySyncLogGroup = new logs.LogGroup(this, `${constructorPrefix}-memory-sync-log-group`, {
+      logGroupName: `/aws/codebuild/${resourceName}-memory-sync`,
+      retention: logs.RetentionDays.ONE_WEEK,
+      removalPolicy: cdk.RemovalPolicy.DESTROY,
+    });
+    for (const [role, logGroup] of [[imageBuildRole, buildLogGroup], [testRole, e2eLogGroup], [deployRole, deployLogGroup], [memorySyncRole, memorySyncLogGroup]] as const) {
       role.addToPolicy(new iam.PolicyStatement({
         actions: ["logs:CreateLogStream", "logs:PutLogEvents"],
         resources: [`${logGroup.logGroupArn}:*`],
@@ -162,14 +176,27 @@ export class PipelineStack extends cdk.Stack {
       timeout: cdk.Duration.minutes(30),
       badge: false,
     });
+    const memorySyncProject = new codebuild.Project(this, `${constructorPrefix}-memory-sync-project`, {
+      projectName: `${resourceName}-memory-sync`,
+      role: memorySyncRole,
+      description: "Synchronize the repository trip memory baseline",
+      buildSpec: memorySyncBuildSpec("apps/managed-agents", resourceName),
+      environment: {
+        computeType: codebuild.ComputeType.SMALL,
+        buildImage: codebuild.LinuxBuildImage.STANDARD_7_0,
+      },
+      logging: { cloudWatch: { logGroup: memorySyncLogGroup } },
+      timeout: cdk.Duration.minutes(15),
+      badge: false,
+    });
 
     pipelineRole.addToPolicy(new iam.PolicyStatement({
       actions: ["codebuild:BatchGetBuilds", "codebuild:StartBuild", "codebuild:StopBuild"],
-      resources: [buildProject.projectArn, e2eProject.projectArn, deployProject.projectArn],
+      resources: [buildProject.projectArn, e2eProject.projectArn, deployProject.projectArn, memorySyncProject.projectArn],
     }));
     pipelineRole.addToPolicy(new iam.PolicyStatement({
       actions: ["iam:PassRole"],
-      resources: [imageBuildRole.roleArn, testRole.roleArn, deployRole.roleArn],
+      resources: [imageBuildRole.roleArn, testRole.roleArn, deployRole.roleArn, memorySyncRole.roleArn],
       conditions: { StringEquals: { "iam:PassedToService": "codebuild.amazonaws.com" } },
     }));
 
@@ -225,6 +252,15 @@ export class PipelineStack extends cdk.Stack {
         actionName: "Management",
         project: deployProject,
         input: imageArtifact,
+        ...actionRoleProps,
+      })],
+    });
+    pipeline.addStage({
+      stageName: "AgentMemory",
+      actions: [new actions.CodeBuildAction({
+        actionName: "SyncTripMemory",
+        project: memorySyncProject,
+        input: sourceArtifact,
         ...actionRoleProps,
       })],
     });

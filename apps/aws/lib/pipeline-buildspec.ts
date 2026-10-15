@@ -144,3 +144,28 @@ export const serviceDeploymentBuildSpec = ({
     },
   },
 });
+
+export const memorySyncBuildSpec = (sourcePath: string, secretName: string) => codebuild.BuildSpec.fromObject({
+  version: "0.2",
+  env: {
+    "secrets-manager": {
+      ANTHROPIC_API_KEY: `${secretName}:ANTHROPIC_API_KEY`,
+      CLAUDE_TRIP_MEMORY_STORE_ID: `${secretName}:CLAUDE_TRIP_MEMORY_STORE_ID`,
+    },
+  },
+  phases: {
+    install: {
+      "runtime-versions": { nodejs: "22" },
+      commands: ["curl -fsSL https://bun.sh/install | bash"],
+    },
+    build: {
+      commands: [
+        "set -eu",
+        `cd "$CODEBUILD_SRC_DIR/${sourcePath}"`,
+        "export PATH=\"$HOME/.bun/bin:$PATH\"",
+        "$HOME/.bun/bin/bun run validate",
+        "$HOME/.bun/bin/bun scripts/sync-memory.ts",
+      ],
+    },
+  },
+});

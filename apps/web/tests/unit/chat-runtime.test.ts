@@ -436,7 +436,7 @@ describe("Q2 agent instructions and fail-closed configuration", () => {
     // apps/managed-agents/tests/deploy.test.ts asserts the same digest against the YAML, so
     // the two copies of the prompt cannot drift apart without one of the suites failing.
     const digest = createHash("sha256").update(TRIP_AGENT_INSTRUCTIONS, "utf8").digest("hex");
-    expect(digest).toBe("69b30488a03dd9c7d1bc142d039b4dc837005b1699c9ecd0791c1b87a2910bd4");
+    expect(digest).toBe("93f190f315461e73c16409afc9c65707787e30fe4d9a6a4bc3f7066c6b75acb5");
   });
   it("requires fixed server configuration and never accepts a guest-selected agent", () => {
     expect(() => parseManagedAgentsConfig({})).toThrow("ANTHROPIC_API_KEY is required for chat.");
