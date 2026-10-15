@@ -141,6 +141,7 @@ const PAID_GUESTS = new Set([
   "Tim Kurdi",
   "Augustus Shewchuck",
   "Olajuwon Jones",
+  "Ted Delcima",
 ]);
 
 // Seed defaults captured from the live guest records (owner, 2026-10-13).
