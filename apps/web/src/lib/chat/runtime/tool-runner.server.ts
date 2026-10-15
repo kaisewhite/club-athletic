@@ -25,6 +25,9 @@ import {
   readTripAttachment,
 } from "../tools/attachment.server";
 import { logChatFailure } from "./chat-debug.server";
+import { authorizeOperator } from "../operator-auth.server";
+import { updateTripRecord } from "../tools/operator-write.server";
+import { authorizeOperatorSchema, updateTripRecordSchema } from "../tools/registry.server";
 
 const ownedNames = new Set(tripToolDefinitions.map((t) => t.name));
 /** Enrich ONLY the service-wait classification from observed SDK event identity.
@@ -118,6 +121,19 @@ export function createTripRunnableTools(
               sourceSection: "Guests",
               data: boundTripData(await lookupTripGuest(parsed.data)),
             });
+          }
+          if (name === "authorizeOperator") {
+            const parsed = authorizeOperatorSchema.safeParse(input);
+            if (!parsed.success) return JSON.stringify({ ok: false, message: TRIP_INVALID_REQUEST });
+            const authorized = await authorizeOperator(scope, parsed.data.passphrase);
+            return JSON.stringify(authorized
+              ? { ok: true, authorized: true, message: "Operator authorization accepted. Proceed with the requested database update." }
+              : { ok: false, authorized: false, message: "That passphrase was not accepted. Ask the operator to try again." });
+          }
+          if (name === "updateTripRecord") {
+            const parsed = updateTripRecordSchema.safeParse(input);
+            if (!parsed.success) return JSON.stringify({ ok: false, message: TRIP_INVALID_REQUEST });
+            return JSON.stringify({ ok: true, data: await updateTripRecord(scope, parsed.data) });
           }
           if (name === "readTripAttachment" && context?.signal) {
             const parsed = attachmentSchema.safeParse(input);

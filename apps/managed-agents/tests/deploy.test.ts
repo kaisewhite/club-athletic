@@ -35,7 +35,7 @@ describe("persisted configuration", () => {
     // Snapshot of TRIP_AGENT_INSTRUCTIONS; no import/runtime dependency on apps/web. The web
     // side pins the same digest, so the two copies cannot drift apart unnoticed.
     expect(new Bun.CryptoHasher("sha256").update((agent as { system: string }).system).digest("hex"))
-      .toBe("93f190f315461e73c16409afc9c65707787e30fe4d9a6a4bc3f7066c6b75acb5");
+      .toBe("d7d35778ddd00703c7d015ca1173a947e7ed7aa41e133f76eb32805047bb028d");
   });
   test("the prompt makes answering the reflex and the fallback the last resort", () => {
     const system = (agent as { system: string }).system;

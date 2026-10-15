@@ -39,6 +39,7 @@ export const project = {
       "CLAUDE_MANAGED_ENVIRONMENT_ID",
       "CLAUDE_TRIP_AGENT_ID",
       "CLAUDE_TRIP_MEMORY_STORE_ID",
+      "PASSPHRASE",
     ],
   },
 } as const;

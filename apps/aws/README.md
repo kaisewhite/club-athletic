@@ -9,12 +9,12 @@ Club Athletic runs entirely in management AWS account `366394957699` (`mostrom_m
 | ECS cluster | `club-athletic` |
 | ECS service | `web` |
 | ECR repository | `club-athletic-web` (existing management repository) |
-| Secrets Manager | `club-athletic-web` (existing management secret) |
+| Secrets Manager | `club-athletic-web` (existing management secret, including `PASSPHRASE`) |
 | DNS | `meribel.xn--tshi-l3a.com`, hosted zone configured in `properties/index.ts` |
 | HTTPS listener | Club Athletic's own ALB and ACM certificate in management |
 | CodePipeline | `club-athletic-web`, GitHub `kaisewhite/club-athletic` `main` branch |
 
-The infrastructure stack creates the Club Athletic cluster and web service, task and execution roles, security groups, target group, and internet-facing load balancer. It imports the existing matching ACM certificate by ARN and uses the existing `/ecs/club-athletic-web` log group, management ECR repository, runtime secret, management VPC, and hosted zone. The pipeline has Source, Build, EndToEnd, and Deploy stages, all within management; it has no cross-account roles or dev/prod stages. The target group's `/health` check is the service health check; there is no separate container health check.
+The infrastructure stack creates the Club Athletic cluster and web service, task and execution roles, security groups, target group, and internet-facing load balancer. It imports the existing matching ACM certificate by ARN and uses the existing `/ecs/club-athletic-web` log group, management ECR repository, runtime secret, management VPC, and hosted zone. The pipeline has Source, Build, EndToEnd, Deploy, and AgentMemory stages, all within management; it has no cross-account roles or dev/prod stages. The target group's `/health` check is the service health check; there is no separate container health check.
 
 ## Pipeline setup and deployment
 
