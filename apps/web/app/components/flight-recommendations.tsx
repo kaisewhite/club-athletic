@@ -1,4 +1,4 @@
-import type { FlightRecommendations } from "@/lib/db/repository.server";
+import type { FlightRecommendations, Links } from "@/lib/db/repository.server";
 
 /**
  * The organizer's flight recommendations (owner, 2026-09-29), in the shape of
@@ -6,7 +6,7 @@ import type { FlightRecommendations } from "@/lib/db/repository.server";
  * shuttle column that says plainly whether the group bus works for that flight.
  * All of it — titles, rows, verdicts — is the database's.
  */
-export function FlightRecommendationsSection({ sections }: { sections: FlightRecommendations }) {
+export function FlightRecommendationsSection({ sections, hotelLinks = [] }: { sections: FlightRecommendations; hotelLinks?: Links }) {
   if (sections.length === 0) return null;
   return <section className="flight-recs" aria-labelledby="flight-recs-heading">
     <h3 id="flight-recs-heading" className="detail-kicker">Recommended flights · New York</h3>
@@ -29,5 +29,15 @@ export function FlightRecommendationsSection({ sections }: { sections: FlightRec
       </table></div>}
       {section.outro && <p className="flight-rec-copy flight-rec-outro">{section.outro}</p>}
     </article>)}
+    {hotelLinks.length > 0 && <section className="flight-hotels" aria-labelledby="flight-hotels-heading">
+      <h4 id="flight-hotels-heading" className="flight-rec-title">If you arrive Friday</h4>
+      <p className="flight-rec-copy">Staying near GVA is completely optional, but these airport hotels have shuttles back to the terminal for Saturday’s Méribel transfer.</p>
+      <div className="link-list">
+        {hotelLinks.map((link) => <a className="link-row" key={link.id} href={link.href} target="_blank" rel="noopener noreferrer">
+          <span><span className="link-name">{link.label}</span>{link.note && <span className="link-group">{link.note}</span>}</span>
+          <span className="text-accent" aria-hidden="true">↗</span>
+        </a>)}
+      </div>
+    </section>}
   </section>;
 }

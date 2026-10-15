@@ -9,8 +9,8 @@ const SECTIONS = [
   ['overview','Home'],['schedule','Schedule'],['flights','Flights'],['shuttle','Shuttle'],
   ['chalet','Chalet'],['rooms','Rooms'],['spots','Spots & pricing'],['chef','Chef'],['tasks','Tasks'],['links','Links']
 ];
-const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;venue?:string;breakfast:string;dinner:string;at?:string}[] = [
-  {dow:'Fri',num:'29',short:'Fri 29',event:'Arrive in Geneva',detail:'Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Hotel shuttles make it easy to get back to GVA for Saturday morning’s Méribel transfer.',venue:'Geneva',breakfast:'—',dinner:'—'},
+const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;venue?:string;venueUrl?:string;breakfast:string;dinner:string;at?:string}[] = [
+  {dow:'Fri',num:'29',short:'Fri 29',event:'Arrive in Geneva (optional)',detail:'Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. This is simply a buffer against flight delays; hotel shuttles make it easy to get back to GVA for Saturday morning’s Méribel transfer.',venue:'Geneva',venueUrl:'/flights',breakfast:'—',dinner:'—'},
   {dow:'Sat',num:'30',short:'Sat 30',event:'Arrive & settle in',detail:'Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax. Optional group viewing of NFL playoff games upon arrival.',venue:'Geneva → Méribel',breakfast:'—',dinner:'Chef'},
   {dow:'Sun',num:'31',short:'Sun 31',event:'Slopes & Rond Point',detail:'Skiing and après drinks at Rond Point. Club Athletic buys rounds.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
   {dow:'Mon',num:'1',short:'Mon 1',event:'Croissant, ski, repeat',detail:'La Folie Douce, 3–5 p.m.',venue:'La Folie Douce',breakfast:'Chef',dinner:'Chef',at:'15:00'},
@@ -33,8 +33,8 @@ const FLIGHT_RECOMMENDATIONS = [
       { id: 'seed_flightopt_jfk_sat', carrier: 'SWISS LX23', route: 'JFK → GVA', departs: '7:25 PM Fri', arrives: '9:15 AM Sat', fits: true, note: 'Fits the window; less buffer' },
     ] },
   { id: 'seed_flightrec_fri', title: 'Option 2 — Arrive Friday for extra buffer',
-    intro: 'Optional, but the usual plan: fly Thursday, sleep by the airport Friday, meet the shuttle Saturday morning. A full day of cover for weather or delays. The organizer is on this one.',
-    outro: 'Airport hotels with free shuttles are listed above.',
+    intro: 'Optional: fly Thursday, spend Friday in Geneva, and sleep by the airport before meeting the shuttle Saturday morning. It is simply a buffer against flight delays. The organizer is on this one.',
+    outro: 'See the Geneva Marriott and Hilton Geneva hotel options below; both have shuttles back to GVA.',
     options: [
       { id: 'seed_flightopt_ewr_fri', carrier: 'United UA956', route: 'EWR → GVA', departs: '5:35 PM Thu', arrives: '7:25 AM Fri', fits: true, note: 'Stay near GVA, shuttle Saturday' },
     ] },
@@ -379,7 +379,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
       () => tx.scheduleDay.findUnique({ where: { tripId_date: dayKey } }),
       () => tx.scheduleDay.create({ data: {
         id: createId(), ...dayKey, dow: day.dow, dayNumber: Number(day.num),
-        eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, breakfast: MEALS[day.breakfast]!,
+        eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, venueUrl: day.venueUrl ?? null, breakfast: MEALS[day.breakfast]!,
         dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
         // Standing times (owner, 2026-09-28): breakfast is ready by 07:00 and
         // dinner is around 19:30. A time only exists where the chef actually
@@ -394,7 +394,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
       } }));
     // Event details, times and meals are organizer copy pushed by the seed.
     await tx.scheduleDay.update({ where: { id: day_row.id }, data: {
-      eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, breakfast: MEALS[day.breakfast]!, dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
+      eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, venueUrl: day.venueUrl ?? null, breakfast: MEALS[day.breakfast]!, dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
       breakfastAt: MEALS[day.breakfast] === "CHEF" ? "07:00" : null, dinnerAt: MEALS[day.dinner] === "CHEF" ? "19:30" : null, eventAt: day.at ?? null,
     } });
   }

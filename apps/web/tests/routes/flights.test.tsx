@@ -6,8 +6,8 @@ import Flights, { loader } from "../../app/routes/flights";
 import { GroupFlightTable } from "../../app/components/flight-table";
 import type { FlightTable } from "../../src/lib/db/repository.server";
 
-const { getFlightTable, getFlightRecommendations, getFlightRules } = vi.hoisted(() => ({ getFlightTable: vi.fn(), getFlightRecommendations: vi.fn(), getFlightRules: vi.fn() }));
-vi.mock("../../src/lib/db/repository.server", () => ({ getFlightTable, getFlightRecommendations, getFlightRules }));
+const { getFlightTable, getFlightRecommendations, getFlightRules, getLinks } = vi.hoisted(() => ({ getFlightTable: vi.fn(), getFlightRecommendations: vi.fn(), getFlightRules: vi.fn(), getLinks: vi.fn() }));
+vi.mock("../../src/lib/db/repository.server", () => ({ getFlightTable, getFlightRecommendations, getFlightRules, getLinks }));
 // The rules card's every figure is this fixture's, so an assertion on "08:30"
 // below is an assertion that the card printed the database, not a constant.
 const rules = {
@@ -49,7 +49,7 @@ const outbound = () => leg({ id: "return", direction: "OUTBOUND", origin: "GVA",
 
 function staticPage(flights: FlightTable) {
   const page = document.createElement("div");
-  page.innerHTML = renderToStaticMarkup(<Flights {...{ loaderData: { flights, recommendations, rules } } as ComponentProps<typeof Flights>} />);
+  page.innerHTML = renderToStaticMarkup(<Flights {...{ loaderData: { flights, recommendations, rules, hotelLinks: [] } } as unknown as ComponentProps<typeof Flights>} />);
   return page;
 }
 
@@ -63,6 +63,8 @@ beforeEach(() => {
   getFlightRecommendations.mockResolvedValue(recommendations);
   getFlightRules.mockReset();
   getFlightRules.mockResolvedValue(rules);
+  getLinks.mockReset();
+  getLinks.mockResolvedValue([]);
   narrow = false;
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.stubGlobal("matchMedia", vi.fn((query: string) => ({

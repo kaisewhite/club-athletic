@@ -362,6 +362,7 @@ button:disabled, input:disabled { cursor: not-allowed; }
 .schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
 .schedule-entry-detail { display: block; margin-top: 3px; color: var(--text-dim); font-size: 13px; font-weight: 400; line-height: 1.45; }
+.schedule-entry-link { display: block; width: fit-content; margin-top: 8px; color: var(--brand); font-size: 13px; font-weight: 700; }
 .schedule-copy-button { display: inline-flex; align-items: center; justify-content: center; width: 40px; min-width: 40px; height: 40px; align-self: start; padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); cursor: pointer; transition: background 120ms cubic-bezier(.4,0,.2,1), color 120ms cubic-bezier(.4,0,.2,1); }
 .schedule-copy-button svg { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .schedule-copy-button:hover { background: var(--hover); color: var(--text); }

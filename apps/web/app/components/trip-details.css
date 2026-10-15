@@ -13,6 +13,7 @@
    short line. Verdicts are colour-coded once, in the shuttle column, and nowhere
    else, so the tables stay quiet. */
 .flight-recs { margin: 20px 0 24px; display: flex; flex-direction: column; gap: 16px; }
+.flight-hotels { margin-top: 4px; }
 .flight-rec-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
 .flight-rec-copy { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--text-muted); }
 .flight-rec-outro { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
