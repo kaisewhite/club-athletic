@@ -3,7 +3,7 @@
 // or left to the guest — the chef page is about the chef.
 export const mealLabel = { CHEF: "Chef", NONE: "—", OWN: "—" } as const;
 
-export interface ScheduleEntry { key: string; time: string | null; title: string }
+export interface ScheduleEntry { key: string; time: string | null; title: string; detail?: string | null }
 
 /**
  * One day as a list of what actually happens on it, in the order it happens.
@@ -27,7 +27,7 @@ export interface ScheduleEntry { key: string; time: string | null; title: string
  * reads as a list of commitments rather than a grid with holes punched in it.
  */
 export function dayEntries(day: {
-  id: string; eventTitle: string; isOpen?: boolean;
+  id: string; eventTitle: string; eventDetail?: string | null; isOpen?: boolean;
   breakfast: keyof typeof mealLabel; dinner: keyof typeof mealLabel;
   breakfastAt?: string | null; dinnerAt?: string | null; eventAt?: string | null;
 }): ScheduleEntry[] {
@@ -39,7 +39,7 @@ export function dayEntries(day: {
     };
   const entries: (ScheduleEntry | null)[] = [
     meal("breakfast", day.breakfastAt, day.breakfast),
-    day.isOpen ? null : { key: `${day.id}:event`, time: day.eventAt ?? null, title: day.eventTitle },
+    day.isOpen ? null : { key: `${day.id}:event`, time: day.eventAt ?? null, title: day.eventTitle, detail: day.eventDetail },
     meal("dinner", day.dinnerAt, day.dinner),
   ];
   return entries.filter((entry): entry is ScheduleEntry => entry !== null);

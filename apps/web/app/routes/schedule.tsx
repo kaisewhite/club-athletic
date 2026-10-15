@@ -23,7 +23,7 @@ export default function Schedule({ loaderData }: Route.ComponentProps) {
           <ol className="schedule-entries">
             {dayEntries(day).map((entry) => <li key={entry.key} className="schedule-entry">
               <span className="schedule-time">{entry.time ?? "TBD"}</span>
-              <span className="schedule-entry-title">{entry.title}</span>
+              <span className="schedule-entry-title">{entry.title}{entry.detail && <span className="schedule-entry-detail">{entry.detail}</span>}</span>
             </li>)}
           </ol>
         </div>)}

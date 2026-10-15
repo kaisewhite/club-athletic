@@ -9,15 +9,15 @@ const SECTIONS = [
   ['overview','Home'],['schedule','Schedule'],['flights','Flights'],['shuttle','Shuttle'],
   ['chalet','Chalet'],['rooms','Rooms'],['spots','Spots & pricing'],['chef','Chef'],['tasks','Tasks'],['links','Links']
 ];
-const SCHEDULE: {dow:string;num:string;short:string;event:string;breakfast:string;dinner:string;at?:string}[] = [
-  {dow:'Sat',num:'30',short:'Sat 30',event:'Arrival — shuttle from GVA, settle in',breakfast:'—',dinner:'Chef',at:'13:00'},
-  {dow:'Sun',num:'31',short:'Sun 31',event:'Chill drinks at Le Rond Point des Pistes',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Mon',num:'1',short:'Mon 1',event:'La Folie Douce, Méribel–Courchevel',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Tue',num:'2',short:'Tue 2',event:'TBD',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Wed',num:'3',short:'Wed 3',event:'Le Cap Horn, Courchevel 1850',breakfast:'Chef',dinner:'—'},
-  {dow:'Thu',num:'4',short:'Thu 4',event:'Final night out',breakfast:'Chef',dinner:'—'},
-  {dow:'Fri',num:'5',short:'Fri 5',event:'Open — last ski day',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Sat',num:'6',short:'Sat 6',event:'Departure — shuttle to GVA',breakfast:'—',dinner:'—',at:'04:00'},
+const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;venue?:string;breakfast:string;dinner:string;at?:string}[] = [
+  {dow:'Sat',num:'30',short:'Sat 30',event:'Arrive & settle in',detail:'Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax. Optional group viewing of NFL playoff games upon arrival.',venue:'Geneva → Méribel',breakfast:'—',dinner:'Chef'},
+  {dow:'Sun',num:'31',short:'Sun 31',event:'Slopes & Rond Point',detail:'Skiing and après drinks at Rond Point. Club Athletic buys rounds.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Mon',num:'1',short:'Mon 1',event:'Croissant, ski, repeat',detail:'La Folie Douce, 3–5 p.m.',venue:'La Folie Douce',breakfast:'Chef',dinner:'Chef',at:'15:00'},
+  {dow:'Tue',num:'2',short:'Tue 2',event:'Ski day & chalet mixers',detail:'Après gathering at randomly assigned chalets to meet others, followed by a night out.',venue:'Méribel',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Wed',num:'3',short:'Wed 3',event:'Courchevel day',detail:'Cap Horn, followed by going out in Courchevel. No buses.',venue:'Cap Horn · Courchevel',breakfast:'Chef',dinner:'—'},
+  {dow:'Thu',num:'4',short:'Thu 4',event:'Final big night out',detail:'Doron Pub.',venue:'Doron Pub',breakfast:'Chef',dinner:'—'},
+  {dow:'Fri',num:'5',short:'Fri 5',event:'Chill ski day',detail:'Rond Point; many people leave in the morning.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
+  {dow:'Sat',num:'6',short:'Sat 6',event:'Transfer home',detail:'Early-morning transfer to Geneva (GVA) and flights home.',venue:'Méribel → GVA',breakfast:'—',dinner:'—'},
 ];
 // /flights recommendations, content and shape from the Notion "Flight & Shuttle
 // Guide" (owner, 2026-09-29): a table per option with a one-line verdict per
@@ -75,7 +75,7 @@ FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earli
 ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Kristy Kelly. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, Christie Navarre, 2 available. Bedroom 5 bunk cabin: Pete F., Tim Kurdi. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 13 confirmed guests, 6 open spots.
 REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,810 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,860 per person all-in. All-in = room rate + €33.60 taxes + €178 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
-EVENTS: Sat 30 arrival. Sun 31 chill drinks at Le Rond Point des Pistes, Méribel. Mon 1 Feb La Folie Douce Méribel–Courchevel. Tue 2 open. Wed 3 Le Cap Horn, Courchevel 1850. Thu 4 final night out. Fri 5 open. Sat 6 departure.
+EVENTS: Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
 CHALET: Central Méribel ~200 m from slopes, 326 m², 3 levels, 8 bedrooms, sleeps 10–20. Two apartments combined: F12 (sleeps 4–8) + F21 (sleeps 6–12). Lounges, two fireplaces, main kitchen + kitchenette, private outdoor hot tub, two saunas, fitness room, shared indoor pool/hammam/sauna/massage rooms, on-site ski shop and rental, ski lockers with boot warmers, underground parking, laundry. Most rooms en-suite with balcony/terrace; some bunk rooms share a shower room, may lack balcony.
 LINKS: ski pass skipass-meribel.com and Epic Pass 3 Vallées; Méribel webcams; Spa Falcon.`;
 
@@ -370,28 +370,26 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
 
   for (const [index, day] of SCHEDULE.entries()) {
     const dayKey = { tripId: trip.id, date: scheduleDate(index) };
-    // Venue names are taken from the schedule itself. No URLs are supplied.
-    const venue = index === 1 ? day.event.replace("Chill drinks at ", "")
-      : index === 2 || index === 4 ? day.event : null;
     const day_row = await ensure(tx, "ScheduleDay",
       () => tx.scheduleDay.findUnique({ where: { tripId_date: dayKey } }),
       () => tx.scheduleDay.create({ data: {
         id: createId(), ...dayKey, dow: day.dow, dayNumber: Number(day.num),
-        eventTitle: day.event, venue, breakfast: MEALS[day.breakfast]!,
+        eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, breakfast: MEALS[day.breakfast]!,
         dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
         // Standing times (owner, 2026-09-28): breakfast is ready by 07:00 and
         // dinner is around 19:30. A time only exists where the chef actually
         // serves — "on your own" and "—" stay null so the page says so rather
-        // than implying a sitting. Event times are TBD for now.
+        // than implying a sitting. Only Monday's event start is recorded; the
+        // other event times remain TBD.
         breakfastAt: MEALS[day.breakfast] === "CHEF" ? "07:00" : null,
         dinnerAt: MEALS[day.dinner] === "CHEF" ? "19:30" : null,
-        // Arrival is the inbound shuttle's 11:00 window end + its 120 min; departure
-        // is the outbound pickup window opening. Every other event time is genuinely TBD.
+        // Event time is copied only when the source provides one; the poster gives
+        // Monday's 3 p.m. start, while the other event times remain genuinely TBD.
         eventAt: day.at ?? null,
       } }));
-    // Times and meals are edited here and pushed (owner, 2026-09-29).
+    // Event details, times and meals are organizer copy pushed by the seed.
     await tx.scheduleDay.update({ where: { id: day_row.id }, data: {
-      eventTitle: day.event, breakfast: MEALS[day.breakfast]!, dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
+      eventTitle: day.event, eventDetail: day.detail, venue: day.venue ?? null, breakfast: MEALS[day.breakfast]!, dinner: MEALS[day.dinner]!, isOpen: day.event === "TBD" || day.event.startsWith("Open —"),
       breakfastAt: MEALS[day.breakfast] === "CHEF" ? "07:00" : null, dinnerAt: MEALS[day.dinner] === "CHEF" ? "19:30" : null, eventAt: day.at ?? null,
     } });
   }

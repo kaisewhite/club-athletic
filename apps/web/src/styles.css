@@ -361,6 +361,7 @@ button:disabled, input:disabled { cursor: not-allowed; }
 .schedule-entry { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: baseline; }
 .schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
+.schedule-entry-detail { display: block; margin-top: 3px; color: var(--text-dim); font-size: 13px; font-weight: 400; line-height: 1.45; }
 /* A meal with no chef sitting still gets its row — the guest needs to know — but
    it steps back so the real fixtures of the day read first. */
 a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
