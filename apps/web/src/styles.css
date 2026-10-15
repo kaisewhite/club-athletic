@@ -351,7 +351,7 @@
 button:disabled, input:disabled { cursor: not-allowed; }
 .page-sub { color: var(--text-dim); margin: 0 0 24px; }
 .schedule-list { display: flex; flex-direction: column; }
-.schedule-row { display: grid; grid-template-columns: 96px 1fr; gap: 16px; padding: 16px 8px; border-top: 1px solid var(--border); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.schedule-row { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; padding: 16px 8px; border-top: 1px solid var(--border); transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .schedule-day-number { font-size: 36px; }
 .schedule-event { font-size: 14px; font-weight: 600; line-height: 1.571; }
 /* Breakfast, the event and dinner share one row shape, so a guest reads the day
@@ -362,6 +362,10 @@ button:disabled, input:disabled { cursor: not-allowed; }
 .schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
 .schedule-entry-detail { display: block; margin-top: 3px; color: var(--text-dim); font-size: 13px; font-weight: 400; line-height: 1.45; }
+.schedule-copy-button { display: inline-flex; align-items: center; justify-content: center; width: 40px; min-width: 40px; height: 40px; align-self: start; padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); cursor: pointer; transition: background 120ms cubic-bezier(.4,0,.2,1), color 120ms cubic-bezier(.4,0,.2,1); }
+.schedule-copy-button svg { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.schedule-copy-button:hover { background: var(--hover); color: var(--text); }
+.schedule-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 /* A meal with no chef sitting still gets its row — the guest needs to know — but
    it steps back so the real fixtures of the day read first. */
 a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
@@ -517,8 +521,9 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
      day stacks weekday over number so it needs far less than 96px, and a
      "19:30" needs far less than 52px, so below the seam both gutters shrink and
      the title gets 160px back. Guarded by the 320px case in mobile-layout.spec. */
-  .schedule-row { grid-template-columns: 56px 1fr; gap: 12px; }
+  .schedule-row { grid-template-columns: 56px 1fr auto; gap: 12px; }
   .schedule-entry { grid-template-columns: 44px 1fr; gap: 8px; }
+  .schedule-copy-button { width: 44px; min-width: 44px; height: 44px; }
 }
 
 /* Reduced motion for the `:active` transforms added above. The base

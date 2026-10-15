@@ -1,5 +1,6 @@
 import { getSchedule } from "@/lib/db/repository.server";
 import { dayEntries } from "../lib/schedule-display";
+import { ScheduleCopyButton } from "../components/schedule-copy-button";
 import type { Route } from "./+types/schedule";
 
 export async function loader() {
@@ -26,6 +27,10 @@ export default function Schedule({ loaderData }: Route.ComponentProps) {
               <span className="schedule-entry-title">{entry.title}{entry.detail && <span className="schedule-entry-detail">{entry.detail}</span>}</span>
             </li>)}
           </ol>
+          <ScheduleCopyButton dayLabel={`${day.dow} ${day.dayNumber} schedule`} text={[
+            `${day.dow} ${day.dayNumber}`,
+            ...dayEntries(day).map((entry) => `${entry.time ?? "TBD"} — ${entry.title}${entry.detail ? `: ${entry.detail}` : ""}`),
+          ].join("\n")} />
         </div>)}
       </div>
     </section>
