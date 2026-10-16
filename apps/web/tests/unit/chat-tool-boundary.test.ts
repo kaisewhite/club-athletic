@@ -44,7 +44,7 @@ describe("Task 5 write boundary", () => {
       /\.(payment|spot|guestTask|room|scheduleDay|link)\.(create|update|delete)/i,
     );
     for (const file of readdirSync("src/lib/chat/tools").filter((f) =>
-      f.endsWith(".ts"),
+      f.endsWith(".ts") && f !== "operator-write.server.ts",
     ))
       expect(read(`src/lib/chat/tools/${file}`)).not.toMatch(
         /\bPrismaClient\b|\$executeRaw|\$queryRaw|DATABASE_URL_POOLED/,

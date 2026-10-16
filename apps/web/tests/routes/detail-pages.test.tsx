@@ -64,7 +64,7 @@ describe("database-backed read-only detail pages", () => {
   it("renders eight rooms, nine named guests, ten available beds and one not-offered bed", async () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors, sleepsMax: 20 }, _count: { guests: 9 } });
     const page = renderPage(Rooms, await roomsLoader());
-    expect(page.textContent).toContain("9 confirmed · 10 spots open · sleeps up to 20");
+    expect(page.textContent).toContain("9 confirmed guests · 10 open spots · sleeps up to 20");
     expect(page.querySelectorAll(".room-card")).toHaveLength(8);
     expect(page.querySelectorAll(".spot-available")).toHaveLength(10);
     expect(page.querySelectorAll(".spot-not-offered")).toHaveLength(1);
@@ -104,7 +104,7 @@ describe("database-backed read-only detail pages", () => {
     ] });
     const chefPage = renderPage(Chef, await chefLoader());
     for (const name of ["Christie Navarre", "Christine Calvo", "Valeriia Stobolva", "Wayne Martindale"]) {
-      const link = [...chefPage.querySelectorAll<HTMLAnchorElement>('table[aria-label="Guest dietary requirements"] th a')].find((anchor) => anchor.textContent === name);
+      const link = [...chefPage.querySelectorAll<HTMLAnchorElement>('table[aria-label="Guest dietary needs"] th a')].find((anchor) => anchor.textContent === name);
       expect(link?.getAttribute("href")).toMatch(/^https:\/\/www\.instagram\.com\//);
     }
   });
@@ -114,10 +114,10 @@ describe("database-backed read-only detail pages", () => {
         .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE") })),
     })) } });
     const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".spots-heading")?.textContent).toBe("Spots still open 10");
+    expect(page.querySelector(".spots-heading")?.textContent).toBe("Open spots 10");
     expect(page.querySelector(".spots-count")?.textContent).toBe("10");
     expect(page.textContent).toContain("€1,690–€1,860");
-    expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "USD estimate · per person, all-in"]);
+    expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "Estimated USD price · per person, all-in"]);
     expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $2,028–$2,232");
     expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
@@ -126,16 +126,16 @@ describe("database-backed read-only detail pages", () => {
     expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,810 / $2,172.00 per person", "€1,690 / $2,028.00 per person", "€1,860 / $2,232.00 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const breakdown = page.querySelector(".price-breakdown");
-    expect(breakdown?.getAttribute("aria-label")).toBe("How the all-in price is built");
+    expect(breakdown?.getAttribute("aria-label")).toBe("Price breakdown");
     expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
-    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["varies by room", "€33.60 / $40.32", "€178 / $213.60", "€100 / $120.00", "€408 / $489.60"]);
+    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["Depends on the room", "€33.60 / $40.32", "€178 / $213.60", "€100 / $120.00", "€408 / $489.60"]);
   });
   it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
     getEurUsdRate.mockResolvedValue(null);
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [] } });
     const page = renderPage(Spots, await spotsLoader());
     expect(page.querySelector(".spots-price")?.textContent).toBe("€1,690–€1,860");
-    expect(page.querySelector(".spots-price-usd")?.textContent).toBe("Temporarily unavailable");
+    expect(page.querySelector(".spots-price-usd")?.textContent).toBe("USD rate unavailable");
   });
   it("renders both shuttle windows in local time and editable driver and meeting notes", async () => {
     findUniqueOrThrow.mockResolvedValue({ shuttles: [
@@ -169,7 +169,7 @@ describe("database-backed read-only detail pages", () => {
     }));
     findUniqueOrThrow.mockResolvedValue({ chefBreakfastCount: 6, chefDinnerCount: 5, scheduleDays: days, guests: [{ id: "kaise", displayName: "Kaise", dietaryNotes: "No peanuts" }, { id: "amelia", displayName: "Amelia Drake", dietaryNotes: null }] });
     const page = renderPage(Chef, await chefLoader());
-    for (const text of ["6 breakfasts and 5 dinners", "Dinner, Sat 30", "Wed 3 Feb", "Fri 5 Feb", "No peanuts", "Add allergies or dietary needs", "Add allergies or dietary needs in the table below before the trip."]) expect(page.textContent).toContain(text);
+    for (const text of ["6 breakfasts and 5 dinners", "Dinner, Sat 30", "Wed 3 Feb", "Fri 5 Feb", "No peanuts", "Add allergies or dietary needs", "Add any allergies or dietary needs below before the trip."]) expect(page.textContent).toContain(text);
     const rows = page.querySelectorAll('table[aria-label="Chef meal schedule"] tbody tr');
     expect(rows).toHaveLength(8);
     // A dinner the chef is not cooking is a dash, whatever the reason.

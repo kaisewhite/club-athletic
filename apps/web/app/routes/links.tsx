@@ -19,7 +19,7 @@ export async function loader() {
 export default function Links({ loaderData }: Route.ComponentProps) {
   const groups = [...new Set(loaderData.links.map((link) => link.group))];
   return <section aria-labelledby="links-heading">
-    <PageHeading id="links-heading" sub="Everything you might need to open, and what each one is for.">Links</PageHeading>
+    <PageHeading id="links-heading" sub="Links you may need, grouped by purpose.">Links</PageHeading>
     {groups.map((group) => <section key={group} className="link-section" aria-labelledby={`links-${group}`}>
       <h3 id={`links-${group}`} className="detail-kicker">{group}</h3>
       <div className="link-list">

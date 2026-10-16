@@ -26,14 +26,14 @@ function InteractiveDietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }
       setStatus("failed");
     }
   };
-  const label = status === "copied" ? "Dietary requirements copied" : status === "failed" ? "Could not copy dietary requirements" : "Copy dietary requirements";
+  const label = status === "copied" ? "Dietary needs copied" : status === "failed" ? "Could not copy dietary needs" : "Copy dietary needs";
   return <>
     <button type="button" className="dietary-copy-button" aria-label={label} title={label} onClick={() => void copy()}>
       {status === "copied" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="m5 12 4 4L19 6" /></svg>
         : status === "failed" ? <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 8v5m0 3h.01M10.3 3.9 2.7 17a2 2 0 0 0 1.7 3h15.2a2 2 0 0 0 1.7-3l-7.6-13.1a2 2 0 0 0-3.4 0Z" /></svg>
           : <svg viewBox="0 0 24 24" aria-hidden="true"><rect x="8" y="8" width="12" height="13" rx="2" /><path d="M16 8V5a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v11a2 2 0 0 0 2 2h2" /></svg>}
     </button>
-    <span className="sr-only" role="status" aria-live="polite">{status === "copied" ? "Dietary requirements copied to clipboard." : status === "failed" ? "Could not copy dietary requirements." : ""}</span>
+    <span className="sr-only" role="status" aria-live="polite">{status === "copied" ? "Dietary needs copied to clipboard." : status === "failed" ? "Could not copy dietary needs." : ""}</span>
   </>;
 }
 
@@ -76,7 +76,7 @@ function InteractiveDietaryGuestAdd() {
   return <div className="dietary-add-form">
     <div className="dietary-add-heading">
       <strong>Add yourself to the guest list</strong>
-      <span>Share your dietary requirements with the chef.</span>
+      <span>Share your dietary needs with the chef.</span>
     </div>
     <fetcher.Form method="post" action="/api/guests" onSubmit={() => { submitted.current = true; setError(null); }}>
       <div className="dietary-add-fields">

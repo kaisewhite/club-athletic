@@ -12,7 +12,7 @@ export default function Schedule({ loaderData }: Route.ComponentProps) {
   return (
     <section aria-labelledby="schedule-heading">
       <h2 id="schedule-heading">The week<span className="text-accent">.</span></h2>
-      <p className="page-sub">Events and chef meals. Open days are up for grabs.</p>
+      <p className="page-sub">Events and chef meals. Open days are yours to plan.</p>
       <div className="schedule-list">
         {loaderData.schedule.map((day) => <div className="schedule-row" key={day.id}>
           <div><div className="day-label">{day.dow}</div><div className="schedule-day-number">{day.dayNumber}</div></div>

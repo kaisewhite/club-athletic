@@ -157,7 +157,7 @@ describe("ported chat presentation and guest composer", () => {
     expect(api.detail).toHaveBeenCalledOnce();
     expect((api.detail.mock.calls[0]?.[1] as AbortSignal).aborted).toBe(false);
     await act(async () => rejectFirst(new Error("offline")));
-    await expect.poll(() => container.textContent).toContain("couldn’t be loaded");
+    await expect.poll(() => container.textContent).toContain("couldn’t load the conversation");
     const reload = [...container.querySelectorAll<HTMLButtonElement>("button")].find(button => button.textContent === "Reload conversation")!;
     await act(async () => reload.click());
     expect(api.detail).toHaveBeenCalledTimes(2);

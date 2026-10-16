@@ -36,14 +36,14 @@ describe("attachment through the existing panel send controller", () => {
     const fetcher = uploadResponses(); api.send.mockResolvedValue({ ok: true, seq: 0, conversationId: "conversation" });
     await mount(); await send();
     expect(fetcher).toHaveBeenCalledTimes(2);
-    expect(api.send).toHaveBeenCalledWith("conversation", "Please read this attachment.", expect.any(String), expect.objectContaining({ uploadId: "upload", signal: expect.any(AbortSignal) }));
+    expect(api.send).toHaveBeenCalledWith("conversation", "Read this attachment.", expect.any(String), expect.objectContaining({ uploadId: "upload", signal: expect.any(AbortSignal) }));
     expect(container.querySelector('[aria-label="Remove attachment"]')).toBeNull(); expect(api.subscribe).toHaveBeenCalled();
   });
   it("keeps the attachment on failure and retries the failed transcript message", async () => {
     const fetcher = uploadResponses(); api.send.mockResolvedValueOnce({ ok: false, error: "unavailable" }).mockResolvedValueOnce({ ok: true, seq: 0, conversationId: "conversation" });
     await mount(); await send();
     expect(container.querySelector('[aria-label="Remove attachment"]')).not.toBeNull(); expect(container.querySelector("textarea")?.value).toBe("");
-    expect(container.textContent).toContain("Please read this attachment.");
+    expect(container.textContent).toContain("Read this attachment.");
     await act(async () => [...container.querySelectorAll<HTMLButtonElement>(".chat-assistant-notice button")].find(button => button.textContent === "Retry")!.click());
     expect(fetcher).toHaveBeenCalledTimes(2); expect(api.send.mock.calls[1]![2]).not.toBe(api.send.mock.calls[0]![2]);
   });

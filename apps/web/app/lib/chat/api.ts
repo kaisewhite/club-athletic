@@ -6,9 +6,9 @@ import type {
   SessionEventRow, StreamDelta,
 } from "../../../src/lib/chat/contracts";
 
-export const CHAT_UNAVAILABLE_MESSAGE = "The trip assistant is temporarily unavailable. Please try again later.";
-const connectionErrorMessage = "We couldn't connect to the trip assistant. Check your connection and try again.";
-const sendErrorMessage = "Your message couldn't be sent. Please try again.";
+export const CHAT_UNAVAILABLE_MESSAGE = "The trip assistant is unavailable right now. Try again later.";
+const connectionErrorMessage = "We couldn't connect to the trip assistant. Check your connection, then try again.";
+const sendErrorMessage = "Your message couldn't be sent. Try again.";
 
 export class ApiError extends Error {
   constructor(message: string, readonly status: number) { super(message); this.name = "ApiError"; }
@@ -24,14 +24,14 @@ async function apiFetch(input: string, init?: RequestInit): Promise<Response> {
 
 function publicError(status: number, fallback: string): string {
   if (status >= 500) return CHAT_UNAVAILABLE_MESSAGE;
-  if (status === 429) return "Please wait before sending another message.";
+  if (status === 429) return "Wait a moment before sending another message.";
   return fallback;
 }
 
 async function readJson<T>(response: Response): Promise<T> {
   // Matching Task 1 contracts and Task 2 routes own the response shapes.
   try { return await response.json() as T; }
-  catch { throw new ApiError("The trip assistant returned an incomplete response. Please try again.", response.status); }
+  catch { throw new ApiError("The trip assistant returned an incomplete response. Try again.", response.status); }
 }
 
 export async function fetchConversationDetails(conversationId: string, signal?: AbortSignal): Promise<ConversationDetails> {
@@ -39,7 +39,7 @@ export async function fetchConversationDetails(conversationId: string, signal?: 
     headers: { Accept: "application/json" }, signal,
   });
   if (response.status === 404) throw new ApiError("Conversation not found.", 404);
-  if (!response.ok) throw new ApiError(publicError(response.status, "Couldn't load this conversation. Please try again."), response.status);
+  if (!response.ok) throw new ApiError(publicError(response.status, "Couldn't load this conversation. Try again."), response.status);
   return readJson<ConversationDetails>(response);
 }
 
@@ -48,7 +48,7 @@ export async function fetchConversationStatus(conversationId: string, signal?: A
     headers: { Accept: "application/json" }, signal,
   });
   if (response.status === 404) throw new ApiError("Conversation not found.", 404);
-  if (!response.ok) throw new ApiError(publicError(response.status, "Couldn't reconnect to the trip assistant."), response.status);
+  if (!response.ok) throw new ApiError(publicError(response.status, "Couldn't reconnect to the trip assistant. Try again."), response.status);
   return readJson<ConversationStatusSnapshot>(response);
 }
 
@@ -198,5 +198,5 @@ export async function sendConversationChatMessage(
 export async function cancelConversation(conversationId: string, signal?: AbortSignal): Promise<void> {
   const response = await apiFetch(`/api/chat/conversations/${encodeURIComponent(conversationId)}/cancel`, { method: "POST", signal });
   // A completed-turn race is a benign no-op in edge.
-  if (!response.ok && response.status !== 409) throw new ApiError(publicError(response.status, "Couldn't stop this answer. Please try again."), response.status);
+  if (!response.ok && response.status !== 409) throw new ApiError(publicError(response.status, "Couldn't stop this answer. Try again."), response.status);
 }

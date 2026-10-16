@@ -12,7 +12,7 @@ export async function loader() {
 
 export default function Flights({ loaderData: { flights, recommendations, rules, hotelLinks } }: Route.ComponentProps) {
   return <section aria-labelledby="flights-heading">
-    <PageHeading id="flights-heading" sub="Everything is timed around the group shuttle at Geneva (GVA).">Flights</PageHeading>
+    <PageHeading id="flights-heading" sub="Times are based on the group shuttle from Geneva (GVA).">Flights</PageHeading>
     <FlightBookingRules rules={rules} />
     <FlightRecommendationsSection sections={recommendations} hotelLinks={hotelLinks} />
     <GroupFlightTable flights={flights} />

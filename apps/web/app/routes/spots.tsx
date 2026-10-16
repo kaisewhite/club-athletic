@@ -31,21 +31,21 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
 
   return <section aria-label="Pricing">
     <div className="spots-hero">
-      <div className="spots-heading">Spots still open <span className="spots-count">{data.openCount}</span></div>
+      <div className="spots-heading">Open spots <span className="spots-count">{data.openCount}</span></div>
       <dl className="spots-currencies">
         <div className="spots-currency"><dt>{data.pricing.currency} · {data.pricing.description}</dt><dd className="spots-price">{data.pricing.rangeLabel}</dd></div>
-        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>USD estimate · {data.pricing.description}</dt>
-          <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">Temporarily unavailable</span>}</dd>
+        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>Estimated USD price · {data.pricing.description}</dt>
+          <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">USD rate unavailable</span>}</dd>
         </div>}
       </dl>
     </div>
     <div className="detail-grid">
-      <div className="detail-card"><h3 className="detail-kicker">Included</h3><DetailList items={data.pricing.includes} />
+      <div className="detail-card"><h3 className="detail-kicker">Included in the price</h3><DetailList items={data.pricing.includes} />
         <p className="detail-note" style={{ marginTop: 12 }}>Not included: {data.pricing.excludes.join(", ")}.</p>
         {data.pricing.breakdown && <>
-          <h4 className="detail-kicker price-breakdown-heading">How the all-in price is built</h4>
-          <dl className="price-breakdown" aria-label="How the all-in price is built">
-            <div className="price-breakdown-row"><dt>Room rate</dt><dd className="price-breakdown-muted">varies by room</dd></div>
+          <h4 className="detail-kicker price-breakdown-heading">Price breakdown</h4>
+          <dl className="price-breakdown" aria-label="Price breakdown">
+            <div className="price-breakdown-row"><dt>Room rate</dt><dd className="price-breakdown-muted">Depends on the room</dd></div>
             <div className="price-breakdown-row"><dt>Taxes</dt><dd>{breakdownPrice(data.pricing.breakdown.taxes)}</dd></div>
             <div className="price-breakdown-row"><dt>Shuttle</dt><dd>{breakdownPrice(data.pricing.breakdown.shuttle)}</dd></div>
             <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{breakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
@@ -53,11 +53,11 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
           </dl>
         </>}
       </div>
-      <div className="detail-card"><h3 className="detail-kicker" style={{ marginBottom: 6 }}>Where the spots are</h3>
+      <div className="detail-card"><h3 className="detail-kicker" style={{ marginBottom: 6 }}>Open rooms</h3>
         {data.openRooms.map((room) => <div className="open-room" key={room.id}>
           <div className="open-room-text">
             <span className="open-room-name">{room.shortName} <span className="open-room-floor">· {room.floorName}</span></span>
-            {room.pricePerPerson === null ? <span className="open-room-price">price varies by room</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
+            {room.pricePerPerson === null ? <span className="open-room-price">Price depends on the room</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
             {room.description && <span className="open-room-note">{room.description}</span>}
           </div>
           <span className="open-room-count">{room.openCount}</span>

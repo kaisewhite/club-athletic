@@ -1,7 +1,7 @@
 const questions = [
   {
     question: "Will I be sharing a room?",
-    answer: "The remaining rooms are shared bunk rooms. Most chalet accommodation on this trip involves some shared room or bathroom space. You’d share your room with up to 3 other people, not 6.",
+    answer: "The remaining rooms are shared bunk rooms. Some rooms and bathrooms are shared on this trip. Your room would have up to 3 other people, not 6.",
   },
   {
     question: "What about bathrooms?",
@@ -9,7 +9,7 @@ const questions = [
   },
   {
     question: "Where can I keep my things?",
-    answer: "There’s plenty of storage throughout the chalet and a separate luggage area. Skis and boots can go in the on-site ski shop or storage area instead of your bedroom. The fitness room is directly down the hall and mostly empty, so it can also hold extra luggage or clothing, or give you space to get ready.",
+    answer: "The chalet has plenty of storage and a separate luggage area. Skis and boots can go in the on-site ski shop or storage area instead of your bedroom. The fitness room is down the hall and mostly empty, so you can also use it for extra luggage, clothes, or getting ready.",
   },
   {
     question: "How much time will I actually spend in my room?",
@@ -17,7 +17,7 @@ const questions = [
   },
 ] as const;
 
-const closingNote = "If the shared setup isn’t the right fit, no one is locked in. Explore other chalet options, and reach out if you find something better.";
+const closingNote = "If sharing a room is not right for you, you are not locked in. Check other chalet options if you find a better fit.";
 
 export function RoomSharingFaq() {
   return <section className="mt-8" aria-labelledby="room-sharing-faq-heading">

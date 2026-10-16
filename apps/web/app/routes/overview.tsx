@@ -28,7 +28,7 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
           <div className="week-heading">
             <span className="section-label">This week</span>
             <div className="schedule-ticker-actions">
-              <Link to="/schedule">Full schedule →</Link>
+              <Link to="/schedule">See full schedule →</Link>
             </div>
           </div>
           <ol className="sr-only">
@@ -52,9 +52,9 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
           </div>
         </section>
         <div className="home-welcome">
-          <h1 id="overview-heading">How can I help with the trip?</h1>
-          <p>Ask about the schedule, rooms, travel, or anything else you need.</p>
-          <Link to="/faq">Browse frequently asked questions <span aria-hidden="true">→</span></Link>
+          <h1 id="overview-heading">How can I help?</h1>
+          <p>Ask about the schedule, rooms, flights, or anything else.</p>
+          <Link to="/faq">See common questions <span aria-hidden="true">→</span></Link>
         </div>
       </div>
       </ChatPanel></ChatErrorBoundary>

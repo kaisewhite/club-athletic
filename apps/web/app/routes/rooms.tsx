@@ -23,7 +23,7 @@ export async function loader() {
 
 export default function Rooms({ loaderData: data }: Route.ComponentProps) {
   return <section aria-labelledby="rooms-heading">
-    <PageHeading id="rooms-heading" sub={<>{data.guestCount} confirmed · {data.openCount} spots open{data.capacity !== null && <> · sleeps up to {data.capacity}</>}.</>}>Rooms</PageHeading>
+    <PageHeading id="rooms-heading" sub={<>{data.guestCount} confirmed guests · {data.openCount} open spots{data.capacity !== null && <> · sleeps up to {data.capacity}</>}.</>}>Rooms</PageHeading>
     <div className="room-floors">{data.floors.map((floor) => <section key={floor.id} aria-labelledby={`floor-${floor.id}`}>
       <div className="floor-heading"><h3 id={`floor-${floor.id}`}>{floor.name}</h3><span>{floor.code}</span></div>
       <div className="room-grid">{floor.rooms.map((room) => <article key={room.id} className={`room-card${room.openCount > 0 ? " has-open-spots" : ""}`}>
@@ -35,7 +35,7 @@ export default function Rooms({ loaderData: data }: Route.ComponentProps) {
             : spot.status === "AVAILABLE" ? <span className="spot-available">Available</span>
             : <span className="spot-assigned">{spot.guest ? (() => {
               return <GuestInstagramLink displayName={spot.guest.displayName} instagramUrl={spot.guest.instagramUrl} />;
-            })() : "Assignment unavailable"}</span>}
+            })() : "Guest not listed"}</span>}
         </div>)}</div>
       </article>)}</div>
     </section>)}</div>

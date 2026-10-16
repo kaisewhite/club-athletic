@@ -87,6 +87,8 @@ describe("bounded trip registry", () => {
       "findGuestByName",
       "readTripAttachment",
       "recordFlight",
+      "authorizeOperator",
+      "updateTripRecord",
     ]);
     expect(tripToolDefinitions.every((t) => t.type === "custom")).toBe(true);
     expect(JSON.stringify(tripToolDefinitions)).not.toMatch(

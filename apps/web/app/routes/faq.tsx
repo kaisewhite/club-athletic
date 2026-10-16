@@ -11,7 +11,7 @@ export async function loader() {
 
 export default function FAQ({ loaderData: data }: Route.ComponentProps) {
   return <section aria-labelledby="faq-heading">
-    <PageHeading id="faq-heading" sub="Quick answers to the questions we hear most.">Frequently asked</PageHeading>
+    <PageHeading id="faq-heading" sub="Quick answers to common questions.">FAQ</PageHeading>
     <div className="overview-tiles faq-tiles">
       {data.tiles.map((tile) => <Link className="overview-tile" to={tile.to} key={tile.kicker} aria-label={tile.question}>
         <div className="tile-question">{tile.question}</div>

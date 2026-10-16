@@ -38,7 +38,7 @@ describe("read-only trip loaders", () => {
     // FAQ copy is static, the answers are not: every value above is this mock's.
     expect(faq.tiles.map((tile) => tile.question)).toEqual([
       "When is the trip?", "Where are we staying?", "What time does the bus leave Geneva?",
-      "What time do I need to land?", "How many beds are still open?", "How much is a bunk?",
+      "What time do I need to land?", "How many beds are open?", "How much is a bunk?",
       "How many meals does the chef cook?", "What time is the bus back to the airport?", "How many people are coming?",
     ]);
     expect(faq.tiles[0]?.sub).toMatch(/^\d+ days until the trip$/);

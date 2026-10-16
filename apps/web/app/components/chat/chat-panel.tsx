@@ -20,7 +20,7 @@ const RECOVERY_POLL_MS = 2_000;
 const STREAM_SETTLE_PAUSE_MS = 500;
 const TRANSPORT_ERROR = "The connection was interrupted. Reconnecting…";
 const CONVERSATION_GONE = "This conversation is no longer available. Start a new question.";
-const STOP_FAILED = "Couldn't stop this answer. Please try again.";
+const STOP_FAILED = "Couldn't stop this answer. Try again.";
 const NEW_CHAT: ConversationChatCapability = { canSend: true, reason: null, runtimeStatus: null, pendingWakeupAt: null, activeTurn: false, waitingOnApproval: false };
 export const CHAT_SUGGESTIONS = ["What time do I need to land?", "How much are the open spots?", "Which nights is there no chef dinner?", "What are we doing Monday?", "Where am I sleeping?"];
 
@@ -110,7 +110,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
     void fetchConversationDetails(selectedId, abort.signal).then(detail => {
       if (!cancelled) { setConversation(detail); setError(null); setSelectionLoadFailed(false); }
     }).catch(() => {
-      if (!cancelled) { setError("The conversation couldn’t be loaded. Please try again."); setSelectionLoadFailed(true); }
+      if (!cancelled) { setError("We couldn’t load the conversation. Try again."); setSelectionLoadFailed(true); }
     });
     return () => { cancelled = true; abort.abort(); };
   }, [selectedId, conversation?.id, selectionLoadAttempt]);
@@ -290,7 +290,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
   }
 
   async function handleSend(override?: string, allowDuringTurn = false, retainedUploadId?: string) {
-    const text = override ?? (chatUi.draft.trim() ? chatUi.draft : attachment.file ? "Please read this attachment." : chatUi.draft);
+    const text = override ?? (chatUi.draft.trim() ? chatUi.draft : attachment.file ? "Read this attachment." : chatUi.draft);
     // A second POST must wait for the first acknowledgement. Once acknowledged,
     // suggestion clicks can use the server's queue while the agent is answering.
     if (sendPending.current || chatUi.phase === "sending" || (!allowDuringTurn && busy) || !capability.canSend || !text.trim()) return;
@@ -311,7 +311,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
     ackTimer.current = setTimeout(() => {
       if (!lifetime.current || sendAttempt.current !== attempt) return;
       sendAttempt.current += 1; sendPending.current = false; ackTimer.current = null; controller.abort();
-      dispatchChat({ type: "send_failed", message: "The message wasn’t acknowledged. Please try again." });
+      dispatchChat({ type: "send_failed", message: "The message wasn’t acknowledged. Try again." });
       setPending(current => current && current.key === key ? { ...current, failed: true } : current);
     }, attachment.file ? 120_000 : CHAT_SEND_ACK_TIMEOUT_MS);
     try {
@@ -321,7 +321,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
         const result = await sendConversationChatMessage(targetId, text, key, { signal: controller.signal, ...(uploaded ? { uploadId: uploaded.uploadId } : retainedUploadId ? { uploadId: retainedUploadId } : {}) });
         if (!lifetime.current || sendAttempt.current !== attempt) return;
         if (!result.ok) throw new ApiError(result.error, result.status ?? 500);
-        if ((result.conversationId && result.conversationId !== targetId) || (result.requestId && result.requestId !== key)) throw new ApiError("The trip assistant returned an incomplete response. Please try again.", 500);
+        if ((result.conversationId && result.conversationId !== targetId) || (result.requestId && result.requestId !== key)) throw new ApiError("The trip assistant returned an incomplete response. Try again.", 500);
         if (!conversationId) {
           onConversationIdChange?.(targetId);
           setConversation({ id: targetId, tripId: "", createdAt: "", finishedAt: null, error: null, status: "running", events: [], eventsTruncated: false, eventsCursor: null, lastEventSeq: -1, agentSessionId: null, pendingWakeupAt: null, chat: { ...NEW_CHAT, activeTurn: true, runtimeStatus: "starting" } });

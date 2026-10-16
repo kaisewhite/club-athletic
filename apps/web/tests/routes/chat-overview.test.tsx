@@ -82,7 +82,7 @@ it("sidebar New question detaches from any section and next ask creates a fresh 
   await act(async () => container.querySelector<HTMLButtonElement>(".new-chat")!.click());
   expect(router!.state.location.pathname).toBe("/");
   expect(container.querySelectorAll(".overview-tile")).toHaveLength(0); expect(container.textContent).not.toContain("Stored question");
-  expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("Browse frequently asked questions");
+  expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("See common questions");
   mocks.start.mockRejectedValue(new Error("unavailable"));
   await act(async () => container.querySelector<HTMLButtonElement>(".suggestions button")!.click());
   expect(mocks.start).toHaveBeenCalledTimes(1); expect(conversation.events).toHaveLength(2);
@@ -109,10 +109,10 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
   const headings = [...container.querySelectorAll("h1")];
   expect(headings).toHaveLength(1);
   expect(headings[0]!.id).toBe("overview-heading");
-  expect(headings[0]!.textContent).toBe("How can I help with the trip?");
+  expect(headings[0]!.textContent).toBe("How can I help?");
   expect(container.querySelector('.home-welcome a[href="/faq"]')).not.toBeNull();
 });
 
 it("starts a fresh chat view on a document load", async () => {
-  await mount(); expect(container.textContent).toContain("How can I help with the trip?");
+  await mount(); expect(container.textContent).toContain("How can I help?");
 });

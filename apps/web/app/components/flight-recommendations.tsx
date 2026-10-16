@@ -9,7 +9,7 @@ import type { FlightRecommendations, Links } from "@/lib/db/repository.server";
 export function FlightRecommendationsSection({ sections, hotelLinks = [] }: { sections: FlightRecommendations; hotelLinks?: Links }) {
   if (sections.length === 0) return null;
   return <section className="flight-recs" aria-labelledby="flight-recs-heading">
-    <h3 id="flight-recs-heading" className="detail-kicker">Recommended flights · New York</h3>
+    <h3 id="flight-recs-heading" className="detail-kicker">Suggested flights from New York</h3>
     {sections.map((section) => <article key={section.id} className="flight-rec">
       <h4 className="flight-rec-title">{section.title}</h4>
       {section.intro && <p className="flight-rec-copy">{section.intro}</p>}
@@ -31,7 +31,7 @@ export function FlightRecommendationsSection({ sections, hotelLinks = [] }: { se
     </article>)}
     {hotelLinks.length > 0 && <section className="flight-hotels" aria-labelledby="flight-hotels-heading">
       <h4 id="flight-hotels-heading" className="flight-rec-title">If you arrive Friday</h4>
-      <p className="flight-rec-copy">Staying near GVA is completely optional, but these airport hotels have shuttles back to the terminal for Saturday’s Méribel transfer.</p>
+      <p className="flight-rec-copy">Staying near GVA is optional. These airport hotels run shuttles back to the terminal for Saturday’s Méribel transfer.</p>
       <div className="link-list">
         {hotelLinks.map((link) => <a className="link-row" key={link.id} href={link.href} target="_blank" rel="noopener noreferrer">
           <span><span className="link-name">{link.label}</span>{link.note && <span className="link-group">{link.note}</span>}</span>

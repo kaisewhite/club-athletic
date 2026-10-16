@@ -57,7 +57,7 @@ export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
         <p className="page-sub">
           {status === 404
             ? "That link is not part of the trip page."
-            : "Please try again in a moment."}
+            : "Try again in a moment."}
         </p>
         <p style={{ marginTop: 20 }}><a className="text-accent" href="/">Back to the trip overview</a></p>
       </div>
