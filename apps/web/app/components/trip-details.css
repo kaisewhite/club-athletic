@@ -9,6 +9,7 @@
 .price-breakdown-row dt { color: var(--text-dim); }
 .price-breakdown-row dd { margin: 0; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
 .price-breakdown-row .price-breakdown-muted { color: var(--text-dim); }
+.price-breakdown-usd { color: var(--text-dim); font-size: 12px; font-weight: 400; }
 /* Flight recommendations: the Notion guide's shape — a short line, a table, a
    short line. Verdicts are colour-coded once, in the shuttle column, and nowhere
    else, so the tables stay quiet. */

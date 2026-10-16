@@ -19,6 +19,10 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     style: "currency", currency: data.pricing.currency,
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2,
   }).format(amount);
+  const formatBreakdownUsd = data.usdRate ? new Intl.NumberFormat("en-US", {
+    style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2,
+  }) : null;
+  const breakdownPrice = (amount: number) => <>{formatBreakdownPrice(amount)}{formatBreakdownUsd && <span className="price-breakdown-usd"> / {formatBreakdownUsd.format(amount * data.usdRate!.rate)}</span>}</>;
   const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
   const usdRange = data.usdRate && `${usd.format(data.pricing.minPerPerson * data.usdRate.rate)}–${usd.format(data.pricing.maxPerPerson * data.usdRate.rate)}`;
   const rateDate = data.usdRate && new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
@@ -41,10 +45,10 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
           <h4 className="detail-kicker price-breakdown-heading">How the all-in price is built</h4>
           <dl className="price-breakdown" aria-label="How the all-in price is built">
             <div className="price-breakdown-row"><dt>Room rate</dt><dd className="price-breakdown-muted">varies by room</dd></div>
-            <div className="price-breakdown-row"><dt>Taxes</dt><dd>{formatBreakdownPrice(data.pricing.breakdown.taxes)}</dd></div>
-            <div className="price-breakdown-row"><dt>Shuttle</dt><dd>{formatBreakdownPrice(data.pricing.breakdown.shuttle)}</dd></div>
-            <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{formatBreakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
-            <div className="price-breakdown-row"><dt>Chef</dt><dd>{formatBreakdownPrice(data.pricing.breakdown.chef)}</dd></div>
+            <div className="price-breakdown-row"><dt>Taxes</dt><dd>{breakdownPrice(data.pricing.breakdown.taxes)}</dd></div>
+            <div className="price-breakdown-row"><dt>Shuttle</dt><dd>{breakdownPrice(data.pricing.breakdown.shuttle)}</dd></div>
+            <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{breakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
+            <div className="price-breakdown-row"><dt>Chef</dt><dd>{breakdownPrice(data.pricing.breakdown.chef)}</dd></div>
           </dl>
         </>}
       </div>

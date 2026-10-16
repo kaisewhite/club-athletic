@@ -128,7 +128,7 @@ describe("database-backed read-only detail pages", () => {
     const breakdown = page.querySelector(".price-breakdown");
     expect(breakdown?.getAttribute("aria-label")).toBe("How the all-in price is built");
     expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
-    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["varies by room", "€33.60", "€178", "€100", "€408"]);
+    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["varies by room", "€33.60 / $40.32", "€178 / $213.60", "€100 / $120.00", "€408 / $489.60"]);
   });
   it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
     getEurUsdRate.mockResolvedValue(null);
