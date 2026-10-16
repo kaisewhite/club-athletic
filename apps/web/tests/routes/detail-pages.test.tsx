@@ -123,7 +123,7 @@ describe("database-backed read-only detail pages", () => {
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
     expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent)).toEqual(["4", "2", "4"]);
     expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);
-    expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,810 per person", "€1,690 per person", "€1,860 per person"]);
+    expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,810 / $2,172.00 per person", "€1,690 / $2,028.00 per person", "€1,860 / $2,232.00 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const breakdown = page.querySelector(".price-breakdown");
     expect(breakdown?.getAttribute("aria-label")).toBe("How the all-in price is built");

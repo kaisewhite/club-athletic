@@ -8,8 +8,8 @@ export async function loader() {
   return {
     pricing: data.pricing, openCount: data.openCount,
     usdRate: data.pricing.currency === "EUR" ? await getEurUsdRate() : null,
-    openRooms: data.openRooms.map(({ id, shortName, floorName, openCount, priceLabel, description }) => ({
-      id, shortName, floorName, openCount, priceLabel, description,
+    openRooms: data.openRooms.map(({ id, shortName, floorName, openCount, priceLabel, pricePerPerson, description }) => ({
+      id, shortName, floorName, openCount, priceLabel, pricePerPerson: pricePerPerson === null ? null : Number(pricePerPerson), description,
     })),
   };
 }
@@ -23,6 +23,7 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     style: "currency", currency: "USD", minimumFractionDigits: 2, maximumFractionDigits: 2,
   }) : null;
   const breakdownPrice = (amount: number) => <>{formatBreakdownPrice(amount)}{formatBreakdownUsd && <span className="price-breakdown-usd"> / {formatBreakdownUsd.format(amount * data.usdRate!.rate)}</span>}</>;
+  const roomPrice = (amount: number | null) => amount === null ? null : <>{formatBreakdownPrice(amount)}{formatBreakdownUsd && <span className="price-breakdown-usd"> / {formatBreakdownUsd.format(amount * data.usdRate!.rate)}</span>}</>;
   const usd = new Intl.NumberFormat("en-US", { style: "currency", currency: "USD", maximumFractionDigits: 0 });
   const usdRange = data.usdRate && `${usd.format(data.pricing.minPerPerson * data.usdRate.rate)}–${usd.format(data.pricing.maxPerPerson * data.usdRate.rate)}`;
   const rateDate = data.usdRate && new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
@@ -56,7 +57,7 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
         {data.openRooms.map((room) => <div className="open-room" key={room.id}>
           <div className="open-room-text">
             <span className="open-room-name">{room.shortName} <span className="open-room-floor">· {room.floorName}</span></span>
-            <span className="open-room-price">{room.priceLabel} per person</span>
+            {room.pricePerPerson === null ? <span className="open-room-price">price varies by room</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
             {room.description && <span className="open-room-note">{room.description}</span>}
           </div>
           <span className="open-room-count">{room.openCount}</span>
