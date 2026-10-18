@@ -115,15 +115,16 @@ describe("Flights route", () => {
     expect(page.querySelectorAll("form, input, textarea, select")).toHaveLength(0);
   });
 
-  it("renders the recommendations as the database's tables, verdict column included", () => {
+  it("renders the recommendations without the removed shuttle verdict column", () => {
     const page = staticPage([]);
     const tables = page.querySelectorAll(".flight-rec-table");
     expect(tables).toHaveLength(1); // a section with no flights is prose only
-    expect([...tables[0]!.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual(["Flight", "Route", "Departs", "Arrives", "Group shuttle"]);
+    expect([...tables[0]!.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual(["Flight", "Route", "Departs", "Arrives"]);
     const rows = [...tables[0]!.querySelectorAll("tbody tr")];
     expect(rows.map((row) => row.querySelector("th")?.textContent)).toEqual(["United", "SWISS LX23"]);
-    expect(rows[0]?.querySelector(".flight-rec-verdict")?.textContent).toBe("Yes · Best buffer");
-    expect(rows[1]?.querySelector(".flight-rec-verdict")?.textContent).toBe("No · Lands after the 8:30 AM cutoff — separate transfer");
+    expect(rows[0]?.querySelectorAll("td")).toHaveLength(3);
+    expect(rows[1]?.querySelectorAll("td")).toHaveLength(3);
+    expect(tables[0]?.textContent).not.toContain("Group shuttle");
     for (const text of ["Option 1 — Fly Friday night, arrive Saturday", "Return — Saturday 6 February", "Book 11:00 AM or later.", "Schedules change"]) expect(page.textContent).toContain(text);
   });
   it("keeps all nine guests, grouped headers and missing cells when no flights exist", () => {

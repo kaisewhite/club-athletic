@@ -14,17 +14,12 @@ export function FlightRecommendationsSection({ sections, hotelLinks = [] }: { se
       <h4 className="flight-rec-title">{section.title}</h4>
       {section.intro && <p className="flight-rec-copy">{section.intro}</p>}
       {section.options.length > 0 && <div className="detail-table-wrap"><table className="detail-table flight-rec-table" aria-label={section.title}>
-        <thead><tr><th scope="col">Flight</th><th scope="col">Route</th><th scope="col">Departs</th><th scope="col">Arrives</th><th scope="col">Group shuttle</th></tr></thead>
-        <tbody>{section.options.map((option) => <tr key={option.id} data-fits={option.fitsShuttle ?? undefined}>
+        <thead><tr><th scope="col">Flight</th><th scope="col">Route</th><th scope="col">Departs</th><th scope="col">Arrives</th></tr></thead>
+        <tbody>{section.options.map((option) => <tr key={option.id}>
           <th scope="row">{option.carrier}</th>
           <td className="flight-rec-route" data-label="Route">{option.route}</td>
           <td data-label="Departs">{option.departs}</td>
           <td data-label="Arrives">{option.arrives}</td>
-          <td className="flight-rec-verdict" data-label="Group shuttle">
-            {option.fitsShuttle === true && <span className="flight-rec-yes">Yes</span>}
-            {option.fitsShuttle === false && <span className="flight-rec-no">No</span>}
-            {option.note && <span className="flight-rec-note">{option.fitsShuttle === null ? "" : " · "}{option.note}</span>}
-          </td>
         </tr>)}</tbody>
       </table></div>}
       {section.outro && <p className="flight-rec-copy flight-rec-outro">{section.outro}</p>}

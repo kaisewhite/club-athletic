@@ -20,12 +20,9 @@
 .flight-rec-outro { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
 .flight-rec-table th[scope="row"] { white-space: nowrap; }
 .flight-rec-route { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.flight-rec-verdict { min-width: 200px; }
-.flight-rec-yes { color: var(--brand); font-weight: 700; }
-.flight-rec-no { color: var(--text); font-weight: 700; }
-.flight-rec-note { color: var(--text-dim); }
 .shuttle-outbound { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
-.shuttle-outbound .detail-kicker { color: var(--brand); }
+.shuttle-outbound .detail-kicker { color: var(--brand-dim); }
+.flight-rule-kicker { display: inline-block; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--text); }
 .shuttle-time { font-family: var(--font-display); font-weight: 600; font-size: clamp(48px,7vw,72px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 10px 0 8px; }
 .shuttle-copy { font-size: 14px; margin: 0; color: var(--text-muted); }
 .shuttle-outbound .shuttle-copy { color: inherit; font-weight: 500; }
@@ -42,7 +39,7 @@
 .shuttle-explainer-list { display: grid; gap: 8px; margin: 8px 0 0; padding-left: 18px; color: var(--text-muted); font-size: 14px; line-height: 1.55; }
 .chalet-address { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); text-decoration: none; color: var(--text); background: var(--surface); margin-bottom: 12px; transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .chalet-address:hover { background: var(--hover); }
-.chalet-address svg { color: var(--accent); flex: none; }
+.chalet-address svg { color: var(--brand-dim); flex: none; }
 .chalet-address > span:first-of-type { flex: 1; font-size: 15px; font-weight: 600; }
 /* Chalet facts strip: the same quiet stat tiles the chef page uses. */
 .stat-grid { display: grid; grid-template-columns: repeat(auto-fit,minmax(150px,1fr)); gap: 10px; margin: 0 0 12px; }
@@ -69,8 +66,8 @@
 .guest-instagram-link, .guest-instagram-label { display: inline-flex; align-items: baseline; gap: .35em; color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
 .guest-instagram-link:hover { color: var(--text); text-decoration-color: var(--accent); }
 .guest-instagram-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
-.guest-instagram-arrow { color: var(--accent); flex: none; text-decoration: none; }
-.spot-available { color: var(--brand); font-size: 12px; font-weight: 600; }
+.guest-instagram-arrow { color: var(--brand-dim); flex: none; text-decoration: none; }
+.spot-available { color: var(--brand-dim); font-size: 12px; font-weight: 600; }
 .spot-not-offered { color: var(--text-faint); }
 .chalet-gallery { margin: 24px 0 0; }
 .chalet-gallery figcaption { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; margin-bottom: 10px; }
@@ -94,7 +91,7 @@
 .open-room-floor { color: var(--text-dim); font-weight: 400; }
 .open-room-price { font-size: 12px; color: var(--text-dim); }
 .open-room-note { font-size: 13px; color: var(--text-muted); margin-top: 3px; }
-.open-room-count { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.02em; color: var(--brand); }
+.open-room-count { font-family: var(--font-display); font-weight: 600; font-size: 24px; line-height: 1.2; letter-spacing: -.02em; color: var(--brand-dim); }
 .chef-stats { display: grid; grid-template-columns: repeat(auto-fit,minmax(160px,1fr)); gap: 10px; margin-bottom: 12px; }
 .chef-stat { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 16px; }
 .chef-stat-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
@@ -243,7 +240,6 @@
     letter-spacing: .06em;
     text-transform: uppercase;
   }
-  .flight-rec-table .flight-rec-verdict { grid-column: 1 / -1; min-width: 0; }
   .flight-rec-table .flight-rec-route { grid-column: 1 / -1; white-space: normal; }
 
   /* Dietary notes can be long and editable. Give each guest their own row

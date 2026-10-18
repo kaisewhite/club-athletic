@@ -137,7 +137,7 @@ const styles = `
 .flight-table tbody th { font-weight: 600; }
 .flight-table td { color: var(--text-muted); }
 .flight-sort { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
-.flight-sort:hover { color: var(--accent); }
+.flight-sort:hover { color: var(--brand-dim); }
 .group-flights :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
 .flight-route { font-weight: 600; color: var(--text); }
 .flight-mobile-sorting { display: flex; flex-wrap: wrap; gap: 4px 12px; margin-bottom: 12px; font-size: 12px; color: var(--text-dim); }
@@ -154,7 +154,7 @@ const styles = `
      "Kaise" would otherwise give it. */
   /* min-width too: the shortest real guest name, "Kaise", measures 40px. */
   .flight-guest-card h4 a { display: inline-flex; align-items: center; min-height: 44px; min-width: 44px; }
-  .flight-mobile-sorting button:active, .flight-guest-card a:active { color: var(--accent); }
+  .flight-mobile-sorting button:active, .flight-guest-card a:active { color: var(--brand-dim); }
   .flight-cards, .flight-guest-card { -webkit-tap-highlight-color: transparent; }
 }
 .flight-cards { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }

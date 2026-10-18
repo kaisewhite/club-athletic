@@ -24,21 +24,21 @@ const hours = (minutes: number) => (minutes % 60 === 0 ? `${minutes / 60} h` : `
 export function FlightBookingRules({ rules }: { rules: FlightRules }) {
   return <div className="detail-grid">
     <article className="detail-card">
-      <h3 style={kicker}>Getting there · {tripDate(rules.startDate, "long")}</h3>
+      <h3 className="flight-rule-kicker" style={kicker}>Getting there · {tripDate(rules.startDate, "long")}</h3>
       <div style={time}>{rules.arrivalCutoff}</div>
       <div style={rule}>Your flight needs to land in Geneva by {spoken(rules.arrivalCutoff)}</div>
       <p style={copy}>Aim for {spoken(rules.arrivalTarget)} or earlier for bags and delays.{rules.inbound && <> Shuttle leaves {rules.inbound.pickup} {rules.inbound.from}–{rules.inbound.to}.</>}</p>
       <p style={note}>Land later and you'll likely miss it — plan your own transfer.</p>
     </article>
     <article className="detail-card">
-      <h3 style={kicker}>Going home · {tripDate(rules.endDate, "long")}</h3>
+      <h3 className="flight-rule-kicker" style={kicker}>Going home · {tripDate(rules.endDate, "long")}</h3>
       <div style={time}>{rules.returnCutoff}</div>
       <div style={rule}>Book a flight leaving Geneva at {spoken(rules.returnCutoff)} or later</div>
       <p style={copy}>{rules.outbound && <>Chalet pickup {rules.outbound.from === rules.outbound.to ? rules.outbound.from : `${rules.outbound.from}–${rules.outbound.to}`}, ~{hours(rules.outbound.durationMinutes)} to GVA, then check-in and security.</>}</p>
       <p style={note}>Anything earlier and you won't make it through security in time.</p>
     </article>
     <article className="detail-card">
-      <h3 style={kicker}>Option · Arrive Friday</h3>
+      <h3 className="flight-rule-kicker" style={kicker}>Option · Arrive Friday</h3>
       <div style={{ ...time, fontSize: 30, lineHeight: 1.05, letterSpacing: "-.03em", margin: "10px 0 10px" }}>Overnight near GVA</div>
       <p style={{ ...copy, marginBottom: 12 }}>Fly Thursday evening, land Friday morning, sleep by the airport, meet the shuttle Saturday. Flights in the recommendations below.</p>
       <div style={{ fontSize: 13, display: "flex", flexDirection: "column", gap: 6 }}>
