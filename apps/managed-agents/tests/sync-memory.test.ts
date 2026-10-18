@@ -9,7 +9,7 @@ describe("trip memory sync", () => {
       if (path === "/memory_stores/memstore_fixture") {
         return { id: "memstore_fixture", name: "club-athletic-meribel-2027-facts", archived_at: null };
       }
-      if (path.endsWith("/memories?limit=1000")) {
+      if (path.endsWith("/memories?limit=100")) {
         return { data: [
           { id: "memory_readme", path: "/README.txt", content_sha256: "stale" },
           { id: "memory_extra", path: "/other-writer.txt", content_sha256: "old" },
@@ -26,7 +26,7 @@ describe("trip memory sync", () => {
     expect(calls.map((call) => `${call.method} ${call.path}`)).toEqual([
       "GET /memory_stores/memstore_fixture",
       "POST /memory_stores/memstore_fixture",
-      "GET /memory_stores/memstore_fixture/memories?limit=1000",
+      "GET /memory_stores/memstore_fixture/memories?limit=100",
       "POST /memory_stores/memstore_fixture/memories/memory_readme",
       "POST /memory_stores/memstore_fixture/memories",
     ]);

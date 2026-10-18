@@ -34,9 +34,12 @@ function apiRequest(apiKey: string): Request {
 }
 
 async function listMemories(id: string, request: Request): Promise<MemoryRow[]> {
-  const response = await request(`/memory_stores/${id}/memories?limit=1000`);
+  // The memory API caps this endpoint at 100 items per request. Keep the
+  // reconciliation bounded and fail closed if the store ever grows beyond
+  // the single page we can verify here.
+  const response = await request(`/memory_stores/${id}/memories?limit=100`);
   const rows = response.data;
-  if (!Array.isArray(rows) || rows.length > 1000 || response.has_more === true) {
+  if (!Array.isArray(rows) || rows.length > 100 || response.has_more === true || response.next_cursor) {
     throw new Error("Memory listing was incomplete; refusing to reconcile.");
   }
   return rows.map((row) => {
