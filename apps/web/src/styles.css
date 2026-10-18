@@ -462,6 +462,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .mobile-nav-toggle:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
   .week-heading { align-items: center; }
   .week-heading a,
+  .guest-instagram-link,
+  .schedule-entry-link,
   .suggestions button,
   .chat-jump,
   .chat-sources a,
@@ -471,6 +473,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     align-items: center;
     min-height: 44px;
   }
+  .guest-instagram-link,
+  .schedule-entry-link { align-items: center; }
   .chat-tool-group > button { min-height: 44px; align-items: center; }
   /* Send/Stop share the composer's pill geometry, so both grow together. */
   .send,

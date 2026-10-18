@@ -87,6 +87,8 @@ export const testBuildSpec = (sourcePath: string) => codebuild.BuildSpec.fromObj
 
 interface DeploymentProps {
   readonly region: string;
+  readonly account: string;
+  readonly runtimeSecretName: string;
   readonly imageTag: string;
   readonly cluster: string;
   readonly service: string;
@@ -99,6 +101,8 @@ interface DeploymentProps {
 
 export const serviceDeploymentBuildSpec = ({
   region,
+  account,
+  runtimeSecretName,
   imageTag,
   cluster,
   service,
@@ -126,7 +130,8 @@ export const serviceDeploymentBuildSpec = ({
         "CURRENT_TASK_DEFINITION=$(echo \"$SERVICE_JSON\" | jq -er '.services[0].taskDefinition')",
         `aws ecs describe-task-definition --task-definition "$CURRENT_TASK_DEFINITION" --region ${region} --query taskDefinition --output json > /tmp/club-athletic-current-task.json`,
         `jq -e --arg container ${containerName} 'any(.containerDefinitions[]; .name == $container)' /tmp/club-athletic-current-task.json >/dev/null`,
-        `jq --arg image "$IMAGE_URI" --arg container ${containerName} 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions |= map(if .name == $container then .image = $image else . end)' /tmp/club-athletic-current-task.json > /tmp/club-athletic-next-task.json`,
+        `PASSPHRASE_SECRET_ARN="arn:aws:secretsmanager:${region}:${account}:secret:${runtimeSecretName}:PASSPHRASE::"`,
+        `jq --arg image "$IMAGE_URI" --arg container ${containerName} --arg passphraseSecretArn "$PASSPHRASE_SECRET_ARN" 'del(.taskDefinitionArn,.revision,.status,.requiresAttributes,.compatibilities,.registeredAt,.registeredBy) | .containerDefinitions |= map(if .name == $container then .image = $image | .secrets = ((.secrets // []) + [{name: "PASSPHRASE", valueFrom: $passphraseSecretArn}] | unique_by(.name)) else . end)' /tmp/club-athletic-current-task.json > /tmp/club-athletic-next-task.json`,
         `NEW_TASK_DEFINITION=$(aws ecs register-task-definition --cli-input-json file:///tmp/club-athletic-next-task.json --region ${region} --query 'taskDefinition.taskDefinitionArn' --output text)`,
         `aws ecs update-service --cluster ${cluster} --service ${service} --task-definition "$NEW_TASK_DEFINITION" --region ${region}`,
         `aws ecs wait services-stable --cluster ${cluster} --services ${service} --region ${region}`,

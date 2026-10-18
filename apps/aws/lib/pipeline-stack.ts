@@ -159,6 +159,8 @@ export class PipelineStack extends cdk.Stack {
       description: `Deploy ${resourceName} to management ECS`,
       buildSpec: serviceDeploymentBuildSpec({
         region: project.region,
+        account: this.account,
+        runtimeSecretName: resourceName,
         imageTag: service.imageTag,
         cluster: project.clusterName,
         service: service.name,

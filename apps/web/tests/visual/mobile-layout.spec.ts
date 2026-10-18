@@ -41,12 +41,12 @@ const PAGES = [
  * organizer assigns an open spot (Pete F. took a Bedroom 5 bunk on 2026-09-28,
  * Christine Calvo a Bedroom 4 bunk on 2026-09-29), so it is named rather than inlined as a magic 9.
  */
-const CONFIRMED_GUESTS = 12;
+const CONFIRMED_GUESTS = 13;
 
 const LONGEST = {
   guest: "Augustus Shewchuck", // 18 chars
   room: "Bedroom 1", // rooms are the bare bedroom number since 2026-09-29
-  event: "Chill drinks at Le Rond Point des Pistes", // 40 chars
+  event: "Chill ski day", // current seeded schedule title
 } as const;
 
 // `test.skip`'s condition callback is handed fixtures only, not the project,
@@ -175,7 +175,7 @@ for (const [width, height] of VIEWPORTS) {
         expect(shape.head).toBe("table-header-group");
       }
       // Mobile dietary records stack the note below the guest name.
-      const dietary = page.locator('[aria-label="Guest dietary requirements"] tbody tr').first();
+      const dietary = page.locator('[aria-label="Guest dietary needs"] tbody tr').first();
       expect(await dietary.evaluate((el) => getComputedStyle(el).display)).toBe(mobile ? "grid" : "table-row");
     });
 

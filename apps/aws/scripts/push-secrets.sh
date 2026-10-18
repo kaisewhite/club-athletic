@@ -42,6 +42,9 @@ const entries = Object.fromEntries(
 if (Object.keys(entries).length === 0) {
   throw new Error("environment file did not contain any variables");
 }
+if (!entries.PASSPHRASE?.trim()) {
+  throw new Error("environment file must contain a non-empty PASSPHRASE for operator updates");
+}
 fs.writeFileSync(destination, JSON.stringify(entries));
 console.log(`prepared ${Object.keys(entries).length} secret variables`);
 NODE
