@@ -25,7 +25,7 @@ export default function Schedule({ loaderData }: Route.ComponentProps) {
           <ol className="schedule-entries">
             {dayEntries(day).map((entry) => <li key={entry.key} className="schedule-entry">
               <span className="schedule-time">{entry.time ?? "TBD"}</span>
-              <span className="schedule-entry-title">{entry.title}{entry.detail && <span className="schedule-entry-detail">{entry.detail}</span>}{entry.href && <Link className="schedule-entry-link" to={entry.href}>See early-arrival options on Flights →</Link>}</span>
+              <span className="schedule-entry-title"><span className="schedule-entry-name">{entry.title}</span>{entry.detail && <span className="schedule-entry-detail">{entry.detail}</span>}{entry.href && <Link className="schedule-entry-link" to={entry.href}>See early-arrival options on Flights →</Link>}</span>
             </li>)}
           </ol>
           <ScheduleCopyButton dayLabel={`${day.dow} ${day.dayNumber} schedule`} text={[

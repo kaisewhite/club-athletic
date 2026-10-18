@@ -105,7 +105,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
         {!wide && mobileNavOpen && <div className="mobile-nav-layer">
           <button type="button" className="mobile-nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />
           <aside ref={mobileDrawer} id="mobile-trip-navigation" className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Trip navigation">
-            <div className="mobile-drawer-heading"><span>Trip pages</span><button type="button" className="mobile-drawer-close" aria-label="Close menu" onClick={() => setMobileNavOpen(false)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg></button></div>
+            <div className="mobile-drawer-heading"><span>Trip pages</span><button type="button" className="mobile-drawer-close" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg></button></div>
             <Navigation className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
           </aside>
         </div>}

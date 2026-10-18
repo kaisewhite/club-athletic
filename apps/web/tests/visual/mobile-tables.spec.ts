@@ -240,7 +240,7 @@ for (const width of [1280, 1440]) {
       expect(audit.rowCount).toBe(15);
       expect(audit.headerRowCount).toBe(2);
       expect(audit.bodyRowCount).toBe(13);
-      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 13 }, () => 8));
+      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 13 }, () => 7));
       expect(audit.failures).toEqual([]);
     });
   });

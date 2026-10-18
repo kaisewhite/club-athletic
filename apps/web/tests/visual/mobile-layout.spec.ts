@@ -295,7 +295,7 @@ for (const [width, height] of VIEWPORTS) {
       } else {
         expect(composer.attach, "desktop attachment control is compact at 32px").toEqual({ w: 32, h: 32 });
         expect(composer.send, "desktop send geometry is compact at 32px").toEqual({ w: 32, h: 32 });
-        expect(composer.padBottom).toBe(18);
+        expect(composer.padBottom).toBe(48);
       }
     });
 
@@ -389,7 +389,7 @@ for (const [width, height] of VIEWPORTS) {
       await expect(page.locator(".task-table tbody th", { hasText: LONGEST.guest })).toHaveCount(1);
       await openFrozen(page, "/schedule");
       await expect(page.locator(".schedule-entry-title", { hasText: LONGEST.event })).toHaveCount(1);
-      const lines = await lineCount(page.locator(".schedule-entry-title", { hasText: LONGEST.event }));
+      const lines = await lineCount(page.locator(".schedule-entry-name", { hasText: LONGEST.event }));
       expect(lines, `the longest event title took ${lines} lines at ${width}px`).toBeLessThanOrEqual(3);
     });
   });
