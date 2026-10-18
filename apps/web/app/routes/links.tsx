@@ -1,6 +1,6 @@
 import { getGuestInstagramProfiles, getLinks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
-import { GuestInstagramAffordance } from "../components/guest-instagram-link";
+import { GuestInstagramAvatar } from "../components/guest-instagram-preview";
 import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/links";
 
@@ -32,10 +32,13 @@ export default function Links({ loaderData }: Route.ComponentProps) {
     <section className="link-section" aria-labelledby="links-guests">
       <h3 id="links-guests" className="detail-kicker">Guests</h3>
       <div className="link-list">
-        {loaderData.guestProfiles.map(({ displayName, href }) => <a className="link-row" key={displayName} href={href} target="_blank" rel="noopener noreferrer" data-group="Guests" aria-label={`${displayName} on Instagram`}>
-          <span><GuestInstagramAffordance displayName={displayName} className="link-name" /><span className="link-group">Instagram profile</span></span>
-          <span className="text-accent" aria-hidden="true">↗</span>
-        </a>)}
+        {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
+          <a className="link-row" href={href} target="_blank" rel="noopener noreferrer" data-group="Guests" aria-label={`${displayName} on Instagram`}>
+            <GuestInstagramAvatar profileUrl={href} />
+            <span><span className="link-name">{displayName}</span><span className="link-group">Instagram · @{href.split("/").filter(Boolean).pop()}</span></span>
+            <span className="text-accent" aria-hidden="true">↗</span>
+          </a>
+        </div>)}
       </div>
     </section>
   </section>;

@@ -136,15 +136,21 @@ describe("mobile CSS convention (TODO §2.15)", () => {
     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(16);
   });
 
-  it("keeps the mobile home composer in document flow", () => {
+  it("centers the mobile home composer and keeps prompts in the landing group", () => {
     const { mobile } = split(read("src/styles.css"));
-    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*relative/);
-    expect(mobile).toMatch(/\.home-composer\s+\.suggestions\s*\{[^}]*position:\s*static/);
+    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*absolute/);
+    expect(mobile).toMatch(/\.home-composer-content\s*\{[^}]*gap:\s*12px/);
   });
 
-  it("separates mobile home prompts from the composer", () => {
-    const { mobile } = split(read("src/styles.css"));
-    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*gap:\s*var\(--space-5\)/);
+  it("keeps the landing group vertically centered", () => {
+    const css = read("src/styles.css");
+    const { mobile } = split(css);
+    expect(css).toMatch(/\.home-composer\s*\{[^}]*align-items:\s*center/);
+    expect(css).toMatch(/\.home-composer-content\s*\{[^}]*display:\s*flex/);
+    expect(css).toMatch(/\.home-composer \.chat-attachment-area\s*\{[^}]*width:\s*min\(600px/);
+    expect(css).toMatch(/\.home-composer \.composer\s*\{[^}]*width:\s*100%/);
+    expect(css).toMatch(/\.home-composer \.suggestions\s*\{[^}]*width:\s*min\(720px/);
+    expect(mobile).toMatch(/\.home-composer-content\s*\{[^}]*gap:\s*12px/);
   });
 
   it("keeps mobile prompt pills content-sized instead of stretching every column", () => {
@@ -159,7 +165,7 @@ describe("mobile CSS convention (TODO §2.15)", () => {
   it("keeps the mobile prompt hit area tall while making the visible pill thinner", () => {
     const { mobile } = split(read("src/styles.css"));
     expect(mobile).toMatch(/\.suggestions button[^{]*\{[^}]*border:\s*0/);
-    expect(mobile).toMatch(/\.suggestions button::before\s*\{[^}]*inset:\s*4px 0/);
+    expect(mobile).toMatch(/\.suggestions button::before\s*\{[^}]*inset:\s*7px 0/);
   });
 
   it("declares viewport-fit=cover and interactive-widget=resizes-content", () => {

@@ -216,9 +216,14 @@ describe("database-backed read-only detail pages", () => {
     expect(anchors.map((link) => link.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
     for (const link of anchors) { expect(link.target).toBe("_blank"); expect(link.rel).toContain("noopener"); }
     const guestRows = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group="Guests"]')];
-    expect(guestRows).toHaveLength(11);
-    expect(guestRows[0]?.querySelector(".guest-instagram-label")?.textContent).toContain("Kaise");
+    expect(guestRows).toHaveLength(12);
+    expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
-    expect(guestRows.every((link) => link.querySelector(".guest-instagram-arrow"))).toBe(true);
+    expect(guestRows.every((link) => link.querySelector(".text-accent"))).toBe(true);
+    expect(page.querySelectorAll(".guest-link-entry .guest-instagram-arrow")).toHaveLength(0);
+    expect(guestRows.some((link) => link.getAttribute("href") === "https://www.instagram.com/kurdieffect/")).toBe(true);
+    expect(page.querySelectorAll(".guest-instagram-avatar")).toHaveLength(12);
+    expect(page.querySelectorAll(".guest-instagram-preview-profile")).toHaveLength(0);
+    expect(page.querySelectorAll(".guest-instagram-preview-handle")).toHaveLength(0);
   });
 });

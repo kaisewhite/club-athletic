@@ -299,6 +299,23 @@ for (const [width, height] of VIEWPORTS) {
       }
     });
 
+    test("the home landing centers the composer above its quick prompts", async ({ page }) => {
+      await openFrozen(page, "/");
+      const geometry = await page.evaluate(() => {
+        const home = document.querySelector(".overview")!.getBoundingClientRect();
+        const composer = document.querySelector(".home-composer .composer")!.getBoundingClientRect();
+        const prompts = document.querySelector(".home-composer .suggestions")!.getBoundingClientRect();
+        return {
+          homeCenter: home.top + home.height / 2,
+          groupCenter: (composer.top + prompts.bottom) / 2,
+          composerBottom: composer.bottom,
+          promptsTop: prompts.top,
+        };
+      });
+      expect(geometry.promptsTop, "quick prompts should sit below the input").toBeGreaterThanOrEqual(geometry.composerBottom);
+      expect(Math.abs(geometry.groupCenter - geometry.homeCenter), "landing group should remain centered").toBeLessThan(48);
+    });
+
     test("every control §2.15 names is a 44px box below the seam", async ({ page }) => {
       test.skip(!mobile, "44px minimums are a touch requirement, not a pointer one");
       // §2.15: "Minimum 44×44px touch targets for every button: nav chips,

@@ -128,6 +128,7 @@ const GUEST_INSTAGRAMS: Record<string, string> = {
   "Ted Delcima": "https://www.instagram.com/tedscorner_",
   "Christine Calvo": "https://www.instagram.com/christinecalvo_",
   "Christie Navarre": "https://www.instagram.com/xtnavarre",
+  "Tim Kurdi": "https://www.instagram.com/kurdieffect/",
 };
 
 // Payment status is organizer-provided positive seed content. A guest omitted

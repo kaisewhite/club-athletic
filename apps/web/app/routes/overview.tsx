@@ -52,7 +52,6 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
           </div>
         </section>
         <div className="home-welcome">
-          <h1 id="overview-heading">How can I help?</h1>
           <p>Ask about the schedule, rooms, flights, or anything else.</p>
           <Link to="/faq">See common questions <span aria-hidden="true">→</span></Link>
         </div>

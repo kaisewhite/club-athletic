@@ -285,9 +285,12 @@
    bottom-of-page card it was covered by the sticky composer. */
 .maps-label { font-size: 12px; color: var(--text); text-decoration: underline; text-underline-offset: 2px; white-space: nowrap; }
 .composer-shell { position: sticky; bottom: 0; background: linear-gradient(rgb(255 255 255 / 0), var(--bg) 40%); padding: 10px 0 32px; }
-.home-composer { position: absolute; inset: 0; z-index: 2; display: flex; flex-direction: column; justify-content: flex-end; padding: 0 0 48px; background: transparent; pointer-events: none; }
-.home-composer .suggestions { position: absolute; top: 50%; left: 50%; width: min(760px, calc(100% - 40px)); margin: 0; transform: translate(-50%, -50%); pointer-events: auto; }
-.home-composer .composer { width: min(600px, calc(100% - 40px)); margin-inline: auto; pointer-events: auto; }
+.home-composer { position: absolute; inset: 0; z-index: 2; display: flex; align-items: center; justify-content: center; padding: 0 0 48px; background: transparent; pointer-events: none; }
+.home-composer-content { display: flex; flex-direction: column; align-items: center; gap: 14px; width: 100%; pointer-events: none; }
+.home-composer-heading { margin: 0; color: var(--text); font: 400 24px/1.1 var(--font-sans); letter-spacing: 0; text-transform: none; }
+.home-composer .suggestions { width: min(720px, calc(100% - 40px)); margin: 0; pointer-events: auto; }
+.home-composer .chat-attachment-area { width: min(600px, calc(100% - 40px)); }
+.home-composer .composer { width: 100%; margin-inline: auto; pointer-events: auto; }
 .composer { width: min(600px, calc(100% - 40px)); margin-inline: auto; display: flex; align-items: center; gap: 8px; border: 1px solid var(--border); border-radius: 26px; padding: 6px 8px 6px 12px; background: var(--surface); box-shadow: 0 2px 8px rgb(0 0 0 / 24%); }
 .composer:focus-within { border-color: var(--border-strong); }
 .composer textarea { flex: 1; min-width: 0; border: 0; outline: 0; background: none; font: inherit; font-size: 16px; line-height: 20px; color: var(--text); padding: 6px 0; resize: none; user-select: text; -webkit-user-select: text; cursor: text; pointer-events: auto; }
@@ -302,8 +305,8 @@
 .chat-jump-row { display: flex; justify-content: center; padding-bottom: 10px; }
 .chat-jump { border: 1px solid var(--border-strong); background: var(--surface-alt); border-radius: var(--radius-pill); padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); cursor: pointer; transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .chat-jump:hover { background: var(--hover); color: var(--text); }
-.suggestions { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 8px 10px; width: min(760px, 100%); margin: 0 auto 12px; overflow: visible; }
-.suggestions button { grid-column: span 2; min-height: 40px; border: 1px solid var(--border-strong); background: none; border-radius: var(--radius-pill); padding: 6px 12px; font: inherit; font-size: 12.5px; color: var(--text-muted); text-align: center; transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.suggestions { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 6px 10px; width: min(760px, 100%); margin: 0 auto 12px; overflow: visible; }
+.suggestions button { grid-column: span 2; min-height: 34px; border: 1px solid var(--border-strong); background: none; border-radius: var(--radius-pill); padding: 4px 12px; font: inherit; font-size: 12px; line-height: 1.2; color: var(--text-muted); text-align: center; transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .suggestions button:nth-child(4) { grid-column: 2 / span 2; }
 .suggestions button:nth-child(5) { grid-column: 4 / span 2; }
 
@@ -453,7 +456,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .suggestions button,
   .suggestions button:nth-child(4),
   .suggestions button:nth-child(5) { position: relative; grid-column: auto; width: auto; max-width: calc(100% - 16px); flex: 0 0 auto; justify-content: center; padding: 4px 10px; border: 0; background: transparent; font-size: 12px; line-height: 1.35; text-align: center; white-space: nowrap; }
-  .suggestions button::before { content: ""; position: absolute; z-index: 0; inset: 4px 0; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); pointer-events: none; }
+  .suggestions button::before { content: ""; position: absolute; z-index: 0; inset: 7px 0; border: 1px solid var(--border-strong); border-radius: var(--radius-pill); pointer-events: none; }
   .suggestions button > * { position: relative; z-index: 1; }
 
   /* ---- Touch targets, 44×44 minimum (TODO §2.15; Fitts). Links sitting
@@ -492,9 +495,11 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  .home-composer { position: relative; inset: auto; gap: var(--space-5); padding-bottom: max(56px, env(safe-area-inset-bottom, 0px)); }
-  /* Keep the prompt group below the home intro and FAQ link on small screens. */
-  .home-composer .suggestions { position: static; width: 100%; transform: none; }
+  .home-composer { position: absolute; inset: 0; gap: 0; padding: 0 0 max(56px, env(safe-area-inset-bottom, 0px)); }
+  .home-composer-content { gap: 12px; }
+  .home-composer-heading { font-size: 22px; }
+  .home-composer .chat-attachment-area { width: 100%; }
+  .home-composer .suggestions { width: 100%; }
 
   /* ---- Pressed feedback. Hover does nothing on touch, so `:active` is the
      only feedback there is, and the grey tap flash is replaced by it. */
