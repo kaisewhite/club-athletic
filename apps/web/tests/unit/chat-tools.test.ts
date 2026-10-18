@@ -228,6 +228,18 @@ describe("flight rules are a first-class read, not a shuttle lookup", () => {
     expect(JSON.stringify(definition)).not.toMatch(/write|update|insert|delete/i);
   });
 });
+
+it("includes note ids so operator updates can target the exact database row", async () => {
+  const tool = createReadTools({
+    getNotes: async () => [{ id: "note_overview", section: "overview", title: "TRIP", content: "facts" }],
+  }).find((entry) => entry.name === "getNotes")!;
+  expect(JSON.parse(await tool.run({}))).toEqual({
+    ok: true,
+    sourceSection: "Trip notes",
+    data: [{ id: "note_overview", section: "overview", title: "TRIP", content: "facts" }],
+  });
+});
+
 it("preserves database decimal prices as values rather than implementation fields", () => {
   const decimal = { d: [2400], e: 3, s: 1, toJSON: () => "2400" };
   expect(boundTripData({ pricePerPerson: decimal })).toEqual({

@@ -47,7 +47,9 @@ export async function getNotes() {
             notes: {
               take: 50,
               orderBy: { id: "asc" },
-              select: { section: true, title: true, content: true },
+              // Operator updates need the real primary key, not the human
+              // section label (for example, "overview").
+              select: { id: true, section: true, title: true, content: true },
             },
           },
         })
