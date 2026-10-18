@@ -1,14 +1,9 @@
-import { getGuestInstagramProfiles, getLinks } from "@/lib/db/repository.server";
+import { getLinks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
-import { GuestInstagramAvatar } from "../components/guest-instagram-preview";
-import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/links";
 
 export async function loader() {
-  const [links, guestProfiles] = await Promise.all([getLinks(), getGuestInstagramProfiles()]);
-  const profiles = new Map(guestInstagramProfiles.map((profile) => [profile.displayName, profile]));
-  guestProfiles.forEach((profile) => profiles.set(profile.displayName, profile));
-  return { links, guestProfiles: [...profiles.values()] };
+  return { links: await getLinks() };
 }
 
 /**
@@ -29,17 +24,5 @@ export default function Links({ loaderData }: Route.ComponentProps) {
         </a>)}
       </div>
     </section>)}
-    <section className="link-section" aria-labelledby="links-guests">
-      <h3 id="links-guests" className="detail-kicker">Guests</h3>
-      <div className="link-list">
-        {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
-          <a className="link-row" href={href} target="_blank" rel="noopener noreferrer" data-group="Guests" aria-label={`${displayName} on Instagram`}>
-            <GuestInstagramAvatar profileUrl={href} />
-            <span><span className="link-name">{displayName}</span><span className="link-group">Instagram · @{href.split("/").filter(Boolean).pop()}</span></span>
-            <span className="text-accent" aria-hidden="true">↗</span>
-          </a>
-        </div>)}
-      </div>
-    </section>
   </section>;
 }

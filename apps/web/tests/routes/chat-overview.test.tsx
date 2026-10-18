@@ -19,7 +19,7 @@ beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.spyOn(window, "scrollTo").mockImplementation(() => {});
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
-  mocks.trip.mockResolvedValue({ destination: "Méribel, France", resort: "Les 3 Vallées", startDate: new Date("2027-01-30Z"), endDate: new Date("2027-02-06Z"), timezone: "Europe/Paris", currency: "EUR", pricing: { minPerPerson: 1690, maxPerPerson: 1860 }, openCount: 10, guestCount: 9, capacity: 20, chefBreakfastCount: 6, chefDinnerCount: 5, flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00", property: { name: "Falcon", address: "269 Test, France", mapsUrl: "https://maps.google.com", description: "~200 m from slopes" }, shuttles: [] });
+  mocks.trip.mockResolvedValue({ destination: "Méribel, France", resort: "Les 3 Vallées", startDate: new Date("2027-01-30Z"), endDate: new Date("2027-02-06Z"), timezone: "Europe/Paris", currency: "EUR", pricing: { minPerPerson: 1620.55, maxPerPerson: 1790.55 }, openCount: 10, guestCount: 9, capacity: 20, chefBreakfastCount: 6, chefDinnerCount: 5, flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00", property: { name: "Falcon", address: "269 Test, France", mapsUrl: "https://maps.google.com", description: "~200 m from slopes" }, shuttles: [] });
   mocks.schedule.mockResolvedValue([]);
   mocks.detail.mockReset().mockResolvedValue(conversation);
   cleanup = vi.fn(); mocks.subscribe.mockReset().mockReturnValue(Object.assign(cleanup, { finished: Promise.resolve() }));

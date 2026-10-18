@@ -29,6 +29,17 @@
 .shuttle-time { font-family: var(--font-display); font-weight: 600; font-size: clamp(48px,7vw,72px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 10px 0 8px; }
 .shuttle-copy { font-size: 14px; margin: 0; color: var(--text-muted); }
 .shuttle-outbound .shuttle-copy { color: inherit; font-weight: 500; }
+.shuttle-locations { display: grid; gap: 14px; margin-top: 16px; }
+.shuttle-location-group { border-top: 1px solid var(--border-subtle); padding-top: 10px; text-align: left; }
+.shuttle-location-label { color: var(--text-faint); font-size: 11px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; }
+.shuttle-stop-list { display: grid; gap: 7px; list-style: none; margin: 8px 0 0; padding: 0; }
+.shuttle-stop { display: grid; grid-template-columns: minmax(52px, auto) 1fr; gap: 10px; align-items: baseline; font-size: 14px; text-align: left; }
+.shuttle-stop-single { grid-template-columns: 1fr; }
+.shuttle-stop-single .shuttle-stop-index:empty { display: none; }
+.shuttle-stop-index { color: var(--brand); font-size: 12px; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.shuttle-stop-address { color: var(--text-muted); }
+.shuttle-explainer { margin-top: 24px; padding-top: 16px; border-top: 1px solid var(--border); }
+.shuttle-explainer-list { display: grid; gap: 8px; margin: 8px 0 0; padding-left: 18px; color: var(--text-muted); font-size: 14px; line-height: 1.55; }
 .chalet-address { display: flex; align-items: center; gap: 12px; padding: 16px; border: 1px solid var(--border-strong); border-radius: var(--radius-md); text-decoration: none; color: var(--text); background: var(--surface); margin-bottom: 12px; transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .chalet-address:hover { background: var(--hover); }
 .chalet-address svg { color: var(--accent); flex: none; }
@@ -153,6 +164,7 @@
 .guest-instagram-avatar { width: 42px; height: 42px; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-muted); }
 .guest-link-entry .link-row { justify-content: flex-start; gap: 12px; }
 .guest-link-entry .link-row > .text-accent { margin-left: auto; }
+.guest-list .guest-link-entry .link-row { min-height: 66px; }
 
 @media (prefers-reduced-motion: reduce) {
   .chalet-address, .link-row, .dietary-cell-edit, .dietary-copy-button { transition: none; }

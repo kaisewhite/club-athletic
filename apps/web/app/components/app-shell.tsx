@@ -2,9 +2,9 @@ import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 
 const SECTIONS = [
-  ["/", "Home"], ["/faq", "FAQ"], ["/schedule", "Schedule"], ["/flights", "Flights"],
-  ["/shuttle", "Shuttle"], ["/chalet", "Chalet"], ["/rooms", "Rooms"],
-  ["/spots", "Pricing"], ["/chef", "Chef"], ["/tasks", "Tasks"], ["/links", "Links"],
+  ["/", "Home"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
+  ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
+  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/links", "Links"], ["/faq", "FAQ"],
 ] as const;
 
 /* The 860px seam, as the one query the browser itself evaluates. `innerWidth`

@@ -9,6 +9,7 @@ import Spots, { loader as spotsLoader } from "../../app/routes/spots";
 import Chef, { loader as chefLoader } from "../../app/routes/chef";
 import Tasks, { loader as tasksLoader } from "../../app/routes/tasks";
 import Links, { loader as linksLoader } from "../../app/routes/links";
+import Guests, { loader as guestsLoader } from "../../app/routes/guests";
 
 const { findUniqueOrThrow } = vi.hoisted(() => ({ findUniqueOrThrow: vi.fn() }));
 const { getEurUsdRate } = vi.hoisted(() => ({ getEurUsdRate: vi.fn() }));
@@ -34,7 +35,7 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
 
 const names = ["Kaise", "Amelia Drake", "Kristy Kelly", "Kristy Khoury", "Valeriia Stobolva", "Augustus Shewchuck", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima"];
 const room = (number: number, type: string, occupants: (string | null)[]) => ({
-  id: `room-${number}`, name: `Bedroom ${number}`, shortName: `Bedroom ${number}`, type, pricePerPerson: ({ 4: 1810, 5: 1690, 8: 1860 } as Record<number, number>)[number] ?? null,
+  id: `room-${number}`, name: `Bedroom ${number}`, shortName: `Bedroom ${number}`, type, pricePerPerson: ({ 4: 1740.55, 5: 1620.55, 8: 1790.55 } as Record<number, number>)[number] ?? null,
   description: ({ 4: "Women's quad bunk — shared balcony, shared shower", 5: "Men's bunk cabin — shared shower", 8: "Women's quad bunk — en-suite bathroom" } as Record<number, string>)[number] ?? null,
   spots: occupants.map((occupant, index) => ({ id: `${number}-${index}`, index: index + 1, priceOverride: null,
     status: occupant === null ? "NOT_OFFERED" : occupant ? "ASSIGNED" : "AVAILABLE",
@@ -51,9 +52,9 @@ const floors = [
     room(6, "DOUBLE", names.slice(5, 7)), room(7, "DOUBLE", names.slice(7, 9)), room(8, "QUAD_BUNK", ["", "", "", ""]),
   ] },
 ];
-const pricing = { minPerPerson: 1690, maxPerPerson: 1860, currency: "EUR", description: "per person, all-in",
-  breakdown: { taxes: 33.6, shuttle: 178, incidentals: 100, chef: 408 },
-  note: "All-in = room rate + taxes + shuttle + incidentals + chef",
+const pricing = { minPerPerson: 1620.55, maxPerPerson: 1790.55, currency: "EUR", description: "per person, all-in",
+  breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
+  note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
   includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
   excludes: ["flights", "ski pass", "rentals", "nights out"],
 };
@@ -116,34 +117,41 @@ describe("database-backed read-only detail pages", () => {
     const page = renderPage(Spots, await spotsLoader());
     expect(page.querySelector(".spots-heading")?.textContent).toBe("Open spots 10");
     expect(page.querySelector(".spots-count")?.textContent).toBe("10");
-    expect(page.textContent).toContain("€1,690–€1,860");
+    expect(page.textContent).toContain("€1,620.55–€1,790.55");
     expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "Estimated USD price · per person, all-in"]);
-    expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $2,028–$2,232");
+    expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $1,945–$2,149");
     expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
     expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent)).toEqual(["4", "2", "4"]);
     expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);
-    expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,810 / $2,172.00 per person", "€1,690 / $2,028.00 per person", "€1,860 / $2,232.00 per person"]);
+    expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,740.55 / $2,088.66 per person", "€1,620.55 / $1,944.66 per person", "€1,790.55 / $2,148.66 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const breakdown = page.querySelector(".price-breakdown");
     expect(breakdown?.getAttribute("aria-label")).toBe("Price breakdown");
     expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
-    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["Depends on the room", "€33.60 / $40.32", "€178 / $213.60", "€100 / $120.00", "€408 / $489.60"]);
+    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["Depends on the room", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60"]);
+    expect(page.textContent).toContain("refund €69.45");
   });
   it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
     getEurUsdRate.mockResolvedValue(null);
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [] } });
     const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".spots-price")?.textContent).toBe("€1,690–€1,860");
+    expect(page.querySelector(".spots-price")?.textContent).toBe("€1,620.55–€1,790.55");
     expect(page.querySelector(".spots-price-usd")?.textContent).toBe("USD rate unavailable");
   });
-  it("renders both shuttle windows in local time and editable driver and meeting notes", async () => {
+  it("renders shuttle times and both pickup and drop-off locations", async () => {
     findUniqueOrThrow.mockResolvedValue({ shuttles: [
-      { id: "out", direction: "INBOUND", seats: 49, durationMinutes: 120, pickupLocation: "Geneva Airport (GVA)", departWindowStart: new Date("2027-01-30T09:30:00Z"), departWindowEnd: new Date("2027-01-30T10:00:00Z"), notes: "Meeting point: arrivals door 5.", driverContact: "+41 123" },
-      { id: "back", direction: "OUTBOUND", seats: 49, durationMinutes: 120, pickupLocation: "Falcon Lodge F", departWindowStart: new Date("2027-02-06T03:15:00Z"), departWindowEnd: new Date("2027-02-06T03:30:00Z"), notes: "Meeting point/driver TBA.", driverContact: null },
+      { id: "out", direction: "INBOUND", pickupLocation: "Geneva Airport (GVA)", dropoffLocation: "269 Rte de l'Altiport and 181 Imp. des Fontaines", departWindowStart: new Date("2027-01-30T09:30:00Z"), departWindowEnd: new Date("2027-01-30T10:00:00Z"), notes: "Ignored page note", driverContact: "+41 123" },
+      { id: "back", direction: "OUTBOUND", pickupLocation: "269 Rte de l'Altiport, then 181 Imp. des Fontaines", dropoffLocation: "Geneva Airport (GVA)", departWindowStart: new Date("2027-02-06T03:15:00Z"), departWindowEnd: new Date("2027-02-06T03:30:00Z"), notes: "Ignored refund note", driverContact: null },
     ] });
     const page = renderPage(Shuttle, await shuttleLoader());
-    for (const text of ["49-seat", "2 hours", "10:30 and 11:00", "04:15 and 04:30", "Saturday 30 Jan", "Saturday 6 Feb", "arrivals door 5", "+41 123"]) expect(page.textContent).toContain(text);
+    for (const text of ["10:30–11:00", "04:15–04:30", "Saturday 30 Jan", "Saturday 6 Feb", "Geneva Airport (GVA)", "269 Rte de l'Altiport", "181 Imp. des Fontaines"]) expect(page.textContent).toContain(text);
+    expect(page.querySelectorAll(".shuttle-location-group")).toHaveLength(4);
+    expect(page.querySelectorAll(".shuttle-stop")).toHaveLength(6);
+    expect(page.querySelectorAll(".shuttle-explainer-list li")).toHaveLength(4);
+    for (const text of ["outside baggage claim", "The shuttle leaves GVA", "stops at 269 Rte de l'Altiport first", "be ready at 269 Rte de l'Altiport"]) expect(page.textContent).toContain(text);
+    expect(page.textContent).not.toContain("Ignored page note");
+    expect(page.textContent).not.toContain("refund");
     expect(page.querySelectorAll(".shuttle-outbound")).toHaveLength(1);
   });
   it("renders property JSON amenities, real facts and listing destinations without a photo section", async () => {
@@ -209,20 +217,24 @@ describe("database-backed read-only detail pages", () => {
       ["Hotels", "Geneva Marriott (Friday night)", "https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/"],
       ["Hotels", "Hilton Geneva (Friday night)", "https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/"],
     ].map(([group, label, href], index) => ({ id: String(index), group, label, href }));
-    findUniqueOrThrow.mockResolvedValueOnce({ links }).mockResolvedValueOnce({ guests: [] });
-    const page = renderPage(Links, await linksLoader(), 2);
-    const anchors = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group]:not([data-group="Guests"])')];
+    findUniqueOrThrow.mockResolvedValueOnce({ links });
+    const page = renderPage(Links, await linksLoader(), 1);
+    const anchors = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group]')];
     expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.map((link) => link.href));
     expect(anchors.map((link) => link.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
     for (const link of anchors) { expect(link.target).toBe("_blank"); expect(link.rel).toContain("noopener"); }
-    const guestRows = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group="Guests"]')];
+    expect(page.querySelectorAll('.link-row[data-group="Guests"]')).toHaveLength(0);
+  });
+  it("renders the guest page with one compact Instagram row per guest", async () => {
+    findUniqueOrThrow.mockResolvedValueOnce({ guests: [] });
+    const page = renderPage(Guests, await guestsLoader());
+    const guestRows = [...page.querySelectorAll<HTMLAnchorElement>(".guest-list .link-row")];
     expect(guestRows).toHaveLength(12);
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
+    expect(guestRows.every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
     expect(guestRows.every((link) => link.querySelector(".text-accent"))).toBe(true);
     expect(page.querySelectorAll(".guest-link-entry .guest-instagram-arrow")).toHaveLength(0);
-    expect(guestRows.some((link) => link.getAttribute("href") === "https://www.instagram.com/kurdieffect/")).toBe(true);
-    expect(page.querySelectorAll(".guest-instagram-avatar")).toHaveLength(12);
     expect(page.querySelectorAll(".guest-instagram-preview-profile")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-handle")).toHaveLength(0);
   });

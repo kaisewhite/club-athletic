@@ -47,16 +47,16 @@ const FLIGHT_RECOMMENDATIONS = [
     ] },
 ];
 const FLOORS = [
-  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,allIn:2185,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
+  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,allIn:2115.55,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
   {name:'Middle floor',code:'R10 / F21',rooms:[
-    {name:'Bedroom 2',type:'Double room',rate:1340,allIn:2060,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Kristy Kelly']},
-    {name:'Bedroom 3',type:'Twin room',rate:1290,allIn:2010,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
-    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1810,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','Christie Navarre','','']},
-    {name:'Bedroom 5',type:'Bunk cabin',rate:970,allIn:1690,description:"Men's bunk cabin · Sleeps 2 people · 1 set of bunk beds · shared shower",ensuite:false,balcony:false,spots:['Pete F.','Tim Kurdi']}]},
+    {name:'Bedroom 2',type:'Double room',rate:1340,allIn:1990.55,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Kristy Kelly']},
+    {name:'Bedroom 3',type:'Twin room',rate:1290,allIn:1940.55,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
+    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1740.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','Christie Navarre','','']},
+    {name:'Bedroom 5',type:'Bunk cabin',rate:970,allIn:1620.55,description:"Men's bunk cabin · Sleeps 2 people · 1 set of bunk beds · shared shower",ensuite:false,balcony:false,spots:['Pete F.','Tim Kurdi']}]},
   {name:'Lower floor',code:'R9 / F12',rooms:[
-    {name:'Bedroom 6',type:'Double room',rate:1305,allIn:2025,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
-    {name:'Bedroom 7',type:'Double room',rate:1305,allIn:2025,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Olajuwon Jones','Ted Delcima']},
-    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,allIn:1860,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
+    {name:'Bedroom 6',type:'Double room',rate:1305,allIn:1955.55,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
+    {name:'Bedroom 7',type:'Double room',rate:1305,allIn:1955.55,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Olajuwon Jones','Ted Delcima']},
+    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,allIn:1790.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
 ];
 const LINKS: Array<{ group: string; label: string; href: string; note: string | null }> = [
   {group:'Chalet',label:'Falcon Lodge F — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f',note:'The whole chalet: photos, layout and what it comes with.'},
@@ -71,10 +71,10 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
   {group:'Hotels',label:'Hilton Geneva (Friday night)',href:'https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/',note:'Airport hotel if you fly in a day early — free shuttle every ~20 min, 4:20 AM–11:40 PM.'},
 ];
 const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Official trip dates Sat 30 Jan – Sat 6 Feb 2027; optional early arrival in Geneva Fri 29 Jan.
-SHUTTLE: Out Sat 30 Jan departs GVA 10:30–11:00 AM. Back Sat 6 Feb chalet pickup 4:00 AM, confirmed with Alps2Alps 2026-09-24. 49-seat bus for passengers, luggage, ski equipment. ~2 h to the chalet, ~2.5 h back to GVA. Meeting point at GVA: right outside baggage claim. Return pickup at the chalet.
+SHUTTLE: Out Sat 30 Jan pickup at Geneva Airport (GVA) from 10:30–11:00 AM, drop-off at 269 Rte de l'Altiport and 181 Imp. des Fontaines. Back Sat 6 Feb pickup at 4:00 AM at 269 Rte de l'Altiport, then 4:15 AM at 181 Imp. des Fontaines, with drop-off at Geneva Airport (GVA).
 FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, spend the day in Geneva, and stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
 ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Kristy Kelly. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, Christie Navarre, 2 available. Bedroom 5 bunk cabin: Pete F., Tim Kurdi. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 13 confirmed guests, 6 open spots.
-REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,810 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,860 per person all-in. All-in = room rate + €33.60 taxes + €178 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
+REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,740.55 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,790.55 per person all-in. All-in = room rate + €33.60 taxes + €108.55 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
 EVENTS: Fri 29 Jan — Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
 CHALET: Central Méribel ~200 m from slopes, 326 m², 3 levels, 8 bedrooms, sleeps 10–20. Two apartments combined: F12 (sleeps 4–8) + F21 (sleeps 6–12). Lounges, two fireplaces, main kitchen + kitchenette, private outdoor hot tub, two saunas, fitness room, shared indoor pool/hammam/sauna/massage rooms, on-site ski shop and rental, ski lockers with boot warmers, underground parking, laundry. Most rooms en-suite with balcony/terrace; some bunk rooms share a shower room, may lack balcony.
@@ -202,12 +202,12 @@ const PROPERTY_FACTS = {
 };
 
 const PRICING = {
-  minPerPerson: 1690,
-  maxPerPerson: 1860,
+  minPerPerson: 1620.55,
+  maxPerPerson: 1790.55,
   currency: "EUR",
   description: "per person, all-in",
-  breakdown: { taxes: 33.6, shuttle: 178, incidentals: 100, chef: 408 },
-  note: "All-in = room rate + taxes + shuttle + incidentals + chef",
+  breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
+  note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
   includes: [
     "Your bed for 7 nights",
     "Private chef — 6 breakfasts, 5 dinners",
@@ -344,7 +344,10 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
               ...GUEST_NAMES[displayName]!, displayName, dietaryNotes: DIETARY_NOTES[displayName] ?? null,
               status: "CONFIRMED", createdVia: "SEED",
             } }));
-          await tx.guest.update({ where: { id: guest.id }, data: { instagramUrl: GUEST_INSTAGRAMS[displayName] ?? null } });
+          // A supplied profile is organizer content. If the seed has no profile
+          // for this guest, preserve any URL they or the operator added in the DB.
+          const instagramUrl = GUEST_INSTAGRAMS[displayName];
+          if (instagramUrl) await tx.guest.update({ where: { id: guest.id }, data: { instagramUrl } });
           guestId = guest.id;
           for (const type of ["FLIGHT", "PAYMENT", "DETAILS"] as const) {
             const taskKey = { guestId: guest.id, type };
@@ -414,10 +417,8 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
     else await tx.flight.create({ data: { id: createId(), guestId: guest.id, direction: flight.direction, ...fields } });
   }
 
-  // A link dropped from this list is dropped from the database (owner, 2026-09-29:
-  // the Notion planning doc went — "the whole point of this website was to move
-  // away from Notion").
-  await tx.link.deleteMany({ where: { tripId: trip.id, NOT: { OR: LINKS.map((link) => ({ group: link.group, href: link.href })) } } });
+  // Seed-owned links are upserted below. Do not delete links added through the
+  // site: a seed refresh must never erase an operator's or guest's DB update.
 
   for (const [order, rec] of FLIGHT_RECOMMENDATIONS.entries()) {
     const recKey = { tripId: trip.id, sortOrder: order + 1 };
@@ -448,18 +449,18 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
   const shuttles = [
     { direction: "INBOUND" as const, departWindowStart: new Date("2027-01-30T10:30:00+01:00"),
       departWindowEnd: new Date("2027-01-30T11:00:00+01:00"), pickupLocation: "Geneva Airport (GVA)",
-      dropoffLocation: PROPERTY_FACTS.name, durationMinutes: 120 },
+      dropoffLocation: "269 Rte de l'Altiport + 181 Imp. des Fontaines", durationMinutes: 120 },
     // Return pickup 04:00 sharp — Alps2Alps (2026-09-24): "targeting 4:00 AM for
     // pickup would actually be even better than 4:15–4:30". Winter roads: ~2.5 h.
     { direction: "OUTBOUND" as const, departWindowStart: new Date("2027-02-06T04:00:00+01:00"),
-      departWindowEnd: new Date("2027-02-06T04:00:00+01:00"), pickupLocation: PROPERTY_FACTS.name,
+      departWindowEnd: new Date("2027-02-06T04:15:00+01:00"), pickupLocation: "269 Rte de l'Altiport, then 181 Imp. des Fontaines",
       dropoffLocation: "Geneva Airport (GVA)", durationMinutes: 150 },
   ];
   for (const shuttle of shuttles) {
     const shuttleKey = { tripId: trip.id, direction: shuttle.direction };
     const notes = shuttle.direction === "INBOUND"
-      ? "Meeting point: right outside baggage claim at Geneva Airport (GVA)."
-      : `Meeting point: the bus picks up at ${PROPERTY_FACTS.name}.`;
+      ? "Pickup: Geneva Airport (GVA), outside baggage claim. Drop-off: 269 Rte de l'Altiport and 181 Imp. des Fontaines."
+      : "Pickup: 269 Rte de l'Altiport at 4:00 AM, then 181 Imp. des Fontaines at 4:15 AM. Drop-off: Geneva Airport (GVA).";
     const fields = { ...shuttle, seats: 49, notes };
     // Timings are edited here and pushed: the operator confirms them by email.
     await tx.shuttle.upsert({ where: { tripId_direction: shuttleKey }, create: { id: createId(), tripId: trip.id, ...fields }, update: fields });

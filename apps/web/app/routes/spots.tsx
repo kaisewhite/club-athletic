@@ -51,6 +51,7 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
             <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{breakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
             <div className="price-breakdown-row"><dt>Chef</dt><dd>{breakdownPrice(data.pricing.breakdown.chef)}</dd></div>
           </dl>
+          {data.pricing.note && <p className="detail-note" style={{ marginTop: 12 }}>{data.pricing.note}</p>}
         </>}
       </div>
       <div className="detail-card"><h3 className="detail-kicker" style={{ marginBottom: 6 }}>Open rooms</h3>
