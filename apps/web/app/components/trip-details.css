@@ -22,7 +22,7 @@
 .flight-rec-route { font-variant-numeric: tabular-nums; white-space: nowrap; }
 .shuttle-outbound { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 .shuttle-outbound .detail-kicker { color: var(--brand-dim); }
-.flight-rule-kicker { display: inline-block; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--text); }
+.flight-rule-kicker { display: inline-block; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--accent); }
 .shuttle-time { font-family: var(--font-display); font-weight: 600; font-size: clamp(48px,7vw,72px); line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; margin: 10px 0 8px; }
 .shuttle-copy { font-size: 14px; margin: 0; color: var(--text-muted); }
 .shuttle-outbound .shuttle-copy { color: inherit; font-weight: 500; }

@@ -30,7 +30,7 @@ export const project = {
     memoryLimitMiB: 1024,
     cpu: 512,
     containerPort: 4173,
-    capacityProvider: "FARGATE",
+    capacityProvider: "FARGATE_SPOT",
     disableIpv6: true,
     secrets: [
       "ANTHROPIC_API_KEY",

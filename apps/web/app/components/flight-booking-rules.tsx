@@ -2,7 +2,7 @@ import type { CSSProperties } from "react";
 import type { FlightRules } from "@/lib/db/repository.server";
 import { tripDate } from "../lib/schedule-display";
 
-const kicker: CSSProperties = { fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--accent)", fontWeight: 700, margin: 0 };
+const kicker: CSSProperties = { fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--text)", fontWeight: 700, margin: 0 };
 const time: CSSProperties = { fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, letterSpacing: "-.04em", margin: "10px 0 4px" };
 const rule: CSSProperties = { fontWeight: 600, marginBottom: 10 };
 const copy: CSSProperties = { fontSize: 14, margin: "0 0 6px", color: "var(--text-muted)" };
