@@ -38,8 +38,13 @@ export async function loader({ request }: { request: Request }) {
   if (!handle) return new Response("Invalid Instagram profile URL.", { status: 400 });
 
   try {
-    const response = await fetch(`https://www.instagram.com/${handle}/`, {
-      headers: { "user-agent": "Mozilla/5.0 (compatible; ClubAthletic/1.0)" },
+    const response = await fetch(`https://www.instagram.com/${handle}/?hl=en`, {
+      headers: {
+        accept: "text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,*/*;q=0.8",
+        "accept-language": "en-US,en;q=0.9",
+        referer: "https://www.instagram.com/",
+        "user-agent": "Mozilla/5.0 (compatible; ClubAthletic/1.0)",
+      },
       signal: AbortSignal.timeout(8000),
     });
     if (!response.ok) return new Response("Instagram profile unavailable.", { status: 404 });
