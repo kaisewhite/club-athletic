@@ -15,6 +15,10 @@ const guestInstagrams: Record<string, string> = {
 
 export const guestInstagramProfiles = Object.entries(guestInstagrams).map(([displayName, href]) => ({ displayName, href }));
 
+export function guestInstagramHandle(profileUrl: string) {
+  return new URL(profileUrl).pathname.split("/").filter(Boolean)[0];
+}
+
 export function guestInstagramUrl(displayName: string, instagramUrl?: string | null): string | undefined {
   return instagramUrl ?? guestInstagrams[displayName];
 }

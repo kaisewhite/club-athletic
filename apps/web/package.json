@@ -9,7 +9,7 @@
   "scripts": {
     "dev": "NODE_ENV=development bun --watch index.ts",
     "start": "bun index.ts",
-    "prebuild": "react-router typegen",
+    "prebuild": "bun run sync:guest-avatars && react-router typegen",
     "build": "react-router build && tsc --noEmit",
     "typecheck": "react-router typegen && tsc --noEmit",
     "lint": "oxlint app src server tests index.ts vite.config.ts vitest.config.ts react-router.config.ts",
@@ -17,6 +17,7 @@
     "test:agent:live": "bun run build && bun tests/integration/live-trip-read-tools.ts && playwright test --config playwright.live.config.ts",
     "test:visual": "playwright test",
     "test:visual:update": "playwright test --update-snapshots",
+    "sync:guest-avatars": "bun scripts/sync-guest-avatars.ts",
     "db:generate": "bash scripts/with-env.sh bunx prisma generate",
     "db:migrate:deploy": "bash scripts/with-env.sh bunx prisma migrate deploy",
     "db:migrate:dev": "bash scripts/with-env.sh bash scripts/migrate-dev.sh",

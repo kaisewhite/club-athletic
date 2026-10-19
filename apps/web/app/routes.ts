@@ -8,7 +8,6 @@ export default [
   route("api/chat/uploads", "routes/api.chat.uploads.ts"),
   route("api/guests", "routes/api.guests.ts"),
   route("api/guests/dietary", "routes/api.guests.dietary.ts"),
-  route("api/instagram-avatar", "routes/api.instagram-avatar.ts"),
   route("api/chat/conversations", "routes/api.chat.conversations.ts"),
   route("api/chat/conversations/:conversationId", "routes/api.chat.conversation.ts"),
   route("api/chat/conversations/:conversationId/status", "routes/api.chat.status.ts"),

@@ -233,7 +233,7 @@ describe("database-backed read-only detail pages", () => {
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
     expect(guestRows.every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
-    expect(guestRows[0]?.querySelector<HTMLImageElement>(".guest-instagram-avatar")?.getAttribute("src")).toBe("/api/instagram-avatar?profile=https%3A%2F%2Fwww.instagram.com%2Fkaise.white");
+    expect(guestRows[0]?.querySelector<HTMLImageElement>(".guest-instagram-avatar")?.getAttribute("src")).toBe("/guest-avatars/kaise.white.jpg");
     expect(guestRows.every((link) => link.querySelector(".text-accent"))).toBe(true);
     expect(page.querySelectorAll(".guest-link-entry .guest-instagram-arrow")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-profile")).toHaveLength(0);
