@@ -24,7 +24,7 @@ export class InfraStack extends cdk.Stack {
 
     const { service } = project;
     const constructorPrefix = `${project.name}-${project.environment}-${service.name}`;
-    const hostName = `${service.subdomain}.${project.domain}`;
+    const hostNames = [service.subdomain, ...service.additionalSubdomains].map((subdomain) => `${subdomain}.${project.domain}`);
     const resourceName = service.resourceName;
     addStandardTags(this, {
       project: project.name,
@@ -163,10 +163,12 @@ export class InfraStack extends cdk.Stack {
       open: false,
     });
 
-    new route53.ARecord(this, `${constructorPrefix}-alias-record`, {
-      zone: hostedZone,
-      recordName: hostName,
-      target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
+    hostNames.forEach((hostName, index) => {
+      new route53.ARecord(this, index === 0 ? `${constructorPrefix}-alias-record` : `${constructorPrefix}-${service.additionalSubdomains[index - 1]}-alias-record`, {
+        zone: hostedZone,
+        recordName: hostName,
+        target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
+      });
     });
 
     new cdk.CfnOutput(this, `${constructorPrefix}-load-balancer-name`, { value: loadBalancer.loadBalancerName });

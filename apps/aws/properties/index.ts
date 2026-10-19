@@ -26,6 +26,7 @@ export const project = {
     imageTag: "main",
     healthCheck: "/health",
     subdomain: "meribel",
+    additionalSubdomains: ["chalet-falcon"],
     desiredCount: 1,
     memoryLimitMiB: 1024,
     cpu: 512,
