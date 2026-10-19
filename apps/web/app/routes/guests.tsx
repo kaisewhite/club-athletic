@@ -1,6 +1,7 @@
 import { getGuestInstagramProfiles } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramAvatar } from "../components/guest-instagram-preview";
+import { CopyAllLinksButton } from "../components/copy-all-links-button";
 import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/guests";
 
@@ -14,6 +15,7 @@ export async function loader() {
 export default function Guests({ loaderData }: Route.ComponentProps) {
   return <section aria-labelledby="guests-heading">
     <PageHeading id="guests-heading" sub="Everyone on the trip, with a direct link to their Instagram profile.">Guests</PageHeading>
+    <div className="guest-actions"><CopyAllLinksButton links={loaderData.guestProfiles.map(({ href }) => href)} /></div>
     <div className="link-list guest-list">
       {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
         <a className="link-row" href={href} target="_blank" rel="noopener noreferrer" aria-label={`${displayName} on Instagram`}>
