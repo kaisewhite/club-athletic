@@ -18,6 +18,19 @@ export function Layout({ children }: { children: ReactNode }) {
             and no such JS exists in this app. Desktop ignores all three. */}
         <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover, interactive-widget=resizes-content" />
         <title>Méribel ’27 — Club Athletic</title>
+        <meta name="description" content="The Club Athletic Méribel ’27 trip guide: chalet, rooms, flights, shuttle, schedule, guests, and pricing." />
+        <meta property="og:type" content="website" />
+        <meta property="og:site_name" content="Club Athletic" />
+        <meta property="og:title" content="Méribel ’27 — Club Athletic" />
+        <meta property="og:description" content="The Club Athletic Méribel ’27 trip guide: chalet, rooms, flights, shuttle, schedule, guests, and pricing." />
+        <meta property="og:url" content="https://meribel.clubathletic.org/" />
+        <meta property="og:image" content="https://meribel.clubathletic.org/chalet-rooms.webp" />
+        <meta property="og:image:alt" content="The Club Athletic Méribel chalet" />
+        <meta name="twitter:card" content="summary_large_image" />
+        <meta name="twitter:title" content="Méribel ’27 — Club Athletic" />
+        <meta name="twitter:description" content="The Club Athletic Méribel ’27 trip guide: chalet, rooms, flights, shuttle, schedule, guests, and pricing." />
+        <meta name="twitter:image" content="https://meribel.clubathletic.org/chalet-rooms.webp" />
+        <link rel="canonical" href="https://meribel.clubathletic.org/" />
         {/* Without this, every browser visit requests `/favicon.ico`, misses static
             serving and reaches the SSR handler as a 404. */}
         <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
