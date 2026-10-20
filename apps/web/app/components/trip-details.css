@@ -163,8 +163,9 @@
 .guest-link-entry .link-row > .text-accent { margin-left: auto; }
 .guest-list .guest-link-entry .link-row { min-height: 66px; }
 .guest-actions { display: flex; justify-content: flex-start; margin: 18px 0; }
-.guest-copy-all { min-height: 40px; padding: 0 14px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: transparent; color: var(--text); font: inherit; cursor: pointer; }
-.guest-copy-all:hover { background: var(--hover); }
+.guest-copy-all { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 4px; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; cursor: pointer; }
+.guest-copy-all svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }
+.guest-copy-all:hover { color: var(--text); }
 .guest-copy-all:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 
 @media (prefers-reduced-motion: reduce) {
