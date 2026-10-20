@@ -41,7 +41,7 @@ const PAGES = [
  * organizer assigns an open spot (Pete F. took a Bedroom 5 bunk on 2026-09-28,
  * Christine Calvo a Bedroom 4 bunk on 2026-09-29), so it is named rather than inlined as a magic 9.
  */
-const CONFIRMED_GUESTS = 13;
+const CONFIRMED_GUESTS = 12;
 
 const LONGEST = {
   guest: "Augustus Shewchuck", // 18 chars

@@ -229,7 +229,7 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [] });
     const page = renderPage(Guests, await guestsLoader());
     const guestRows = [...page.querySelectorAll<HTMLAnchorElement>(".guest-list .link-row")];
-    expect(guestRows).toHaveLength(12);
+    expect(guestRows).toHaveLength(11);
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
     expect(page.querySelector<HTMLButtonElement>(".guest-copy-all")?.textContent).toBe("Copy links");
