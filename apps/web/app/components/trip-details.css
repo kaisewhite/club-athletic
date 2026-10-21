@@ -159,8 +159,10 @@
 .guest-link-entry + .guest-link-entry { border-top: 1px solid var(--border-subtle); }
 .guest-link-entry .link-row { border-top: 0; }
 .guest-instagram-avatar { width: 42px; height: 42px; flex: none; border-radius: 50%; object-fit: cover; background: var(--surface-muted); }
+.guest-avatar-placeholder { display: grid; place-items: center; width: 42px; height: 42px; flex: none; border: 1px solid var(--border); border-radius: 50%; color: var(--text-dim); }
 .guest-link-entry .link-row { justify-content: flex-start; gap: 12px; }
 .guest-link-entry .link-row > .text-accent { margin-left: auto; }
+.guest-profile-note { margin-left: auto; color: var(--text-dim); font-size: 12px; }
 .guest-list .guest-link-entry .link-row { min-height: 66px; }
 .guest-actions { display: flex; justify-content: flex-start; margin: 18px 0; }
 .guest-copy-all { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 4px; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; cursor: pointer; }

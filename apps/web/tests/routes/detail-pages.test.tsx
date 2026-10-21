@@ -206,7 +206,7 @@ describe("database-backed read-only detail pages", () => {
       expect(storage).not.toHaveBeenCalled();
     } finally { storage.mockRestore(); }
   });
-  it("preserves all nine link destinations and the six source groups in order", async () => {
+  it("preserves link destinations and source groups in order", async () => {
     const links = [
       ["Chalet", "Falcon Lodge F — Ski in Luxury", "https://www.skiinluxury.com/france/meribel/falcon-lodge-f"],
       ["Chalet", "Chalet F — Alpine Resorts", "https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f"],
@@ -226,16 +226,18 @@ describe("database-backed read-only detail pages", () => {
     expect(page.querySelectorAll('.link-row[data-group="Guests"]')).toHaveLength(0);
   });
   it("renders the guest page with one compact Instagram row per guest", async () => {
-    findUniqueOrThrow.mockResolvedValueOnce({ guests: [] });
+    findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });
     const page = renderPage(Guests, await guestsLoader());
-    const guestRows = [...page.querySelectorAll<HTMLAnchorElement>(".guest-list .link-row")];
-    expect(guestRows).toHaveLength(11);
+    const guestRows = [...page.querySelectorAll<HTMLElement>(".guest-list .link-row")];
+    expect(guestRows).toHaveLength(12);
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
     expect(page.querySelector<HTMLButtonElement>(".guest-copy-all")?.textContent).toBe("Copy links");
-    expect(guestRows.every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
+    expect(guestRows.slice(0, -1).every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
     expect(guestRows[0]?.querySelector<HTMLImageElement>(".guest-instagram-avatar")?.getAttribute("src")).toBe("/guest-avatars/kaise.white.jpg");
-    expect(guestRows.every((link) => link.querySelector(".text-accent"))).toBe(true);
+    expect(page.querySelector(".guest-link-entry:last-child .link-name")?.textContent).toBe("Pete F.");
+    expect(page.querySelector(".guest-link-entry:last-child .guest-profile-note")?.textContent).toBe("No Instagram profile");
+    expect(guestRows.slice(0, -1).every((link) => link.querySelector(".text-accent"))).toBe(true);
     expect(page.querySelectorAll(".guest-link-entry .guest-instagram-arrow")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-profile")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-handle")).toHaveLength(0);

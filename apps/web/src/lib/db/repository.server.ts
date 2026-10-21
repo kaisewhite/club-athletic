@@ -253,8 +253,8 @@ export async function getLinks(tripKey = DEFAULT_TRIP_KEY) {
 export async function getGuestInstagramProfiles(tripKey = DEFAULT_TRIP_KEY) {
   return withReadDatabase(async (db) => (await db.trip.findUniqueOrThrow({
     where: { seedKey: tripKey },
-    select: { guests: { where: { status: "CONFIRMED", instagramUrl: { not: null } }, orderBy: [...guestOrder], select: { displayName: true, instagramUrl: true } } },
-  })).guests.map(({ displayName, instagramUrl }) => ({ displayName, href: instagramUrl! })));
+    select: { guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { displayName: true, instagramUrl: true } } },
+  })).guests.map(({ displayName, instagramUrl }) => ({ displayName, href: instagramUrl ?? undefined })));
 }
 
 export type TripOverview = Awaited<ReturnType<typeof getTripOverview>>;

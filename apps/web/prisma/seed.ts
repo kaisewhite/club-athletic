@@ -336,6 +336,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
   // The booking rules are edited here and pushed, whatever the row held before.
   await tx.trip.update({ where: { id: trip.id }, data: { flightArrivalCutoff: "09:30", flightArrivalTarget: "08:30", flightReturnCutoff: "10:00", pricing: PRICING } });
   await removeDroppedGuest(tx, "Tim Kurdi");
+  await tx.link.deleteMany({ where: { tripId: trip.id, group: "Potential chalets to look into" } });
 
   for (const [floorIndex, sourceFloor] of FLOORS.entries()) {
     const floorKey = { propertyId: property.id, code: sourceFloor.code };
