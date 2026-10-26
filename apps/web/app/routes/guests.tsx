@@ -21,7 +21,7 @@ export default function Guests({ loaderData }: Route.ComponentProps) {
     <div className="link-list guest-list">
       {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
         {href ? <a className="link-row" href={href} target="_blank" rel="noopener noreferrer" aria-label={`${displayName} on Instagram`}>
-          <GuestInstagramAvatar profileUrl={href} />
+          <GuestInstagramAvatar profileUrl={href} displayName={displayName} />
           <span className="link-name">{displayName}</span>
           <span className="text-accent" aria-hidden="true">↗</span>
         </a> : <div className="link-row" aria-label={`${displayName}, no Instagram profile configured`}>

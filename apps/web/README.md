@@ -57,11 +57,11 @@ without printing values. No database or Anthropic request is made by this scaffo
 The `Chalet Guest Details — Méribel 2027` form (`s7gvWdIF`) sends completed
 responses to `POST /api/webhooks/typeform`. The route verifies Typeform's
 `Typeform-Signature` HMAC before reading a response, matches the normalized
-first and last name to one confirmed or invited Méribel guest, and applies the
-answer fields in one database transaction. A response token is stored as the
-idempotency key; the raw form payload is not stored. An unknown or ambiguous
-guest match returns an error so the delivery is visible for correction and
-redelivery in Typeform.
+first and last name to one Méribel guest and applies the answer fields in one
+database transaction. When no guest with that name exists, it creates a new
+confirmed guest from the submission. An ambiguous duplicate-name match returns
+an error for correction. A response token is stored as the idempotency key; the
+raw form payload is not stored.
 
 First/last name, Venmo handle, phone, Instagram handle, dietary restrictions,
 and favorite cocktails map to the `Guest` record. Instagram links appear on
