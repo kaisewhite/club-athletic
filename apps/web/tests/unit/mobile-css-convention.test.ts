@@ -138,7 +138,7 @@ describe("mobile CSS convention (TODO §2.15)", () => {
 
   it("centers the mobile home composer and keeps prompts in the landing group", () => {
     const { mobile } = split(read("src/styles.css"));
-    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*absolute/);
+    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*relative/);
     expect(mobile).toMatch(/\.home-composer-content\s*\{[^}]*gap:\s*12px/);
   });
 
