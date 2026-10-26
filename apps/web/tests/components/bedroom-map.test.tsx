@@ -15,6 +15,9 @@ it("opens the authored map at full size and closes it without changing the inlin
   try {
     await act(async () => root.render(<BedroomMap floors={floors} />));
     expect(container.querySelectorAll(".bm-sheet")).toHaveLength(1);
+    const r10 = container.querySelector<SVGSVGElement>('.bm-sheet svg[viewBox="0 0 600 465"]');
+    expect(r10?.querySelector(".part")?.getAttribute("d")).toContain("M135 300H178M200 300H258M280 300H345");
+    expect(Array.from(r10?.querySelectorAll(".door") ?? [], (door) => door.getAttribute("d")).join(" ")).toContain("M178 300v22a22 22 0 0 0 22-22M258 300v22a22 22 0 0 0 22-22");
     await act(async () => container.querySelector<HTMLButtonElement>(".bm-expand")!.click());
     const dialog = container.querySelector<HTMLDialogElement>(".bm-dialog");
     expect(dialog?.open).toBe(true);
