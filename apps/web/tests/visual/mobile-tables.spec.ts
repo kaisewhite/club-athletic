@@ -237,10 +237,10 @@ for (const width of [1280, 1440]) {
       return { rowCount: rows.length, headerRowCount, bodyRowCount: bodyRows.length, bodyColumnCounts: bodyRows.map((row) => row.querySelectorAll("th, td").length), failures };
     });
 
-      expect(audit.rowCount).toBe(15);
+      expect(audit.rowCount).toBe(14);
       expect(audit.headerRowCount).toBe(2);
-      expect(audit.bodyRowCount).toBe(13);
-      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 13 }, () => 7));
+      expect(audit.bodyRowCount).toBe(12);
+      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 12 }, () => 7));
       expect(audit.failures).toEqual([]);
     });
   });
