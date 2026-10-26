@@ -433,7 +433,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   }
 
   /* Keep the homepage content close to its navigation on small screens. */
-  .overview-content { padding-top: 20px; }
+  .overview-content { flex: 1 0 auto; padding-top: 20px; }
+  .home-welcome { justify-content: flex-start; min-height: 0; padding: 12px 0 16px; }
 
   /* ---- Horizontal scrollers (suggestions and the reduced-motion
      schedule ticker). Momentum so a flick coasts, hidden bars, and `overscroll-behavior-x:
@@ -496,7 +497,11 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  .home-composer { position: absolute; inset: 0; gap: 0; padding: 0 0 max(56px, env(safe-area-inset-bottom, 0px)); }
+  /* The desktop landing overlays the composer on the page content. On phones,
+     keep it in normal flow so the welcome copy and schedule cannot sit behind
+     the input or its suggestion buttons. The content flexes above it, keeping
+     the composer near the bottom when there is enough height. */
+  .home-composer { position: relative; inset: auto; z-index: auto; flex: none; padding: 20px 0 max(32px, env(safe-area-inset-bottom, 0px)); }
   .home-composer-content { gap: 12px; }
   .home-composer-heading { font-size: 22px; }
   .home-composer .chat-attachment-area { width: 100%; }
