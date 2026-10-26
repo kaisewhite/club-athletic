@@ -66,6 +66,7 @@ export const ModelName = {
   FlightRecommendationOption: 'FlightRecommendationOption',
   Link: 'Link',
   Note: 'Note',
+  TypeformSubmission: 'TypeformSubmission',
   Upload: 'Upload',
   Conversation: 'Conversation',
   Message: 'Message',
@@ -183,8 +184,10 @@ export const GuestScalarFieldEnum = {
   instagramUrl: 'instagramUrl',
   email: 'email',
   phone: 'phone',
+  venmoHandle: 'venmoHandle',
   status: 'status',
   dietaryNotes: 'dietaryNotes',
+  favoriteCocktails: 'favoriteCocktails',
   emergencyContact: 'emergencyContact',
   notes: 'notes',
   createdVia: 'createdVia'
@@ -333,6 +336,17 @@ export const NoteScalarFieldEnum = {
 } as const
 
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const TypeformSubmissionScalarFieldEnum = {
+  responseId: 'responseId',
+  formId: 'formId',
+  guestId: 'guestId',
+  submittedAt: 'submittedAt',
+  processedAt: 'processedAt'
+} as const
+
+export type TypeformSubmissionScalarFieldEnum = (typeof TypeformSubmissionScalarFieldEnum)[keyof typeof TypeformSubmissionScalarFieldEnum]
 
 
 export const UploadScalarFieldEnum = {

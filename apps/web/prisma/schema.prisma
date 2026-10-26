@@ -181,8 +181,10 @@ model Guest {
   instagramUrl          String?
   email                 String?
   phone                 String?
+  venmoHandle           String?
   status                GuestStatus
   dietaryNotes          String?
+  favoriteCocktails     String?
   emergencyContact      Json?               @db.JsonB
   notes                 String?
   createdVia            GuestCreatedVia
@@ -193,6 +195,7 @@ model Guest {
   flights               Flight[]
   pendingExtractions    PendingExtraction[] @relation("IntakeGuest")
   createdForExtractions PendingExtraction[] @relation("IntakeCreatedGuest")
+  typeformSubmissions   TypeformSubmission[]
 
   // Guest_lastName_lower_idx is an expression index, maintained in migration SQL.
   @@index([tripId])
@@ -365,6 +368,19 @@ model Note {
   trip    Trip    @relation(fields: [tripId], references: [id], onDelete: Restrict)
 
   @@index([tripId])
+}
+
+// Stores only the response identity and processing result, never the submitted
+// payload. The unique response ID makes webhook retries safe to replay.
+model TypeformSubmission {
+  responseId  String   @id
+  formId      String
+  guestId     String
+  submittedAt DateTime @db.Timestamptz(3)
+  processedAt DateTime @default(now()) @db.Timestamptz(3)
+  guest       Guest    @relation(fields: [guestId], references: [id], onDelete: Restrict)
+
+  @@index([guestId, submittedAt])
 }
 
 model Upload {

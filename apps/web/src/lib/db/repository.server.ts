@@ -183,7 +183,7 @@ export async function getChefSummary(tripKey = DEFAULT_TRIP_KEY) {
       where: { seedKey: tripKey }, select: {
         chefBreakfastCount: true, chefDinnerCount: true,
         scheduleDays: { orderBy: { date: "asc" } },
-        guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { ...guestIdentity, dietaryNotes: true } },
+        guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { ...guestIdentity, dietaryNotes: true, favoriteCocktails: true } },
       },
     });
     const breakfasts = trip.scheduleDays.filter((day) => day.breakfast === "CHEF");

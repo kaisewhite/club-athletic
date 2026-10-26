@@ -34,8 +34,10 @@ export type GuestMinAggregateOutputType = {
   instagramUrl: string | null
   email: string | null
   phone: string | null
+  venmoHandle: string | null
   status: $Enums.GuestStatus | null
   dietaryNotes: string | null
+  favoriteCocktails: string | null
   notes: string | null
   createdVia: $Enums.GuestCreatedVia | null
 }
@@ -50,8 +52,10 @@ export type GuestMaxAggregateOutputType = {
   instagramUrl: string | null
   email: string | null
   phone: string | null
+  venmoHandle: string | null
   status: $Enums.GuestStatus | null
   dietaryNotes: string | null
+  favoriteCocktails: string | null
   notes: string | null
   createdVia: $Enums.GuestCreatedVia | null
 }
@@ -66,8 +70,10 @@ export type GuestCountAggregateOutputType = {
   instagramUrl: number
   email: number
   phone: number
+  venmoHandle: number
   status: number
   dietaryNotes: number
+  favoriteCocktails: number
   emergencyContact: number
   notes: number
   createdVia: number
@@ -85,8 +91,10 @@ export type GuestMinAggregateInputType = {
   instagramUrl?: true
   email?: true
   phone?: true
+  venmoHandle?: true
   status?: true
   dietaryNotes?: true
+  favoriteCocktails?: true
   notes?: true
   createdVia?: true
 }
@@ -101,8 +109,10 @@ export type GuestMaxAggregateInputType = {
   instagramUrl?: true
   email?: true
   phone?: true
+  venmoHandle?: true
   status?: true
   dietaryNotes?: true
+  favoriteCocktails?: true
   notes?: true
   createdVia?: true
 }
@@ -117,8 +127,10 @@ export type GuestCountAggregateInputType = {
   instagramUrl?: true
   email?: true
   phone?: true
+  venmoHandle?: true
   status?: true
   dietaryNotes?: true
+  favoriteCocktails?: true
   emergencyContact?: true
   notes?: true
   createdVia?: true
@@ -207,8 +219,10 @@ export type GuestGroupByOutputType = {
   instagramUrl: string | null
   email: string | null
   phone: string | null
+  venmoHandle: string | null
   status: $Enums.GuestStatus
   dietaryNotes: string | null
+  favoriteCocktails: string | null
   emergencyContact: runtime.JsonValue | null
   notes: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -245,8 +259,10 @@ export type GuestWhereInput = {
   instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
+  venmoHandle?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
+  favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   emergencyContact?: Prisma.JsonNullableFilter<"Guest">
   notes?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
@@ -257,6 +273,7 @@ export type GuestWhereInput = {
   flights?: Prisma.FlightListRelationFilter
   pendingExtractions?: Prisma.PendingExtractionListRelationFilter
   createdForExtractions?: Prisma.PendingExtractionListRelationFilter
+  typeformSubmissions?: Prisma.TypeformSubmissionListRelationFilter
 }
 
 export type GuestOrderByWithRelationInput = {
@@ -269,8 +286,10 @@ export type GuestOrderByWithRelationInput = {
   instagramUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  venmoHandle?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   dietaryNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteCocktails?: Prisma.SortOrderInput | Prisma.SortOrder
   emergencyContact?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdVia?: Prisma.SortOrder
@@ -281,6 +300,7 @@ export type GuestOrderByWithRelationInput = {
   flights?: Prisma.FlightOrderByRelationAggregateInput
   pendingExtractions?: Prisma.PendingExtractionOrderByRelationAggregateInput
   createdForExtractions?: Prisma.PendingExtractionOrderByRelationAggregateInput
+  typeformSubmissions?: Prisma.TypeformSubmissionOrderByRelationAggregateInput
 }
 
 export type GuestWhereUniqueInput = Prisma.AtLeast<{
@@ -296,8 +316,10 @@ export type GuestWhereUniqueInput = Prisma.AtLeast<{
   instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
+  venmoHandle?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
+  favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   emergencyContact?: Prisma.JsonNullableFilter<"Guest">
   notes?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
@@ -308,6 +330,7 @@ export type GuestWhereUniqueInput = Prisma.AtLeast<{
   flights?: Prisma.FlightListRelationFilter
   pendingExtractions?: Prisma.PendingExtractionListRelationFilter
   createdForExtractions?: Prisma.PendingExtractionListRelationFilter
+  typeformSubmissions?: Prisma.TypeformSubmissionListRelationFilter
 }, "id" | "seedKey">
 
 export type GuestOrderByWithAggregationInput = {
@@ -320,8 +343,10 @@ export type GuestOrderByWithAggregationInput = {
   instagramUrl?: Prisma.SortOrderInput | Prisma.SortOrder
   email?: Prisma.SortOrderInput | Prisma.SortOrder
   phone?: Prisma.SortOrderInput | Prisma.SortOrder
+  venmoHandle?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
   dietaryNotes?: Prisma.SortOrderInput | Prisma.SortOrder
+  favoriteCocktails?: Prisma.SortOrderInput | Prisma.SortOrder
   emergencyContact?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrderInput | Prisma.SortOrder
   createdVia?: Prisma.SortOrder
@@ -343,8 +368,10 @@ export type GuestScalarWhereWithAggregatesInput = {
   instagramUrl?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   email?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
+  venmoHandle?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusWithAggregatesFilter<"Guest"> | $Enums.GuestStatus
   dietaryNotes?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
+  favoriteCocktails?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   emergencyContact?: Prisma.JsonNullableWithAggregatesFilter<"Guest">
   notes?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaWithAggregatesFilter<"Guest"> | $Enums.GuestCreatedVia
@@ -359,8 +386,10 @@ export type GuestCreateInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -371,6 +400,7 @@ export type GuestCreateInput = {
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateInput = {
@@ -383,8 +413,10 @@ export type GuestUncheckedCreateInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -394,6 +426,7 @@ export type GuestUncheckedCreateInput = {
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUpdateInput = {
@@ -405,8 +438,10 @@ export type GuestUpdateInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -417,6 +452,7 @@ export type GuestUpdateInput = {
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateInput = {
@@ -429,8 +465,10 @@ export type GuestUncheckedUpdateInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -440,6 +478,7 @@ export type GuestUncheckedUpdateInput = {
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestCreateManyInput = {
@@ -452,8 +491,10 @@ export type GuestCreateManyInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -468,8 +509,10 @@ export type GuestUpdateManyMutationInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -485,8 +528,10 @@ export type GuestUncheckedUpdateManyInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -517,8 +562,10 @@ export type GuestCountOrderByAggregateInput = {
   instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  venmoHandle?: Prisma.SortOrder
   status?: Prisma.SortOrder
   dietaryNotes?: Prisma.SortOrder
+  favoriteCocktails?: Prisma.SortOrder
   emergencyContact?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
@@ -534,8 +581,10 @@ export type GuestMaxOrderByAggregateInput = {
   instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  venmoHandle?: Prisma.SortOrder
   status?: Prisma.SortOrder
   dietaryNotes?: Prisma.SortOrder
+  favoriteCocktails?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
 }
@@ -550,8 +599,10 @@ export type GuestMinOrderByAggregateInput = {
   instagramUrl?: Prisma.SortOrder
   email?: Prisma.SortOrder
   phone?: Prisma.SortOrder
+  venmoHandle?: Prisma.SortOrder
   status?: Prisma.SortOrder
   dietaryNotes?: Prisma.SortOrder
+  favoriteCocktails?: Prisma.SortOrder
   notes?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
 }
@@ -669,6 +720,20 @@ export type GuestUpdateOneRequiredWithoutFlightsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.GuestUpdateToOneWithWhereWithoutFlightsInput, Prisma.GuestUpdateWithoutFlightsInput>, Prisma.GuestUncheckedUpdateWithoutFlightsInput>
 }
 
+export type GuestCreateNestedOneWithoutTypeformSubmissionsInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedCreateWithoutTypeformSubmissionsInput>
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTypeformSubmissionsInput
+  connect?: Prisma.GuestWhereUniqueInput
+}
+
+export type GuestUpdateOneRequiredWithoutTypeformSubmissionsNestedInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedCreateWithoutTypeformSubmissionsInput>
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutTypeformSubmissionsInput
+  upsert?: Prisma.GuestUpsertWithoutTypeformSubmissionsInput
+  connect?: Prisma.GuestWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.GuestUpdateToOneWithWhereWithoutTypeformSubmissionsInput, Prisma.GuestUpdateWithoutTypeformSubmissionsInput>, Prisma.GuestUncheckedUpdateWithoutTypeformSubmissionsInput>
+}
+
 export type GuestCreateNestedOneWithoutPendingExtractionsInput = {
   create?: Prisma.XOR<Prisma.GuestCreateWithoutPendingExtractionsInput, Prisma.GuestUncheckedCreateWithoutPendingExtractionsInput>
   connectOrCreate?: Prisma.GuestCreateOrConnectWithoutPendingExtractionsInput
@@ -710,8 +775,10 @@ export type GuestCreateWithoutTripInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -721,6 +788,7 @@ export type GuestCreateWithoutTripInput = {
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutTripInput = {
@@ -732,8 +800,10 @@ export type GuestUncheckedCreateWithoutTripInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -743,6 +813,7 @@ export type GuestUncheckedCreateWithoutTripInput = {
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutTripInput = {
@@ -784,8 +855,10 @@ export type GuestScalarWhereInput = {
   instagramUrl?: Prisma.StringNullableFilter<"Guest"> | string | null
   email?: Prisma.StringNullableFilter<"Guest"> | string | null
   phone?: Prisma.StringNullableFilter<"Guest"> | string | null
+  venmoHandle?: Prisma.StringNullableFilter<"Guest"> | string | null
   status?: Prisma.EnumGuestStatusFilter<"Guest"> | $Enums.GuestStatus
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
+  favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   emergencyContact?: Prisma.JsonNullableFilter<"Guest">
   notes?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
@@ -800,8 +873,10 @@ export type GuestCreateWithoutSpotInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -811,6 +886,7 @@ export type GuestCreateWithoutSpotInput = {
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutSpotInput = {
@@ -823,8 +899,10 @@ export type GuestUncheckedCreateWithoutSpotInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -833,6 +911,7 @@ export type GuestUncheckedCreateWithoutSpotInput = {
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutSpotInput = {
@@ -860,8 +939,10 @@ export type GuestUpdateWithoutSpotInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -871,6 +952,7 @@ export type GuestUpdateWithoutSpotInput = {
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutSpotInput = {
@@ -883,8 +965,10 @@ export type GuestUncheckedUpdateWithoutSpotInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -893,6 +977,7 @@ export type GuestUncheckedUpdateWithoutSpotInput = {
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestCreateWithoutTasksInput = {
@@ -904,8 +989,10 @@ export type GuestCreateWithoutTasksInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -915,6 +1002,7 @@ export type GuestCreateWithoutTasksInput = {
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutTasksInput = {
@@ -927,8 +1015,10 @@ export type GuestUncheckedCreateWithoutTasksInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -937,6 +1027,7 @@ export type GuestUncheckedCreateWithoutTasksInput = {
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutTasksInput = {
@@ -964,8 +1055,10 @@ export type GuestUpdateWithoutTasksInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -975,6 +1068,7 @@ export type GuestUpdateWithoutTasksInput = {
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutTasksInput = {
@@ -987,8 +1081,10 @@ export type GuestUncheckedUpdateWithoutTasksInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -997,6 +1093,7 @@ export type GuestUncheckedUpdateWithoutTasksInput = {
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestCreateWithoutPaymentsInput = {
@@ -1008,8 +1105,10 @@ export type GuestCreateWithoutPaymentsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1019,6 +1118,7 @@ export type GuestCreateWithoutPaymentsInput = {
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutPaymentsInput = {
@@ -1031,8 +1131,10 @@ export type GuestUncheckedCreateWithoutPaymentsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1041,6 +1143,7 @@ export type GuestUncheckedCreateWithoutPaymentsInput = {
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutPaymentsInput = {
@@ -1068,8 +1171,10 @@ export type GuestUpdateWithoutPaymentsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1079,6 +1184,7 @@ export type GuestUpdateWithoutPaymentsInput = {
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutPaymentsInput = {
@@ -1091,8 +1197,10 @@ export type GuestUncheckedUpdateWithoutPaymentsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1101,6 +1209,7 @@ export type GuestUncheckedUpdateWithoutPaymentsInput = {
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestCreateWithoutFlightsInput = {
@@ -1112,8 +1221,10 @@ export type GuestCreateWithoutFlightsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1123,6 +1234,7 @@ export type GuestCreateWithoutFlightsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutFlightsInput = {
@@ -1135,8 +1247,10 @@ export type GuestUncheckedCreateWithoutFlightsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1145,6 +1259,7 @@ export type GuestUncheckedCreateWithoutFlightsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutFlightsInput = {
@@ -1172,8 +1287,10 @@ export type GuestUpdateWithoutFlightsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1183,6 +1300,7 @@ export type GuestUpdateWithoutFlightsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutFlightsInput = {
@@ -1195,14 +1313,133 @@ export type GuestUncheckedUpdateWithoutFlightsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutGuestNestedInput
+  pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
+  createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
+}
+
+export type GuestCreateWithoutTypeformSubmissionsInput = {
+  id: string
+  seedKey?: string | null
+  firstName: string
+  lastName: string
+  displayName: string
+  instagramUrl?: string | null
+  email?: string | null
+  phone?: string | null
+  venmoHandle?: string | null
+  status: $Enums.GuestStatus
+  dietaryNotes?: string | null
+  favoriteCocktails?: string | null
+  emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  notes?: string | null
+  createdVia: $Enums.GuestCreatedVia
+  trip: Prisma.TripCreateNestedOneWithoutGuestsInput
+  spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
+  payments?: Prisma.PaymentCreateNestedManyWithoutGuestInput
+  flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
+  pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
+  createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+}
+
+export type GuestUncheckedCreateWithoutTypeformSubmissionsInput = {
+  id: string
+  seedKey?: string | null
+  tripId: string
+  firstName: string
+  lastName: string
+  displayName: string
+  instagramUrl?: string | null
+  email?: string | null
+  phone?: string | null
+  venmoHandle?: string | null
+  status: $Enums.GuestStatus
+  dietaryNotes?: string | null
+  favoriteCocktails?: string | null
+  emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  notes?: string | null
+  createdVia: $Enums.GuestCreatedVia
+  spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
+  tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
+  payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutGuestInput
+  flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
+  pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
+  createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+}
+
+export type GuestCreateOrConnectWithoutTypeformSubmissionsInput = {
+  where: Prisma.GuestWhereUniqueInput
+  create: Prisma.XOR<Prisma.GuestCreateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedCreateWithoutTypeformSubmissionsInput>
+}
+
+export type GuestUpsertWithoutTypeformSubmissionsInput = {
+  update: Prisma.XOR<Prisma.GuestUpdateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedUpdateWithoutTypeformSubmissionsInput>
+  create: Prisma.XOR<Prisma.GuestCreateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedCreateWithoutTypeformSubmissionsInput>
+  where?: Prisma.GuestWhereInput
+}
+
+export type GuestUpdateToOneWithWhereWithoutTypeformSubmissionsInput = {
+  where?: Prisma.GuestWhereInput
+  data: Prisma.XOR<Prisma.GuestUpdateWithoutTypeformSubmissionsInput, Prisma.GuestUncheckedUpdateWithoutTypeformSubmissionsInput>
+}
+
+export type GuestUpdateWithoutTypeformSubmissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
+  dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
+  spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
+  payments?: Prisma.PaymentUpdateManyWithoutGuestNestedInput
+  flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
+  pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
+  createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+}
+
+export type GuestUncheckedUpdateWithoutTypeformSubmissionsInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tripId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
+  dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
+  notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
+  tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
+  payments?: Prisma.PaymentUncheckedUpdateManyWithoutGuestNestedInput
+  flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
 }
@@ -1216,8 +1453,10 @@ export type GuestCreateWithoutPendingExtractionsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1227,6 +1466,7 @@ export type GuestCreateWithoutPendingExtractionsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutPendingExtractionsInput = {
@@ -1239,8 +1479,10 @@ export type GuestUncheckedCreateWithoutPendingExtractionsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1249,6 +1491,7 @@ export type GuestUncheckedCreateWithoutPendingExtractionsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutPendingExtractionsInput = {
@@ -1265,8 +1508,10 @@ export type GuestCreateWithoutCreatedForExtractionsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1276,6 +1521,7 @@ export type GuestCreateWithoutCreatedForExtractionsInput = {
   payments?: Prisma.PaymentCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionCreateNestedManyWithoutGuestInput
 }
 
 export type GuestUncheckedCreateWithoutCreatedForExtractionsInput = {
@@ -1288,8 +1534,10 @@ export type GuestUncheckedCreateWithoutCreatedForExtractionsInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1298,6 +1546,7 @@ export type GuestUncheckedCreateWithoutCreatedForExtractionsInput = {
   payments?: Prisma.PaymentUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedCreateNestedManyWithoutGuestInput
 }
 
 export type GuestCreateOrConnectWithoutCreatedForExtractionsInput = {
@@ -1325,8 +1574,10 @@ export type GuestUpdateWithoutPendingExtractionsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1336,6 +1587,7 @@ export type GuestUpdateWithoutPendingExtractionsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutPendingExtractionsInput = {
@@ -1348,8 +1600,10 @@ export type GuestUncheckedUpdateWithoutPendingExtractionsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1358,6 +1612,7 @@ export type GuestUncheckedUpdateWithoutPendingExtractionsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUpsertWithoutCreatedForExtractionsInput = {
@@ -1380,8 +1635,10 @@ export type GuestUpdateWithoutCreatedForExtractionsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1391,6 +1648,7 @@ export type GuestUpdateWithoutCreatedForExtractionsInput = {
   payments?: Prisma.PaymentUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutCreatedForExtractionsInput = {
@@ -1403,8 +1661,10 @@ export type GuestUncheckedUpdateWithoutCreatedForExtractionsInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1413,6 +1673,7 @@ export type GuestUncheckedUpdateWithoutCreatedForExtractionsInput = {
   payments?: Prisma.PaymentUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestCreateManyTripInput = {
@@ -1424,8 +1685,10 @@ export type GuestCreateManyTripInput = {
   instagramUrl?: string | null
   email?: string | null
   phone?: string | null
+  venmoHandle?: string | null
   status: $Enums.GuestStatus
   dietaryNotes?: string | null
+  favoriteCocktails?: string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: string | null
   createdVia: $Enums.GuestCreatedVia
@@ -1440,8 +1703,10 @@ export type GuestUpdateWithoutTripInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1451,6 +1716,7 @@ export type GuestUpdateWithoutTripInput = {
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateWithoutTripInput = {
@@ -1462,8 +1728,10 @@ export type GuestUncheckedUpdateWithoutTripInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1473,6 +1741,7 @@ export type GuestUncheckedUpdateWithoutTripInput = {
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  typeformSubmissions?: Prisma.TypeformSubmissionUncheckedUpdateManyWithoutGuestNestedInput
 }
 
 export type GuestUncheckedUpdateManyWithoutTripInput = {
@@ -1484,8 +1753,10 @@ export type GuestUncheckedUpdateManyWithoutTripInput = {
   instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   emergencyContact?: Prisma.NullableJsonNullValueInput | runtime.InputJsonValue
   notes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
@@ -1502,6 +1773,7 @@ export type GuestCountOutputType = {
   flights: number
   pendingExtractions: number
   createdForExtractions: number
+  typeformSubmissions: number
 }
 
 export type GuestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1510,6 +1782,7 @@ export type GuestCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.
   flights?: boolean | GuestCountOutputTypeCountFlightsArgs
   pendingExtractions?: boolean | GuestCountOutputTypeCountPendingExtractionsArgs
   createdForExtractions?: boolean | GuestCountOutputTypeCountCreatedForExtractionsArgs
+  typeformSubmissions?: boolean | GuestCountOutputTypeCountTypeformSubmissionsArgs
 }
 
 /**
@@ -1557,6 +1830,13 @@ export type GuestCountOutputTypeCountCreatedForExtractionsArgs<ExtArgs extends r
   where?: Prisma.PendingExtractionWhereInput
 }
 
+/**
+ * GuestCountOutputType without action
+ */
+export type GuestCountOutputTypeCountTypeformSubmissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.TypeformSubmissionWhereInput
+}
+
 
 export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -1568,8 +1848,10 @@ export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   instagramUrl?: boolean
   email?: boolean
   phone?: boolean
+  venmoHandle?: boolean
   status?: boolean
   dietaryNotes?: boolean
+  favoriteCocktails?: boolean
   emergencyContact?: boolean
   notes?: boolean
   createdVia?: boolean
@@ -1580,6 +1862,7 @@ export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   flights?: boolean | Prisma.Guest$flightsArgs<ExtArgs>
   pendingExtractions?: boolean | Prisma.Guest$pendingExtractionsArgs<ExtArgs>
   createdForExtractions?: boolean | Prisma.Guest$createdForExtractionsArgs<ExtArgs>
+  typeformSubmissions?: boolean | Prisma.Guest$typeformSubmissionsArgs<ExtArgs>
   _count?: boolean | Prisma.GuestCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
@@ -1593,8 +1876,10 @@ export type GuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   instagramUrl?: boolean
   email?: boolean
   phone?: boolean
+  venmoHandle?: boolean
   status?: boolean
   dietaryNotes?: boolean
+  favoriteCocktails?: boolean
   emergencyContact?: boolean
   notes?: boolean
   createdVia?: boolean
@@ -1611,8 +1896,10 @@ export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   instagramUrl?: boolean
   email?: boolean
   phone?: boolean
+  venmoHandle?: boolean
   status?: boolean
   dietaryNotes?: boolean
+  favoriteCocktails?: boolean
   emergencyContact?: boolean
   notes?: boolean
   createdVia?: boolean
@@ -1629,14 +1916,16 @@ export type GuestSelectScalar = {
   instagramUrl?: boolean
   email?: boolean
   phone?: boolean
+  venmoHandle?: boolean
   status?: boolean
   dietaryNotes?: boolean
+  favoriteCocktails?: boolean
   emergencyContact?: boolean
   notes?: boolean
   createdVia?: boolean
 }
 
-export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "instagramUrl" | "email" | "phone" | "status" | "dietaryNotes" | "emergencyContact" | "notes" | "createdVia", ExtArgs["result"]["guest"]>
+export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "instagramUrl" | "email" | "phone" | "venmoHandle" | "status" | "dietaryNotes" | "favoriteCocktails" | "emergencyContact" | "notes" | "createdVia", ExtArgs["result"]["guest"]>
 export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   spot?: boolean | Prisma.Guest$spotArgs<ExtArgs>
@@ -1645,6 +1934,7 @@ export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   flights?: boolean | Prisma.Guest$flightsArgs<ExtArgs>
   pendingExtractions?: boolean | Prisma.Guest$pendingExtractionsArgs<ExtArgs>
   createdForExtractions?: boolean | Prisma.Guest$createdForExtractionsArgs<ExtArgs>
+  typeformSubmissions?: boolean | Prisma.Guest$typeformSubmissionsArgs<ExtArgs>
   _count?: boolean | Prisma.GuestCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type GuestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1664,6 +1954,7 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     flights: Prisma.$FlightPayload<ExtArgs>[]
     pendingExtractions: Prisma.$PendingExtractionPayload<ExtArgs>[]
     createdForExtractions: Prisma.$PendingExtractionPayload<ExtArgs>[]
+    typeformSubmissions: Prisma.$TypeformSubmissionPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1675,8 +1966,10 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     instagramUrl: string | null
     email: string | null
     phone: string | null
+    venmoHandle: string | null
     status: $Enums.GuestStatus
     dietaryNotes: string | null
+    favoriteCocktails: string | null
     emergencyContact: runtime.JsonValue | null
     notes: string | null
     createdVia: $Enums.GuestCreatedVia
@@ -2081,6 +2374,7 @@ export interface Prisma__GuestClient<T, Null = never, ExtArgs extends runtime.Ty
   flights<T extends Prisma.Guest$flightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$flightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FlightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pendingExtractions<T extends Prisma.Guest$pendingExtractionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$pendingExtractionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PendingExtractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   createdForExtractions<T extends Prisma.Guest$createdForExtractionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$createdForExtractionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PendingExtractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  typeformSubmissions<T extends Prisma.Guest$typeformSubmissionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$typeformSubmissionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$TypeformSubmissionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -2119,8 +2413,10 @@ export interface GuestFieldRefs {
   readonly instagramUrl: Prisma.FieldRef<"Guest", 'String'>
   readonly email: Prisma.FieldRef<"Guest", 'String'>
   readonly phone: Prisma.FieldRef<"Guest", 'String'>
+  readonly venmoHandle: Prisma.FieldRef<"Guest", 'String'>
   readonly status: Prisma.FieldRef<"Guest", 'GuestStatus'>
   readonly dietaryNotes: Prisma.FieldRef<"Guest", 'String'>
+  readonly favoriteCocktails: Prisma.FieldRef<"Guest", 'String'>
   readonly emergencyContact: Prisma.FieldRef<"Guest", 'Json'>
   readonly notes: Prisma.FieldRef<"Guest", 'String'>
   readonly createdVia: Prisma.FieldRef<"Guest", 'GuestCreatedVia'>
@@ -2661,6 +2957,30 @@ export type Guest$createdForExtractionsArgs<ExtArgs extends runtime.Types.Extens
   take?: number
   skip?: number
   distinct?: Prisma.PendingExtractionScalarFieldEnum | Prisma.PendingExtractionScalarFieldEnum[]
+}
+
+/**
+ * Guest.typeformSubmissions
+ */
+export type Guest$typeformSubmissionsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the TypeformSubmission
+   */
+  select?: Prisma.TypeformSubmissionSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the TypeformSubmission
+   */
+  omit?: Prisma.TypeformSubmissionOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.TypeformSubmissionInclude<ExtArgs> | null
+  where?: Prisma.TypeformSubmissionWhereInput
+  orderBy?: Prisma.TypeformSubmissionOrderByWithRelationInput | Prisma.TypeformSubmissionOrderByWithRelationInput[]
+  cursor?: Prisma.TypeformSubmissionWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.TypeformSubmissionScalarFieldEnum | Prisma.TypeformSubmissionScalarFieldEnum[]
 }
 
 /**

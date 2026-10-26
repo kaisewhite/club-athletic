@@ -399,6 +399,7 @@ export const ModelName = {
   FlightRecommendationOption: 'FlightRecommendationOption',
   Link: 'Link',
   Note: 'Note',
+  TypeformSubmission: 'TypeformSubmission',
   Upload: 'Upload',
   Conversation: 'Conversation',
   Message: 'Message',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "trip" | "property" | "floor" | "room" | "spot" | "guest" | "guestTask" | "payment" | "flight" | "shuttle" | "scheduleDay" | "flightRecommendation" | "flightRecommendationOption" | "link" | "note" | "upload" | "conversation" | "message" | "pendingExtraction" | "auditLog"
+    modelProps: "trip" | "property" | "floor" | "room" | "spot" | "guest" | "guestTask" | "payment" | "flight" | "shuttle" | "scheduleDay" | "flightRecommendation" | "flightRecommendationOption" | "link" | "note" | "typeformSubmission" | "upload" | "conversation" | "message" | "pendingExtraction" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1533,6 +1534,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    TypeformSubmission: {
+      payload: Prisma.$TypeformSubmissionPayload<ExtArgs>
+      fields: Prisma.TypeformSubmissionFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.TypeformSubmissionFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.TypeformSubmissionFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        findFirst: {
+          args: Prisma.TypeformSubmissionFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.TypeformSubmissionFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        findMany: {
+          args: Prisma.TypeformSubmissionFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>[]
+        }
+        create: {
+          args: Prisma.TypeformSubmissionCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        createMany: {
+          args: Prisma.TypeformSubmissionCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.TypeformSubmissionCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>[]
+        }
+        delete: {
+          args: Prisma.TypeformSubmissionDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        update: {
+          args: Prisma.TypeformSubmissionUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        deleteMany: {
+          args: Prisma.TypeformSubmissionDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.TypeformSubmissionUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.TypeformSubmissionUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>[]
+        }
+        upsert: {
+          args: Prisma.TypeformSubmissionUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$TypeformSubmissionPayload>
+        }
+        aggregate: {
+          args: Prisma.TypeformSubmissionAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateTypeformSubmission>
+        }
+        groupBy: {
+          args: Prisma.TypeformSubmissionGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TypeformSubmissionGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.TypeformSubmissionCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.TypeformSubmissionCountAggregateOutputType> | number
+        }
+      }
+    }
     Upload: {
       payload: Prisma.$UploadPayload<ExtArgs>
       fields: Prisma.UploadFieldRefs
@@ -2036,8 +2111,10 @@ export const GuestScalarFieldEnum = {
   instagramUrl: 'instagramUrl',
   email: 'email',
   phone: 'phone',
+  venmoHandle: 'venmoHandle',
   status: 'status',
   dietaryNotes: 'dietaryNotes',
+  favoriteCocktails: 'favoriteCocktails',
   emergencyContact: 'emergencyContact',
   notes: 'notes',
   createdVia: 'createdVia'
@@ -2186,6 +2263,17 @@ export const NoteScalarFieldEnum = {
 } as const
 
 export type NoteScalarFieldEnum = (typeof NoteScalarFieldEnum)[keyof typeof NoteScalarFieldEnum]
+
+
+export const TypeformSubmissionScalarFieldEnum = {
+  responseId: 'responseId',
+  formId: 'formId',
+  guestId: 'guestId',
+  submittedAt: 'submittedAt',
+  processedAt: 'processedAt'
+} as const
+
+export type TypeformSubmissionScalarFieldEnum = (typeof TypeformSubmissionScalarFieldEnum)[keyof typeof TypeformSubmissionScalarFieldEnum]
 
 
 export const UploadScalarFieldEnum = {
@@ -2704,6 +2792,7 @@ export type GlobalOmitConfig = {
   flightRecommendationOption?: Prisma.FlightRecommendationOptionOmit
   link?: Prisma.LinkOmit
   note?: Prisma.NoteOmit
+  typeformSubmission?: Prisma.TypeformSubmissionOmit
   upload?: Prisma.UploadOmit
   conversation?: Prisma.ConversationOmit
   message?: Prisma.MessageOmit

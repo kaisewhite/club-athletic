@@ -52,6 +52,32 @@ The server validates these keys before listening. Errors name the invalid fields
 without printing values. No database or Anthropic request is made by this scaffold.
 `PORT` is optional and can be passed on the command line; no new `.env` key is needed.
 
+## Typeform guest detail sync
+
+The `Chalet Guest Details — Méribel 2027` form (`s7gvWdIF`) sends completed
+responses to `POST /api/webhooks/typeform`. The route verifies Typeform's
+`Typeform-Signature` HMAC before reading a response, matches the normalized
+first and last name to one confirmed or invited Méribel guest, and applies the
+answer fields in one database transaction. A response token is stored as the
+idempotency key; the raw form payload is not stored. An unknown or ambiguous
+guest match returns an error so the delivery is visible for correction and
+redelivery in Typeform.
+
+First/last name, Venmo handle, phone, Instagram handle, dietary restrictions,
+and favorite cocktails map to the `Guest` record. Instagram links appear on
+Guests, while dietary notes and cocktail preferences appear on Chef. Phone and
+Venmo values remain in the database and are not rendered on the guest-facing
+site. The webhook uses only full submissions, not partial responses.
+
+For local webhook verification, set `TYPEFORM_WEBHOOK_SECRET`. The deployed ECS
+task receives the same key from the `club-athletic-web` Secrets Manager secret;
+the Typeform API token is used only to manage the webhook and is not required by
+the running app. Register the webhook after the new app version is healthy with
+`PUT https://api.typeform.com/forms/s7gvWdIF/webhooks/club-athletic-guest-sync`,
+using the deployed HTTPS endpoint, `event_types: { form_response: true }`,
+`verify_ssl: true`, and the same `TYPEFORM_WEBHOOK_SECRET` value. Keep partial
+responses disabled.
+
 ## Checks
 
 ```sh

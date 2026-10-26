@@ -6,6 +6,7 @@ const envSchema = z.object({
   ANTHROPIC_API_KEY: z.string().trim().min(1),
   DATABASE_URL: postgresUrl,
   DATABASE_URL_POOLED: postgresUrl,
+  TYPEFORM_WEBHOOK_SECRET: z.string().trim().min(1).optional(),
   PORT: z.coerce.number().int().min(1).max(65535).default(4173),
 });
 
