@@ -305,14 +305,19 @@ for (const [width, height] of VIEWPORTS) {
         const home = document.querySelector(".overview")!.getBoundingClientRect();
         const composer = document.querySelector(".home-composer .composer")!.getBoundingClientRect();
         const prompts = document.querySelector(".home-composer .suggestions")!.getBoundingClientRect();
+        const schedule = document.querySelector(".home-schedule")!.getBoundingClientRect();
         return {
           homeCenter: home.top + home.height / 2,
           groupCenter: (composer.top + prompts.bottom) / 2,
           composerBottom: composer.bottom,
           promptsTop: prompts.top,
+          scheduleTop: schedule.top,
         };
       });
       expect(geometry.promptsTop, "quick prompts should sit below the input").toBeGreaterThanOrEqual(geometry.composerBottom);
+      if (mobile) {
+        expect(geometry.scheduleTop, "schedule content should begin below the centered composer").toBeGreaterThanOrEqual(geometry.promptsTop + 12);
+      }
       expect(Math.abs(geometry.groupCenter - geometry.homeCenter), "landing group should remain centered").toBeLessThan(48);
     });
 

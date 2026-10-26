@@ -497,11 +497,10 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  /* The desktop landing overlays the composer on the page content. On phones,
-     keep it in normal flow so the welcome copy and schedule cannot sit behind
-     the input or its suggestion buttons. The content flexes above it, keeping
-     the composer near the bottom when there is enough height. */
-  .home-composer { position: relative; inset: auto; z-index: auto; flex: none; padding: 20px 0 max(32px, env(safe-area-inset-bottom, 0px)); }
+  /* Keep the input and quick prompts centered in the first view, and reserve
+     their vertical space before the schedule so it cannot sit under them. */
+  .overview-content { padding-top: calc(50dvh + 120px); }
+  .home-composer { position: absolute; inset: 0; z-index: 2; padding: 0; }
   .home-composer-content { gap: 12px; }
   .home-composer-heading { font-size: 22px; }
   .home-composer .chat-attachment-area { width: 100%; }

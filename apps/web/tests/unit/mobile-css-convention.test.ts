@@ -136,9 +136,10 @@ describe("mobile CSS convention (TODO §2.15)", () => {
     for (const size of sizes) expect(size).toBeGreaterThanOrEqual(16);
   });
 
-  it("centers the mobile home composer and keeps prompts in the landing group", () => {
+  it("centers the mobile home composer and reserves space before the landing content", () => {
     const { mobile } = split(read("src/styles.css"));
-    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*relative/);
+    expect(mobile).toMatch(/\.home-composer\s*\{[^}]*position:\s*absolute/);
+    expect(mobile).toMatch(/\.overview-content\s*\{[^}]*padding-top:\s*calc\(50dvh \+ 120px\)/);
     expect(mobile).toMatch(/\.home-composer-content\s*\{[^}]*gap:\s*12px/);
   });
 
