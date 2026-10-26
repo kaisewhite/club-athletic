@@ -500,7 +500,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   /* Keep the input and quick prompts centered in the first view, and reserve
      their vertical space before the schedule so it cannot sit under them. */
   .overview-content { padding-top: calc(50dvh + 120px); }
-  .home-composer { position: absolute; inset: 0; z-index: 2; padding: 0; }
+  .home-composer { position: absolute; inset: 0; z-index: 2; padding: 0 0 max(32px, env(safe-area-inset-bottom, 0px)); }
   .home-composer-content { gap: 12px; }
   .home-composer-heading { font-size: 22px; }
   .home-composer .chat-attachment-area { width: 100%; }
