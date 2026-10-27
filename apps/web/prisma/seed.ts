@@ -86,13 +86,14 @@ LINKS: ski pass skipass-meribel.com and Epic Pass 3 Vallées; Méribel webcams; 
 // airport's local clock, stored as instants: New York airports are UTC-5 in
 // January/February, Geneva is UTC+1. A guest whose sheet entry is incomplete or
 // blank has no row for that direction; the table shows "—" for it.
-const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; airline: string; flightNumber: string; origin: string; destination: string; departs: string; arrives: string }> = [
+const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; airline: string; flightNumber: string | null; origin: string; destination: string; departs: string; arrives: string }> = [
   // Flight numbers: UA956 and UA749 are the only nonstops on their routes. The
   // Miami trips connect in Zurich onto SWISS LX64; the 10:35 GVA→ZRH feeder's own
   // number was not published in what could be found, so the long-haul is recorded.
   { guest: "Olajuwon Jones",    direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
   { guest: "Olajuwon Jones",    direction: "OUTBOUND", airline: "United", flightNumber: "UA749", origin: "GVA", destination: "IAD", departs: "2027-02-06T11:20:00+01:00", arrives: "2027-02-06T14:55:00-05:00" },
-  { guest: "Augustus Shewchuck", direction: "OUTBOUND", airline: "SWISS", flightNumber: "LX64 via ZRH", origin: "GVA", destination: "MIA", departs: "2027-02-06T10:35:00+01:00", arrives: "2027-02-06T17:30:00-05:00" },
+  { guest: "Augustus Shewchuck", direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
+  { guest: "Augustus Shewchuck", direction: "OUTBOUND", airline: "United", flightNumber: null, origin: "GVA", destination: "EWR", departs: "2027-02-06T12:50:00+01:00", arrives: "2027-02-06T18:45:00-05:00" },
   { guest: "Valeriia Stobolva", direction: "OUTBOUND", airline: "SWISS", flightNumber: "LX64 via ZRH", origin: "GVA", destination: "MIA", departs: "2027-02-06T10:35:00+01:00", arrives: "2027-02-06T17:30:00-05:00" },
   { guest: "Kaise",             direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
   { guest: "Kristy Khoury",     direction: "INBOUND",  airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departs: "2027-01-28T17:35:00-05:00", arrives: "2027-01-29T07:25:00+01:00" },
