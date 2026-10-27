@@ -25,25 +25,25 @@ const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;v
 // flight. `fitsShuttle` is against the trip's cutoffs (land by 09:30, depart
 // 10:00 or later); a flight outside them stays listed and says so.
 const FLIGHT_RECOMMENDATIONS = [
-  { id: 'seed_flightrec_sat', title: 'Option 1 — Fly Friday night, arrive Saturday',
+  { id: 'seed_flightrec_sat', title: 'Option 1 — Friday, January 29, 2027 to Saturday, January 30, 2027',
     intro: 'Two nonstops from New York land in time for the group shuttle. Be on the ground at GVA by 9:30 AM.',
     outro: 'If your flight is scheduled to arrive after 9:30 AM, arrange separate transportation to the chalet.',
     options: [
-      { id: 'seed_flightopt_ewr_sat', carrier: 'United UA956', route: 'EWR → GVA', departs: '5:30 PM Fri', arrives: '7:30 AM Sat', fits: true, note: 'Best buffer' },
-      { id: 'seed_flightopt_jfk_sat', carrier: 'SWISS LX23', route: 'JFK → GVA', departs: '7:25 PM Fri', arrives: '9:15 AM Sat', fits: true, note: 'Fits the window; less buffer' },
+      { id: 'seed_flightopt_ewr_sat', carrier: 'United UA956', route: 'EWR → GVA', departs: 'Fri, Jan 29, 2027 · 5:30 PM', arrives: 'Sat, Jan 30, 2027 · 7:30 AM', fits: true, note: 'Best buffer' },
+      { id: 'seed_flightopt_jfk_sat', carrier: 'SWISS LX23', route: 'JFK → GVA', departs: 'Fri, Jan 29, 2027 · 7:25 PM', arrives: 'Sat, Jan 30, 2027 · 9:15 AM', fits: true, note: 'Fits the window; less buffer' },
     ] },
-  { id: 'seed_flightrec_fri', title: 'Option 2 — Arrive Friday for extra buffer',
+  { id: 'seed_flightrec_fri', title: 'Option 2 — Thursday, January 28, 2027 to Friday, January 29, 2027',
     intro: 'Optional: fly Thursday, spend Friday in Geneva, and sleep by the airport before meeting the shuttle Saturday morning. It is simply a buffer against flight delays. The organizer is on this one.',
     outro: 'See the Geneva Marriott and Hilton Geneva hotel options below; both have shuttles back to GVA.',
     options: [
-      { id: 'seed_flightopt_ewr_fri', carrier: 'United UA956', route: 'EWR → GVA', departs: '5:35 PM Thu', arrives: '7:25 AM Fri', fits: true, note: 'Stay near GVA, shuttle Saturday' },
+      { id: 'seed_flightopt_ewr_fri', carrier: 'United UA956', route: 'EWR → GVA', departs: 'Thu, Jan 28, 2027 · 5:35 PM', arrives: 'Fri, Jan 29, 2027 · 7:25 AM', fits: true, note: 'Stay near GVA, shuttle Saturday' },
     ] },
-  { id: 'seed_flightrec_home', title: 'Return — Saturday 6 February',
+  { id: 'seed_flightrec_home', title: 'Return — Saturday, February 6, 2027',
     intro: 'Pickup is 4:00 AM, about 2.5 hours to GVA. Book a flight departing GVA at 10:00 AM or later.',
     outro: 'Schedules change — confirm exact times when booking.',
     options: [
-      { id: 'seed_flightopt_jfk_home', carrier: 'SWISS LX22', route: 'GVA → JFK', departs: '11:40 AM', arrives: '2:20 PM', fits: true,  note: 'Room to spare' },
-      { id: 'seed_flightopt_ewr_home', carrier: 'United UA957', route: 'GVA → EWR', departs: '9:15 AM', arrives: '12:20 PM', fits: false, note: 'Separate transfer required' },
+      { id: 'seed_flightopt_jfk_home', carrier: 'SWISS LX22', route: 'GVA → JFK', departs: 'Sat, Feb 6, 2027 · 11:40 AM', arrives: 'Sat, Feb 6, 2027 · 2:20 PM', fits: true,  note: 'Room to spare' },
+      { id: 'seed_flightopt_ewr_home', carrier: 'United UA957', route: 'GVA → EWR', departs: 'Sat, Feb 6, 2027 · 9:15 AM', arrives: 'Sat, Feb 6, 2027 · 12:20 PM', fits: false, note: 'Separate transfer required' },
     ] },
 ];
 const FLOORS = [
