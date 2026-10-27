@@ -14,7 +14,7 @@ export default function Flights({ loaderData: { flights, recommendations, rules,
   return <section aria-labelledby="flights-heading">
     <PageHeading id="flights-heading" sub="Times are based on the group shuttle from Geneva (GVA).">Flights</PageHeading>
     <FlightBookingRules rules={rules} />
-    <FlightRecommendationsSection sections={recommendations} hotelLinks={hotelLinks} />
+    <FlightRecommendationsSection sections={recommendations} hotelLinks={hotelLinks} tripDates={{ startDate: rules.startDate, endDate: rules.endDate }} />
     <GroupFlightTable flights={flights} />
   </section>;
 }

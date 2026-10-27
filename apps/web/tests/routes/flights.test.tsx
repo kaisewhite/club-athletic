@@ -21,16 +21,16 @@ const rules = {
   ],
 };
 const recommendations = [
-  { id: "sat", title: "Option 1 — Friday, January 29, 2027 to Saturday, January 30, 2027", intro: "Land by 8:30 AM.", outro: null, options: [
-    { id: "ewr", carrier: "United UA956", route: "EWR → GVA", departs: "Fri, Jan 29, 2027 · 5:30 PM", arrives: "Sat, Jan 30, 2027 · 7:30 AM", fitsShuttle: true, note: "Best buffer" },
-    { id: "jfk", carrier: "SWISS LX23", route: "JFK → GVA", departs: "Fri, Jan 29, 2027 · 7:25 PM", arrives: "Sat, Jan 30, 2027 · 9:15 AM", fitsShuttle: false, note: "Lands after the 8:30 AM cutoff — separate transfer" },
+  { id: "sat", title: "Option 1 — Fly Friday night, arrive Saturday", intro: "Land by 8:30 AM.", outro: null, options: [
+    { id: "ewr", carrier: "United UA956", route: "EWR → GVA", departs: "5:30 PM Fri", arrives: "7:30 AM Sat", fitsShuttle: true, note: "Best buffer" },
+    { id: "jfk", carrier: "SWISS LX23", route: "JFK → GVA", departs: "7:25 PM Fri", arrives: "9:15 AM Sat", fitsShuttle: false, note: "Lands after the 8:30 AM cutoff — separate transfer" },
   ] },
-  { id: "fri", title: "Option 2 — Thursday, January 28, 2027 to Friday, January 29, 2027", intro: "Fly out a day early and stay near Geneva Airport before Saturday’s shuttle.", outro: null, options: [
-    { id: "ewr-fri", carrier: "United UA956", route: "EWR → GVA", departs: "Thu, Jan 28, 2027 · 5:35 PM", arrives: "Fri, Jan 29, 2027 · 7:25 AM", fitsShuttle: true, note: "Stay near GVA, shuttle Saturday" },
+  { id: "fri", title: "Option 2 — Arrive Friday for extra buffer", intro: "Fly out a day early and stay near Geneva Airport before Saturday’s shuttle.", outro: null, options: [
+    { id: "ewr-fri", carrier: "United UA956", route: "EWR → GVA", departs: "5:35 PM Thu", arrives: "7:25 AM Fri", fitsShuttle: true, note: "Stay near GVA, shuttle Saturday" },
   ] },
-  { id: "home", title: "Return — Saturday, February 6, 2027", intro: "Book 11:00 AM or later.", outro: "Schedules change — confirm when booking.", options: [
-    { id: "jfk-home", carrier: "SWISS LX22", route: "GVA → JFK", departs: "Sat, Feb 6, 2027 · 11:40 AM", arrives: "Sat, Feb 6, 2027 · 2:20 PM", fitsShuttle: true, note: "Room to spare" },
-    { id: "ewr-home", carrier: "United UA957", route: "GVA → EWR", departs: "Sat, Feb 6, 2027 · 9:15 AM", arrives: "Sat, Feb 6, 2027 · 12:20 PM", fitsShuttle: false, note: "Separate transfer required" },
+  { id: "home", title: "Return — Saturday 6 February", intro: "Book 11:00 AM or later.", outro: "Schedules change — confirm when booking.", options: [
+    { id: "jfk-home", carrier: "SWISS LX22", route: "GVA → JFK", departs: "11:40 AM", arrives: "2:20 PM", fitsShuttle: true, note: "Room to spare" },
+    { id: "ewr-home", carrier: "United UA957", route: "GVA → EWR", departs: "9:15 AM", arrives: "12:20 PM", fitsShuttle: false, note: "Separate transfer required" },
   ] },
 ];
 
@@ -132,12 +132,12 @@ describe("Flights route", () => {
     expect(rows[1]?.querySelectorAll("td")).toHaveLength(3);
     expect(tables[0]?.textContent).not.toContain("Group shuttle");
     for (const text of [
-      "Option 1 — Friday, January 29, 2027 to Saturday, January 30, 2027",
+      "Option 1 — Fly Friday night, arrive Saturday (Friday, January 29, 2027 to Saturday, January 30, 2027)",
       "Fri, Jan 29, 2027 · 5:30 PM", "Sat, Jan 30, 2027 · 7:30 AM",
       "SWISS LX23", "Fri, Jan 29, 2027 · 7:25 PM", "Sat, Jan 30, 2027 · 9:15 AM",
-      "Option 2 — Thursday, January 28, 2027 to Friday, January 29, 2027",
+      "Option 2 — Arrive Friday for extra buffer (Thursday, January 28, 2027 to Friday, January 29, 2027)",
       "Thu, Jan 28, 2027 · 5:35 PM", "Fri, Jan 29, 2027 · 7:25 AM",
-      "Return — Saturday, February 6, 2027", "Sat, Feb 6, 2027 · 11:40 AM", "Sat, Feb 6, 2027 · 2:20 PM", "Sat, Feb 6, 2027 · 9:15 AM", "Sat, Feb 6, 2027 · 12:20 PM",
+      "Return — Saturday 6 February, 2027", "Sat, Feb 6, 2027 · 11:40 AM", "Sat, Feb 6, 2027 · 2:20 PM", "Sat, Feb 6, 2027 · 9:15 AM", "Sat, Feb 6, 2027 · 12:20 PM",
       "Book 11:00 AM or later.", "Schedules change",
     ]) expect(page.textContent).toContain(text);
   });
