@@ -16,7 +16,7 @@ afterEach(async () => {
 });
 
 describe("GuestInstagramAvatar", () => {
-  it("shows guest initials when the cached profile image is unavailable", async () => {
+  it("falls back to the dynamic avatar route before showing initials", async () => {
     container = document.createElement("div");
     document.body.append(container);
     root = createRoot(container);
@@ -27,6 +27,12 @@ describe("GuestInstagramAvatar", () => {
     expect(image?.getAttribute("src")).toBe("/guest-avatars/ari.jpg");
     expect(fallback?.textContent).toBe("AS");
     expect(fallback?.hasAttribute("hidden")).toBe(true);
+
+    await act(async () => image?.dispatchEvent(new Event("error")));
+
+    expect(image?.getAttribute("src")).toBe("/api/guest-avatars/ari");
+    expect(image?.hidden).toBe(false);
+    expect(fallback?.hidden).toBe(true);
 
     await act(async () => image?.dispatchEvent(new Event("error")));
 
