@@ -128,16 +128,19 @@ describe("Flights route", () => {
     expect([...tables[0]!.querySelectorAll("thead th")].map((th) => th.textContent)).toEqual(["Flight", "Route", "Departs", "Arrives"]);
     const rows = [...tables[0]!.querySelectorAll("tbody tr")];
     expect(rows.map((row) => row.querySelector("th")?.textContent)).toEqual(["United UA956", "SWISS LX23"]);
+    expect([...page.querySelectorAll(".flight-rec > .flight-rec-title")].map((heading) => heading.textContent)).toEqual([
+      "Option 1 — Fri, Jan 29 → Sat, Jan 30, 2027",
+      "Option 2 — Thu, Jan 28 → Fri, Jan 29, 2027",
+      "Return — Sat, Feb 6, 2027",
+    ]);
     expect(rows[0]?.querySelectorAll("td")).toHaveLength(3);
     expect(rows[1]?.querySelectorAll("td")).toHaveLength(3);
     expect(tables[0]?.textContent).not.toContain("Group shuttle");
     for (const text of [
-      "Option 1 — Fly Friday night, arrive Saturday (Friday, January 29, 2027 to Saturday, January 30, 2027)",
-      "Fri, Jan 29, 2027 · 5:30 PM", "Sat, Jan 30, 2027 · 7:30 AM",
-      "SWISS LX23", "Fri, Jan 29, 2027 · 7:25 PM", "Sat, Jan 30, 2027 · 9:15 AM",
-      "Option 2 — Arrive Friday for extra buffer (Thursday, January 28, 2027 to Friday, January 29, 2027)",
-      "Thu, Jan 28, 2027 · 5:35 PM", "Fri, Jan 29, 2027 · 7:25 AM",
-      "Return — Saturday 6 February, 2027", "Sat, Feb 6, 2027 · 11:40 AM", "Sat, Feb 6, 2027 · 2:20 PM", "Sat, Feb 6, 2027 · 9:15 AM", "Sat, Feb 6, 2027 · 12:20 PM",
+      "Option 1 — Fri, Jan 29 → Sat, Jan 30, 2027", "5:30 PM Fri", "7:30 AM Sat",
+      "SWISS LX23", "7:25 PM Fri", "9:15 AM Sat",
+      "Option 2 — Thu, Jan 28 → Fri, Jan 29, 2027", "5:35 PM Thu", "7:25 AM Fri",
+      "Return — Sat, Feb 6, 2027", "11:40 AM", "2:20 PM", "9:15 AM", "12:20 PM",
       "Book 11:00 AM or later.", "Schedules change",
     ]) expect(page.textContent).toContain(text);
   });
