@@ -35,6 +35,7 @@ enum GuestCreatedVia {
   SEED
   IMPORT
   AGENT
+  WEBSITE
 }
 
 enum GuestTaskType {
@@ -195,7 +196,7 @@ model Guest {
   flights               Flight[]
   pendingExtractions    PendingExtraction[] @relation("IntakeGuest")
   createdForExtractions PendingExtraction[] @relation("IntakeCreatedGuest")
-  typeformSubmissions   TypeformSubmission[]
+  submissions           GuestSubmission[]
 
   // Guest_lastName_lower_idx is an expression index, maintained in migration SQL.
   @@index([tripId])
@@ -370,15 +371,15 @@ model Note {
   @@index([tripId])
 }
 
-// Stores only the response identity and processing result, never the submitted
-// payload. The unique response ID makes webhook retries safe to replay.
-model TypeformSubmission {
-  responseId  String   @id
-  formId      String
-  guestId     String
-  submittedAt DateTime @db.Timestamptz(3)
-  processedAt DateTime @default(now()) @db.Timestamptz(3)
-  guest       Guest    @relation(fields: [guestId], references: [id], onDelete: Restrict)
+// Stores submission identity and its guest link, never the submitted form data.
+model GuestSubmission {
+  submissionId String   @id
+  source       String   @default("website")
+  sourceRef    String?
+  guestId      String
+  submittedAt  DateTime @db.Timestamptz(3)
+  processedAt  DateTime @default(now()) @db.Timestamptz(3)
+  guest        Guest    @relation(fields: [guestId], references: [id], onDelete: Restrict)
 
   @@index([guestId, submittedAt])
 }

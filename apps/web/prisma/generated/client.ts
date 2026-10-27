@@ -117,10 +117,10 @@ export type Link = Prisma.LinkModel
  */
 export type Note = Prisma.NoteModel
 /**
- * Model TypeformSubmission
+ * Model GuestSubmission
  *
  */
-export type TypeformSubmission = Prisma.TypeformSubmissionModel
+export type GuestSubmission = Prisma.GuestSubmissionModel
 /**
  * Model Upload
  *
