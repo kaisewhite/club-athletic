@@ -131,6 +131,29 @@ describe("database-backed read-only detail pages", () => {
     expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
     expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["Depends on the room", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60"]);
     expect(page.textContent).toContain("refund €69.45");
+    const chefAgreement = page.querySelector<HTMLDetailsElement>("details.service-agreement");
+    expect(chefAgreement).not.toBeNull();
+    expect(chefAgreement?.hasAttribute("open")).toBe(false);
+    chefAgreement?.querySelector("summary")?.click();
+    expect(chefAgreement?.open).toBe(true);
+    chefAgreement?.querySelector("summary")?.click();
+    expect(chefAgreement?.open).toBe(false);
+    expect(chefAgreement?.querySelector("summary")?.textContent).toContain("Booked");
+    for (const detail of ["€8,296.50", "€2,614.50", "€1,200.00", "€3,814.50", "€1,800 food-shopping credit", "Janaina Rangel", "no refund"]) {
+      expect(chefAgreement?.textContent).toContain(detail);
+    }
+    const openBar = page.querySelector<HTMLDetailsElement>("details.open-bar-proposal");
+    expect(openBar).not.toBeNull();
+    expect(openBar?.hasAttribute("open")).toBe(false);
+    openBar?.querySelector("summary")?.click();
+    expect(openBar?.open).toBe(true);
+    openBar?.querySelector("summary")?.click();
+    expect(openBar?.open).toBe(false);
+    expect(openBar?.querySelector("summary")?.textContent).toContain("Not booked");
+    expect(openBar?.querySelector("summary")?.textContent).toContain("€2,090 including VAT");
+    for (const detail of ["not included in the trip price", "€1,900", "10% · €190", "Professional bartender", "Alpine Berry Smash", "20% discount"]) {
+      expect(openBar?.textContent).toContain(detail);
+    }
   });
   it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
     getEurUsdRate.mockResolvedValue(null);
