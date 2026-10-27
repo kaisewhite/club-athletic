@@ -16,8 +16,12 @@ it("opens the authored map at full size and closes it without changing the inlin
     await act(async () => root.render(<BedroomMap floors={floors} />));
     expect(container.querySelectorAll(".bm-sheet")).toHaveLength(1);
     const r10 = container.querySelector<SVGSVGElement>('.bm-sheet svg[viewBox="0 0 600 465"]');
-    expect(r10?.querySelector("image")?.getAttribute("href")).toBe("/chalet-r10-official.webp");
-    expect(r10?.querySelector("image")?.getAttribute("preserveAspectRatio")).toBe("none");
+    const partitions = Array.from(r10?.querySelectorAll(".part") ?? [], (path) => path.getAttribute("d")).join(" ");
+    expect(partitions).toContain("M100 197V278M100 300V320");
+    expect(partitions).toContain("M135 275V278M135 300V410");
+    const doors = Array.from(r10?.querySelectorAll(".door") ?? [], (path) => path.getAttribute("d")).join(" ");
+    expect(doors).toContain("M320 275v22a22 22 0 0 0 22-22");
+    expect(r10?.querySelector('rect.wd[x="320"][y="197"][width="25"]')).toBeNull();
     await act(async () => container.querySelector<HTMLButtonElement>(".bm-expand")!.click());
     const dialog = container.querySelector<HTMLDialogElement>(".bm-dialog");
     expect(dialog?.open).toBe(true);
