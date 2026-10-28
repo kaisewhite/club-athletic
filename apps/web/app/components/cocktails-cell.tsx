@@ -1,12 +1,13 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useFetcher, useInRouterContext } from "react-router";
+import { GuestPreferenceList, preferenceItems } from "./guest-preference-list";
 
 type CocktailResponse = { ok: boolean; favoriteCocktails?: string | null; error?: string };
 type CocktailCellProps = { guestId: string; guestName: string; favoriteCocktails: string | null };
 
 export function FavoriteCocktailsCell(props: CocktailCellProps) {
   return useInRouterContext() ? <InteractiveFavoriteCocktailsCell {...props} />
-    : props.favoriteCocktails ?? <span className="dietary-cell-empty">Add favorite cocktails</span>;
+    : <GuestPreferenceList value={props.favoriteCocktails} emptyLabel="Add favorite cocktails" />;
 }
 
 function InteractiveFavoriteCocktailsCell({ guestId, guestName, favoriteCocktails }: CocktailCellProps) {
@@ -39,7 +40,7 @@ function InteractiveFavoriteCocktailsCell({ guestId, guestName, favoriteCocktail
 
   const begin = () => {
     if (saving) return;
-    setDraft(favoriteCocktails ?? "");
+    setDraft(preferenceItems(favoriteCocktails).join("\n"));
     setError(null);
     setEditing(true);
   };
@@ -61,7 +62,7 @@ function InteractiveFavoriteCocktailsCell({ guestId, guestName, favoriteCocktail
   };
 
   if (!editing) return <button type="button" className={`dietary-cell-button${favoriteCocktails ? "" : " is-empty"}`} aria-label={`Edit favorite cocktails for ${guestName}`} onClick={begin}>
-    {favoriteCocktails ?? <span className="dietary-cell-empty">Add favorite cocktails</span>}
+    <GuestPreferenceList value={favoriteCocktails} emptyLabel="Add favorite cocktails" />
     <span className="dietary-cell-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20h9" /><path d="m16.5 3.5 4 4L8 20l-5 1 1-5Z" /></svg></span>
   </button>;
 

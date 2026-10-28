@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, type KeyboardEvent } from "react";
 import { useFetcher, useInRouterContext } from "react-router";
+import { formatPreferenceListForCopy, GuestPreferenceList, preferenceItems } from "./guest-preference-list";
 
 type DietaryResponse = { ok: boolean; dietaryNotes?: string | null; error?: string };
 type GuestCreateResponse = { ok: boolean; guest?: { displayName: string }; error?: string };
@@ -19,9 +20,9 @@ function InteractiveDietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }
     const text = guests.map(({ displayName, dietaryNotes, favoriteCocktails }) => [
       displayName,
       "Dietary needs:",
-      dietaryNotes ?? "—",
+      formatPreferenceListForCopy(dietaryNotes),
       "Favorite drinks:",
-      favoriteCocktails ?? "—",
+      formatPreferenceListForCopy(favoriteCocktails),
     ].join("\n")).join("\n\n");
     try {
       await navigator.clipboard.writeText(text);
@@ -44,7 +45,7 @@ function InteractiveDietaryCopyButton({ guests }: { guests: DietaryCopyGuest[] }
 }
 
 export function DietaryCell(props: DietaryCellProps) {
-  return useInRouterContext() ? <InteractiveDietaryCell {...props} /> : props.dietaryNotes ?? <span className="dietary-cell-empty">Add allergies or dietary needs</span>;
+  return useInRouterContext() ? <InteractiveDietaryCell {...props} /> : <GuestPreferenceList value={props.dietaryNotes} emptyLabel="Add allergies or dietary needs" />;
 }
 
 export function DietaryGuestAdd() {
@@ -135,7 +136,7 @@ function InteractiveDietaryCell({ guestId, guestName, dietaryNotes }: DietaryCel
 
   const begin = () => {
     if (saving) return;
-    setDraft(dietaryNotes ?? "");
+    setDraft(preferenceItems(dietaryNotes).join("\n"));
     setError(null);
     setEditing(true);
   };
@@ -157,7 +158,7 @@ function InteractiveDietaryCell({ guestId, guestName, dietaryNotes }: DietaryCel
   };
 
   if (!editing) return <button type="button" className={`dietary-cell-button${dietaryNotes ? "" : " is-empty"}`} aria-label={`Edit dietary needs for ${guestName}`} onClick={begin} onDoubleClick={begin}>
-    {dietaryNotes ?? <span className="dietary-cell-empty">Add allergies or dietary needs</span>}
+    <GuestPreferenceList value={dietaryNotes} emptyLabel="Add allergies or dietary needs" />
     <span className="dietary-cell-edit" aria-hidden="true"><svg viewBox="0 0 24 24"><path d="M12 20h9" /><path d="m16.5 3.5 4 4L8 20l-5 1 1-5Z" /></svg></span>
   </button>;
 

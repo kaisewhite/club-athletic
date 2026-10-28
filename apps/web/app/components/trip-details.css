@@ -132,7 +132,11 @@
 /* The cell is a control: an empty one reads like an input's placeholder — dim,
    italic, with a dashed underline and a pencil — so it is obvious it can be typed
    into (owner, 2026-09-29), and a filled one shows the pencil on hover. */
-.dietary-cell-button { display: flex; align-items: center; gap: 10px; white-space: pre-line; }
+.dietary-cell-button { display: flex; align-items: flex-start; gap: 10px; white-space: normal; }
+.dietary-preference-list { display: grid; flex: 1; gap: 2px; min-width: 0; }
+.dietary-preference-item { display: grid; grid-template-columns: 1em minmax(0, 1fr); gap: 3px; }
+.dietary-preference-bullet { color: var(--text-dim); }
+.dietary-cell-edit { align-self: center; flex: none; }
 .dietary-cell-empty { color: var(--text-faint); font-style: italic; border-bottom: 1px dashed var(--border-strong); padding-bottom: 1px; }
 .dietary-cell-edit { color: var(--text-faint); font-style: normal; font-size: 13px; opacity: 0; transition: opacity 120ms cubic-bezier(.4,0,.2,1); }
 .dietary-cell-edit svg { display: block; width: 15px; height: 15px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }

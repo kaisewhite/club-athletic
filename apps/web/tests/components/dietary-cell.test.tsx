@@ -3,6 +3,7 @@ import { createRoot, type Root } from "react-dom/client";
 import { createMemoryRouter, RouterProvider, useLoaderData } from "react-router";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { DietaryCell, DietaryCopyButton, DietaryGuestAdd } from "../../app/components/dietary-cell";
+import { FavoriteCocktailsCell } from "../../app/components/cocktails-cell";
 
 let root: Root | undefined;
 let router: ReturnType<typeof createMemoryRouter>;
@@ -77,16 +78,33 @@ describe("DietaryCell", () => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
     await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Copy guest food preferences"]')!.click(); await Promise.resolve(); });
-    expect(writeText).toHaveBeenCalledWith("Ada Lovelace\nDietary needs:\nNo nuts\nFavorite drinks:\n• Dirty martini\n\nGrace Hopper\nDietary needs:\n—\nFavorite drinks:\n—");
+    expect(writeText).toHaveBeenCalledWith("Ada Lovelace\nDietary needs:\n• No nuts\nFavorite drinks:\n• Dirty martini\n• Mojito\n\nGrace Hopper\nDietary needs:\n—\nFavorite drinks:\n—");
     expect(container.querySelector<HTMLButtonElement>(".dietary-copy-button")?.getAttribute("aria-label")).toBe("Guest food preferences copied");
     expect(container.querySelector('[role="status"]')?.textContent).toBe("Guest food preferences copied to clipboard.");
+  });
+
+  it("renders each dietary and drink preference as a separate list item", async () => {
+    savedNotes = "• Gluten (European wheat may be okay) • Dairy";
+    await act(async () => { await router.revalidate(); });
+    await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
+
+    const lists = container.querySelectorAll(".dietary-preference-list");
+    expect(lists).toHaveLength(2);
+    expect([...lists[0].querySelectorAll(".dietary-preference-item > span:last-child")].map((item) => item.textContent)).toEqual([
+      "Gluten (European wheat may be okay)",
+      "Dairy",
+    ]);
+    expect([...lists[1].querySelectorAll(".dietary-preference-item > span:last-child")].map((item) => item.textContent)).toEqual([
+      "Dirty martini",
+      "Mojito",
+    ]);
   });
 });
 
 function DietaryRoute() {
   const data = useLoaderData() as { dietaryNotes: string };
   return <><DietaryGuestAdd /><DietaryCopyButton guests={[
-    { displayName: "Ada Lovelace", dietaryNotes: data.dietaryNotes, favoriteCocktails: "• Dirty martini" },
+    { displayName: "Ada Lovelace", dietaryNotes: data.dietaryNotes, favoriteCocktails: "• Dirty martini\n• Mojito" },
     { displayName: "Grace Hopper", dietaryNotes: null, favoriteCocktails: null },
-  ]} /><table><tbody><tr><td><DietaryCell guestId="guest-1" guestName="Ada Lovelace" dietaryNotes={data.dietaryNotes} /></td></tr></tbody></table></>;
+  ]} /><table><tbody><tr><td><DietaryCell guestId="guest-1" guestName="Ada Lovelace" dietaryNotes={data.dietaryNotes} /></td><td><FavoriteCocktailsCell guestId="guest-1" guestName="Ada Lovelace" favoriteCocktails={"• Dirty martini\n• Mojito"} /></td></tr></tbody></table></>;
 }
