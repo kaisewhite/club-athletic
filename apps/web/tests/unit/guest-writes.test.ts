@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { createGuestWithDietaryNotes, GuestAlreadyExistsError, GuestNotFoundError, updateGuestDietaryNotes } from "../../src/lib/db/guest-writes.server";
+import { createGuestWithDietaryNotes, GuestAlreadyExistsError, GuestNotFoundError, updateGuestDietaryNotes, updateGuestFavoriteCocktails } from "../../src/lib/db/guest-writes.server";
 
 describe("guest dietary write boundary", () => {
   it("updates only dietaryNotes and records before/after audit data in the transaction", async () => {
@@ -60,5 +60,27 @@ describe("guest dietary write boundary", () => {
     });
     await expect(createGuestWithDietaryNotes({ firstName: "Existing", lastName: "Guest", dietaryNotes: null, instagramUrl: "https://instagram.com/existing" }, { withDatabase: withDatabase as never })).rejects.toBeInstanceOf(GuestAlreadyExistsError);
     expect(create).not.toHaveBeenCalled(); expect(audit).not.toHaveBeenCalled();
+  });
+});
+
+describe("guest cocktail preference write boundary", () => {
+  it("updates the preference and records before/after audit data in the transaction", async () => {
+    const calls: unknown[] = [];
+    const withDatabase = async (write: (db: { transaction<T>(operation: (tx: unknown) => Promise<T>): Promise<T> }) => Promise<unknown>) => write({
+      transaction: async (operation) => operation({
+        guest: {
+          findUnique: async (args: unknown) => { calls.push(["find", args]); return { favoriteCocktails: null }; },
+          update: async (args: unknown) => { calls.push(["update", args]); return { id: "guest-1" }; },
+        },
+        auditLog: { create: async (args: unknown) => { calls.push(["audit", args]); } },
+      }),
+    });
+    const result = await updateGuestFavoriteCocktails({ guestId: "guest-1", favoriteCocktails: "Mezcal Negroni" }, { withDatabase: withDatabase as never, createId: () => "audit-2" });
+    expect(result).toBe("Mezcal Negroni");
+    expect(calls).toEqual([
+      ["find", { where: { id: "guest-1" }, select: { favoriteCocktails: true } }],
+      ["update", { where: { id: "guest-1" }, data: { favoriteCocktails: "Mezcal Negroni" }, select: { id: true } }],
+      ["audit", { data: { id: "audit-2", action: "GUEST_COCKTAILS_UPDATE", entity: "Guest", entityId: "guest-1", before: { favoriteCocktails: null }, after: { favoriteCocktails: "Mezcal Negroni" }, source: "GUEST" } }],
+    ]);
   });
 });

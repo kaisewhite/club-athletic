@@ -7,6 +7,7 @@ export default [
   route("robots.txt", "routes/robots.ts"),
   route("api/chat/uploads", "routes/api.chat.uploads.ts"),
   route("api/guests", "routes/api.guests.ts"),
+  route("api/guests/cocktails", "routes/api.guests.cocktails.ts"),
   route("api/guests/dietary", "routes/api.guests.dietary.ts"),
   route("api/guest-avatars/:handle", "routes/api.guest-avatars.ts"),
   route("api/guest-details", "routes/api.guest-details.ts"),

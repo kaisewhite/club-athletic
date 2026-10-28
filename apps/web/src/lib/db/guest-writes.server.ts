@@ -42,6 +42,22 @@ export async function updateGuestDietaryNotes(
   }));
 }
 
+export async function updateGuestFavoriteCocktails(
+  { guestId, favoriteCocktails }: { guestId: string; favoriteCocktails: string | null },
+  deps: UpdateDependencies = {},
+): Promise<string | null> {
+  return (deps.withDatabase ?? withGuestWriteDatabase)((db) => db.transaction(async (tx) => {
+    const existing = await tx.guest.findUnique({ where: { id: guestId }, select: { favoriteCocktails: true } });
+    if (!existing) throw new GuestNotFoundError("Guest not found.");
+    await tx.guest.update({ where: { id: guestId }, data: { favoriteCocktails }, select: { id: true } });
+    await tx.auditLog.create({ data: {
+      id: (deps.createId ?? createId)(), action: "GUEST_COCKTAILS_UPDATE", entity: "Guest", entityId: guestId,
+      before: { favoriteCocktails: existing.favoriteCocktails }, after: { favoriteCocktails }, source: "GUEST",
+    } });
+    return favoriteCocktails;
+  }));
+}
+
 export async function createGuestWithDietaryNotes(
   { firstName, lastName, dietaryNotes, instagramUrl, tripKey = "meribel-2027" }: { firstName: string; lastName: string; dietaryNotes: string | null; instagramUrl: string; tripKey?: string },
   deps: CreateDependencies = {},
