@@ -72,21 +72,21 @@ describe("DietaryCell", () => {
     expect(container.querySelector<HTMLButtonElement>('[aria-label="Edit dietary needs for Ada Lovelace"]')?.textContent).toContain("Updated note");
   });
 
-  it("copies one guest per line as plain text", async () => {
+  it("copies dietary needs and favorite drinks in a plain-text list", async () => {
     const writeText = vi.fn().mockResolvedValue(undefined);
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: { writeText } });
     await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router} />); });
-    await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Copy dietary needs"]')!.click(); await Promise.resolve(); });
-    expect(writeText).toHaveBeenCalledWith("Ada Lovelace: No nuts\nGrace Hopper: —");
-    expect(container.querySelector<HTMLButtonElement>(".dietary-copy-button")?.getAttribute("aria-label")).toBe("Dietary needs copied");
-    expect(container.querySelector('[role="status"]')?.textContent).toBe("Dietary needs copied to clipboard.");
+    await act(async () => { container.querySelector<HTMLButtonElement>('[aria-label="Copy guest food preferences"]')!.click(); await Promise.resolve(); });
+    expect(writeText).toHaveBeenCalledWith("Ada Lovelace\nDietary needs:\nNo nuts\nFavorite drinks:\n• Dirty martini\n\nGrace Hopper\nDietary needs:\n—\nFavorite drinks:\n—");
+    expect(container.querySelector<HTMLButtonElement>(".dietary-copy-button")?.getAttribute("aria-label")).toBe("Guest food preferences copied");
+    expect(container.querySelector('[role="status"]')?.textContent).toBe("Guest food preferences copied to clipboard.");
   });
 });
 
 function DietaryRoute() {
   const data = useLoaderData() as { dietaryNotes: string };
   return <><DietaryGuestAdd /><DietaryCopyButton guests={[
-    { displayName: "Ada Lovelace", dietaryNotes: data.dietaryNotes },
-    { displayName: "Grace Hopper", dietaryNotes: null },
+    { displayName: "Ada Lovelace", dietaryNotes: data.dietaryNotes, favoriteCocktails: "• Dirty martini" },
+    { displayName: "Grace Hopper", dietaryNotes: null, favoriteCocktails: null },
   ]} /><table><tbody><tr><td><DietaryCell guestId="guest-1" guestName="Ada Lovelace" dietaryNotes={data.dietaryNotes} /></td></tr></tbody></table></>;
 }

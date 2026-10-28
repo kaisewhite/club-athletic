@@ -144,16 +144,23 @@ const PAID_GUESTS = new Set([
   "Ted Delcima",
 ]);
 
-// Seed defaults captured from the live guest records (owner, 2026-10-13).
-// These are applied only when a guest row is first created; existing dietary
-// notes entered through the site remain authoritative on later seed runs.
+// Seed defaults for guest food preferences. These are applied only when a guest
+// row is first created; later edits entered through the site stay authoritative.
 const DIETARY_NOTES: Record<string, string> = {
-  Kaise: "Pescatarian / Lactose Intolerant",
-  "Christie Navarre": "Gluten free (non celiac/ non allergy)",
-  "Kristy Khoury": "Dairy. I can take a pill but it would be helpful if not every meal has it. It’s much less of an issue when cooked into meal vs. fresh milk/ cream/ soft cheese.",
-  "Olajuwon Jones": "Pork",
-  "Ted Delcima": "I don’t really fuck with with Parsley",
-  "Valeriia Stobolva": "Sensitivity to peanuts",
+  "Ari Stobaugh": "• Gluten (European wheat may be okay)\n• Dairy",
+  "Christie Navarre": "• Gluten-free preference (not celiac or an allergy)",
+  "Joanna Gonzalez": "No allergies or dietary restrictions",
+  Kaise: "• Pescatarian\n• Lactose intolerant",
+  "Kristy Khoury": "• Dairy (medication helps)\n• Please don't serve dairy at every meal\n• Cooked dairy is less of an issue than milk, cream, and soft cheese",
+  "Olajuwon Jones": "• No pork",
+  "Ted Delcima": "• Please avoid parsley",
+  "Valeriia Stobolva": "• Sensitive to peanuts",
+};
+const FAVORITE_COCKTAILS: Record<string, string> = {
+  "Ari Stobaugh": "• Dirty vodka martini",
+  "Joanna Gonzalez": "• Spicy margaritas\n• Full-bodied red wine\n• Mezcal Negroni\n• Hugo Spritz or Aperol Spritz\n• Dirty martinis",
+  "Olajuwon Jones": "• Espresso Martini\n• Margarita\n• Old Fashioned",
+  "Valeriia Stobolva": "• Mezcal Negroni",
 };
 
 const ROOM_TYPES: Record<string, RoomType> = {
@@ -370,6 +377,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
             () => tx.guest.create({ data: {
               id: createId(), seedKey: guestKey, tripId: trip.id,
               ...GUEST_NAMES[displayName]!, displayName, dietaryNotes: DIETARY_NOTES[displayName] ?? null,
+              favoriteCocktails: FAVORITE_COCKTAILS[displayName] ?? null,
               status: "CONFIRMED", createdVia: "SEED",
             } }));
           // A supplied profile is organizer content. If the seed has no profile

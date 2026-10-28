@@ -27,10 +27,10 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <tbody>{data.scheduleDays.map((day) => <tr key={day.id}><th scope="row">{day.dow} {day.dayNumber}</th><td data-meal="Breakfast">{mealLabel[day.breakfast]}</td><td data-meal="Dinner">{mealLabel[day.dinner]}</td></tr>)}</tbody>
     </table></div>
     <p className="detail-note">Add any allergies or dietary needs below before the trip.</p>
-    <h3 className="dietary-heading">Guest dietary needs</h3>
+    <h3 className="dietary-heading">Guest food preferences</h3>
     <div className="detail-table-wrap chef-dietary-card">
-      <DietaryCopyButton guests={data.guests} />
-      <table className="detail-table" aria-label="Guest dietary needs">
+      <DietaryCopyButton guests={data.guests.map(({ displayName, dietaryNotes, favoriteCocktails }) => ({ displayName, dietaryNotes, favoriteCocktails }))} />
+      <table className="detail-table" aria-label="Guest food preferences">
       <thead><tr><th scope="col">Guest</th><th scope="col">Allergies / dietary needs</th><th scope="col">Favorite cocktails</th></tr></thead>
       <tbody>{data.guests.map((guest) => <tr key={guest.id}><th scope="row"><GuestInstagramLink displayName={guest.displayName} instagramUrl={guest.instagramUrl} /></th><td data-label="Allergies / dietary needs"><DietaryCell guestId={guest.id} guestName={guest.displayName} dietaryNotes={guest.dietaryNotes} /></td><td data-label="Favorite cocktails"><FavoriteCocktailsCell guestId={guest.id} guestName={guest.displayName} favoriteCocktails={guest.favoriteCocktails} /></td></tr>)}</tbody>
       </table>
