@@ -105,7 +105,7 @@ describe("database-backed read-only detail pages", () => {
     ] });
     const chefPage = renderPage(Chef, await chefLoader());
     for (const name of ["Christie Navarre", "Christine Calvo", "Valeriia Stobolva", "Wayne Martindale"]) {
-      const link = [...chefPage.querySelectorAll<HTMLAnchorElement>('table[aria-label="Guest dietary needs"] th a')].find((anchor) => anchor.textContent === name);
+      const link = [...chefPage.querySelectorAll<HTMLAnchorElement>('table[aria-label="Guest food preferences"] th a')].find((anchor) => anchor.textContent === name);
       expect(link?.getAttribute("href")).toMatch(/^https:\/\/www\.instagram\.com\//);
     }
   });
@@ -239,10 +239,6 @@ describe("database-backed read-only detail pages", () => {
       ["Wellness", "Spa Falcon", "https://www.alpine-resorts.fr/en_US/destination/alpes-fr/meribel/spa/spa-falcon"],
       ["Hotels", "Geneva Marriott (Friday night)", "https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/"],
       ["Hotels", "Hilton Geneva (Friday night)", "https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/"],
-      ["Potential chalets", "Chalet Phoebe", "https://cimalpes.com/en/rental-meribel/chalet-phoebe/?date_debut=30/01/2027&date_fin=06/02/2027"],
-      ["Potential chalets", "Chalet Arpege", "https://www.chaletowners.com/chalets/meribel/chalet-arpege.html?utm_source=chatgpt.com"],
-      ["Restaurants", "Le Cap Horn — official restaurant page", "https://www.maisontournier.com/fr/page/restaurant-cap-horn-courchevel-maison-tournier.9486.html"],
-      ["Restaurants", "Le Cap Horn — reserve via SevenRooms", "https://www.sevenrooms.com/explore/restaurantlecaphorn/reservations/create/search"],
     ].map(([group, label, href], index) => ({ id: String(index), group, label, href }));
     findUniqueOrThrow.mockResolvedValueOnce({ links });
     const page = renderPage(Links, await linksLoader(), 1);
