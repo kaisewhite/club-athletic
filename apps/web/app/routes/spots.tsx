@@ -38,6 +38,7 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
           <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">USD rate unavailable</span>}</dd>
         </div>}
       </dl>
+      <p className="detail-note">Payment is in full; there is no deposit. If you drop out by November 15, you’ll receive a full refund. After November 15, you’ll need to find your own replacement.</p>
     </div>
     <div className="detail-grid">
       <div className="detail-card"><h3 className="detail-kicker">Included in the price</h3><DetailList items={data.pricing.includes} />

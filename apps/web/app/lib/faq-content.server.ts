@@ -29,5 +29,6 @@ export function faqTiles(trip: TripOverview) {
     { to: "/chef", question: "How many meals does the chef cook?", lead: null, kicker: "Meals cooked for us", sub: `${trip.chefBreakfastCount} breakfasts and ${trip.chefDinnerCount} dinners` },
     { to: "/shuttle", question: "What time is the bus back to the airport?", lead: time(outbound?.departWindowStart), kicker: "Bus back to the airport", sub: `${tripDate(trip.endDate, "long")} · book flights for ${trip.flightReturnCutoff} or later` },
     { to: "/rooms", question: "How many people are coming?", lead: trip.capacity === null ? String(trip.guestCount) : `${trip.guestCount} of ${trip.capacity}`, kicker: "People coming", sub: "see who’s sleeping where" },
+    { to: "/spots", question: "Can I drop out?", lead: "Full refund by November 15", kicker: "Drop-out policy", sub: "Paid in full; no deposit · after that, find your own replacement" },
   ];
 }

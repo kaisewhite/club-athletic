@@ -69,6 +69,10 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
   {group:'Wellness',label:'Spa Falcon',href:'https://www.alpine-resorts.fr/en_US/destination/alpes-fr/meribel/spa/spa-falcon',note:'The residence spa for treatments and massages.'},
   {group:'Hotels',label:'Geneva Marriott (Friday night)',href:'https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/',note:'Airport hotel if you fly in a day early — free shuttle, under 5 min.'},
   {group:'Hotels',label:'Hilton Geneva (Friday night)',href:'https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/',note:'Airport hotel if you fly in a day early — free shuttle every ~20 min, 4:20 AM–11:40 PM.'},
+  {group:'Potential chalets',label:'Chalet Phoebe',href:'https://cimalpes.com/en/rental-meribel/chalet-phoebe/?date_debut=30/01/2027&date_fin=06/02/2027',note:'Potential Méribel chalet option to review.'},
+  {group:'Potential chalets',label:'Chalet Arpege',href:'https://www.chaletowners.com/chalets/meribel/chalet-arpege.html?utm_source=chatgpt.com',note:'Potential Méribel chalet option to review.'},
+  {group:'Restaurants',label:'Le Cap Horn — official restaurant page',href:'https://www.maisontournier.com/fr/page/restaurant-cap-horn-courchevel-maison-tournier.9486.html',note:'Official Maison Tournier page. Phone: +33 4 79 08 33 10 · cap-horn@maisontournier.com · 2029 Route de l’Altiport, Courchevel 1850.'},
+  {group:'Restaurants',label:'Le Cap Horn — reserve via SevenRooms',href:'https://www.sevenrooms.com/explore/restaurantlecaphorn/reservations/create/search',note:'Use this page to check availability and make the reservation.'},
 ];
 const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Official trip dates Sat 30 Jan – Sat 6 Feb 2027; optional early arrival in Geneva Fri 29 Jan.
 SHUTTLE: Out Sat 30 Jan pickup at Geneva Airport (GVA) from 10:30–11:00 AM, drop-off at 269 Rte de l'Altiport and 181 Imp. des Fontaines. Back Sat 6 Feb pickup at 4:00 AM at 269 Rte de l'Altiport, then 4:15 AM at 181 Imp. des Fontaines, with drop-off at Geneva Airport (GVA).
@@ -241,7 +245,7 @@ function validateSnapshot(): void {
   const names = spots.filter((name): name is string => name !== null && name !== "");
   if (FLOORS.length !== 3 || rooms.length !== 8 || names.length !== 12 ||
       new Set(names).size !== 12 || spots.filter((s) => s === "").length !== 7 ||
-      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 10) {
+      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 14) {
     throw new Error("Decoded seed snapshot counts do not match the reviewed source.");
   }
   if (names.some((name) => !GUEST_NAMES[name]) || Object.keys(GUEST_NAMES).length !== names.length) {
@@ -344,7 +348,6 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
   // The booking rules are edited here and pushed, whatever the row held before.
   await tx.trip.update({ where: { id: trip.id }, data: { flightArrivalCutoff: "09:30", flightArrivalTarget: "08:30", flightReturnCutoff: "10:00", pricing: PRICING } });
   await removeDroppedGuest(tx, "Tim Kurdi");
-  await tx.link.deleteMany({ where: { tripId: trip.id, group: "Potential chalets to look into" } });
 
   for (const [floorIndex, sourceFloor] of FLOORS.entries()) {
     const floorKey = { propertyId: property.id, code: sourceFloor.code };

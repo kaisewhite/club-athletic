@@ -40,6 +40,7 @@ describe("read-only trip loaders", () => {
       "When is the trip?", "Where are we staying?", "What time does the bus leave Geneva?",
       "What time do I need to land?", "How many beds are open?", "How much is a bunk?",
       "How many meals does the chef cook?", "What time is the bus back to the airport?", "How many people are coming?",
+      "Can I drop out?",
     ]);
     expect(faq.tiles[0]?.sub).toMatch(/^\d+ days until the trip$/);
     expect(faq.tiles[0]?.lead).toBe("Sat 12 Feb → Sat 19 Feb 2028");
