@@ -306,17 +306,27 @@ for (const [width, height] of VIEWPORTS) {
         const composer = document.querySelector(".home-composer .composer")!.getBoundingClientRect();
         const prompts = document.querySelector(".home-composer .suggestions")!.getBoundingClientRect();
         const schedule = document.querySelector(".home-schedule")!.getBoundingClientRect();
+        const ticker = document.querySelector(".schedule-ticker-window")!.getBoundingClientRect();
+        const weekHeading = document.querySelector(".week-heading")!.getBoundingClientRect();
+        const mobileHeader = document.querySelector(".mobile-header")?.getBoundingClientRect();
         return {
           homeCenter: home.top + home.height / 2,
           groupCenter: (composer.top + prompts.bottom) / 2,
+          composerTop: composer.top,
           composerBottom: composer.bottom,
           promptsTop: prompts.top,
           scheduleTop: schedule.top,
+          scheduleBottom: schedule.bottom,
+          tickerBottom: ticker.bottom,
+          weekHeadingTop: weekHeading.top,
+          mobileHeaderBottom: mobileHeader?.bottom ?? 0,
         };
       });
       expect(geometry.promptsTop, "quick prompts should sit below the input").toBeGreaterThanOrEqual(geometry.composerBottom);
       if (mobile) {
-        expect(geometry.scheduleTop, "schedule content should begin below the centered composer").toBeGreaterThanOrEqual(geometry.promptsTop + 12);
+        expect(geometry.scheduleTop, "schedule ticker should sit below the mobile header").toBeGreaterThanOrEqual(geometry.mobileHeaderBottom);
+        expect(geometry.weekHeadingTop, "week label should follow the ticker").toBeGreaterThanOrEqual(geometry.tickerBottom);
+        expect(geometry.scheduleBottom, "top schedule should not overlap the centered composer").toBeLessThan(geometry.composerTop);
       }
       expect(Math.abs(geometry.groupCenter - geometry.homeCenter), "landing group should remain centered").toBeLessThan(48);
     });

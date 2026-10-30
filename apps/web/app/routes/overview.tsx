@@ -26,13 +26,6 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
       <ChatErrorBoundary key={chatResetVersion}><ChatPanel initialConversation={null} selectedId={resettingChat ? null : selectedConversationId} onConversationIdChange={selectConversation}>
       <div className="overview-content">
         <section className="home-schedule" aria-label="Schedule for the week">
-          <div className="week-heading">
-            <span className="section-label">This week</span>
-            <div className="schedule-ticker-actions">
-              <button type="button" className="trip-overview-trigger" onClick={openTripWelcome}>Trip overview</button>
-              <Link to="/schedule">See full schedule →</Link>
-            </div>
-          </div>
           <ol className="sr-only">
             {data.week.map(day => <li key={day.id}>
               {day.dow} {day.number}: {day.event}.
@@ -50,6 +43,13 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
                   </li>)}
                 </ol>
               ))}
+            </div>
+          </div>
+          <div className="week-heading">
+            <span className="section-label">This week</span>
+            <div className="schedule-ticker-actions">
+              <button type="button" className="trip-overview-trigger" onClick={openTripWelcome}>Trip overview</button>
+              <Link to="/schedule">See full schedule →</Link>
             </div>
           </div>
         </section>
