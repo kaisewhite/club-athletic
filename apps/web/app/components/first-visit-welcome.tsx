@@ -2,23 +2,21 @@ import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import "./first-visit-welcome.css";
 
-const DISMISSAL_KEY = "club-athletic-trip-welcome-dismissed-v1";
+export const TRIP_WELCOME_DISMISSAL_KEY = "club-athletic-trip-welcome-dismissed-v1";
 
-export function FirstVisitWelcome() {
+export function FirstVisitWelcome({ open, onDismiss }: { open: boolean; onDismiss: () => void }) {
   const dialog = useRef<HTMLDialogElement>(null);
 
   useEffect(() => {
-    try {
-      if (window.localStorage.getItem(DISMISSAL_KEY) === "true") return;
-    } catch {
-      // Storage can be disabled; the welcome still works for this visit.
-    }
-    dialog.current?.showModal();
-  }, []);
+    const element = dialog.current;
+    if (!element) return;
+    if (open && !element.open) element.showModal();
+    else if (!open && element.open) element.close();
+  }, [open]);
 
   const rememberDismissal = () => {
     try {
-      window.localStorage.setItem(DISMISSAL_KEY, "true");
+      window.localStorage.setItem(TRIP_WELCOME_DISMISSAL_KEY, "true");
     } catch {
       // Closing the dialog should not depend on storage being available.
     }
@@ -32,7 +30,7 @@ export function FirstVisitWelcome() {
       className="trip-welcome"
       aria-labelledby="trip-welcome-title"
       aria-describedby="trip-welcome-summary"
-      onClose={rememberDismissal}
+      onClose={() => { rememberDismissal(); onDismiss(); }}
       onClick={(event) => {
         if (event.target === event.currentTarget) closeDialog();
       }}
@@ -67,7 +65,7 @@ export function FirstVisitWelcome() {
         </div>
 
         <div className="trip-welcome-actions">
-          <Link to="/spots" className="trip-welcome-primary" onClick={() => { rememberDismissal(); closeDialog(); }}>See rooms &amp; prices <span aria-hidden="true">→</span></Link>
+          <Link to="/spots" className="trip-welcome-primary" onClick={closeDialog}>See rooms &amp; prices <span aria-hidden="true">→</span></Link>
           <button className="trip-welcome-secondary" type="button" onClick={closeDialog}>Explore the trip</button>
         </div>
       </div>

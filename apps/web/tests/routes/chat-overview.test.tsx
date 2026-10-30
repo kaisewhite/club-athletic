@@ -4,6 +4,7 @@ import { createMemoryRouter, RouterContextProvider, RouterProvider, useLoaderDat
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Overview, { loader } from "../../app/routes/overview";
 import { AppShell } from "../../app/components/app-shell";
+import { TRIP_WELCOME_DISMISSAL_KEY } from "../../app/components/first-visit-welcome";
 import type { ConversationDetails } from "@/lib/chat/contracts";
 
 const mocks = vi.hoisted(() => ({ trip: vi.fn(), schedule: vi.fn(), subscribe: vi.fn(), start: vi.fn(), detail: vi.fn() }));
@@ -115,4 +116,16 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
 
 it("starts a fresh chat view on a document load", async () => {
   await mount(); expect(container.textContent).toContain("How can I help?");
+});
+
+it("lets a visitor reopen the trip overview from the homepage", async () => {
+  window.localStorage.setItem(TRIP_WELCOME_DISMISSAL_KEY, "true");
+  await mount();
+  const dialog = container.querySelector<HTMLDialogElement>(".trip-welcome")!;
+  expect(dialog.open).toBe(false);
+
+  await act(async () => container.querySelector<HTMLButtonElement>(".trip-overview-trigger")!.click());
+  expect(dialog.open).toBe(true);
+  await act(async () => container.querySelector<HTMLButtonElement>(".trip-welcome-close")!.click());
+  expect(dialog.open).toBe(false);
 });

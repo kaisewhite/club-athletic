@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
-import { FirstVisitWelcome } from "./first-visit-welcome";
+import { FirstVisitWelcome, TRIP_WELCOME_DISMISSAL_KEY } from "./first-visit-welcome";
 
 const SECTIONS = [
   ["/", "Home"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
@@ -44,6 +44,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
   const [chatResetVersion, setChatResetVersion] = useState(0);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
+  const [welcomeOpen, setWelcomeOpen] = useState(false);
   const wasMobileNavOpen = useRef(false);
   const mobileNavButton = useRef<HTMLButtonElement>(null);
   const mobileDrawer = useRef<HTMLElement>(null);
@@ -51,6 +52,14 @@ export function AppShell(_props?: { daysUntil?: number }) {
     // Remove the prior 30-day selector cookie. The new selection is held in
     // memory only, so another tab or a fresh document starts with a clean chat.
     document.cookie = `club-athletic-conversation=; Path=/; SameSite=Lax; Max-Age=0${window.location.protocol === "https:" ? "; Secure" : ""}`;
+  }, []);
+  useEffect(() => {
+    try {
+      if (window.localStorage.getItem(TRIP_WELCOME_DISMISSAL_KEY) !== "true") setWelcomeOpen(true);
+    } catch {
+      // Storage can be disabled; show the welcome for this visit.
+      setWelcomeOpen(true);
+    }
   }, []);
   const newChat = () => {
     setSelectedConversationId(null);
@@ -86,7 +95,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
   useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
   return (
     <div className="app-shell">
-      <FirstVisitWelcome />
+      <FirstVisitWelcome open={welcomeOpen} onDismiss={() => setWelcomeOpen(false)} />
       {wide && <aside className="sidebar">
         <button type="button" className="new-chat" onClick={newChat}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
@@ -112,7 +121,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
           </aside>
         </div>}
         <div key={location.key} className={location.pathname === "/" ? "route-content home-route" : "route-content page-route"}>
-          <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId }} />
+          <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId, openTripWelcome: () => setWelcomeOpen(true) }} />
         </div>
       </main>
     </div>

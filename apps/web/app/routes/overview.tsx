@@ -16,9 +16,10 @@ export async function loader(_args?: Route.LoaderArgs) {
 }
 
 export default function Overview({ loaderData: data }: Route.ComponentProps) {
-  const { chatResetVersion, resettingChat, selectedConversationId, selectConversation } = useOutletContext<{
+  const { chatResetVersion, resettingChat, selectedConversationId, selectConversation, openTripWelcome } = useOutletContext<{
     chatResetVersion: number; newChat: () => void; resettingChat: boolean;
     selectedConversationId: string | null; selectConversation: (id: string | null) => void;
+    openTripWelcome: () => void;
   }>();
   return (
     <section className="overview" aria-labelledby="overview-heading">
@@ -28,6 +29,7 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
           <div className="week-heading">
             <span className="section-label">This week</span>
             <div className="schedule-ticker-actions">
+              <button type="button" className="trip-overview-trigger" onClick={openTripWelcome}>Trip overview</button>
               <Link to="/schedule">See full schedule →</Link>
             </div>
           </div>

@@ -262,7 +262,9 @@
 .home-schedule { margin: 0 0 20px; }
 .week-heading { margin: 0 0 4px; }
 .week-heading a { font-size: 12px; color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
-.schedule-ticker-actions { display: flex; align-items: center; }
+.schedule-ticker-actions { display: flex; align-items: center; gap: 16px; }
+.trip-overview-trigger { display: inline-flex; min-height: 32px; align-items: center; padding: 0; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 12px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
+.trip-overview-trigger:hover { color: var(--brand-dim); }
 .schedule-ticker-window { min-width: 0; overflow: hidden; border-block: 1px solid var(--border-subtle); -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); }
 .schedule-ticker-track { display: flex; width: max-content; animation: schedule-ticker-scroll 72s linear infinite; }
 .schedule-ticker-sequence { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
@@ -467,6 +469,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .mobile-nav-toggle:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
   .week-heading { align-items: center; }
   .week-heading a,
+  .trip-overview-trigger,
   .guest-instagram-link,
   .schedule-entry-link,
   .suggestions button,
@@ -513,6 +516,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .link-row:active,
   .chalet-address:active { background: var(--hover); color: var(--text); }
   .week-heading a:active,
+  .trip-overview-trigger:active,
   .suggestions button:not(:disabled):active,
   .chat-jump:active,
   .chat-sources a:active,
