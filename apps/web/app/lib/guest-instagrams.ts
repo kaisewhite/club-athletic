@@ -1,7 +1,6 @@
 const guestInstagrams: Record<string, string> = {
   Kaise: "https://www.instagram.com/kaise.white",
   "Amelia Drake": "https://www.instagram.com/ameliadrake33",
-  "Kristy Kelly": "https://www.instagram.com/kristyke11y",
   "Kristy Khoury": "https://www.instagram.com/kristy.l.khoury",
   "Valeriia Stobolva": "https://www.instagram.com/valeriiastolbova",
   "Augustus Shewchuck": "https://www.instagram.com/ashewchuck",

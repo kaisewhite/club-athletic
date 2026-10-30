@@ -33,7 +33,7 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
   return node;
 }
 
-const names = ["Kaise", "Amelia Drake", "Kristy Kelly", "Kristy Khoury", "Valeriia Stobolva", "Augustus Shewchuck", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima"];
+const names = ["Kaise", "Amelia Drake", "Christie Navarre", "Kristy Khoury", "Valeriia Stobolva", "Augustus Shewchuck", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima"];
 const room = (number: number, type: string, occupants: (string | null)[]) => ({
   id: `room-${number}`, name: `Bedroom ${number}`, shortName: `Bedroom ${number}`, type, pricePerPerson: ({ 4: 1740.55, 5: 1620.55, 8: 1790.55 } as Record<number, number>)[number] ?? null,
   description: ({ 4: "Women's quad bunk — shared balcony, shared shower", 5: "Men's bunk cabin — shared shower", 8: "Women's quad bunk — en-suite bathroom" } as Record<number, string>)[number] ?? null,
@@ -85,9 +85,9 @@ describe("database-backed read-only detail pages", () => {
   });
   it("links guest names to Instagram on rooms and chef pages", async () => {
     const roomFloors = floors.map((floor) => ({ ...floor, rooms: floor.rooms.map((item) => item.name === "Bedroom 4"
-      ? room(4, "QUAD_BUNK", ["Christine Calvo", "Christie Navarre", "", ""])
+      ? room(4, "QUAD_BUNK", ["Christine Calvo", "", "", ""])
       : item) }));
-    findUniqueOrThrow.mockResolvedValue({ property: { floors: roomFloors, sleepsMax: 20 }, _count: { guests: 12 } });
+    findUniqueOrThrow.mockResolvedValue({ property: { floors: roomFloors, sleepsMax: 20 }, _count: { guests: 11 } });
     const roomsPage = renderPage(Rooms, await roomsLoader());
     for (const [name, handle] of [["Christie Navarre", "xtnavarre"], ["Christine Calvo", "christinecalvo_"], ["Valeriia Stobolva", "valeriiastolbova"], ["Wayne Martindale", "_wayne.em_"]] as const) {
       const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".spot-assigned a")].find((anchor) => anchor.querySelector("span")?.textContent === name);
@@ -256,7 +256,8 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });
     const page = renderPage(Guests, await guestsLoader());
     const guestRows = [...page.querySelectorAll<HTMLElement>(".guest-list .link-row")];
-    expect(guestRows).toHaveLength(12);
+    expect(guestRows).toHaveLength(11);
+    expect(page.textContent).not.toContain("Kristy Kelly");
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
     expect(page.querySelector<HTMLButtonElement>(".guest-copy-all")?.textContent).toBe("Copy links");

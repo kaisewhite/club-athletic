@@ -36,7 +36,7 @@ const recommendations = [
 
 type Guest = FlightTable[number];
 type Leg = NonNullable<Guest["inbound"]>;
-const names = ["Kristy Khoury", "Augustus Shewchuck", "Valeriia Stobolva", "Amelia Drake", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima", "Kristy Kelly", "Kaise"];
+const names = ["Kristy Khoury", "Augustus Shewchuck", "Valeriia Stobolva", "Amelia Drake", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima", "Christie Navarre", "Kaise"];
 const guest = (displayName: string, changes: Partial<Guest> = {}): Guest => ({
   id: displayName, firstName: displayName, lastName: "", displayName,
   inbound: null, outbound: null, status: "Not booked", arrivingFriday: false, arrivalMarker: null, ...changes,

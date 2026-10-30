@@ -49,9 +49,9 @@ const FLIGHT_RECOMMENDATIONS = [
 const FLOORS = [
   {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,allIn:2115.55,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
   {name:'Middle floor',code:'R10 / F21',rooms:[
-    {name:'Bedroom 2',type:'Double room',rate:1340,allIn:1990.55,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Kristy Kelly']},
+    {name:'Bedroom 2',type:'Double room',rate:1340,allIn:1990.55,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Christie Navarre']},
     {name:'Bedroom 3',type:'Twin room',rate:1290,allIn:1940.55,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
-    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1740.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','Christie Navarre','','']},
+    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1740.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','','','']},
     {name:'Bedroom 5',type:'Bunk cabin',rate:970,allIn:1620.55,description:"Men's bunk cabin · Sleeps 2 people · 1 set of bunk beds · shared shower",ensuite:false,balcony:false,spots:['Pete F.','']}]},
   {name:'Lower floor',code:'R9 / F12',rooms:[
     {name:'Bedroom 6',type:'Double room',rate:1305,allIn:1955.55,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
@@ -77,7 +77,7 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
 const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Official trip dates Sat 30 Jan – Sat 6 Feb 2027; optional early arrival in Geneva Fri 29 Jan.
 SHUTTLE: Out Sat 30 Jan pickup at Geneva Airport (GVA) from 10:30–11:00 AM, drop-off at 269 Rte de l'Altiport and 181 Imp. des Fontaines. Back Sat 6 Feb pickup at 4:00 AM at 269 Rte de l'Altiport, then 4:15 AM at 181 Imp. des Fontaines, with drop-off at Geneva Airport (GVA).
 FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, spend the day in Geneva, and stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
-ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Kristy Kelly. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, Christie Navarre, 2 available. Bedroom 5 bunk cabin: Pete F., 1 available. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 12 confirmed guests, 7 open spots.
+ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Christie Navarre. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, 3 available. Bedroom 5 bunk cabin: Pete F., 1 available. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 11 confirmed guests, 8 open spots.
 REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,740.55 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,790.55 per person all-in. All-in = room rate + €33.60 taxes + €108.55 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
 EVENTS: Fri 29 Jan — Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
@@ -107,7 +107,6 @@ const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; a
 const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {
   Kaise: { firstName: "Kaise", lastName: "" },
   "Amelia Drake": { firstName: "Amelia", lastName: "Drake" },
-  "Kristy Kelly": { firstName: "Kristy", lastName: "Kelly" },
   "Kristy Khoury": { firstName: "Kristy", lastName: "Khoury" },
   "Valeriia Stobolva": { firstName: "Valeriia", lastName: "Stobolva" },
   "Augustus Shewchuck": { firstName: "Augustus", lastName: "Shewchuck" },
@@ -123,7 +122,6 @@ const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {
 const GUEST_INSTAGRAMS: Record<string, string> = {
   Kaise: "https://www.instagram.com/kaise.white",
   "Amelia Drake": "https://www.instagram.com/ameliadrake33",
-  "Kristy Kelly": "https://www.instagram.com/kristyke11y",
   "Kristy Khoury": "https://www.instagram.com/kristy.l.khoury",
   "Valeriia Stobolva": "https://www.instagram.com/valeriiastolbova",
   "Augustus Shewchuck": "https://www.instagram.com/ashewchuck",
@@ -243,8 +241,8 @@ function validateSnapshot(): void {
   const rooms = FLOORS.flatMap((floor) => floor.rooms);
   const spots = rooms.flatMap((room) => room.spots);
   const names = spots.filter((name): name is string => name !== null && name !== "");
-  if (FLOORS.length !== 3 || rooms.length !== 8 || names.length !== 12 ||
-      new Set(names).size !== 12 || spots.filter((s) => s === "").length !== 7 ||
+  if (FLOORS.length !== 3 || rooms.length !== 8 || names.length !== 11 ||
+      new Set(names).size !== 11 || spots.filter((s) => s === "").length !== 8 ||
       spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 14) {
     throw new Error("Decoded seed snapshot counts do not match the reviewed source.");
   }
@@ -348,6 +346,7 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
   // The booking rules are edited here and pushed, whatever the row held before.
   await tx.trip.update({ where: { id: trip.id }, data: { flightArrivalCutoff: "09:30", flightArrivalTarget: "08:30", flightReturnCutoff: "10:00", pricing: PRICING } });
   await removeDroppedGuest(tx, "Tim Kurdi");
+  await removeDroppedGuest(tx, "Kristy Kelly");
 
   for (const [floorIndex, sourceFloor] of FLOORS.entries()) {
     const floorKey = { propertyId: property.id, code: sourceFloor.code };
