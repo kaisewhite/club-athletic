@@ -46,7 +46,7 @@ export function FirstVisitWelcome() {
         </div>
 
         <p className="trip-welcome-dateline">Méribel, France <span>·</span> January 30–February 6, 2027</p>
-        <h2 id="trip-welcome-title">A week in the<br />Three Valleys.</h2>
+        <h2 id="trip-welcome-title" className="trip-welcome-title">A week in the<br />Three Valleys.</h2>
         <p id="trip-welcome-summary" className="trip-welcome-summary">
           Ski days, après, chef-prepared meals, and plans with the group, based at Falcon Lodge F.
         </p>
