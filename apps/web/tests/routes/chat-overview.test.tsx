@@ -129,3 +129,13 @@ it("lets a visitor reopen the trip overview from the homepage", async () => {
   await act(async () => container.querySelector<HTMLButtonElement>(".trip-welcome-close")!.click());
   expect(dialog.open).toBe(false);
 });
+
+it("labels the mobile header control Trip Info and opens the trip overview", async () => {
+  window.localStorage.setItem(TRIP_WELCOME_DISMISSAL_KEY, "true");
+  vi.stubGlobal("matchMedia", () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList);
+  await mount();
+  const button = container.querySelector<HTMLButtonElement>(".mobile-trip-overview");
+  expect(button?.textContent).toBe("Trip Info");
+  await act(async () => button!.click());
+  expect(container.querySelector<HTMLDialogElement>(".trip-welcome")?.open).toBe(true);
+});
