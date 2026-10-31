@@ -11,6 +11,13 @@ import { expect, type Page } from "@playwright/test";
  */
 export const FROZEN_DAYS_UNTIL = "";
 
+/** Suppress the first-visit welcome while exercising unrelated page journeys. */
+export async function dismissWelcomeForAcceptance(page: Page): Promise<void> {
+  await page.addInitScript(() => {
+    window.localStorage.setItem("club-athletic-trip-welcome-dismissed-v1", "true");
+  });
+}
+
 /**
  * No selectors render `daysUntil` in the shell after the 2026-09-29 FAQ move.
  */
@@ -23,6 +30,7 @@ const COUNTDOWN_SELECTORS: string[] = [];
  * daily again.
  */
 export async function openFrozen(page: Page, path: string): Promise<number> {
+  await dismissWelcomeForAcceptance(page);
   await page.goto(path, { waitUntil: "load" });
 
   // 0. Prove the config's `reducedMotion` actually reached the page. This is what

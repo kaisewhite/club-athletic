@@ -41,7 +41,7 @@ const PAGES = [
  * organizer assigns an open spot (Pete F. took a Bedroom 5 bunk on 2026-09-28,
  * Christine Calvo a Bedroom 4 bunk on 2026-09-29), so it is named rather than inlined as a magic 9.
  */
-const CONFIRMED_GUESTS = 12;
+const CONFIRMED_GUESTS = 11;
 
 const LONGEST = {
   guest: "Augustus Shewchuck", // 18 chars
@@ -175,7 +175,7 @@ for (const [width, height] of VIEWPORTS) {
         expect(shape.head).toBe("table-header-group");
       }
       // Mobile dietary records stack the note below the guest name.
-      const dietary = page.locator('[aria-label="Guest dietary needs"] tbody tr').first();
+      const dietary = page.locator('[aria-label="Guest food preferences"] tbody tr').first();
       expect(await dietary.evaluate((el) => getComputedStyle(el).display)).toBe(mobile ? "grid" : "table-row");
     });
 
@@ -208,7 +208,7 @@ for (const [width, height] of VIEWPORTS) {
           answerWidth: el.querySelector(".tile-answer")!.getBoundingClientRect().width,
         };
       }));
-      expect(tiles).toHaveLength(9);
+      expect(tiles).toHaveLength(10);
       for (const tile of tiles) {
         // Owner, 2026-09-28: "we don't need to state 10:30 twice." A row carries
         // its figure EITHER as the lead OR inside the sentence — never both.

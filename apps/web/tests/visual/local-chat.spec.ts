@@ -1,4 +1,5 @@
 import { expect, test, type Page } from "@playwright/test";
+import { dismissWelcomeForAcceptance } from "./prepare";
 
 const answer = "Mocked local trip answer.";
 
@@ -52,12 +53,34 @@ async function mockChat(page: Page, failFirst = false) {
 
 test.describe("local chat browser journeys", () => {
   test.use({ hasTouch: true });
-  test.beforeEach(({ }, testInfo) => test.skip(testInfo.project.name !== "desktop-1280", "run once at phone size"));
+  test.beforeEach(({ page }, testInfo) => {
+    void page;
+    test.skip(testInfo.project.name !== "desktop-1280", "run once at phone size");
+  });
+
+  async function openHomeWithoutWelcome(page: Page) {
+    await dismissWelcomeForAcceptance(page);
+    await page.goto("/");
+  }
+
+  test("first-time guests can dismiss and reopen the trip overview", async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await page.goto("/");
+    const overview = page.getByRole("dialog", { name: "A week in the Three Valleys." });
+    await expect(overview).toBeVisible();
+
+    await page.getByRole("button", { name: "Close trip overview" }).click();
+    await expect(overview).not.toBeVisible();
+    await page.reload();
+    await expect(overview).not.toBeVisible();
+    await page.getByRole("button", { name: "Trip Info" }).click();
+    await expect(overview).toBeVisible();
+  });
 
   test("a quick option sends once and receives a streamed answer", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const chat = await mockChat(page);
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const quickOption = "What time do I need to land?";
     await page.getByRole("button", { name: quickOption }).click();
     await expect(page.getByText(answer)).toBeVisible();
@@ -69,7 +92,7 @@ test.describe("local chat browser journeys", () => {
   test("a mobile typed send blurs the composer and receives one response", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const chat = await mockChat(page);
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const composer = page.getByRole("textbox", { name: "Ask anything" });
     const prompt = "Typed local question";
     await composer.fill(prompt);
@@ -85,7 +108,7 @@ test.describe("local chat browser journeys", () => {
   test("a failed send exposes only Retry, which resends once and recovers", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     const chat = await mockChat(page, true);
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const prompt = "Recover this question";
     await page.getByRole("textbox", { name: "Ask anything" }).fill(prompt);
     await page.getByRole("button", { name: "Send" }).tap();
@@ -101,7 +124,7 @@ test.describe("local chat browser journeys", () => {
 
   test("mobile navigation opens, navigates, and closes through touch taps", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const toggle = page.getByRole("button", { name: "Menu" });
     await toggle.tap();
     await expect(page.getByRole("dialog", { name: "Trip navigation" })).toBeVisible();
@@ -119,7 +142,7 @@ test.describe("local chat browser journeys", () => {
 
   test("landscape phone viewport keeps the app within the screen", async ({ page }) => {
     await page.setViewportSize({ width: 844, height: 390 });
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     await expect(page.locator(".mobile-header")).toBeVisible();
     expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBeLessThanOrEqual(844);
   });
@@ -127,7 +150,7 @@ test.describe("local chat browser journeys", () => {
   test("desktop acceptance viewports render without horizontal overflow", async ({ page }) => {
     for (const viewport of [{ width: 1280, height: 800 }, { width: 1440, height: 900 }]) {
       await page.setViewportSize(viewport);
-      await page.goto("/");
+      await openHomeWithoutWelcome(page);
       const widths = await page.evaluate(() => ({ client: document.documentElement.clientWidth, scroll: document.documentElement.scrollWidth }));
       expect(widths.scroll, `${viewport.width}x${viewport.height} page overflow`).toBeLessThanOrEqual(widths.client);
     }
@@ -136,7 +159,7 @@ test.describe("local chat browser journeys", () => {
   test("desktop typed send shows its exact prompt and streamed answer", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     const chat = await mockChat(page);
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const prompt = "Desktop typed prompt";
     await page.getByRole("textbox", { name: "Ask anything" }).fill(prompt);
     await page.getByRole("button", { name: "Send" }).click();
@@ -149,7 +172,7 @@ test.describe("local chat browser journeys", () => {
   test("desktop quick option sends its exact text once and receives an answer", async ({ page }) => {
     await page.setViewportSize({ width: 1280, height: 800 });
     const chat = await mockChat(page);
-    await page.goto("/");
+    await openHomeWithoutWelcome(page);
     const quickOption = "Where am I sleeping?";
     await page.getByRole("button", { name: quickOption }).click();
     await expect(page.locator(".chat-user-bubble").getByText(quickOption, { exact: true })).toBeVisible();
