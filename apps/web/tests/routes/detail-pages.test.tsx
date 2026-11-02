@@ -261,12 +261,11 @@ describe("database-backed read-only detail pages", () => {
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");
     expect(page.querySelector<HTMLButtonElement>(".guest-copy-all")?.textContent).toBe("Copy links");
-    expect(guestRows.every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
+    expect(guestRows.slice(0, -1).every((link) => link.querySelector(".guest-instagram-avatar"))).toBe(true);
     expect(guestRows[0]?.querySelector<HTMLImageElement>(".guest-instagram-avatar")?.getAttribute("src")).toBe("/guest-avatars/kaise.white.jpg");
     expect(page.querySelector(".guest-link-entry:last-child .link-name")?.textContent).toBe("Pete F.");
-    expect(page.querySelector(".guest-link-entry:last-child .link-row")?.getAttribute("href")).toBe("https://www.instagram.com/cartoonpete__");
-    expect(page.querySelector<HTMLImageElement>(".guest-link-entry:last-child .guest-instagram-avatar")?.getAttribute("src")).toBe("/guest-avatars/cartoonpete__.jpg");
-    expect(guestRows.every((link) => link.querySelector(".text-accent"))).toBe(true);
+    expect(page.querySelector(".guest-link-entry:last-child .guest-profile-note")?.textContent).toBe("No Instagram profile");
+    expect(guestRows.slice(0, -1).every((link) => link.querySelector(".text-accent"))).toBe(true);
     expect(page.querySelectorAll(".guest-link-entry .guest-instagram-arrow")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-profile")).toHaveLength(0);
     expect(page.querySelectorAll(".guest-instagram-preview-handle")).toHaveLength(0);
