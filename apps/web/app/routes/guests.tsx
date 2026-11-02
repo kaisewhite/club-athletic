@@ -2,7 +2,7 @@ import { getGuestInstagramProfiles } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramAvatar } from "../components/guest-instagram-preview";
 import { CopyAllLinksButton } from "../components/copy-all-links-button";
-import { guestInstagramProfiles } from "../lib/guest-instagrams";
+import { guestInstagramProfiles, guestInstagramUrl } from "../lib/guest-instagrams";
 import type { Route } from "./+types/guests";
 
 type GuestProfile = { displayName: string; href?: string };
@@ -10,7 +10,10 @@ type GuestProfile = { displayName: string; href?: string };
 export async function loader() {
   const guestProfiles = await getGuestInstagramProfiles();
   const profiles = new Map<string, GuestProfile>(guestInstagramProfiles.map((profile) => [profile.displayName, profile] as const));
-  guestProfiles.forEach((profile) => profiles.set(profile.displayName, profile));
+  guestProfiles.forEach((profile) => profiles.set(profile.displayName, {
+    displayName: profile.displayName,
+    href: profile.href ?? guestInstagramUrl(profile.displayName),
+  }));
   return { guestProfiles: [...profiles.values()] };
 }
 

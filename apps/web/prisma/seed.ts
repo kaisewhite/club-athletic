@@ -128,6 +128,7 @@ const GUEST_INSTAGRAMS: Record<string, string> = {
   "Wayne Martindale": "https://www.instagram.com/_wayne.em_",
   "Olajuwon Jones": "https://www.instagram.com/juice_jones1",
   "Ted Delcima": "https://www.instagram.com/tedscorner_",
+  "Pete F.": "https://www.instagram.com/cartoonpete__",
   "Christine Calvo": "https://www.instagram.com/christinecalvo_",
   "Christie Navarre": "https://www.instagram.com/xtnavarre",
 };

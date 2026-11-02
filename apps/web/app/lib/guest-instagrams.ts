@@ -9,6 +9,7 @@ const guestInstagrams: Record<string, string> = {
   "Ted Delcima": "https://www.instagram.com/tedscorner_",
   "Christine Calvo": "https://www.instagram.com/christinecalvo_",
   "Christie Navarre": "https://www.instagram.com/xtnavarre",
+  "Pete F.": "https://www.instagram.com/cartoonpete__",
 };
 
 export const guestInstagramProfiles = Object.entries(guestInstagrams).map(([displayName, href]) => ({ displayName, href }));
