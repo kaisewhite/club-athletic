@@ -37,11 +37,7 @@ export class InfraStack extends cdk.Stack {
       hostedZoneId: project.hostedZoneId,
       zoneName: project.domain,
     });
-    const certificate = acm.Certificate.fromCertificateArn(
-      this,
-      `${constructorPrefix}-certificate`,
-      project.certificate.certificateArn[project.environment],
-    );
+    const certificate = acm.Certificate.fromCertificateArn(this, `${constructorPrefix}-certificate`, project.certificate.certificateArn[project.environment]);
 
     const cluster = new ecs.Cluster(this, `${constructorPrefix}-ecs-cluster`, {
       vpc,
@@ -54,9 +50,7 @@ export class InfraStack extends cdk.Stack {
     const executionRole = new iam.Role(this, `${constructorPrefix}-ecs-execution-role`, {
       roleName: `${resourceName}-execution-role`,
       assumedBy: new iam.ServicePrincipal("ecs-tasks.amazonaws.com"),
-      managedPolicies: [
-        iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy"),
-      ],
+      managedPolicies: [iam.ManagedPolicy.fromAwsManagedPolicyName("service-role/AmazonECSTaskExecutionRolePolicy")],
     });
     runtimeSecret.grantRead(executionRole);
     repository.grantPull(executionRole);
@@ -84,6 +78,7 @@ export class InfraStack extends cdk.Stack {
       containerName: service.name,
       image: ecs.ContainerImage.fromEcrRepository(repository, service.imageTag),
       essential: true,
+      versionConsistency: ecs.VersionConsistency.DISABLED,
       logging: ecs.LogDrivers.awsLogs({ streamPrefix: service.name, logGroup: taskLogGroup }),
       secrets: containerSecrets,
       portMappings: [{ containerPort: service.containerPort, protocol: ecs.Protocol.TCP }],
@@ -109,17 +104,13 @@ export class InfraStack extends cdk.Stack {
       description: "Club Athletic web tasks",
       allowAllOutbound: true,
     });
-    serviceSecurityGroup.addIngressRule(
-      loadBalancerSecurityGroup,
-      ec2.Port.tcp(service.containerPort),
-      "Traffic from the load balancer",
-    );
+    serviceSecurityGroup.addIngressRule(loadBalancerSecurityGroup, ec2.Port.tcp(service.containerPort), "Traffic from the load balancer");
 
     const loadBalancer = new elbv2.ApplicationLoadBalancer(this, `${constructorPrefix}-load-balancer`, {
       vpc,
       internetFacing: true,
       securityGroup: loadBalancerSecurityGroup,
-      vpcSubnets: { subnetGroupName: "Public" },
+      vpcSubnets: { subnets: vpc.publicSubnets },
       loadBalancerName: resourceName,
       ipAddressType: elbv2.IpAddressType.IPV4,
     });
@@ -130,7 +121,7 @@ export class InfraStack extends cdk.Stack {
       desiredCount: service.desiredCount,
       assignPublicIp: true,
       securityGroups: [serviceSecurityGroup],
-      vpcSubnets: { subnetGroupName: "Public" },
+      vpcSubnets: { subnets: vpc.privateSubnets },
       minHealthyPercent: 100,
       maxHealthyPercent: 200,
       circuitBreaker: { rollback: true },
@@ -164,11 +155,15 @@ export class InfraStack extends cdk.Stack {
     });
 
     hostNames.forEach((hostName, index) => {
-      new route53.ARecord(this, index === 0 ? `${constructorPrefix}-alias-record` : `${constructorPrefix}-${service.additionalSubdomains[index - 1]}-alias-record`, {
-        zone: hostedZone,
-        recordName: hostName,
-        target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
-      });
+      new route53.ARecord(
+        this,
+        index === 0 ? `${constructorPrefix}-alias-record` : `${constructorPrefix}-${service.additionalSubdomains[index - 1]}-alias-record`,
+        {
+          zone: hostedZone,
+          recordName: hostName,
+          target: route53.RecordTarget.fromAlias(new targets.LoadBalancerTarget(loadBalancer)),
+        },
+      );
     });
 
     new cdk.CfnOutput(this, `${constructorPrefix}-load-balancer-name`, { value: loadBalancer.loadBalancerName });
