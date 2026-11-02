@@ -235,7 +235,7 @@ describe("database-backed read-only detail pages", () => {
       ["Chalet", "Chalet F — Alpine Resorts", "https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f"],
       ["Ski pass", "Méribel / 3 Vallées ski pass", "https://www.skipass-meribel.com/en/"],
       ["Ski pass", "Epic Pass — Les 3 Vallées access", "https://www.epicpass.com/regions/europe/france/les-3-vallees.aspx"],
-      ["Ski equipment", "Annaski — Falcon Lodge ski & snowboard rentals", "https://www.annaski.com/en"],
+      ["Ski equipment", "Annaski", "https://www.annaski.com/en"],
       ["Ski equipment", "INTERSPORT Méribel Centre", "http://www.intersport-meribel.com/"],
       ["Mountain", "Méribel webcams", "https://www.meribel.net/informations-pratiques/webcams/"],
       ["Wellness", "Spa Falcon", "https://www.alpine-resorts.fr/en_US/destination/alpes-fr/meribel/spa/spa-falcon"],
@@ -250,11 +250,14 @@ describe("database-backed read-only detail pages", () => {
         ? 'Direct booking: [Annaski ski & snowboard rentals](https://www.annaski.com/en).\nOn the booking form, choose Méribel as the destination and select “I’m staying in the mountains with Alpine Resorts.”\nPhone: [+33 (0)4 80 94 95 96](tel:+33480949596).\nEmail: [info@annaski.com](mailto:info@annaski.com).'
         : href === "http://www.intersport-meribel.com/"
           ? 'Website: [INTERSPORT Méribel Centre](http://www.intersport-meribel.com/).\nAddress: Immeuble Les Glaciers, Rte de la Chaudanne, 73550 Les Allues, France.'
-          : null }));
+          : href.includes("maisontournier.com")
+            ? 'Official restaurant details.\nPhone: [+33 4 79 08 33 10](tel:+33479083310).\nEmail: [cap-horn@maisontournier.com](mailto:cap-horn@maisontournier.com).\nAddress: [2029 Route de l’Altiport, Courchevel 1850](https://maps.google.com/?q=2029%20Route%20de%20l%E2%80%99Altiport%2C%20Courchevel%201850).'
+            : "Useful details." }));
     findUniqueOrThrow.mockResolvedValueOnce({ links });
     const page = renderPage(Links, await linksLoader(), 1);
     const rows = [...page.querySelectorAll<HTMLElement>('.resource-link[data-group]')];
     expect(rows.map((row) => row.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
+    expect(rows.every((row) => row.querySelector(".resource-link-details"))).toBe(true);
     const standardRows = rows.filter((row) => row.dataset.group !== "Ski equipment");
     const anchors = standardRows.map((row) => row.querySelector<HTMLAnchorElement>(".resource-link-title")!);
     expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.filter((link) => link.group !== "Ski equipment").map((link) => link.href));
@@ -265,6 +268,7 @@ describe("database-backed read-only detail pages", () => {
     expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="https://www.annaski.com/en"]')?.textContent).toContain("Annaski ski & snowboard rentals");
     expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="http://www.intersport-meribel.com/"]')?.textContent).toContain("INTERSPORT Méribel Centre");
     expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"] .resource-link-details li')).toHaveLength(6);
+    expect(page.querySelector('.resource-link[data-group="Restaurants"] a[href="mailto:cap-horn@maisontournier.com"]')?.textContent).toBe("cap-horn@maisontournier.com");
   });
   it("renders the guest page with one compact Instagram row per guest", async () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });
