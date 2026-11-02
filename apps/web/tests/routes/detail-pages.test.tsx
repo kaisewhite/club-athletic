@@ -247,21 +247,23 @@ describe("database-backed read-only detail pages", () => {
       ["Restaurants", "Le Cap Horn — reserve via SevenRooms", "https://www.sevenrooms.com/explore/restaurantlecaphorn/reservations/create/search"],
     ].map(([group, label, href], index) => ({ id: String(index), group, label, href,
       note: href === "https://www.annaski.com/en"
-        ? 'On site at Falcon Lodge.\nChoose Méribel and “I’m staying in the mountains with Alpine Resorts” when booking.\nCall [+33 (0)4 80 94 95 96](tel:+33480949596) or email [info@annaski.com](mailto:info@annaski.com).\nRent here for easy storage. Other rentals may incur storage fees.'
+        ? 'Direct booking: [Annaski ski & snowboard rentals](https://www.annaski.com/en).\nOn the booking form, choose Méribel as the destination and select “I’m staying in the mountains with Alpine Resorts.”\nPhone: [+33 (0)4 80 94 95 96](tel:+33480949596).\nEmail: [info@annaski.com](mailto:info@annaski.com).'
         : href === "http://www.intersport-meribel.com/"
-          ? 'Address: Immeuble Les Glaciers, Rte de la Chaudanne, 73550 Les Allues, France.\n[Open in Maps](https://maps.google.com/?q=Immeuble%20Les%20Glaciers%2C%20Rte%20de%20la%20Chaudanne%2C%2073550%20Les%20Allues%2C%20France).'
+          ? 'Website: [INTERSPORT Méribel Centre](http://www.intersport-meribel.com/).\nAddress: Immeuble Les Glaciers, Rte de la Chaudanne, 73550 Les Allues, France.'
           : null }));
     findUniqueOrThrow.mockResolvedValueOnce({ links });
     const page = renderPage(Links, await linksLoader(), 1);
     const rows = [...page.querySelectorAll<HTMLElement>('.resource-link[data-group]')];
-    const anchors = rows.map((row) => row.querySelector<HTMLAnchorElement>(".resource-link-title")!);
-    expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.map((link) => link.href));
     expect(rows.map((row) => row.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
+    const standardRows = rows.filter((row) => row.dataset.group !== "Ski equipment");
+    const anchors = standardRows.map((row) => row.querySelector<HTMLAnchorElement>(".resource-link-title")!);
+    expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.filter((link) => link.group !== "Ski equipment").map((link) => link.href));
     for (const link of anchors) { expect(link.target).toBe("_blank"); expect(link.rel).toContain("noopener"); }
     expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"]')).toHaveLength(2);
     expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="tel:+33480949596"]')?.textContent).toBe("+33 (0)4 80 94 95 96");
     expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="mailto:info@annaski.com"]')?.textContent).toBe("info@annaski.com");
-    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href^="https://maps.google.com/"]')?.textContent).toContain("Open in Maps");
+    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="https://www.annaski.com/en"]')?.textContent).toContain("Annaski ski & snowboard rentals");
+    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="http://www.intersport-meribel.com/"]')?.textContent).toContain("INTERSPORT Méribel Centre");
     expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"] .resource-link-details li')).toHaveLength(6);
   });
   it("renders the guest page with one compact Instagram row per guest", async () => {

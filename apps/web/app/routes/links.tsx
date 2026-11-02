@@ -47,9 +47,9 @@ export default function Links({ loaderData }: Route.ComponentProps) {
       <h3 id={`links-${group}`} className="detail-kicker">{group}</h3>
       <div className="link-list">
         {loaderData.links.filter((link) => link.group === group).map((link) => <article className="resource-link" key={link.id} data-group={link.group}>
-          <h4 className="resource-link-heading"><a className="resource-link-title" href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+          <h4 className="resource-link-heading">{group === "Ski equipment" ? link.label : <a className="resource-link-title" href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}>
             <span className="link-name">{link.label}</span><span className="text-accent" aria-hidden="true">↗</span>
-          </a></h4>
+          </a>}</h4>
           <ResourceNote note={link.note} group={group} />
         </article>)}
       </div>
