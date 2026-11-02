@@ -65,6 +65,9 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
   {group:'Chalet',label:'Chalet F — Alpine Resorts',href:'https://www.alpine-resorts.fr/en_US/summer/resort/falcon/hebergement/chalet-f',note:'The chalet’s official listing: photos, floor plan and amenities.'},
   {group:'Ski pass',label:'Méribel / 3 Vallées ski pass',href:'https://www.skipass-meribel.com/en/',note:'Buy your lift pass before you go — Méribel only, or the whole 3 Vallées.'},
   {group:'Ski pass',label:'Epic Pass — Les 3 Vallées access',href:'https://www.epicpass.com/regions/europe/france/les-3-vallees.aspx',note:'Epic Pass holders: how your pass covers days in Les 3 Vallées.'},
+  {group:'Ski equipment',label:'Annaski — book ski & snowboard rentals',href:'https://www.annaski.com/en',note:'On site at Falcon Lodge. Choose Méribel, then “I’m staying in the mountains with Alpine Resorts.” Outside equipment may incur storage fees.'},
+  {group:'Ski equipment',label:'Call Annaski — +33 (0)4 80 94 95 96',href:'tel:+33480949596',note:'Call the Falcon Lodge ski shop.'},
+  {group:'Ski equipment',label:'Email Annaski — info@annaski.com',href:'mailto:info@annaski.com',note:'Email the Falcon Lodge ski shop.'},
   {group:'Mountain',label:'Méribel webcams',href:'https://www.meribel.net/informations-pratiques/webcams/',note:'Live pictures of the slopes and weather before you head out.'},
   {group:'Wellness',label:'Spa Falcon',href:'https://www.alpine-resorts.fr/en_US/destination/alpes-fr/meribel/spa/spa-falcon',note:'The residence spa for treatments and massages.'},
   {group:'Hotels',label:'Geneva Marriott (Friday night)',href:'https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/',note:'Airport hotel if you fly in a day early — free shuttle, under 5 min.'},
@@ -243,7 +246,7 @@ function validateSnapshot(): void {
   const names = spots.filter((name): name is string => name !== null && name !== "");
   if (FLOORS.length !== 3 || rooms.length !== 8 || names.length !== 11 ||
       new Set(names).size !== 11 || spots.filter((s) => s === "").length !== 8 ||
-      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 14) {
+      spots.filter((s) => s === null).length !== 1 || SCHEDULE.length !== 9 || LINKS.length !== 17) {
     throw new Error("Decoded seed snapshot counts do not match the reviewed source.");
   }
   if (names.some((name) => !GUEST_NAMES[name]) || Object.keys(GUEST_NAMES).length !== names.length) {
