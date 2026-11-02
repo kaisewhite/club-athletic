@@ -18,7 +18,7 @@ const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;v
   {dow:'Wed',num:'3',short:'Wed 3',event:'Courchevel day',detail:'Cap Horn, followed by going out in Courchevel. No buses.',venue:'Cap Horn · Courchevel',breakfast:'Chef',dinner:'—'},
   {dow:'Thu',num:'4',short:'Thu 4',event:'Final big night out',detail:'Doron Pub.',venue:'Doron Pub',breakfast:'Chef',dinner:'—'},
   {dow:'Fri',num:'5',short:'Fri 5',event:'Chill ski day',detail:'Rond Point; many people leave in the morning.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Sat',num:'6',short:'Sat 6',event:'Transfer home',detail:'Early-morning transfer to Geneva (GVA) and flights home.',venue:'Méribel → GVA',breakfast:'—',dinner:'—'},
+  {dow:'Sat',num:'6',short:'Sat 6',event:'Transfer home',detail:'Early-morning transfer to Geneva (GVA) and flights home.',venue:'Méribel → GVA',breakfast:'—',dinner:'—',at:'04:00'},
 ];
 // /flights recommendations, content and shape from the Notion "Flight & Shuttle
 // Guide" (owner, 2026-09-29): a table per option with a one-line verdict per
