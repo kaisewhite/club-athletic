@@ -178,12 +178,18 @@ export function AppShell(_props?: { daysUntil?: number }) {
       {wide && <TopNav newChat={newChat} />}
       <main className="shell-main">
         {!wide && <header className="mobile-header">
+          {/* Menu on the left, brand, then the chat action on the right; both
+              buttons are plain icons. */}
           <div className="mobile-nav-bar">
             <button ref={mobileNavButton} type="button" className="mobile-nav-toggle" aria-label={mobileNavOpen ? "Close menu" : "Open menu"} aria-expanded={mobileNavOpen} aria-controls="mobile-trip-navigation" onClick={() => setMobileNavOpen(open => !open)}>
-              {mobileNavOpen ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>}
+              {mobileNavOpen ? <svg width="20" height="20" viewBox="0 0 24 24" {...ICON} aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg> : <svg width="20" height="20" viewBox="0 0 24 24" {...ICON} aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>}
             </button>
             <Link to="/" className="mobile-brand">Méribel ’27</Link>
-            {location.pathname === "/" && <Link to="/chat" className="mobile-chat-link">Chat</Link>}
+            {location.pathname === "/chat" ? <button type="button" className="mobile-new-chat" aria-label="New chat" title="New chat" onClick={newChat}>
+              <svg width="20" height="20" viewBox="0 0 24 24" {...ICON} aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
+            </button> : <Link to="/chat" className="mobile-chat-link" aria-label="Chat" title="Chat">
+              <svg width="20" height="20" viewBox="0 0 24 24" {...ICON} aria-hidden="true"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" /></svg>
+            </Link>}
           </div>
         </header>}
         {!wide && mobileNavOpen && <div className="mobile-nav-layer">

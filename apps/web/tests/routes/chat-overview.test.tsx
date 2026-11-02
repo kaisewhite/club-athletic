@@ -180,11 +180,14 @@ it("hides the footer on /chat so the composer stays the bottom of the page", asy
   expect(container.querySelector(".new-chat")).not.toBeNull();
 });
 
-it("gives the mobile home header a Chat link instead of the old Trip Info dialog button", async () => {
+it("gives the mobile header the menu on the left and an icon-only Chat link on the right", async () => {
   vi.stubGlobal("matchMedia", () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList);
   await mount("/");
   expect(container.querySelector(".mobile-trip-overview")).toBeNull();
   const link = container.querySelector<HTMLAnchorElement>(".mobile-chat-link");
-  expect(link?.textContent).toBe("Chat");
+  expect(link?.textContent).toBe("");
+  expect(link?.getAttribute("aria-label")).toBe("Chat");
   expect(link?.getAttribute("href")).toBe("/chat");
+  const bar = container.querySelector(".mobile-nav-bar")!;
+  expect([...bar.children].map((el) => el.className)).toEqual(["mobile-nav-toggle", "mobile-brand", "mobile-chat-link"]);
 });

@@ -477,10 +477,11 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
   .mobile-brand { display: inline-flex; align-items: center; min-width: 0; min-height: 44px; color: var(--text); font: 600 14px/1 var(--font-sans); letter-spacing: .04em; white-space: nowrap; }
   .mobile-brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
-  .mobile-chat-link { display: inline-flex; flex: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--accent); color: var(--text); font: 700 12px/1 var(--font-sans); white-space: nowrap; cursor: pointer; }
-  .mobile-chat-link:hover { background: var(--accent-hover); color: var(--text); }
-  .mobile-chat-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
-  .mobile-nav-toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text); }
+  /* The menu and chat buttons share one plain icon-button look: 44px, no
+     outline or fill, pressed state below. */
+  .mobile-chat-link, .mobile-new-chat, .mobile-nav-toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text); cursor: pointer; }
+  .mobile-chat-link:hover { color: var(--text); }
+  .mobile-chat-link:focus-visible, .mobile-new-chat:focus-visible, .mobile-nav-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: -2px; }
   .mobile-nav-layer { position: fixed; z-index: 10; inset: 0; }
   .mobile-nav-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(0,0,0,.58); }
   .mobile-drawer { position: absolute; inset: 0 auto 0 0; width: min(84vw, 320px); padding: max(16px, env(safe-area-inset-top, 0px)) 12px max(20px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; background: var(--sidebar); border-right: 1px solid var(--border-subtle); box-shadow: 0 8px 32px rgb(0 0 0 / 32%); animation: drawer-in .3s cubic-bezier(0,0,.2,1); }
@@ -528,7 +529,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   /* ---- Touch targets, 44×44 minimum (TODO §2.15; Fitts). Links sitting
      inline inside a sentence are deliberately left alone — padding them to
      44px would break the line box, and WCAG 2.5.8 exempts them. */
-  .mobile-nav-toggle:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
+  .mobile-nav-toggle:active, .mobile-chat-link:active, .mobile-new-chat:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
   .week-heading { align-items: center; }
   .week-heading a,
   .guest-instagram-link,
