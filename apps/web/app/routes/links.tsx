@@ -1,6 +1,34 @@
+import type { ReactNode } from "react";
 import { getLinks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/links";
+
+const INLINE_LINK = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)/g;
+
+function renderNoteLine(line: string): ReactNode[] {
+  const parts: ReactNode[] = [];
+  let cursor = 0;
+  let key = 0;
+  for (const match of line.matchAll(INLINE_LINK)) {
+    const [source, label, href] = match;
+    const start = match.index ?? 0;
+    if (start > cursor) parts.push(line.slice(cursor, start));
+    const external = href.startsWith("http://") || href.startsWith("https://");
+    parts.push(<a key={key++} className="resource-link-inline" href={href} {...(external ? { target: "_blank", rel: "noopener noreferrer" } : {})}>{label}</a>);
+    cursor = start + source.length;
+  }
+  if (cursor < line.length) parts.push(line.slice(cursor));
+  return parts;
+}
+
+function ResourceNote({ note, group }: { note: string | null; group: string }) {
+  if (!note) return null;
+  const lines = note.split(/\r?\n/).map((line) => line.trim()).filter(Boolean);
+  if (lines.length === 1 && group !== "Ski equipment") return <p className="resource-link-note">{renderNoteLine(lines[0]!)}</p>;
+  return <ul className="resource-link-details">
+    {lines.map((line, index) => <li key={`${index}-${line}`}>{renderNoteLine(line)}</li>)}
+  </ul>;
+}
 
 export async function loader() {
   return { links: await getLinks() };
@@ -18,10 +46,12 @@ export default function Links({ loaderData }: Route.ComponentProps) {
     {groups.map((group) => <section key={group} className="link-section" aria-labelledby={`links-${group}`}>
       <h3 id={`links-${group}`} className="detail-kicker">{group}</h3>
       <div className="link-list">
-        {loaderData.links.filter((link) => link.group === group).map((link) => <a className="link-row" key={link.id} href={link.href} target="_blank" rel="noopener noreferrer" data-group={link.group}>
-          <span><span className="link-name">{link.label}</span>{link.note && <span className="link-group">{link.note}</span>}</span>
-          <span className="text-accent" aria-hidden="true">↗</span>
-        </a>)}
+        {loaderData.links.filter((link) => link.group === group).map((link) => <article className="resource-link" key={link.id} data-group={link.group}>
+          <h4 className="resource-link-heading"><a className="resource-link-title" href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}>
+            <span className="link-name">{link.label}</span><span className="text-accent" aria-hidden="true">↗</span>
+          </a></h4>
+          <ResourceNote note={link.note} group={group} />
+        </article>)}
       </div>
     </section>)}
   </section>;

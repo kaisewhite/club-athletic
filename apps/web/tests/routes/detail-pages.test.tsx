@@ -245,14 +245,24 @@ describe("database-backed read-only detail pages", () => {
       ["Potential chalets", "Chalet Arpege", "https://www.chaletowners.com/chalets/meribel/chalet-arpege.html?utm_source=chatgpt.com"],
       ["Restaurants", "Le Cap Horn — official restaurant page", "https://www.maisontournier.com/fr/page/restaurant-cap-horn-courchevel-maison-tournier.9486.html"],
       ["Restaurants", "Le Cap Horn — reserve via SevenRooms", "https://www.sevenrooms.com/explore/restaurantlecaphorn/reservations/create/search"],
-    ].map(([group, label, href], index) => ({ id: String(index), group, label, href }));
+    ].map(([group, label, href], index) => ({ id: String(index), group, label, href,
+      note: href === "https://www.annaski.com/en"
+        ? 'On site at Falcon Lodge.\nChoose Méribel and “I’m staying in the mountains with Alpine Resorts” when booking.\nCall [+33 (0)4 80 94 95 96](tel:+33480949596) or email [info@annaski.com](mailto:info@annaski.com).\nRent here for easy storage. Other rentals may incur storage fees.'
+        : href === "http://www.intersport-meribel.com/"
+          ? 'Address: Immeuble Les Glaciers, Rte de la Chaudanne, 73550 Les Allues, France.\n[Open in Maps](https://maps.google.com/?q=Immeuble%20Les%20Glaciers%2C%20Rte%20de%20la%20Chaudanne%2C%2073550%20Les%20Allues%2C%20France).'
+          : null }));
     findUniqueOrThrow.mockResolvedValueOnce({ links });
     const page = renderPage(Links, await linksLoader(), 1);
-    const anchors = [...page.querySelectorAll<HTMLAnchorElement>('.link-row[data-group]')];
+    const rows = [...page.querySelectorAll<HTMLElement>('.resource-link[data-group]')];
+    const anchors = rows.map((row) => row.querySelector<HTMLAnchorElement>(".resource-link-title")!);
     expect(anchors.map((link) => link.getAttribute("href"))).toEqual(links.map((link) => link.href));
-    expect(anchors.map((link) => link.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
+    expect(rows.map((row) => row.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
     for (const link of anchors) { expect(link.target).toBe("_blank"); expect(link.rel).toContain("noopener"); }
-    expect(page.querySelectorAll('.link-row[data-group="Guests"]')).toHaveLength(0);
+    expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"]')).toHaveLength(2);
+    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="tel:+33480949596"]')?.textContent).toBe("+33 (0)4 80 94 95 96");
+    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="mailto:info@annaski.com"]')?.textContent).toBe("info@annaski.com");
+    expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href^="https://maps.google.com/"]')?.textContent).toContain("Open in Maps");
+    expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"] .resource-link-details li')).toHaveLength(6);
   });
   it("renders the guest page with one compact Instagram row per guest", async () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });
