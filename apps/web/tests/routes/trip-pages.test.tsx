@@ -89,14 +89,14 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
   const container = document.createElement("div");
   document.body.append(container);
   container.innerHTML = renderToString(element);
-  expect(container.querySelector(".sidebar")).not.toBeNull();
+  expect(container.querySelector(".top-nav")).not.toBeNull();
   expect(container.textContent).not.toContain("30 Jan – 6 Feb 2027");
   const hydrationErrors: unknown[] = [];
   let root: ReturnType<typeof hydrateRoot> | undefined;
   try {
     await act(async () => { root = hydrateRoot(container, element, { onRecoverableError: (error) => hydrationErrors.push(error) }); });
     expect(hydrationErrors).toEqual([]);
-    expect(container.querySelector(".sidebar")).toBeNull();
+    expect(container.querySelector(".top-nav")).toBeNull();
     expect(container.querySelector(".mobile-header")?.textContent).not.toContain("days");
     expect(container.querySelector(".mobile-nav-toggle")?.getAttribute("aria-expanded")).toBe("false");
     await act(async () => container.querySelector<HTMLButtonElement>(".mobile-nav-toggle")!.click());
@@ -110,13 +110,14 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
     expect([...new Set(seamQueries)]).toEqual(["(max-width: 859px)"]);
     expect(listeners.size).toBe(1);
     await resizeTo(860);
-    expect(container.querySelector(".sidebar")).not.toBeNull();
+    expect(container.querySelector(".top-nav")).not.toBeNull();
     expect(container.querySelector(".mobile-header")).toBeNull();
-    expect(container.querySelector(".side-item.active")?.textContent).toBe("Schedule");
-    expect(container.querySelector(".new-chat")?.hasAttribute("disabled")).toBe(false);
+    expect(container.querySelector(".top-nav-item.active")?.textContent).toBe("Schedule");
+    // Off /chat the top bar's action opens the chat; on /chat it is New chat.
+    expect(container.querySelector(".top-nav-chat")?.getAttribute("href")).toBe("/chat");
     // …and back: 859 is mobile again, so the seam is the same width both ways.
     await resizeTo(859);
-    expect(container.querySelector(".sidebar")).toBeNull();
+    expect(container.querySelector(".top-nav")).toBeNull();
     expect(container.querySelector(".mobile-header")).not.toBeNull();
     const brand = container.querySelector<HTMLAnchorElement>(".mobile-brand");
     expect(brand?.getAttribute("href")).toBe("/");

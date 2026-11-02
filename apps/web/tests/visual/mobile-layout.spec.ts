@@ -94,14 +94,14 @@ for (const [width, height] of VIEWPORTS) {
 
     test("the shell picks the right navigation for this side of the seam", async ({ page }) => {
       await openFrozen(page, "/");
-      // Below the seam: app bar and closed navigation drawer, no 250px rail.
+      // Below the seam: app bar and closed navigation drawer; above it, the top bar.
       await expect(page.locator(".mobile-header")).toHaveCount(mobile ? 1 : 0);
-      await expect(page.locator(".sidebar")).toHaveCount(mobile ? 0 : 1);
+      await expect(page.locator(".top-nav")).toHaveCount(mobile ? 0 : 1);
       if (mobile) await expect(page.locator(".mobile-nav-toggle")).toHaveAttribute("aria-expanded", "false");
     });
 
     test("a deep-linked mobile page keeps its active navigation item visible", async ({ page }) => {
-      test.skip(!mobile, "the wide sidebar does not scroll horizontally");
+      test.skip(!mobile, "the wide top bar has no drawer");
       await openFrozen(page, "/rooms");
       await page.locator(".mobile-nav-toggle").click();
       const active = page.locator(".mobile-drawer .side-item[aria-current='page']");

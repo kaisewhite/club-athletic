@@ -78,15 +78,19 @@ it("keeps the active conversation only in this app session across SPA navigation
   expect(mocks.detail).toHaveBeenCalledWith(conversation.id, expect.any(AbortSignal));
   expect(container.textContent).toContain("Stored question");
 });
-it("sidebar New question detaches from any section and next ask creates a fresh conversation", async () => {
-  await mount();
+it("the top bar New chat detaches from any section and next ask creates a fresh conversation", async () => {
+  mocks.start.mockResolvedValue({ ok: true, conversationId: conversation.id, seq: 0 }); await mount();
+  await act(async () => container.querySelector<HTMLButtonElement>(".suggestions button")!.click());
   await act(async () => { await router!.navigate("/flights"); });
+  await act(async () => { await router!.navigate("/chat"); });
+  expect(container.textContent).toContain("Stored question");
+  // On /chat the top bar's action is New chat; it drops the selection.
   await act(async () => container.querySelector<HTMLButtonElement>(".new-chat")!.click());
   expect(router!.state.location.pathname).toBe("/chat");
   expect(container.querySelectorAll(".overview-tile")).toHaveLength(0); expect(container.textContent).not.toContain("Stored question");
   mocks.start.mockRejectedValue(new Error("unavailable"));
   await act(async () => container.querySelector<HTMLButtonElement>(".suggestions button")!.click());
-  expect(mocks.start).toHaveBeenCalledTimes(1); expect(conversation.events).toHaveLength(2);
+  expect(mocks.start).toHaveBeenCalledTimes(2); expect(conversation.events).toHaveLength(2);
 });
 /**
  * Every text node under `root`, in document order. `nodeType === 3` rather than
@@ -95,13 +99,14 @@ it("sidebar New question detaches from any section and next ask creates a fresh 
 /**
  * The no-duplication rule, mechanically (owner, 2026-09-28: "we don't need to
  * display things redundantly"). happy-dom's default 1024px width puts
- * `useWideLayout()` in the wide branch, so the sidebar is the chrome under test
+ * `useWideLayout()` in the wide branch, so the top bar and footer are the chrome under test
  * here; the narrow top bar and the CSS reveal of the date range are asserted by
  * Playwright in `tests/visual/mobile-layout.spec.ts`.
  */
 it("keeps the mobile and desktop chrome free of redundant trip metadata", async () => {
   await mount("/");
-  const chrome = container.querySelector(".sidebar")!;
+  const chrome = container.querySelector(".top-nav")!;
+  expect(container.querySelector(".site-footer")?.textContent).not.toMatch(/days until|2027/i);
   // Dates, countdowns, addresses, and icons belong on the relevant detail page.
   expect(container.querySelectorAll(".countdown-number")).toHaveLength(0);
   expect(container.querySelector(".hero-countdown")).toBeNull();
@@ -134,11 +139,45 @@ it("shows the trip info on the home page by default, with no dialog to open", as
   expect(info.querySelector('a[href="/chat"]')?.textContent).toBe("Ask the trip guide");
 });
 
-it("lists Chat in the navigation right after Home", async () => {
+it("splits desktop navigation into six primary pages and a More menu, with every page in the footer", async () => {
   await mount("/");
-  const labels = [...container.querySelectorAll(".sidebar .side-item")].map((link) => link.textContent);
-  expect(labels.slice(0, 2)).toEqual(["Home", "Chat"]);
-  expect(container.querySelector('.sidebar .side-item[href="/chat"]')).not.toBeNull();
+  const bar = [...container.querySelectorAll(".top-nav .top-nav-item")].map((link) => link.textContent);
+  expect(bar).toEqual(["Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule"]);
+  const more = [...container.querySelectorAll(".more-menu .more-menu-item")].map((link) => link.textContent);
+  expect(more).toEqual(["Chef", "Tasks", "Guests", "Links", "FAQ"]);
+  // Icon-only actions keep their names for assistive tech.
+  expect(container.querySelector(".more-toggle")?.getAttribute("aria-label")).toBe("More pages");
+  expect(container.querySelector(".top-nav-chat")?.getAttribute("aria-label")).toBe("Chat");
+  const footer = [...container.querySelectorAll(".site-footer a")].map((link) => link.getAttribute("href"));
+  for (const path of ["/", "/chat", "/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedule", "/chef", "/tasks", "/guests", "/guest-details", "/links", "/faq"]) {
+    expect(footer, `footer links ${path}`).toContain(path);
+  }
+  expect(container.querySelector('.top-nav-chat[href="/chat"]')).not.toBeNull();
+});
+
+it("opens More with its links reachable, and closes it on Escape back to the toggle", async () => {
+  await mount("/");
+  const toggle = container.querySelector<HTMLButtonElement>(".more-toggle")!;
+  const panel = container.querySelector<HTMLElement>("#more-pages")!;
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  expect(panel.hasAttribute("inert")).toBe(true);
+  await act(async () => toggle.click());
+  expect(toggle.getAttribute("aria-expanded")).toBe("true");
+  expect(panel.hasAttribute("inert")).toBe(false);
+  expect(panel.dataset.open).toBe("true");
+  expect(document.activeElement?.textContent).toBe("Chef");
+  expect(document.body.style.overflow).toBe("hidden");
+  await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
+  expect(toggle.getAttribute("aria-expanded")).toBe("false");
+  expect(panel.hasAttribute("inert")).toBe(true);
+  expect(document.activeElement).toBe(toggle);
+  expect(document.body.style.overflow).toBe("");
+});
+
+it("hides the footer on /chat so the composer stays the bottom of the page", async () => {
+  await mount();
+  expect(container.querySelector(".site-footer")).toBeNull();
+  expect(container.querySelector(".new-chat")).not.toBeNull();
 });
 
 it("gives the mobile home header a Chat link instead of the old Trip Info dialog button", async () => {

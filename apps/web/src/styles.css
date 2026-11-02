@@ -210,10 +210,67 @@
 }
 
 /* App shell and read-only trip pages, matching the decoded trip design. */
-.app-shell { display: flex; min-height: 100vh; }
-.sidebar { width: 240px; flex: none; background: var(--sidebar); border-right: 1px solid var(--border); display: flex; flex-direction: column; padding: 20px 16px; position: sticky; top: 0; height: 100vh; overflow-y: auto; }
-.new-chat { display: flex; align-items: center; min-height: 44px; gap: 8px; padding: 8px 12px; margin-top: 8px; border: 1px solid var(--text); background: var(--text); border-radius: var(--radius-md); font: inherit; font-size: 14px; color: var(--surface); text-align: left; }
-.nav-label { font-size: 11px; letter-spacing: .12em; text-transform: uppercase; color: var(--text-faint); padding: 32px 12px 10px; font-weight: 700; }
+.app-shell { display: flex; flex-direction: column; min-height: 100vh; }
+
+/* ---- Desktop top bar (≥860px). Brand left, the six primary pages, then Chat
+   and More on the right. It stays above the More overlay, which drops from
+   under it. */
+.top-nav { position: sticky; top: 0; z-index: 20; }
+.top-nav-bar { position: relative; z-index: 2; display: flex; align-items: center; gap: 20px; height: 64px; padding: 0 32px; background: var(--bg); border-bottom: 1px solid var(--border); }
+.top-nav-brand { flex: none; color: var(--text); font: 700 18px/1 var(--font-display); letter-spacing: .02em; white-space: nowrap; }
+.top-nav-brand:hover { color: var(--text); }
+.top-nav-links { display: flex; flex: 1; justify-content: center; gap: 2px; min-width: 0; }
+.top-nav-item { position: relative; display: inline-flex; align-items: center; min-height: 40px; padding: 0 12px; color: var(--text-muted); font-size: 14px; font-weight: 700; white-space: nowrap; transition: color 200ms cubic-bezier(.4,0,.2,1); }
+/* The underline grows from the left on hover and stays, in the accent, on the
+   current page. */
+.top-nav-item::after { content: ""; position: absolute; left: 12px; right: 12px; bottom: 6px; height: 2px; background: var(--text); transform: scaleX(0); transform-origin: left; transition: transform 200ms cubic-bezier(.4,0,.2,1); }
+.top-nav-item:hover { color: var(--text); }
+.top-nav-item:hover::after { transform: scaleX(1); }
+.top-nav-item.active { color: var(--text); }
+.top-nav-item.active::after { height: 3px; background: var(--brand); transform: scaleX(1); }
+.top-nav-actions { display: flex; flex: none; align-items: center; gap: 8px; }
+.new-chat, .top-nav-chat { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--text); background: var(--text); border-radius: var(--radius-md); font: inherit; font-size: 14px; font-weight: 700; color: var(--surface); cursor: pointer; transition: background 200ms cubic-bezier(.4,0,.2,1), transform 100ms cubic-bezier(.4,0,.2,1); }
+.new-chat:hover, .top-nav-chat:hover { background: var(--text-muted); color: var(--surface); }
+.new-chat:active, .top-nav-chat:active { transform: scale(.97); }
+.more-toggle { display: inline-flex; align-items: center; justify-content: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--border-strong); background: transparent; border-radius: var(--radius-md); color: var(--text); font: inherit; font-size: 14px; font-weight: 700; cursor: pointer; transition: background 200ms cubic-bezier(.4,0,.2,1); }
+.more-toggle:hover, .more-toggle.is-current { background: var(--hover); }
+.more-toggle svg { transition: transform 300ms cubic-bezier(.4,0,.2,1); }
+.more-toggle[aria-expanded="true"] { background: var(--text); color: var(--surface); }
+.more-toggle[aria-expanded="true"] svg { transform: rotate(90deg); }
+.more-toggle:focus-visible, .new-chat:focus-visible, .top-nav-chat:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+
+/* ---- More overlay. Revealed top-down from under the bar (clip-path) while it
+   fades in; then the links rise in one after another, 40ms apart. Closing
+   reverses without the stagger so it gets out of the way at once. Closed, it is
+   `inert` and `visibility: hidden`, so nothing in it is reachable. */
+.more-menu { position: fixed; inset: 64px 0 0; z-index: 1; overflow-y: auto; background: rgb(17 17 17 / 92%); color: #fff; clip-path: inset(0 0 100% 0); opacity: 0; visibility: hidden; transition: clip-path 300ms cubic-bezier(.4,0,.2,1), opacity 300ms cubic-bezier(.4,0,.2,1), visibility 0s linear 300ms; }
+.more-menu[data-open="true"] { clip-path: inset(0); opacity: 1; visibility: visible; transition: clip-path 350ms cubic-bezier(0,0,.2,1), opacity 250ms cubic-bezier(0,0,.2,1), visibility 0s; }
+.more-menu-inner { display: flex; justify-content: flex-end; width: 100%; max-width: var(--content-max); margin: 0 auto; padding: 56px 40px; }
+.more-menu-links { display: flex; flex-direction: column; align-items: flex-end; gap: 22px; min-width: 280px; }
+.more-menu-item { position: relative; color: #fff; font: 400 clamp(28px, 3.2vw, 40px)/1 var(--font-display); letter-spacing: .01em; text-transform: uppercase; text-align: right; opacity: 0; transform: translateY(10px); transition: opacity 200ms cubic-bezier(.4,0,.2,1), transform 200ms cubic-bezier(.4,0,.2,1), color 200ms cubic-bezier(.4,0,.2,1); }
+.more-menu[data-open="true"] .more-menu-item { opacity: 1; transform: none; transition: opacity 300ms cubic-bezier(0,0,.2,1) calc(120ms + var(--i, 0) * 40ms), transform 300ms cubic-bezier(0,0,.2,1) calc(120ms + var(--i, 0) * 40ms), color 200ms cubic-bezier(.4,0,.2,1); }
+/* Underline grows from the right, toward the aligned edge. */
+.more-menu-item::after { content: ""; position: absolute; right: 0; bottom: -8px; width: 100%; height: 2px; background: var(--accent); transform: scaleX(0); transform-origin: right; transition: transform 300ms cubic-bezier(.4,0,.2,1); }
+.more-menu-item:hover { color: #fff; }
+.more-menu-item:hover::after, .more-menu-item.active::after { transform: scaleX(1); }
+.more-menu-item.active { color: var(--accent); }
+.more-menu-item:focus-visible { outline: 2px solid var(--accent); outline-offset: 6px; }
+
+/* ---- Footer: every page, grouped, light type on black. */
+.site-footer { margin-top: auto; background: #111; color: #fff; }
+.site-footer-inner { display: grid; grid-template-columns: minmax(0, 1.4fr) repeat(4, minmax(0, 1fr)); gap: 32px; max-width: var(--content-max); margin: 0 auto; padding: 48px 40px 56px; }
+.site-footer-mark { color: #fff; font: 700 20px/1 var(--font-display); letter-spacing: .02em; }
+.site-footer-mark:hover { color: #fff; }
+.site-footer-brand p { margin: 10px 0 0; color: rgb(255 255 255 / 64%); font-size: 13px; }
+.site-footer-group h2 { margin: 0 0 14px; font: 500 11px/1.3 var(--font-sans); letter-spacing: .06em; text-transform: uppercase; color: rgb(255 255 255 / 56%); }
+.site-footer-group ul { display: grid; gap: 10px; margin: 0; padding: 0; list-style: none; }
+.site-footer-group a { color: rgb(255 255 255 / 84%); font-size: 14px; transition: color 200ms cubic-bezier(.4,0,.2,1); }
+.site-footer-group a:hover { color: #fff; text-decoration: underline; text-decoration-color: var(--accent); text-underline-offset: 3px; }
+.site-footer a:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+@media (prefers-reduced-motion: reduce) {
+  .top-nav-item, .top-nav-item::after, .new-chat, .top-nav-chat, .more-toggle, .more-toggle svg, .more-menu, .more-menu[data-open="true"], .more-menu-item, .more-menu[data-open="true"] .more-menu-item, .more-menu-item::after, .site-footer-group a { transition: none; }
+  .more-menu-item { transform: none; }
+}
 .side-nav { display: flex; flex-direction: column; gap: 2px; }
 .side-item { display: block; width: 100%; min-height: 36px; padding: 10px 12px; border-radius: var(--radius-sm); font-size: 14px; font-weight: 700; color: var(--text-muted); transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .side-item:hover { background: var(--hover); }
@@ -230,6 +287,10 @@
 /* Home: the trip info, then the week strip, then the FAQ link. The chat
    layout above (`.overview`, `.home-route`) belongs to /chat. */
 .home-overview { display: flex; flex-direction: column; gap: 40px; min-width: 0; }
+/* Home runs edge to edge so the hero video is full width; everything after
+   the hero returns to the page's measure. */
+.route-content.home-page { max-width: none; padding: 0 0 96px; }
+.home-page .home-schedule, .home-page .home-welcome { width: min(100% - 80px, 1100px); margin-inline: auto; }
 .home-welcome { display: flex; flex-direction: column; align-items: flex-start; }
 .home-welcome a { display: inline-flex; gap: 4px; min-height: 44px; align-items: center; color: var(--text); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
 .home-welcome a:hover { color: var(--text); }
@@ -402,6 +463,13 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   /* ---- Full height: mobile Safari's collapsing toolbar makes 100vh overflow. */
   .app-shell { min-height: 100dvh; }
 
+  /* ---- Footer on a phone: brand on its own row, then two columns of
+     44px-tall links, clear of the home indicator. */
+  .site-footer-inner { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 24px 16px; padding: 32px max(20px, env(safe-area-inset-right, 0px)) max(40px, env(safe-area-inset-bottom, 0px)) max(20px, env(safe-area-inset-left, 0px)); }
+  .site-footer-brand { grid-column: 1 / -1; }
+  .site-footer-group ul { gap: 0; }
+  .site-footer-group a { display: inline-flex; align-items: center; min-width: 44px; min-height: 44px; }
+
   /* ---- Safe areas. The sticky top bar and the page gutters clear the notch;
      every inset is floored at the design's own padding so a device without
      insets renders exactly the spacing the source specifies. */
@@ -429,6 +497,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 
   /* Keep the homepage content close to its navigation on small screens. */
   .home-overview { gap: 32px; }
+  .route-content.home-page { padding: 0 0 72px; }
+  .home-page .home-schedule, .home-page .home-welcome { width: calc(100% - 40px); }
   /* The week is one column on a phone. */
   .home-week { columns: 1; }
 

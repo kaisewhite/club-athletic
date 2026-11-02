@@ -3,7 +3,7 @@
 // a judgement call — that is the whole point of §2.15's "do this first".
 //
 // Two captures per page per width:
-//   *-viewport  the true design at that viewport, sticky sidebar and all
+//   *-viewport  the true design at that viewport, sticky top bar and all
 //   *-full      the whole document, which is the only way below-the-fold
 //               content (Rooms, Chef, Tasks) is covered at all
 // The full-page capture keeps `.sidebar { height: 100vh }` at its real viewport
