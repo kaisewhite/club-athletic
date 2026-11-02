@@ -13,7 +13,7 @@ const SCHEDULE: {dow:string;num:string;short:string;event:string;detail:string;v
   {dow:'Fri',num:'29',short:'Fri 29',event:'Early arrival day (optional)',detail:'Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. This is simply a buffer against flight delays; hotel shuttles make it easy to get back to GVA for Saturday morning’s Méribel transfer.',venue:'Geneva',venueUrl:'/flights',breakfast:'—',dinner:'—'},
   {dow:'Sat',num:'30',short:'Sat 30',event:'Arrival day',detail:'Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax. Optional group viewing of NFL playoff games upon arrival.',venue:'Geneva → Méribel',breakfast:'—',dinner:'Chef'},
   {dow:'Sun',num:'31',short:'Sun 31',event:'Slopes & Rond Point',detail:'Skiing and après drinks at Rond Point. Club Athletic buys rounds.',venue:'Rond Point',breakfast:'Chef',dinner:'Chef'},
-  {dow:'Mon',num:'1',short:'Mon 1',event:'Croissant, ski, repeat',detail:'La Folie Douce, 3–5 p.m.',venue:'La Folie Douce',breakfast:'Chef',dinner:'Chef',at:'15:00'},
+  {dow:'Mon',num:'1',short:'Mon 1',event:'Ski day and La Folie Douce',detail:'La Folie Douce, 3–5 p.m.',venue:'La Folie Douce',breakfast:'Chef',dinner:'Chef',at:'15:00'},
   {dow:'Tue',num:'2',short:'Tue 2',event:'Ski day & chalet mixers',detail:'Après gathering at randomly assigned chalets to meet others, followed by a night out.',venue:'Méribel',breakfast:'Chef',dinner:'Chef'},
   {dow:'Wed',num:'3',short:'Wed 3',event:'Courchevel day',detail:'Cap Horn, followed by going out in Courchevel. No buses.',venue:'Cap Horn · Courchevel',breakfast:'Chef',dinner:'—'},
   {dow:'Thu',num:'4',short:'Thu 4',event:'Final big night out',detail:'Doron Pub.',venue:'Doron Pub',breakfast:'Chef',dinner:'—'},
