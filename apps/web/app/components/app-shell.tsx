@@ -1,9 +1,8 @@
 import { useEffect, useRef, useState, useSyncExternalStore } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
-import { FirstVisitWelcome, TRIP_WELCOME_DISMISSAL_KEY } from "./first-visit-welcome";
 
 const SECTIONS = [
-  ["/", "Home"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
+  ["/", "Home"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
   ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
   ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/guest-details", "Guest details"], ["/links", "Links"], ["/faq", "FAQ"],
 ] as const;
@@ -44,22 +43,13 @@ export function AppShell(_props?: { daysUntil?: number }) {
   const [chatResetVersion, setChatResetVersion] = useState(0);
   const [selectedConversationId, setSelectedConversationId] = useState<string | null>(null);
   const [mobileNavOpen, setMobileNavOpen] = useState(false);
-  const [welcomeOpen, setWelcomeOpen] = useState(false);
   const wasMobileNavOpen = useRef(false);
   const mobileNavButton = useRef<HTMLButtonElement>(null);
   const mobileDrawer = useRef<HTMLElement>(null);
   useEffect(() => {
     // Remove the prior 30-day selector cookie. The new selection is held in
     // memory only, so another tab or a fresh document starts with a clean chat.
-    document.cookie = `club-athletic-conversation=; Path=/; SameSite=Lax; Max-Age=0${window.location.protocol === "https:" ? "; Secure" : ""}`;
-  }, []);
-  useEffect(() => {
-    try {
-      if (window.localStorage.getItem(TRIP_WELCOME_DISMISSAL_KEY) !== "true") setWelcomeOpen(true);
-    } catch {
-      // Storage can be disabled; show the welcome for this visit.
-      setWelcomeOpen(true);
-    }
+    document.cookie = `club-athletic-conversation=; Path=/; SameSite=Lax; Max-Age=0; Expires=Thu, 01 Jan 1970 00:00:00 GMT${window.location.protocol === "https:" ? "; Secure" : ""}`;
   }, []);
   const newChat = () => {
     setSelectedConversationId(null);
@@ -68,7 +58,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
     setChatResetVersion(value => value + 1);
     // No route state: nothing reads it, and `navigate` mints a fresh
     // `location.key` on its own, which is what the scroll/reset effect keys on.
-    void navigate("/");
+    void navigate("/chat");
   };
   useEffect(() => { window.scrollTo(0, 0); setResettingChat(false); }, [location.key]);
   useEffect(() => {
@@ -95,7 +85,6 @@ export function AppShell(_props?: { daysUntil?: number }) {
   useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
   return (
     <div className="app-shell">
-      <FirstVisitWelcome open={welcomeOpen} onDismiss={() => setWelcomeOpen(false)} />
       {wide && <aside className="sidebar">
         <button type="button" className="new-chat" onClick={newChat}>
           <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M12 20h9" /><path d="M16.5 3.5a2.1 2.1 0 0 1 3 3L7 19l-4 1 1-4Z" /></svg>
@@ -111,7 +100,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
               {mobileNavOpen ? <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg> : <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16" /></svg>}
             </button>
             <Link to="/" className="mobile-brand">Méribel ’27</Link>
-            {location.pathname === "/" && <button type="button" className="mobile-trip-overview" aria-haspopup="dialog" onClick={() => setWelcomeOpen(true)}>Trip Info</button>}
+            {location.pathname === "/" && <Link to="/chat" className="mobile-chat-link">Chat</Link>}
           </div>
         </header>}
         {!wide && mobileNavOpen && <div className="mobile-nav-layer">
@@ -121,8 +110,10 @@ export function AppShell(_props?: { daysUntil?: number }) {
             <Navigation className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
           </aside>
         </div>}
-        <div key={location.key} className={location.pathname === "/" ? "route-content home-route" : "route-content page-route"}>
-          <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId, openTripWelcome: () => setWelcomeOpen(true) }} />
+        {/* `home-route` is the full-height chat layout, so it belongs to /chat;
+            the home page is an ordinary page now that it shows the trip info. */}
+        <div key={location.key} className={location.pathname === "/chat" ? "route-content home-route" : "route-content page-route"}>
+          <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId }} />
         </div>
       </main>
     </div>

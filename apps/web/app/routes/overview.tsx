@@ -1,9 +1,8 @@
-import { Link, useOutletContext } from "react-router";
+import { Link } from "react-router";
 import { getSchedule } from "@/lib/db/repository.server";
 import type { Route } from "./+types/overview";
 
-import { ChatPanel } from "../components/chat/chat-panel";
-import { ChatErrorBoundary } from "../components/chat/chat-error-boundary";
+import { TripInfo } from "../components/trip-info";
 
 export async function loader(_args?: Route.LoaderArgs) {
   const schedule = await getSchedule();
@@ -15,50 +14,27 @@ export async function loader(_args?: Route.LoaderArgs) {
   };
 }
 
+/** Home: the trip at a glance, then the week. The concierge has its own page
+ * at `/chat`, reached from the trip info, the sidebar's New chat and the nav. */
 export default function Overview({ loaderData: data }: Route.ComponentProps) {
-  const { chatResetVersion, resettingChat, selectedConversationId, selectConversation, openTripWelcome } = useOutletContext<{
-    chatResetVersion: number; newChat: () => void; resettingChat: boolean;
-    selectedConversationId: string | null; selectConversation: (id: string | null) => void;
-    openTripWelcome: () => void;
-  }>();
   return (
-    <section className="overview" aria-labelledby="overview-heading">
-      <ChatErrorBoundary key={chatResetVersion}><ChatPanel initialConversation={null} selectedId={resettingChat ? null : selectedConversationId} onConversationIdChange={selectConversation}>
-      <div className="overview-content">
-        <section className="home-schedule" aria-label="Schedule for the week">
-          <ol className="sr-only">
-            {data.week.map(day => <li key={day.id}>
-              {day.dow} {day.number}: {day.event}.
-            </li>)}
-          </ol>
-          <div className="schedule-ticker-window" aria-hidden="true">
-            <div className="schedule-ticker-track">
-              {[false, true].map(copy => (
-                <ol className="schedule-ticker-sequence" key={String(copy)} data-copy={copy ? "true" : undefined}>
-                  {data.week.map(day => <li className="schedule-ticker-item" key={day.id}>
-                    <div className="ticker-line">
-                      <span className="ticker-date">{day.dow} {day.number}</span>
-                      <span className="ticker-event">{day.event}</span>
-                    </div>
-                  </li>)}
-                </ol>
-              ))}
-            </div>
-          </div>
-          <div className="week-heading">
-            <span className="section-label">This week</span>
-            <div className="schedule-ticker-actions">
-              <button type="button" className="trip-overview-trigger" onClick={openTripWelcome}>Trip overview</button>
-              <Link to="/schedule">See full schedule →</Link>
-            </div>
-          </div>
-        </section>
-        <div className="home-welcome">
-          <p>Ask about the schedule, rooms, flights, or anything else.</p>
-          <Link to="/faq">See common questions <span aria-hidden="true">→</span></Link>
+    <section className="home-overview" aria-labelledby="trip-welcome-title">
+      <TripInfo />
+      <section className="home-schedule" aria-labelledby="home-week-heading">
+        <div className="week-heading">
+          <h2 id="home-week-heading" className="section-label">This week</h2>
+          <Link to="/schedule">See full schedule →</Link>
         </div>
+        <ol className="home-week">
+          {data.week.map(day => <li key={day.id}>
+            <span className="home-week-day">{day.dow} {day.number}</span>
+            <span className="home-week-event">{day.event}</span>
+          </li>)}
+        </ol>
+      </section>
+      <div className="home-welcome">
+        <Link to="/faq">See common questions <span aria-hidden="true">→</span></Link>
       </div>
-      </ChatPanel></ChatErrorBoundary>
     </section>
   );
 }

@@ -227,10 +227,10 @@
 .page-route { padding: 56px 40px 96px; animation: rise .3s ease-out; }
 .home-route { display: flex; flex: 1; padding: 0 20px; }
 .overview { position: relative; flex: 1; min-width: 0; display: flex; flex-direction: column; }
-.overview-content { flex: 1; padding: 40px 0 8px; animation: rise .4s ease-out; }
-.home-welcome { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; min-height: min(44vh, 360px); padding: 16px 0 40px; }
-.home-welcome h1 { margin: 0; font: 400 clamp(40px, 7vw, 72px)/.9 var(--font-display); letter-spacing: 0; text-transform: uppercase; }
-.home-welcome p { margin: 12px 0 16px; color: var(--text-dim); font-size: 15px; line-height: 1.5; }
+/* Home: the trip info, then the week strip, then the FAQ link. The chat
+   layout above (`.overview`, `.home-route`) belongs to /chat. */
+.home-overview { display: flex; flex-direction: column; gap: 40px; min-width: 0; }
+.home-welcome { display: flex; flex-direction: column; align-items: flex-start; }
 .home-welcome a { display: inline-flex; gap: 4px; min-height: 44px; align-items: center; color: var(--text); font-size: 13px; text-decoration: underline; text-underline-offset: 2px; }
 .home-welcome a:hover { color: var(--text); }
 .faq-tiles { margin-top: 24px; }
@@ -259,26 +259,16 @@
 .tile-lead { font-weight: 700; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; margin-right: 6px; }
 .tile-sub { color: var(--text-dim); }
 .overview-tile > svg { grid-column: 2; grid-row: 1; margin-top: 3px; color: var(--text-faint); }
-.home-schedule { margin: 0 0 20px; }
-.week-heading { margin: 8px 0 0; }
+.home-schedule { margin: 0; }
+.week-heading { align-items: center; margin: 0 0 10px; }
+.week-heading h2 { margin: 0; font-family: var(--font-sans); line-height: 1.3; }
 .week-heading a { font-size: 12px; color: var(--text); text-decoration: underline; text-underline-offset: 2px; }
-.schedule-ticker-actions { display: flex; align-items: center; gap: 16px; }
-.trip-overview-trigger { display: inline-flex; min-height: 32px; align-items: center; padding: 0; border: 0; background: transparent; color: var(--text); font: inherit; font-size: 12px; text-decoration: underline; text-underline-offset: 2px; cursor: pointer; }
-.trip-overview-trigger:hover { color: var(--brand-dim); }
-.schedule-ticker-window { min-width: 0; overflow: hidden; border-block: 1px solid var(--border-subtle); -webkit-mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); mask-image: linear-gradient(to right, transparent, #000 4%, #000 96%, transparent); }
-.schedule-ticker-track { display: flex; width: max-content; animation: schedule-ticker-scroll 72s linear infinite; }
-.schedule-ticker-sequence { display: flex; flex: none; margin: 0; padding: 0; list-style: none; }
-.schedule-ticker-item { display: flex; flex: none; align-items: center; min-height: 46px; padding: 0 16px; white-space: nowrap; }
-.schedule-ticker-item + .schedule-ticker-item { border-left: 1px solid var(--border-subtle); }
-.ticker-line { display: flex; align-items: baseline; gap: 10px; }
-.ticker-date { color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; font-variant-numeric: tabular-nums; }
-.ticker-event { color: var(--text); font-size: 13px; }
-@keyframes schedule-ticker-scroll { to { transform: translateX(-50%); } }
-@media (prefers-reduced-motion: reduce) {
-  .schedule-ticker-track { animation: none; }
-  .schedule-ticker-sequence[data-copy="true"] { display: none; }
-  .schedule-ticker-window { overflow-x: auto; scrollbar-width: thin; -webkit-mask-image: none; mask-image: none; }
-}
+/* The week, static: one row per day, day label then the event. Three columns
+   on the wide layout so the whole trip fits in one glance. */
+.home-week { margin: 0; padding: 0; list-style: none; columns: 3; column-gap: 32px; border-top: 1px solid var(--border); }
+.home-week li { display: grid; grid-template-columns: 64px minmax(0, 1fr); gap: 12px; align-items: baseline; padding: 11px 0; border-bottom: 1px solid var(--border-subtle); break-inside: avoid; }
+.home-week-day { color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.home-week-event { color: var(--text); font-size: 14px; line-height: 1.4; }
 /* Guest names in the flight table and cards open a chat question. */
 .flight-table th a, .flight-guest-card a { color: inherit; }
 .schedule-day-number { font-family: var(--font-display); font-weight: 600; line-height: 1; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
@@ -377,7 +367,7 @@ button:disabled, input:disabled { cursor: not-allowed; }
    it steps back so the real fixtures of the day read first. */
 a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 @media (prefers-reduced-motion: reduce) {
-  .page-route, .overview-content { animation: none; }
+  .page-route { animation: none; }
   .overview-tile, .side-item, .schedule-row, .chat-jump, .suggestions button, .chat-sources a { transition: none; }
 }
 
@@ -419,9 +409,9 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .mobile-nav-bar { height: 56px; display: flex; align-items: center; justify-content: space-between; gap: 12px; padding-inline: max(16px, env(safe-area-inset-left, 0px)) max(16px, env(safe-area-inset-right, 0px)); }
   .mobile-brand { display: inline-flex; align-items: center; min-width: 0; min-height: 44px; color: var(--text); font: 600 14px/1 var(--font-sans); letter-spacing: .04em; white-space: nowrap; }
   .mobile-brand:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 2px; }
-  .mobile-trip-overview { display: inline-flex; flex: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--accent); color: var(--text); font: 700 12px/1 var(--font-sans); white-space: nowrap; cursor: pointer; }
-  .mobile-trip-overview:hover { background: var(--accent-hover); }
-  .mobile-trip-overview:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+  .mobile-chat-link { display: inline-flex; flex: none; align-items: center; justify-content: center; min-width: 44px; min-height: 44px; padding: 0 11px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--accent); color: var(--text); font: 700 12px/1 var(--font-sans); white-space: nowrap; cursor: pointer; }
+  .mobile-chat-link:hover { background: var(--accent-hover); color: var(--text); }
+  .mobile-chat-link:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
   .mobile-nav-toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text); }
   .mobile-nav-layer { position: fixed; z-index: 10; inset: 0; }
   .mobile-nav-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: rgba(0,0,0,.58); }
@@ -438,15 +428,15 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   }
 
   /* Keep the homepage content close to its navigation on small screens. */
-  .overview-content { flex: 1 0 auto; padding-top: 20px; }
-  .home-welcome { justify-content: flex-start; min-height: 0; padding: 12px 0 16px; }
+  .home-overview { gap: 32px; }
+  /* The week is one column on a phone. */
+  .home-week { columns: 1; }
 
-  /* ---- Horizontal scrollers (suggestions and the reduced-motion
-     schedule ticker). Momentum so a flick coasts, hidden bars, and `overscroll-behavior-x:
-     contain` so swiping a chip row past its end cannot trigger the browser's
-     back gesture. `.navrow` already hides the bar; this covers the rest. */
+  /* ---- Horizontal scrollers (the suggestion row). Momentum so a flick coasts,
+     hidden bars, and `overscroll-behavior-x: contain` so swiping a chip row past
+     its end cannot trigger the browser's back gesture. `.navrow` already hides
+     the bar; this covers the rest. */
   .navrow,
-  .schedule-ticker-window,
   .suggestions {
     -webkit-overflow-scrolling: touch;
     overscroll-behavior-x: contain;
@@ -454,7 +444,6 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     scrollbar-width: none;
     scroll-padding-inline: 4px;
   }
-  .schedule-ticker-window::-webkit-scrollbar,
   .suggestions::-webkit-scrollbar { display: none; }
   /* Keep prompts compact and content-sized on touch screens. The row can wrap,
      but each pill keeps its own measure instead of stretching to a fake card
@@ -472,7 +461,6 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .mobile-nav-toggle:active, .mobile-drawer-close:active { background: var(--hover); color: var(--text); }
   .week-heading { align-items: center; }
   .week-heading a,
-  .trip-overview-trigger,
   .guest-instagram-link,
   .schedule-entry-link,
   .suggestions button,
@@ -484,7 +472,6 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     align-items: center;
     min-height: 44px;
   }
-  .trip-overview-trigger { display: none; }
   .guest-instagram-link,
   .schedule-entry-link { align-items: center; }
   .chat-tool-group > button { min-height: 44px; align-items: center; }
@@ -504,12 +491,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
     padding-left: env(safe-area-inset-left, 0px);
     padding-right: env(safe-area-inset-right, 0px);
   }
-  /* Keep the input and quick prompts centered while pinning the schedule ticker
-     just below the mobile header. The week label and full-schedule link follow
-     the ticker, and the remaining page content stays below the composer. */
-  .overview-content { padding-top: calc(50dvh + 120px); }
-  .overview-content { position: relative; }
-  .home-schedule { position: absolute; inset: 16px 0 auto; z-index: 1; margin: 0; }
+  /* /chat: keep the input and quick prompts centered on the page. The schedule
+     strip that used to be pinned above them now lives on the home page. */
   .home-composer { position: absolute; inset: 0; z-index: 2; padding: 0 0 max(32px, env(safe-area-inset-bottom, 0px)); }
   .home-composer-content { gap: 12px; }
   .home-composer-heading { font-size: 22px; }
@@ -523,7 +506,6 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .link-row:active,
   .chalet-address:active { background: var(--hover); color: var(--text); }
   .week-heading a:active,
-  .trip-overview-trigger:active,
   .suggestions button:not(:disabled):active,
   .chat-jump:active,
   .chat-sources a:active,

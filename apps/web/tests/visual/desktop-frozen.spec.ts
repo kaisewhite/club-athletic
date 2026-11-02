@@ -1,4 +1,4 @@
-// The desktop-frozen baseline: all eleven trip pages, photographed at 1280 and
+// The desktop-frozen baseline: all twelve trip pages, photographed at 1280 and
 // 1920 (TODO §7). Any diff here after this commit is a desktop regression, not
 // a judgement call — that is the whole point of §2.15's "do this first".
 //
@@ -16,6 +16,7 @@ import { openFrozen } from "./prepare";
 /** The routes, in `app/routes.ts` order. */
 const PAGES = [
   ["home", "/"],
+  ["chat", "/chat"],
   ["faq", "/faq"],
   ["schedule", "/schedule"],
   ["flights", "/flights"],

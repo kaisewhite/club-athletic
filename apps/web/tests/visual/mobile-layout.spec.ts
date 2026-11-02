@@ -24,7 +24,7 @@ const VIEWPORTS = [
 ] as const;
 
 const PAGES = [
-  ["home", "/"], ["guests", "/guests"], ["faq", "/faq"], ["schedule", "/schedule"], ["flights", "/flights"], ["shuttle", "/shuttle"],
+  ["home", "/"], ["chat", "/chat"], ["guests", "/guests"], ["faq", "/faq"], ["schedule", "/schedule"], ["flights", "/flights"], ["shuttle", "/shuttle"],
   ["chalet", "/chalet"], ["rooms", "/rooms"], ["spots", "/spots"], ["chef", "/chef"],
   ["tasks", "/tasks"], ["links", "/links"],
 ] as const;
@@ -229,49 +229,11 @@ for (const [width, height] of VIEWPORTS) {
       expect(tiles.filter((tile) => tile.lead === null)).toHaveLength(2);
     });
 
-    test("horizontal scrollers bleed, hide their bars and contain overscroll", async ({ page }) => {
-      await openFrozen(page, "/");
-      for (const selector of [".schedule-ticker-window"]) {
-        const node = page.locator(selector);
-        if (await node.count() === 0) continue; // .nav-menu only exists below the seam
-        const state = await node.evaluate((el) => {
-          const last = el.lastElementChild?.getBoundingClientRect();
-          return {
-            bleed: el.scrollWidth - el.clientWidth,
-            overscrollX: getComputedStyle(el).overscrollBehaviorX,
-            overflowX: getComputedStyle(el).overflowX,
-            bar: getComputedStyle(el).scrollbarWidth,
-            lastChildOverhang: last ? Math.round(last.right - el.getBoundingClientRect().right) : 0,
-          };
-        });
-        if (!mobile && selector === ".schedule-ticker-window") {
-          // Reduced motion pauses the marquee and makes the single sequence
-          // manually scrollable, including just above the responsive seam.
-          expect(state.overflowX).toBe("auto");
-          continue;
-        }
-        expect(state.bar, `${selector} hides its scrollbar`).toBe("none");
-        if (mobile) {
-          // §2.15: a chip swipe must not trigger browser back-navigation.
-          expect(state.overscrollX, `${selector} contains horizontal overscroll`).toBe("contain");
-          // The overflow must be reachable, not clipped away.
-          expect(["auto", "scroll"], `${selector} is scrollable`).toContain(state.overflowX);
-          // And where the content *does* overflow, the last item must be cut by
-          // the viewport edge rather than stopping neatly inside it — that
-          // visible bleed is what tells a thumb there is more to the right.
-          // Content can be swiped horizontally without moving the page.
-          if (state.bleed > 0) {
-            expect(state.lastChildOverhang, `${selector} bleeds past the right edge at ${width}px`).toBeGreaterThan(0);
-          }
-        } else {
-          // Desktop behaviour is untouched.
-          expect(state.overscrollX).toBe("auto");
-        }
-      }
-    });
+    // The horizontal-scroller check covered the home schedule ticker, which the
+    // home page no longer has; the quick prompts wrap rather than scroll.
 
     test("the composer keeps 44px controls, a 16px input and a safe-area floor", async ({ page }) => {
-      await openFrozen(page, "/");
+      await openFrozen(page, "/chat");
       const composer = await page.evaluate(() => {
         const send = document.querySelector(".send")!.getBoundingClientRect();
         const attach = document.querySelector(".chat-attach")!.getBoundingClientRect();
@@ -299,36 +261,34 @@ for (const [width, height] of VIEWPORTS) {
       }
     });
 
-    test("the home landing centers the composer above its quick prompts", async ({ page }) => {
-      await openFrozen(page, "/");
+    test("the chat page centers the composer above its quick prompts", async ({ page }) => {
+      await openFrozen(page, "/chat");
       const geometry = await page.evaluate(() => {
         const home = document.querySelector(".overview")!.getBoundingClientRect();
         const composer = document.querySelector(".home-composer .composer")!.getBoundingClientRect();
         const prompts = document.querySelector(".home-composer .suggestions")!.getBoundingClientRect();
-        const schedule = document.querySelector(".home-schedule")!.getBoundingClientRect();
-        const ticker = document.querySelector(".schedule-ticker-window")!.getBoundingClientRect();
-        const weekHeading = document.querySelector(".week-heading")!.getBoundingClientRect();
-        const mobileHeader = document.querySelector(".mobile-header")?.getBoundingClientRect();
         return {
           homeCenter: home.top + home.height / 2,
           groupCenter: (composer.top + prompts.bottom) / 2,
-          composerTop: composer.top,
           composerBottom: composer.bottom,
           promptsTop: prompts.top,
-          scheduleTop: schedule.top,
-          scheduleBottom: schedule.bottom,
-          tickerBottom: ticker.bottom,
-          weekHeadingTop: weekHeading.top,
-          mobileHeaderBottom: mobileHeader?.bottom ?? 0,
         };
       });
       expect(geometry.promptsTop, "quick prompts should sit below the input").toBeGreaterThanOrEqual(geometry.composerBottom);
-      if (mobile) {
-        expect(geometry.scheduleTop, "schedule ticker should sit below the mobile header").toBeGreaterThanOrEqual(geometry.mobileHeaderBottom);
-        expect(geometry.weekHeadingTop, "week label should follow the ticker").toBeGreaterThanOrEqual(geometry.tickerBottom);
-        expect(geometry.scheduleBottom, "top schedule should not overlap the centered composer").toBeLessThan(geometry.composerTop);
-      }
       expect(Math.abs(geometry.groupCenter - geometry.homeCenter), "landing group should remain centered").toBeLessThan(48);
+    });
+
+    test("home lists the week as static rows under its heading", async ({ page }) => {
+      await openFrozen(page, "/");
+      const geometry = await page.evaluate(() => ({
+        headingBottom: document.querySelector(".week-heading")!.getBoundingClientRect().bottom,
+        weekTop: document.querySelector(".home-week")!.getBoundingClientRect().top,
+        columns: getComputedStyle(document.querySelector(".home-week")!).columnCount,
+        rows: document.querySelectorAll(".home-week li").length,
+      }));
+      expect(geometry.weekTop, "the week list follows its heading").toBeGreaterThanOrEqual(geometry.headingBottom);
+      expect(geometry.rows).toBeGreaterThan(0);
+      expect(geometry.columns).toBe(mobile ? "1" : "3");
     });
 
     test("every control §2.15 names is a 44px box below the seam", async ({ page }) => {
@@ -339,8 +299,8 @@ for (const [width, height] of VIEWPORTS) {
       // sweep below simply declining to look at something.
       const CONTROLS: [string, string][] = [
         ["/", ".mobile-nav-toggle"], ["/faq", ".overview-tile"], ["/", ".week-heading a"],
-        ["/", ".suggestions button"], ["/", ".send"], ["/", ".chat-attach"],
-        ["/links", ".link-row"], ["/chalet", ".chalet-listings a"],
+        ["/chat", ".suggestions button"], ["/chat", ".send"], ["/chat", ".chat-attach"],
+        ["/links", ".resource-link-title"], ["/chalet", ".chalet-listings a"],
         ["/flights", ".flight-mobile-sorting button"], ["/flights", ".flight-guest-card h4 a"],
       ];
       const offenders: string[] = [];

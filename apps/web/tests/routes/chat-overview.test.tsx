@@ -3,8 +3,8 @@ import { createRoot, type Root } from "react-dom/client";
 import { createMemoryRouter, RouterContextProvider, RouterProvider, useLoaderData } from "react-router";
 import { afterEach, beforeEach, expect, it, vi } from "vitest";
 import Overview, { loader } from "../../app/routes/overview";
+import Chat from "../../app/routes/chat";
 import { AppShell } from "../../app/components/app-shell";
-import { TRIP_WELCOME_DISMISSAL_KEY } from "../../app/components/first-visit-welcome";
 import type { ConversationDetails } from "@/lib/chat/contracts";
 
 const mocks = vi.hoisted(() => ({ trip: vi.fn(), schedule: vi.fn(), subscribe: vi.fn(), start: vi.fn(), detail: vi.fn() }));
@@ -38,12 +38,13 @@ function request(cookie = document.cookie) {
   // Overview's loader never reads it; this is a type-correct empty provider.
   return { request: req, params: {}, context: new RouterContextProvider(), url: new URL(req.url), pattern: "/" as const };
 }
-async function mount() {
+async function mount(path = "/chat") {
   function Page() { const data = useLoaderData<typeof loader>(); return <Overview loaderData={data} params={{}} matches={[] as never} />; }
   router = createMemoryRouter([{ element: <AppShell daysUntil={100} />, children: [
     { path: "/", loader: () => loader(request()), element: <Page />, hydrateFallbackElement: <div>Loading</div> },
+    { path: "/chat", element: <Chat /> },
     { path: "/flights", element: <div>Flight page</div> },
-  ] }]);
+  ] }], { initialEntries: [path] });
   await act(async () => { root = createRoot(container); root.render(<RouterProvider router={router!} />); });
 }
 
@@ -73,7 +74,7 @@ it("keeps the active conversation only in this app session across SPA navigation
   expect(container.textContent).toContain("What time do I need to land?");
   await act(async () => { await router!.navigate("/flights"); });
   expect(router!.state.location.pathname).toBe("/flights");
-  await act(async () => { await router!.navigate("/"); });
+  await act(async () => { await router!.navigate("/chat"); });
   expect(mocks.detail).toHaveBeenCalledWith(conversation.id, expect.any(AbortSignal));
   expect(container.textContent).toContain("Stored question");
 });
@@ -81,9 +82,8 @@ it("sidebar New question detaches from any section and next ask creates a fresh 
   await mount();
   await act(async () => { await router!.navigate("/flights"); });
   await act(async () => container.querySelector<HTMLButtonElement>(".new-chat")!.click());
-  expect(router!.state.location.pathname).toBe("/");
+  expect(router!.state.location.pathname).toBe("/chat");
   expect(container.querySelectorAll(".overview-tile")).toHaveLength(0); expect(container.textContent).not.toContain("Stored question");
-  expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("See common questions");
   mocks.start.mockRejectedValue(new Error("unavailable"));
   await act(async () => container.querySelector<HTMLButtonElement>(".suggestions button")!.click());
   expect(mocks.start).toHaveBeenCalledTimes(1); expect(conversation.events).toHaveLength(2);
@@ -100,7 +100,7 @@ it("sidebar New question detaches from any section and next ask creates a fresh 
  * Playwright in `tests/visual/mobile-layout.spec.ts`.
  */
 it("keeps the mobile and desktop chrome free of redundant trip metadata", async () => {
-  await mount();
+  await mount("/");
   const chrome = container.querySelector(".sidebar")!;
   // Dates, countdowns, addresses, and icons belong on the relevant detail page.
   expect(container.querySelectorAll(".countdown-number")).toHaveLength(0);
@@ -109,33 +109,43 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
   expect(chrome.textContent).not.toMatch(/days until/i);
   const headings = [...container.querySelectorAll("h1")];
   expect(headings).toHaveLength(1);
+  expect(headings[0]!.id).toBe("trip-welcome-title");
+  expect(headings[0]!.textContent).toContain("Three Valleys.");
+  expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("See common questions");
+});
+
+it("starts a fresh chat view on a document load of /chat", async () => {
+  await mount();
+  const headings = [...container.querySelectorAll("h1")];
+  expect(headings).toHaveLength(1);
   expect(headings[0]!.id).toBe("overview-heading");
   expect(headings[0]!.textContent).toBe("How can I help?");
-  expect(container.querySelector('.home-welcome a[href="/faq"]')).not.toBeNull();
 });
 
-it("starts a fresh chat view on a document load", async () => {
-  await mount(); expect(container.textContent).toContain("How can I help?");
+it("shows the trip info on the home page by default, with no dialog to open", async () => {
+  await mount("/");
+  expect(container.querySelector("dialog")).toBeNull();
+  expect(container.querySelector(".composer")).toBeNull();
+  const info = container.querySelector(".trip-welcome")!;
+  expect(info.tagName).toBe("SECTION");
+  expect(info.textContent).toContain("January 30–February 6, 2027");
+  for (const heading of ["Included", "The chalet", "Plan your budget"]) expect(info.textContent).toContain(heading);
+  expect(info.querySelector('a[href="/spots"]')?.textContent).toContain("See rooms & prices");
+  expect(info.querySelector('a[href="/chat"]')?.textContent).toBe("Ask the trip guide");
 });
 
-it("lets a visitor reopen the trip overview from the homepage", async () => {
-  window.localStorage.setItem(TRIP_WELCOME_DISMISSAL_KEY, "true");
-  await mount();
-  const dialog = container.querySelector<HTMLDialogElement>(".trip-welcome")!;
-  expect(dialog.open).toBe(false);
-
-  await act(async () => container.querySelector<HTMLButtonElement>(".trip-overview-trigger")!.click());
-  expect(dialog.open).toBe(true);
-  await act(async () => container.querySelector<HTMLButtonElement>(".trip-welcome-close")!.click());
-  expect(dialog.open).toBe(false);
+it("lists Chat in the navigation right after Home", async () => {
+  await mount("/");
+  const labels = [...container.querySelectorAll(".sidebar .side-item")].map((link) => link.textContent);
+  expect(labels.slice(0, 2)).toEqual(["Home", "Chat"]);
+  expect(container.querySelector('.sidebar .side-item[href="/chat"]')).not.toBeNull();
 });
 
-it("labels the mobile header control Trip Info and opens the trip overview", async () => {
-  window.localStorage.setItem(TRIP_WELCOME_DISMISSAL_KEY, "true");
+it("gives the mobile home header a Chat link instead of the old Trip Info dialog button", async () => {
   vi.stubGlobal("matchMedia", () => ({ matches: true, addEventListener() {}, removeEventListener() {} }) as unknown as MediaQueryList);
-  await mount();
-  const button = container.querySelector<HTMLButtonElement>(".mobile-trip-overview");
-  expect(button?.textContent).toBe("Trip Info");
-  await act(async () => button!.click());
-  expect(container.querySelector<HTMLDialogElement>(".trip-welcome")?.open).toBe(true);
+  await mount("/");
+  expect(container.querySelector(".mobile-trip-overview")).toBeNull();
+  const link = container.querySelector<HTMLAnchorElement>(".mobile-chat-link");
+  expect(link?.textContent).toBe("Chat");
+  expect(link?.getAttribute("href")).toBe("/chat");
 });
