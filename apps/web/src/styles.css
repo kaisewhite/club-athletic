@@ -414,13 +414,13 @@
 button:disabled, input:disabled { cursor: not-allowed; }
 .page-sub { color: var(--text-dim); margin: 0 0 24px; }
 .schedule-list { display: flex; flex-direction: column; }
-.schedule-row { display: grid; grid-template-columns: 96px 1fr auto; gap: 16px; padding: 16px 8px; border-top: 1px solid var(--border); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.schedule-row { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; gap: 16px; padding: 20px 8px; border-top: 1px solid var(--border); transition: background 120ms cubic-bezier(.4,0,.2,1); }
 .schedule-day-number { font-size: 36px; }
 .schedule-event { font-size: 14px; font-weight: 600; line-height: 1.571; }
 /* Breakfast, the event and dinner share one row shape, so a guest reads the day
    as a sequence of times rather than an event with meals appended to it. The
    time column is fixed and tabular so the times line up down the whole week. */
-.schedule-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 7px; }
+.schedule-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 10px; }
 .schedule-entry { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: baseline; }
 .schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
@@ -467,30 +467,35 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .travel-chapter-heading > span { color: var(--brand-dim); font-size: 11px; font-variant-numeric: tabular-nums; }
 .travel-chapter-heading h3 { margin: 0; font: 700 18px/1.25 var(--font-display); }
 .flight-planning-section + .flight-planning-section { margin-top: 30px; }
-.flight-planning-section > .detail-grid { gap: 22px; }
-.flight-planning-section > .detail-grid > .detail-card { padding: 14px 0 0; border: 0; border-top: 1px solid var(--border-subtle); border-radius: 0; background: transparent; }
+.flight-planning-section > .detail-grid { gap: 24px; }
+.flight-planning-section > .detail-grid > .detail-card { padding: 0; border: 0; border-radius: 0; background: transparent; }
 .flight-planning-section .flight-recs { margin-top: 0; }
 .flight-planning-section .group-flights { margin-top: 0; }
 
 .shuttle-guide { margin-top: 20px; }
-.shuttle-plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 28px; }
-.shuttle-plan, .shuttle-plan.shuttle-outbound { min-width: 0; padding: 16px 0; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--text); }
+.shuttle-plans { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: clamp(24px, 4vw, 48px); }
+.shuttle-plan, .shuttle-plan.shuttle-outbound { min-width: 0; padding: 16px 0 0; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; color: var(--text); }
 .shuttle-plan .detail-kicker { color: var(--brand-dim); }
 .shuttle-plan .shuttle-time { margin: 8px 0 12px; font-size: clamp(44px, 5vw, 64px); }
-.shuttle-plan .shuttle-locations { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 18px; }
+.shuttle-plan .shuttle-locations { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 0; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
+.shuttle-plan .shuttle-location-group { border-top: 0; padding-top: 0; }
+.shuttle-plan .shuttle-location-group + .shuttle-location-group { padding-left: 16px; border-left: 1px solid var(--border-subtle); }
 .shuttle-explainer { margin-top: 22px; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
 
-[aria-labelledby="chalet-heading"] > .chalet-address { padding: 12px 0; border: 0; border-block: 1px solid var(--border-subtle); border-radius: 0; background: transparent; }
+[aria-labelledby="chalet-heading"] > .chalet-address { min-height: 44px; padding: 12px 0; border: 0; border-bottom: 1px solid var(--border-subtle); border-radius: 0; background: transparent; margin-bottom: var(--space-5); }
 [aria-labelledby="chalet-heading"] > .chalet-address:hover { background: transparent; color: var(--brand-dim); }
 [aria-labelledby="chalet-heading"] > .detail-grid { gap: 28px; }
 [aria-labelledby="chalet-heading"] > .detail-grid > .detail-card { padding: 14px 0 0; border: 0; border-top: 1px solid var(--border); border-radius: 0; background: transparent; }
 [aria-labelledby="chalet-heading"] > .detail-note { max-width: 72ch; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
+.stat-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 0; margin-bottom: var(--space-5); border-block: 1px solid var(--border-subtle); }
+.stat { min-width: 0; padding: 12px 16px; border: 0; border-right: 1px solid var(--border-subtle); border-radius: 0; background: transparent; }
+.stat:last-child { border-right: 0; }
 
 .room-guide-link { display: flex; justify-content: flex-end; margin: -12px 0 8px; }
 .room-assignment-guide { margin-top: 12px; }
 .room-assignment-guide > .travel-chapter-heading { margin-top: 0; }
 .room-assignment-guide .room-floors { gap: 28px; }
-.room-assignment-guide .room-grid { grid-template-columns: 1fr; gap: 0; border-top: 1px solid var(--border); }
+.room-assignment-guide .room-grid { grid-template-columns: 1fr; gap: 0; border-top: 0; }
 .room-assignment-guide .room-card, .room-assignment-guide .room-card.has-open-spots { display: grid; grid-template-columns: minmax(150px, .7fr) minmax(120px, .55fr) minmax(0, 1.75fr); gap: 6px 20px; align-items: start; padding: 16px 0; border: 0; border-bottom: 1px solid var(--border-subtle); border-radius: 0; background: transparent; }
 .room-assignment-guide .room-name { grid-column: 1; font: 700 17px/1.25 var(--font-display); }
 .room-assignment-guide .room-type { grid-column: 2; margin: 0; color: var(--text-dim); font-size: 13px; }
@@ -510,7 +515,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .pricing-room-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .pricing-room-list-heading .detail-kicker { margin: 0; color: var(--text); font-size: 12px; }
 .pricing-room-list-heading a { flex: none; }
-.pricing-open-rooms { margin: 0; padding: 0; list-style: none; border-top: 1px solid var(--border-subtle); }
+.pricing-open-rooms { margin: 0; padding: 0; list-style: none; }
 .open-room { grid-template-columns: minmax(0, 1fr) minmax(105px, auto); column-gap: 16px; align-items: start; }
 .open-room-name { font: 700 16px/1.3 var(--font-display); }
 .open-room-floor { font: 400 12px/1.4 var(--font-sans); }
@@ -716,10 +721,15 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .schedule-guide-note a { margin-left: 20px; }
   .schedule-date::after { top: 42px; bottom: -18px; }
   .travel-chapter-heading { margin-top: 16px; }
-  .shuttle-plans { grid-template-columns: 1fr; gap: 4px; }
-  .shuttle-plan .shuttle-locations { gap: 12px; }
+  .shuttle-plans { grid-template-columns: 1fr; gap: 24px; }
+  .shuttle-plan .shuttle-locations { grid-template-columns: 1fr; gap: 12px; }
+  .shuttle-plan .shuttle-location-group + .shuttle-location-group { padding: 12px 0 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
   [aria-labelledby="chalet-heading"] > .detail-grid { grid-template-columns: 1fr; gap: 8px; }
   [aria-labelledby="chalet-heading"] > .detail-grid > .detail-card { padding: 12px 0 0; }
+  .stat-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .stat { padding: 10px 12px; }
+  .stat:nth-child(2n) { border-right: 0; }
+  .stat:nth-child(n + 3) { border-top: 1px solid var(--border-subtle); }
   .room-guide-link { margin-top: -8px; }
   .room-assignment-guide .room-card, .room-assignment-guide .room-card.has-open-spots { grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 6px 12px; }
   .room-assignment-guide .room-name { grid-column: 1; }
