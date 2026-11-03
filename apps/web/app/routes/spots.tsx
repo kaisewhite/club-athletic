@@ -64,7 +64,7 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     <section className="pricing-inclusions" aria-labelledby="pricing-inclusions-heading">
       <h3 className="detail-kicker" id="pricing-inclusions-heading">Included in the price</h3>
       <ul className="detail-list">
-        {data.pricing.includes.map((item) => <li key={item}><span>{item}</span></li>)}
+        {data.pricing.includes.map((item) => <li key={item}><span><ArrowText>{item}</ArrowText></span></li>)}
       </ul>
       <p className="detail-note" style={{ marginTop: 12 }}>Not included: {data.pricing.excludes.map((item, index) => <span key={`${index}-${item}`}>{index > 0 && ", "}<ArrowText>{item}</ArrowText></span>)}.</p>
       {data.pricing.breakdown && <div className="pricing-cost-breakdown">
