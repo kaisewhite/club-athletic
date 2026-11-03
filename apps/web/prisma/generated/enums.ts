@@ -83,6 +83,14 @@ export const Meal = {
 export type Meal = (typeof Meal)[keyof typeof Meal]
 
 
+export const FolieDouceChoice = {
+  GENERAL_ADMISSION: 'GENERAL_ADMISSION',
+  VIP_TABLE: 'VIP_TABLE'
+} as const
+
+export type FolieDouceChoice = (typeof FolieDouceChoice)[keyof typeof FolieDouceChoice]
+
+
 export const UploadPurpose = {
   FLIGHT_CONFIRMATION: 'FLIGHT_CONFIRMATION',
   OTHER: 'OTHER'

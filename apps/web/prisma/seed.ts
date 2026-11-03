@@ -106,6 +106,22 @@ const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; a
   { guest: "Kristy Khoury",     direction: "OUTBOUND", airline: "United", flightNumber: "UA957", origin: "GVA", destination: "EWR", departs: "2027-02-06T09:15:00+01:00", arrives: "2027-02-06T12:30:00-05:00" },
 ];
 
+// Poll responses shared by the owner on 2026-11-03. Tim Kurdi's former VIP
+// choice is intentionally omitted because he is no longer a guest.
+const FOLIE_DOUCE_VOTES = [
+  { firstName: "Kaise", lastName: "", choice: "VIP_TABLE" },
+  { firstName: "Kristy", lastName: "Khoury", choice: "VIP_TABLE" },
+  { firstName: "Pete", lastName: "F.", choice: "VIP_TABLE" },
+  { firstName: "Christie", lastName: "Navarre", choice: "VIP_TABLE" },
+  { firstName: "Jacqueline", lastName: "Herrera", choice: "VIP_TABLE" },
+  { firstName: "Valeriia", lastName: "Stobolva", choice: "VIP_TABLE" },
+  { firstName: "Augustus", lastName: "Shewchuck", choice: "VIP_TABLE" },
+  { firstName: "Ari", lastName: "Stobaugh", choice: "GENERAL_ADMISSION" },
+  { firstName: "Joanna", lastName: "Gonzalez", choice: "GENERAL_ADMISSION" },
+  { firstName: "Wayne", lastName: "Martindale", choice: "GENERAL_ADMISSION" },
+  { firstName: "Elijah", lastName: "Jones", choice: "GENERAL_ADMISSION" },
+] as const;
+
 const GUEST_NAMES: Record<string, { firstName: string; lastName: string }> = {
   Kaise: { firstName: "Kaise", lastName: "" },
   "Amelia Drake": { firstName: "Amelia", lastName: "Drake" },
@@ -344,6 +360,13 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
       pricing: PRICING, flightArrivalCutoff: "09:30", flightArrivalTarget: "08:30",
       flightReturnCutoff: "10:00",
     } }));
+  await tx.folieDouceVote.createMany({
+    data: FOLIE_DOUCE_VOTES.map((vote) => ({
+      id: createId(), tripId: trip.id, ...vote,
+      nameKey: [vote.firstName, vote.lastName].filter(Boolean).join(" ").normalize("NFKD").replace(/\p{Diacritic}/gu, "").toLocaleLowerCase("en-US"),
+    })),
+    skipDuplicates: true,
+  });
   // The booking rules are edited here and pushed, whatever the row held before.
   await tx.trip.update({ where: { id: trip.id }, data: { flightArrivalCutoff: "09:30", flightArrivalTarget: "08:30", flightReturnCutoff: "10:00", pricing: PRICING } });
   await removeDroppedGuest(tx, "Tim Kurdi");

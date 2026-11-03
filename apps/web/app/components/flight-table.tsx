@@ -6,7 +6,6 @@ import {
   type Column, type ColumnDef, type Row,
 } from "@tanstack/react-table";
 import type { FlightTable } from "@/lib/db/repository.server";
-import { ArrowText } from "./arrow-text";
 import { GuestInstagramLink } from "./guest-instagram-link";
 
 type GuestFlight = FlightTable[number];
@@ -32,7 +31,7 @@ function FlightName({ leg }: { leg: Leg | null }) {
   const number = [leg.airline, leg.flightNumber].filter(Boolean).join(" ");
   // Route, and the flight number when it is known. Nothing about where the row
   // came from or when it was confirmed (owner, 2026-09-29: "keep this clean").
-  return <><span className="flight-route"><ArrowText>{`${leg.origin} → ${leg.destination}`}</ArrowText></span>{number && <> · {number}</>}</>;
+  return <><span className="flight-route">{leg.origin} to {leg.destination}</span>{number && <> · {number}</>}</>;
 }
 
 function FlightTime({ local }: { local: string | undefined }) {
@@ -53,26 +52,31 @@ const columns: ColumnDef<typeof features, GuestFlight>[] = [
   { id: "arriving", header: "Arriving", columns: [
     { id: "inFlight", header: "Flight", accessorFn: (guest) => guest.inbound ? `${guest.inbound.origin} ${guest.inbound.airline ?? ""} ${guest.inbound.flightNumber ?? ""}` : undefined,
       sortFn: "alphanumeric", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightName leg={row.original.inbound} /> },
-    { id: "inDeparture", header: "Departs", accessorFn: (guest) => guest.inbound?.scheduledDeparture.getTime(),
-      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightTime local={row.original.inbound?.departureLocal} /> },
-    { id: "arrival", header: "Lands GVA", accessorFn: (guest) => guest.inbound?.scheduledArrival.getTime(),
-      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightTime local={row.original.inbound?.arrivalLocal} /> },
+    { id: "arrival", header: "Times", accessorFn: (guest) => guest.inbound?.scheduledArrival.getTime(),
+      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightSchedule leg={row.original.inbound} inbound /> },
   ] },
   { id: "departing", header: "Departing", columns: [
     { id: "outFlight", header: "Flight", accessorFn: (guest) => guest.outbound ? `${guest.outbound.destination} ${guest.outbound.airline ?? ""} ${guest.outbound.flightNumber ?? ""}` : undefined,
       sortFn: "alphanumeric", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightName leg={row.original.outbound} /> },
-    { id: "departure", header: "Departs GVA", accessorFn: (guest) => guest.outbound?.scheduledDeparture.getTime(),
-      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightTime local={row.original.outbound?.departureLocal} /> },
-    { id: "outArrival", header: "Arrives", accessorFn: (guest) => guest.outbound?.scheduledArrival.getTime(),
-      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightTime local={row.original.outbound?.arrivalLocal} /> },
+    { id: "departure", header: "Times", accessorFn: (guest) => guest.outbound?.scheduledDeparture.getTime(),
+      sortFn: "basic", sortUndefined: "last", sortDescFirst: false, cell: ({ row }) => <FlightSchedule leg={row.original.outbound} /> },
   ] },
 ];
 
+function FlightSchedule({ leg, inbound = false }: { leg: Leg | null; inbound?: boolean }) {
+  if (!leg) return <Missing />;
+  return <dl className="flight-schedule">
+    <div><dt>{inbound ? "Departs" : "Departs GVA"}</dt><dd><FlightTime local={leg.departureLocal} /></dd></div>
+    <div><dt>{inbound ? "Lands GVA" : "Arrives"}</dt><dd><FlightTime local={leg.arrivalLocal} /></dd></div>
+  </dl>;
+}
+
 function SortButton({ column }: { column: Column<typeof features, GuestFlight, unknown> }) {
   const sorted = column.getIsSorted();
+  const label = ({ guest: "Guest", inFlight: "Arrival flight", arrival: "Arrival times", outFlight: "Return flight", departure: "Return times" } as const)[column.id as "guest" | "inFlight" | "arrival" | "outFlight" | "departure"] ?? String(column.columnDef.header);
   return <button type="button" className="flight-sort" onClick={column.getToggleSortingHandler()}
-    aria-label={`Sort by ${String(column.columnDef.header)}${sorted ? `, currently ${sorted === "asc" ? "ascending" : "descending"}` : ""}`}>
-    {String(column.columnDef.header)} <span aria-hidden="true">{sorted === "asc" ? <ArrowUp size="1em" /> : sorted === "desc" ? <ArrowDown size="1em" /> : <ArrowsDownUp size="1em" />}</span>
+    aria-label={`Sort by ${label}${sorted ? `, currently ${sorted === "asc" ? "ascending" : "descending"}` : ""}`}>
+    {label} <span aria-hidden="true">{sorted === "asc" ? <ArrowUp size="1em" /> : sorted === "desc" ? <ArrowDown size="1em" /> : <ArrowsDownUp size="1em" />}</span>
   </button>;
 }
 
@@ -84,16 +88,8 @@ function GuestCard({ row }: { row: Row<typeof features, GuestFlight> }) {
   };
   return <li className="flight-guest-card">
     <h4>{renderCell("guest")}</h4>
-    <div className="flight-card-leg"><h5>Arriving</h5><dl>
-      <dt>Flight</dt><dd>{renderCell("inFlight")}</dd>
-      <dt>Departs</dt><dd>{renderCell("inDeparture")}</dd>
-      <dt>Lands GVA</dt><dd>{renderCell("arrival")}</dd>
-    </dl></div>
-    <div className="flight-card-leg"><h5>Departing</h5><dl>
-      <dt>Flight</dt><dd>{renderCell("outFlight")}</dd>
-      <dt>Departs GVA</dt><dd>{renderCell("departure")}</dd>
-      <dt>Arrives</dt><dd>{renderCell("outArrival")}</dd>
-    </dl></div>
+    <div className="flight-card-leg"><h5>Arriving</h5><p>{renderCell("inFlight")}</p>{renderCell("arrival")}</div>
+    <div className="flight-card-leg"><h5>Departing</h5><p>{renderCell("outFlight")}</p>{renderCell("departure")}</div>
   </li>;
 }
 
@@ -129,14 +125,26 @@ const styles = `
 .group-flights > h3 { font: 700 24px var(--font-display); letter-spacing: -.02em; margin: 0 0 8px; }
 .group-flights > p { margin: 0 0 8px; color: var(--text-muted); }
 .group-flights .flight-help { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
-.flight-table-frame { overflow: visible; border: 0; border-radius: 0; background: transparent; }
-.flight-table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; background: transparent; }
-.flight-table th, .flight-table td { padding: 14px 10px; overflow-wrap: anywhere; vertical-align: top; border: 0; }
+.flight-table-frame { overflow-x: auto; border: 0; border-radius: 0; background: transparent; }
+.flight-table { width: 100%; min-width: 680px; table-layout: fixed; border-collapse: collapse; text-align: left; background: transparent; }
+.flight-table th, .flight-table td { padding: 11px 12px; overflow-wrap: anywhere; vertical-align: top; border: 0; }
 .flight-table thead { color: var(--text-dim); font-size: 11px; }
+.flight-table thead tr:first-child th { padding-bottom: 6px; border-bottom: 1px solid var(--border-subtle); }
+.flight-table thead tr:nth-child(2) th { padding-top: 7px; }
+.flight-table tbody tr { border-top: 1px solid var(--border-subtle); }
+.flight-table tbody tr:hover { background: color-mix(in srgb, var(--surface) 55%, transparent); }
 .flight-table thead th { font-weight: 600; }
 .flight-table tbody { font-size: 13px; }
 .flight-table tbody th { font-weight: 600; }
 .flight-table td { color: var(--text-muted); }
+.flight-table th:first-child { width: 14%; }
+.flight-table th:nth-child(2), .flight-table td:nth-child(2), .flight-table th:nth-child(4), .flight-table td:nth-child(4) { width: 19%; }
+.flight-table th:nth-child(3), .flight-table td:nth-child(3), .flight-table th:nth-child(5), .flight-table td:nth-child(5) { width: 24%; }
+.flight-table .flight-route { color: var(--text); font-weight: 600; }
+.flight-schedule { display: grid; gap: 5px; margin: 0; }
+.flight-schedule > div { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 8px; align-items: baseline; }
+.flight-schedule dt { color: var(--text-dim); font-size: 11px; }
+.flight-schedule dd { min-width: 0; margin: 0; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .flight-sort { font: inherit; color: inherit; background: none; border: 0; padding: 0; cursor: pointer; text-align: left; }
 .flight-sort:hover { color: var(--brand-dim); }
 .group-flights :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
@@ -159,11 +167,12 @@ const styles = `
   .flight-cards, .flight-guest-card { -webkit-tap-highlight-color: transparent; }
 }
 .flight-cards { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.flight-guest-card { min-width: 0; overflow-wrap: anywhere; background: transparent; border: 0; border-radius: 0; padding: 18px 0; }
+.flight-guest-card { min-width: 0; overflow-wrap: anywhere; background: transparent; border: 0; border-radius: 0; padding: 18px 0; border-top: 1px solid var(--border-subtle); }
 .flight-guest-card h4 { margin: 0 0 8px; font-size: 16px; }
-.flight-card-leg { margin-top: 18px; padding: 0; border: 0; }
+.flight-card-leg { min-width: 0; margin-top: 12px; padding: 12px 0 0; border-top: 1px solid var(--border-subtle); }
 .flight-card-leg h5 { margin: 0 0 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
-.flight-card-leg dl { margin: 0; font-size: 13px; }
-.flight-card-leg dt { color: var(--text-dim); font-size: 11px; margin-top: 8px; }
-.flight-card-leg dd { margin: 2px 0 0; }
+.flight-card-leg > p { margin: 0 0 8px; font-size: 13px; }
+.flight-card-leg .flight-schedule { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 12px; }
+.flight-card-leg .flight-schedule > div { display: block; min-width: 0; }
+.flight-card-leg .flight-schedule dd { white-space: normal; font-size: 12px; }
 `;

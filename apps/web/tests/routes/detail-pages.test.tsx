@@ -133,22 +133,23 @@ describe("database-backed read-only detail pages", () => {
         .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE") })),
     })) } });
     const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".spots-heading")?.textContent).toBe("Open spots 10");
-    expect(page.querySelector(".spots-count")?.textContent).toBe("10");
+    expect(page.querySelector(".pricing-open-count")?.textContent).toBe("10");
     expect(page.textContent).toContain("€1,620.55–€1,790.55");
-    expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "Estimated USD price · per person, all-in"]);
-    expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $1,945–$2,149");
-    expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
-    for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item.replace("↔", "and"));
+    expect(page.querySelector(".pricing-estimate-value")?.textContent).toContain("≈ $1,945–$2,149");
+    expect(page.querySelector(".pricing-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
+    expect(page.querySelector(".pricing-payment-terms")?.textContent).toContain("Payment is in full; there is no deposit.");
+    for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item.replace("↔", "to and from"));
     const roomRows = [...page.querySelectorAll<HTMLTableRowElement>(".pricing-room-table tbody tr")];
     expect(roomRows).toHaveLength(3);
     expect(roomRows.map((row) => row.querySelector('[data-label="Availability"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Availability4 spots open", "Availability2 spots open", "Availability4 spots open"]);
     expect(roomRows.map((row) => row.querySelector('[data-label="Price per person"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Price per person€1,740.55 / $2,088.66 per person", "Price per person€1,620.55 / $1,944.66 per person", "Price per person€1,790.55 / $2,148.66 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
-    const breakdown = page.querySelector(".price-breakdown");
-    expect(breakdown?.getAttribute("aria-label")).toBe("Price breakdown");
-    expect([...breakdown!.querySelectorAll("dt")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef"]);
-    expect([...breakdown!.querySelectorAll("dd")].map((node) => node.textContent)).toEqual(["Depends on the room", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60"]);
+    const priceDetails = page.querySelector<HTMLTableElement>(".pricing-facts-table");
+    expect(priceDetails?.getAttribute("aria-label")).toBe("Included items and price breakdown");
+    expect([...priceDetails!.querySelectorAll("tbody th[scope='row']")].map((node) => node.textContent)).toEqual(["Included in the price", "Not included", "Room rate", "Taxes", "Shuttle", "Incidentals", "Chef", "Price note"]);
+    expect([...priceDetails!.querySelectorAll("tbody td")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual([
+      pricing.includes.join("").replace("↔", "to and from"), pricing.excludes.join(", "), "Depends on the room", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60", pricing.note,
+    ]);
     expect(page.textContent).toContain("refund €69.45");
     const chefAgreement = page.querySelector<HTMLDetailsElement>("details.service-agreement");
     expect(chefAgreement).not.toBeNull();
@@ -178,8 +179,8 @@ describe("database-backed read-only detail pages", () => {
     getEurUsdRate.mockResolvedValue(null);
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [] } });
     const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".spots-price")?.textContent).toBe("€1,620.55–€1,790.55");
-    expect(page.querySelector(".spots-price-usd")?.textContent).toBe("USD rate unavailable");
+    expect(page.querySelector(".pricing-total-range")?.textContent).toBe("€1,620.55–€1,790.55");
+    expect(page.querySelector(".pricing-estimate-value")?.textContent).toBe("USD rate unavailable");
   });
   it("renders shuttle times and both pickup and drop-off locations", async () => {
     findUniqueOrThrow.mockResolvedValue({ shuttles: [

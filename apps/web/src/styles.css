@@ -415,13 +415,15 @@ button:disabled, input:disabled { cursor: not-allowed; }
 .page-sub { color: var(--text-dim); margin: 0 0 24px; }
 .schedule-list { display: flex; flex-direction: column; }
 .schedule-row { display: grid; grid-template-columns: 72px minmax(0, 1fr) auto; gap: 20px; padding: 22px 0; transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.schedule-list > .schedule-row + .schedule-row { border-top: 1px solid var(--border-subtle); }
 .schedule-day-number { font-size: 36px; }
 .schedule-event { font-size: 14px; font-weight: 600; line-height: 1.571; }
 /* Breakfast, the event and dinner share one row shape, so a guest reads the day
    as a sequence of times rather than an event with meals appended to it. The
    time column is fixed and tabular so the times line up down the whole week. */
-.schedule-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 14px; }
+.schedule-entries { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 0; }
 .schedule-entry { display: grid; grid-template-columns: 52px 1fr; gap: 12px; align-items: baseline; }
+.schedule-entry + .schedule-entry { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
 .schedule-time { font-size: 13px; font-variant-numeric: tabular-nums; color: var(--text-dim); white-space: nowrap; }
 .schedule-entry-title { font-size: 15px; color: var(--text); line-height: 1.35; min-width: 0; }
 .schedule-entry-detail { display: block; margin-top: 3px; color: var(--text-dim); font-size: 13px; font-weight: 400; line-height: 1.45; }
@@ -505,18 +507,20 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .room-assignment-guide .room-spot { min-height: 36px; padding: 6px 0; border-bottom: 1px solid var(--border-subtle); }
 .room-assignment-guide .room-spot:last-child { border-bottom: 0; }
 
+.pricing-overview { margin: 8px 0 24px; border-block: 1px solid var(--border); }
+.pricing-overview-top { display: grid; grid-template-columns: minmax(0, 1fr) minmax(180px, .32fr); gap: 24px; align-items: stretch; }
+.pricing-total { min-width: 0; padding: 20px 0; }
+.pricing-overview-label { display: block; margin: 0; color: var(--text-dim); font-size: 12px; font-weight: 600; line-height: 1.4; }
+.pricing-total-range { margin: 4px 0 0; font: 700 clamp(30px, 4vw, 46px)/1.08 var(--font-display); letter-spacing: -.035em; font-variant-numeric: tabular-nums; }
+.pricing-estimate { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin-top: 12px; }
+.pricing-estimate-value { font-size: 15px; font-weight: 600; font-variant-numeric: tabular-nums; }
+.pricing-rate-date { color: var(--text-faint); font-size: 11px; }
+.pricing-availability { display: flex; flex-direction: column; align-items: flex-start; justify-content: center; gap: 2px; padding: 16px 20px; border-left: 1px solid var(--border-subtle); background: var(--surface); }
+.pricing-open-count { font: 700 34px/1.1 var(--font-display); font-variant-numeric: tabular-nums; }
+.pricing-availability a { display: inline-flex; align-items: center; gap: 5px; min-height: 44px; color: var(--text); font-size: 12px; font-weight: 600; text-underline-offset: 3px; }
+.pricing-payment-terms { margin: 0; padding: 12px 0; border-top: 1px solid var(--border-subtle); color: var(--text-dim); font-size: 13px; line-height: 1.55; }
 .pricing-details { display: block; margin-top: 24px; }
-[aria-labelledby="pricing-heading"] .spots-hero { border: 0; border-radius: 0; padding: 0; background: transparent; }
-[aria-labelledby="pricing-heading"] .price-breakdown-row { border: 0; padding: 4px 0; }
-[aria-labelledby="pricing-heading"] .pricing-room-list { padding-top: 0; border: 0; }
-[aria-labelledby="pricing-heading"] .open-room { padding: 14px 0; border: 0; }
-[aria-labelledby="pricing-heading"] .open-room-count { padding-left: 0; border: 0; }
-.spots-open-summary { display: flex; flex-wrap: wrap; align-items: baseline; gap: 0 16px; margin-bottom: 18px; }
-.spots-open-summary .spots-heading { display: inline-flex; align-items: baseline; gap: 8px; margin: 0; font-size: 14px; }
-.spots-open-summary .spots-count { font-size: 20px; font-weight: 600; line-height: 1.2; }
-.spots-open-summary p { flex: 1 1 280px; margin: 0; color: var(--text-dim); font-size: 13px; }
-.spots-room-link { flex: none; margin-top: 6px; }
-.pricing-room-list { min-width: 0; padding-top: 14px; border-top: 1px solid var(--border); }
+.pricing-room-list { min-width: 0; padding-top: 0; border-top: 0; }
 .pricing-room-list-heading { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .pricing-room-list-heading .detail-kicker { margin: 0; color: var(--text); font-size: 12px; }
 .pricing-room-list-heading a { flex: none; }
@@ -530,12 +534,14 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .pricing-bedroom-name { display: block; font: 700 16px/1.3 var(--font-display); }
 .pricing-bedroom-note { display: block; margin-top: 4px; color: var(--text-dim); font-size: 12px; font-weight: 400; line-height: 1.45; }
 .pricing-mobile-label { display: none; }
-.pricing-inclusions { max-width: 72ch; margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); }
+.pricing-inclusions { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border); }
 .pricing-inclusions > .detail-kicker { margin-bottom: 10px; color: var(--text); font-size: 14px; }
-.pricing-inclusions .detail-list { display: grid; gap: 8px; padding: 0; list-style: none; line-height: 1.5; }
-.pricing-inclusions .detail-list li { display: grid; grid-template-columns: 6px minmax(0, 1fr); gap: 10px; align-items: baseline; }
-.pricing-inclusions .detail-list li::before { content: ""; width: 5px; height: 5px; margin-top: .55em; border-radius: 50%; background: var(--brand-dim); }
-.pricing-cost-breakdown { margin-top: 22px; }
+.pricing-facts-table { width: 100%; border-collapse: collapse; background: var(--surface); color: var(--text); font-size: 14px; }
+.pricing-facts-table th, .pricing-facts-table td { padding: 11px 12px; border-bottom: 1px solid var(--border-subtle); text-align: left; vertical-align: top; }
+.pricing-facts-table thead th { color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.pricing-facts-table tbody th[scope="row"] { width: 28%; font-weight: 600; }
+.pricing-facts-table tbody td { color: var(--text-dim); }
+.pricing-included-list { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; }
 
 
 
@@ -748,13 +754,24 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .room-assignment-guide .room-type { grid-column: 2; text-align: right; }
   .room-assignment-guide .room-spots { grid-column: 1 / -1; grid-row: auto; }
   .room-assignment-guide .detail-note { grid-column: 1 / -1; }
+  .pricing-overview { margin: 4px 0 20px; }
+  .pricing-overview-top { grid-template-columns: 1fr; gap: 0; }
+  .pricing-total { padding: 16px 0; }
+  .pricing-total-range { font-size: clamp(22px, 7.5vw, 32px); }
+  .pricing-availability { display: grid; grid-template-columns: auto auto minmax(0, 1fr); align-items: center; gap: 8px 12px; padding: 8px 0 8px; border-top: 1px solid var(--border-subtle); border-left: 0; }
+  .pricing-availability a { justify-self: end; text-align: right; }
+  .pricing-payment-terms { padding: 10px 0; }
   .pricing-details { margin-top: 20px; }
-  .spots-open-summary { gap: 8px 12px; }
-  .spots-open-summary .spots-heading { flex: 1 1 100%; }
-  .spots-open-summary p { flex-basis: 100%; }
   .pricing-room-list-heading { align-items: flex-start; flex-direction: column; gap: 0; }
+  .pricing-facts-table, .pricing-facts-table tbody { display: block; width: 100%; }
+  .pricing-facts-table { border: 1px solid var(--border); border-radius: 0; overflow: hidden; }
+  .pricing-facts-table thead { display: none; }
+  .pricing-facts-table tbody tr { display: grid; grid-template-columns: 1fr; gap: 5px; padding: 12px 14px; border-top: 1px solid var(--border-subtle); }
+  .pricing-facts-table tbody tr:first-child { border-top: 0; }
+  .pricing-facts-table tbody th[scope="row"] { width: auto; padding: 0; }
+  .pricing-facts-table tbody td { min-width: 0; padding: 0; border: 0; overflow-wrap: anywhere; }
   .pricing-room-table, .pricing-room-table tbody { display: block; width: 100%; }
-  .pricing-room-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .pricing-room-table { border: 1px solid var(--border); border-radius: 0; overflow: hidden; }
   .pricing-room-table thead { display: none; }
   .pricing-room-table tbody tr { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 14px; padding: 12px 14px; border-top: 1px solid var(--border-subtle); }
   .pricing-room-table tbody tr:first-child { border-top: 0; }

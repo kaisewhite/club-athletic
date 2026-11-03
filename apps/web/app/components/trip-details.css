@@ -39,14 +39,16 @@
 .flight-recs { margin: 20px 0 24px; display: flex; flex-direction: column; gap: 16px; }
 .flight-hotels { margin-top: 4px; }
 .flight-rec-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
-.flight-rec-date-arrival { white-space: nowrap; }
+.flight-rec-date-arrival { white-space: normal; }
 .flight-rec-copy { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--text-muted); }
 .flight-rec-outro { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
-.flight-rec-table th[scope="row"] { white-space: nowrap; }
-.flight-rec-route { font-variant-numeric: tabular-nums; white-space: nowrap; }
-.flight-rec .detail-table-wrap { overflow: visible; border: 0; border-radius: 0; background: transparent; }
-.flight-rec-table tbody tr { border: 0; }
+.flight-rec-table { table-layout: auto; }
+.flight-rec-table th[scope="row"] { width: 16%; white-space: nowrap; }
+.flight-rec-route { font-variant-numeric: tabular-nums; }
+.flight-rec .detail-table-wrap { overflow: hidden; border: 1px solid var(--border); border-radius: 0; background: var(--surface); }
+.flight-rec-table tbody tr { border-top: 1px solid var(--border-subtle); }
 .flight-rec-table tbody th, .flight-rec-table tbody td { border: 0; }
+.flight-rec-table tbody td:nth-child(3), .flight-rec-table tbody td:nth-child(4) { white-space: nowrap; }
 .shuttle-outbound { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 .shuttle-outbound .detail-kicker { color: var(--brand-dim); }
 .flight-rule-kicker { display: inline-block; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--accent); }
@@ -130,7 +132,6 @@
 .detail-table thead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .detail-table thead th { padding: 10px 16px; font-weight: 500; }
 .detail-table tbody tr { border-top: 1px solid var(--border-subtle); font-size: 14px; line-height: 1.571; }
-.detail-table.flight-rec-table tbody tr { border: 0; }
 .detail-table tbody th, .detail-table tbody td { padding: 12px 16px; }
 .detail-table tbody th { font-weight: 600; }
 .detail-table td { color: var(--text-muted); }
@@ -327,9 +328,8 @@
   .chef-meal-table tbody td { grid-column: 2; }
   .chef-meal-table tbody td::before { content: attr(data-meal) ": "; color: var(--text-dim); }
 
-  /* Flight recommendations have five narrow desktop columns. On phones each
-     option becomes a readable record: airline and route, paired departure and
-     arrival times, then the shuttle verdict across the bottom. */
+  /* Each flight option becomes a readable record on phones, with the route
+     above paired departure and arrival times. */
   .flight-rec-table,
   .flight-rec-table tbody { display: block; }
   .flight-rec-table thead { display: none; }
@@ -338,9 +338,10 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 16px;
     margin-bottom: 18px;
-    padding: 0;
-    border: 0;
+    padding: 12px 0 0;
+    border-top: 1px solid var(--border-subtle);
   }
+  .flight-rec-table tbody tr:first-child { border-top: 0; }
   .flight-rec-table tbody th[scope="row"] {
     grid-column: 1 / -1;
     padding: 0;

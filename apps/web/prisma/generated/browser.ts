@@ -78,6 +78,11 @@ export type FlightRecommendation = Prisma.FlightRecommendationModel
  */
 export type FlightRecommendationOption = Prisma.FlightRecommendationOptionModel
 /**
+ * Model FolieDouceVote
+ * 
+ */
+export type FolieDouceVote = Prisma.FolieDouceVoteModel
+/**
  * Model Link
  * 
  */

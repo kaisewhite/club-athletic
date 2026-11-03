@@ -318,6 +318,7 @@ export type TripWhereInput = {
   scheduleDays?: Prisma.ScheduleDayListRelationFilter
   links?: Prisma.LinkListRelationFilter
   flightRecommendations?: Prisma.FlightRecommendationListRelationFilter
+  folieDouceVotes?: Prisma.FolieDouceVoteListRelationFilter
   notes?: Prisma.NoteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
 }
@@ -346,6 +347,7 @@ export type TripOrderByWithRelationInput = {
   scheduleDays?: Prisma.ScheduleDayOrderByRelationAggregateInput
   links?: Prisma.LinkOrderByRelationAggregateInput
   flightRecommendations?: Prisma.FlightRecommendationOrderByRelationAggregateInput
+  folieDouceVotes?: Prisma.FolieDouceVoteOrderByRelationAggregateInput
   notes?: Prisma.NoteOrderByRelationAggregateInput
   conversations?: Prisma.ConversationOrderByRelationAggregateInput
 }
@@ -377,6 +379,7 @@ export type TripWhereUniqueInput = Prisma.AtLeast<{
   scheduleDays?: Prisma.ScheduleDayListRelationFilter
   links?: Prisma.LinkListRelationFilter
   flightRecommendations?: Prisma.FlightRecommendationListRelationFilter
+  folieDouceVotes?: Prisma.FolieDouceVoteListRelationFilter
   notes?: Prisma.NoteListRelationFilter
   conversations?: Prisma.ConversationListRelationFilter
 }, "id" | "seedKey">
@@ -452,6 +455,7 @@ export type TripCreateInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -479,6 +483,7 @@ export type TripUncheckedCreateInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -506,6 +511,7 @@ export type TripUpdateInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -533,6 +539,7 @@ export type TripUncheckedUpdateInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -797,6 +804,20 @@ export type TripUpdateOneRequiredWithoutFlightRecommendationsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutFlightRecommendationsInput, Prisma.TripUpdateWithoutFlightRecommendationsInput>, Prisma.TripUncheckedUpdateWithoutFlightRecommendationsInput>
 }
 
+export type TripCreateNestedOneWithoutFolieDouceVotesInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutFolieDouceVotesInput, Prisma.TripUncheckedCreateWithoutFolieDouceVotesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutFolieDouceVotesInput
+  connect?: Prisma.TripWhereUniqueInput
+}
+
+export type TripUpdateOneRequiredWithoutFolieDouceVotesNestedInput = {
+  create?: Prisma.XOR<Prisma.TripCreateWithoutFolieDouceVotesInput, Prisma.TripUncheckedCreateWithoutFolieDouceVotesInput>
+  connectOrCreate?: Prisma.TripCreateOrConnectWithoutFolieDouceVotesInput
+  upsert?: Prisma.TripUpsertWithoutFolieDouceVotesInput
+  connect?: Prisma.TripWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.TripUpdateToOneWithWhereWithoutFolieDouceVotesInput, Prisma.TripUpdateWithoutFolieDouceVotesInput>, Prisma.TripUncheckedUpdateWithoutFolieDouceVotesInput>
+}
+
 export type TripCreateNestedOneWithoutLinksInput = {
   create?: Prisma.XOR<Prisma.TripCreateWithoutLinksInput, Prisma.TripUncheckedCreateWithoutLinksInput>
   connectOrCreate?: Prisma.TripCreateOrConnectWithoutLinksInput
@@ -861,6 +882,7 @@ export type TripCreateWithoutPropertyInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -887,6 +909,7 @@ export type TripUncheckedCreateWithoutPropertyInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -962,6 +985,7 @@ export type TripCreateWithoutGuestsInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -988,6 +1012,7 @@ export type TripUncheckedCreateWithoutGuestsInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -1030,6 +1055,7 @@ export type TripUpdateWithoutGuestsInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1056,6 +1082,7 @@ export type TripUncheckedUpdateWithoutGuestsInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1082,6 +1109,7 @@ export type TripCreateWithoutShuttlesInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -1108,6 +1136,7 @@ export type TripUncheckedCreateWithoutShuttlesInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -1150,6 +1179,7 @@ export type TripUpdateWithoutShuttlesInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1176,6 +1206,7 @@ export type TripUncheckedUpdateWithoutShuttlesInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1202,6 +1233,7 @@ export type TripCreateWithoutScheduleDaysInput = {
   shuttles?: Prisma.ShuttleCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -1228,6 +1260,7 @@ export type TripUncheckedCreateWithoutScheduleDaysInput = {
   shuttles?: Prisma.ShuttleUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -1270,6 +1303,7 @@ export type TripUpdateWithoutScheduleDaysInput = {
   shuttles?: Prisma.ShuttleUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1296,6 +1330,7 @@ export type TripUncheckedUpdateWithoutScheduleDaysInput = {
   shuttles?: Prisma.ShuttleUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1322,6 +1357,7 @@ export type TripCreateWithoutFlightRecommendationsInput = {
   shuttles?: Prisma.ShuttleCreateNestedManyWithoutTripInput
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -1348,6 +1384,7 @@ export type TripUncheckedCreateWithoutFlightRecommendationsInput = {
   shuttles?: Prisma.ShuttleUncheckedCreateNestedManyWithoutTripInput
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -1390,6 +1427,7 @@ export type TripUpdateWithoutFlightRecommendationsInput = {
   shuttles?: Prisma.ShuttleUpdateManyWithoutTripNestedInput
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1416,6 +1454,131 @@ export type TripUncheckedUpdateWithoutFlightRecommendationsInput = {
   shuttles?: Prisma.ShuttleUncheckedUpdateManyWithoutTripNestedInput
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
+  notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
+  conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
+}
+
+export type TripCreateWithoutFolieDouceVotesInput = {
+  id: string
+  seedKey?: string | null
+  name: string
+  destination: string
+  resort: string
+  startDate: Date | string
+  endDate: Date | string
+  timezone: string
+  currency: string
+  status?: string | null
+  chefBreakfastCount: number
+  chefDinnerCount: number
+  pricing: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  flightArrivalCutoff: string
+  flightArrivalTarget: string
+  flightReturnCutoff: string
+  property: Prisma.PropertyCreateNestedOneWithoutTripsInput
+  guests?: Prisma.GuestCreateNestedManyWithoutTripInput
+  shuttles?: Prisma.ShuttleCreateNestedManyWithoutTripInput
+  scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
+  links?: Prisma.LinkCreateNestedManyWithoutTripInput
+  flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  notes?: Prisma.NoteCreateNestedManyWithoutTripInput
+  conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
+}
+
+export type TripUncheckedCreateWithoutFolieDouceVotesInput = {
+  id: string
+  seedKey?: string | null
+  name: string
+  destination: string
+  resort: string
+  startDate: Date | string
+  endDate: Date | string
+  timezone: string
+  currency: string
+  status?: string | null
+  chefBreakfastCount: number
+  chefDinnerCount: number
+  pricing: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  flightArrivalCutoff: string
+  flightArrivalTarget: string
+  flightReturnCutoff: string
+  propertyId: string
+  guests?: Prisma.GuestUncheckedCreateNestedManyWithoutTripInput
+  shuttles?: Prisma.ShuttleUncheckedCreateNestedManyWithoutTripInput
+  scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
+  links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
+  flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
+  conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
+}
+
+export type TripCreateOrConnectWithoutFolieDouceVotesInput = {
+  where: Prisma.TripWhereUniqueInput
+  create: Prisma.XOR<Prisma.TripCreateWithoutFolieDouceVotesInput, Prisma.TripUncheckedCreateWithoutFolieDouceVotesInput>
+}
+
+export type TripUpsertWithoutFolieDouceVotesInput = {
+  update: Prisma.XOR<Prisma.TripUpdateWithoutFolieDouceVotesInput, Prisma.TripUncheckedUpdateWithoutFolieDouceVotesInput>
+  create: Prisma.XOR<Prisma.TripCreateWithoutFolieDouceVotesInput, Prisma.TripUncheckedCreateWithoutFolieDouceVotesInput>
+  where?: Prisma.TripWhereInput
+}
+
+export type TripUpdateToOneWithWhereWithoutFolieDouceVotesInput = {
+  where?: Prisma.TripWhereInput
+  data: Prisma.XOR<Prisma.TripUpdateWithoutFolieDouceVotesInput, Prisma.TripUncheckedUpdateWithoutFolieDouceVotesInput>
+}
+
+export type TripUpdateWithoutFolieDouceVotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  destination?: Prisma.StringFieldUpdateOperationsInput | string
+  resort?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chefBreakfastCount?: Prisma.IntFieldUpdateOperationsInput | number
+  chefDinnerCount?: Prisma.IntFieldUpdateOperationsInput | number
+  pricing?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  flightArrivalCutoff?: Prisma.StringFieldUpdateOperationsInput | string
+  flightArrivalTarget?: Prisma.StringFieldUpdateOperationsInput | string
+  flightReturnCutoff?: Prisma.StringFieldUpdateOperationsInput | string
+  property?: Prisma.PropertyUpdateOneRequiredWithoutTripsNestedInput
+  guests?: Prisma.GuestUpdateManyWithoutTripNestedInput
+  shuttles?: Prisma.ShuttleUpdateManyWithoutTripNestedInput
+  scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
+  links?: Prisma.LinkUpdateManyWithoutTripNestedInput
+  flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
+  conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
+}
+
+export type TripUncheckedUpdateWithoutFolieDouceVotesInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  destination?: Prisma.StringFieldUpdateOperationsInput | string
+  resort?: Prisma.StringFieldUpdateOperationsInput | string
+  startDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  endDate?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  timezone?: Prisma.StringFieldUpdateOperationsInput | string
+  currency?: Prisma.StringFieldUpdateOperationsInput | string
+  status?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  chefBreakfastCount?: Prisma.IntFieldUpdateOperationsInput | number
+  chefDinnerCount?: Prisma.IntFieldUpdateOperationsInput | number
+  pricing?: Prisma.JsonNullValueInput | runtime.InputJsonValue
+  flightArrivalCutoff?: Prisma.StringFieldUpdateOperationsInput | string
+  flightArrivalTarget?: Prisma.StringFieldUpdateOperationsInput | string
+  flightReturnCutoff?: Prisma.StringFieldUpdateOperationsInput | string
+  propertyId?: Prisma.StringFieldUpdateOperationsInput | string
+  guests?: Prisma.GuestUncheckedUpdateManyWithoutTripNestedInput
+  shuttles?: Prisma.ShuttleUncheckedUpdateManyWithoutTripNestedInput
+  scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
+  links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
+  flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1442,6 +1605,7 @@ export type TripCreateWithoutLinksInput = {
   shuttles?: Prisma.ShuttleCreateNestedManyWithoutTripInput
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
@@ -1468,6 +1632,7 @@ export type TripUncheckedCreateWithoutLinksInput = {
   shuttles?: Prisma.ShuttleUncheckedCreateNestedManyWithoutTripInput
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
@@ -1510,6 +1675,7 @@ export type TripUpdateWithoutLinksInput = {
   shuttles?: Prisma.ShuttleUpdateManyWithoutTripNestedInput
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1536,6 +1702,7 @@ export type TripUncheckedUpdateWithoutLinksInput = {
   shuttles?: Prisma.ShuttleUncheckedUpdateManyWithoutTripNestedInput
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1563,6 +1730,7 @@ export type TripCreateWithoutNotesInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationCreateNestedManyWithoutTripInput
 }
 
@@ -1589,6 +1757,7 @@ export type TripUncheckedCreateWithoutNotesInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   conversations?: Prisma.ConversationUncheckedCreateNestedManyWithoutTripInput
 }
 
@@ -1631,6 +1800,7 @@ export type TripUpdateWithoutNotesInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
 
@@ -1657,6 +1827,7 @@ export type TripUncheckedUpdateWithoutNotesInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
 
@@ -1683,6 +1854,7 @@ export type TripCreateWithoutConversationsInput = {
   scheduleDays?: Prisma.ScheduleDayCreateNestedManyWithoutTripInput
   links?: Prisma.LinkCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteCreateNestedManyWithoutTripInput
 }
 
@@ -1709,6 +1881,7 @@ export type TripUncheckedCreateWithoutConversationsInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedCreateNestedManyWithoutTripInput
   links?: Prisma.LinkUncheckedCreateNestedManyWithoutTripInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedCreateNestedManyWithoutTripInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedCreateNestedManyWithoutTripInput
   notes?: Prisma.NoteUncheckedCreateNestedManyWithoutTripInput
 }
 
@@ -1751,6 +1924,7 @@ export type TripUpdateWithoutConversationsInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
 }
 
@@ -1777,6 +1951,7 @@ export type TripUncheckedUpdateWithoutConversationsInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
 }
 
@@ -1821,6 +1996,7 @@ export type TripUpdateWithoutPropertyInput = {
   scheduleDays?: Prisma.ScheduleDayUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUpdateManyWithoutTripNestedInput
 }
@@ -1847,6 +2023,7 @@ export type TripUncheckedUpdateWithoutPropertyInput = {
   scheduleDays?: Prisma.ScheduleDayUncheckedUpdateManyWithoutTripNestedInput
   links?: Prisma.LinkUncheckedUpdateManyWithoutTripNestedInput
   flightRecommendations?: Prisma.FlightRecommendationUncheckedUpdateManyWithoutTripNestedInput
+  folieDouceVotes?: Prisma.FolieDouceVoteUncheckedUpdateManyWithoutTripNestedInput
   notes?: Prisma.NoteUncheckedUpdateManyWithoutTripNestedInput
   conversations?: Prisma.ConversationUncheckedUpdateManyWithoutTripNestedInput
 }
@@ -1881,6 +2058,7 @@ export type TripCountOutputType = {
   scheduleDays: number
   links: number
   flightRecommendations: number
+  folieDouceVotes: number
   notes: number
   conversations: number
 }
@@ -1891,6 +2069,7 @@ export type TripCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   scheduleDays?: boolean | TripCountOutputTypeCountScheduleDaysArgs
   links?: boolean | TripCountOutputTypeCountLinksArgs
   flightRecommendations?: boolean | TripCountOutputTypeCountFlightRecommendationsArgs
+  folieDouceVotes?: boolean | TripCountOutputTypeCountFolieDouceVotesArgs
   notes?: boolean | TripCountOutputTypeCountNotesArgs
   conversations?: boolean | TripCountOutputTypeCountConversationsArgs
 }
@@ -1943,6 +2122,13 @@ export type TripCountOutputTypeCountFlightRecommendationsArgs<ExtArgs extends ru
 /**
  * TripCountOutputType without action
  */
+export type TripCountOutputTypeCountFolieDouceVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.FolieDouceVoteWhereInput
+}
+
+/**
+ * TripCountOutputType without action
+ */
 export type TripCountOutputTypeCountNotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   where?: Prisma.NoteWhereInput
 }
@@ -1979,6 +2165,7 @@ export type TripSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   scheduleDays?: boolean | Prisma.Trip$scheduleDaysArgs<ExtArgs>
   links?: boolean | Prisma.Trip$linksArgs<ExtArgs>
   flightRecommendations?: boolean | Prisma.Trip$flightRecommendationsArgs<ExtArgs>
+  folieDouceVotes?: boolean | Prisma.Trip$folieDouceVotesArgs<ExtArgs>
   notes?: boolean | Prisma.Trip$notesArgs<ExtArgs>
   conversations?: boolean | Prisma.Trip$conversationsArgs<ExtArgs>
   _count?: boolean | Prisma.TripCountOutputTypeDefaultArgs<ExtArgs>
@@ -2054,6 +2241,7 @@ export type TripInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   scheduleDays?: boolean | Prisma.Trip$scheduleDaysArgs<ExtArgs>
   links?: boolean | Prisma.Trip$linksArgs<ExtArgs>
   flightRecommendations?: boolean | Prisma.Trip$flightRecommendationsArgs<ExtArgs>
+  folieDouceVotes?: boolean | Prisma.Trip$folieDouceVotesArgs<ExtArgs>
   notes?: boolean | Prisma.Trip$notesArgs<ExtArgs>
   conversations?: boolean | Prisma.Trip$conversationsArgs<ExtArgs>
   _count?: boolean | Prisma.TripCountOutputTypeDefaultArgs<ExtArgs>
@@ -2074,6 +2262,7 @@ export type $TripPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     scheduleDays: Prisma.$ScheduleDayPayload<ExtArgs>[]
     links: Prisma.$LinkPayload<ExtArgs>[]
     flightRecommendations: Prisma.$FlightRecommendationPayload<ExtArgs>[]
+    folieDouceVotes: Prisma.$FolieDouceVotePayload<ExtArgs>[]
     notes: Prisma.$NotePayload<ExtArgs>[]
     conversations: Prisma.$ConversationPayload<ExtArgs>[]
   }
@@ -2495,6 +2684,7 @@ export interface Prisma__TripClient<T, Null = never, ExtArgs extends runtime.Typ
   scheduleDays<T extends Prisma.Trip$scheduleDaysArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$scheduleDaysArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ScheduleDayPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   links<T extends Prisma.Trip$linksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$linksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$LinkPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   flightRecommendations<T extends Prisma.Trip$flightRecommendationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$flightRecommendationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FlightRecommendationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  folieDouceVotes<T extends Prisma.Trip$folieDouceVotesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$folieDouceVotesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FolieDouceVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   notes<T extends Prisma.Trip$notesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$notesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$NotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   conversations<T extends Prisma.Trip$conversationsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Trip$conversationsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$ConversationPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
@@ -3061,6 +3251,30 @@ export type Trip$flightRecommendationsArgs<ExtArgs extends runtime.Types.Extensi
   take?: number
   skip?: number
   distinct?: Prisma.FlightRecommendationScalarFieldEnum | Prisma.FlightRecommendationScalarFieldEnum[]
+}
+
+/**
+ * Trip.folieDouceVotes
+ */
+export type Trip$folieDouceVotesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the FolieDouceVote
+   */
+  select?: Prisma.FolieDouceVoteSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the FolieDouceVote
+   */
+  omit?: Prisma.FolieDouceVoteOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.FolieDouceVoteInclude<ExtArgs> | null
+  where?: Prisma.FolieDouceVoteWhereInput
+  orderBy?: Prisma.FolieDouceVoteOrderByWithRelationInput | Prisma.FolieDouceVoteOrderByWithRelationInput[]
+  cursor?: Prisma.FolieDouceVoteWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.FolieDouceVoteScalarFieldEnum | Prisma.FolieDouceVoteScalarFieldEnum[]
 }
 
 /**

@@ -396,6 +396,7 @@ export const ModelName = {
   ScheduleDay: 'ScheduleDay',
   FlightRecommendation: 'FlightRecommendation',
   FlightRecommendationOption: 'FlightRecommendationOption',
+  FolieDouceVote: 'FolieDouceVote',
   Link: 'Link',
   Note: 'Note',
   GuestSubmission: 'GuestSubmission',
@@ -419,7 +420,7 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
     omit: GlobalOmitOptions
   }
   meta: {
-    modelProps: "trip" | "property" | "floor" | "room" | "spot" | "guest" | "guestTask" | "flight" | "shuttle" | "scheduleDay" | "flightRecommendation" | "flightRecommendationOption" | "link" | "note" | "guestSubmission" | "upload" | "conversation" | "message" | "pendingExtraction" | "auditLog"
+    modelProps: "trip" | "property" | "floor" | "room" | "spot" | "guest" | "guestTask" | "flight" | "shuttle" | "scheduleDay" | "flightRecommendation" | "flightRecommendationOption" | "folieDouceVote" | "link" | "note" | "guestSubmission" | "upload" | "conversation" | "message" | "pendingExtraction" | "auditLog"
     txIsolationLevel: TransactionIsolationLevel
   }
   model: {
@@ -1311,6 +1312,80 @@ export type TypeMap<ExtArgs extends runtime.Types.Extensions.InternalArgs = runt
         }
       }
     }
+    FolieDouceVote: {
+      payload: Prisma.$FolieDouceVotePayload<ExtArgs>
+      fields: Prisma.FolieDouceVoteFieldRefs
+      operations: {
+        findUnique: {
+          args: Prisma.FolieDouceVoteFindUniqueArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload> | null
+        }
+        findUniqueOrThrow: {
+          args: Prisma.FolieDouceVoteFindUniqueOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        findFirst: {
+          args: Prisma.FolieDouceVoteFindFirstArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload> | null
+        }
+        findFirstOrThrow: {
+          args: Prisma.FolieDouceVoteFindFirstOrThrowArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        findMany: {
+          args: Prisma.FolieDouceVoteFindManyArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>[]
+        }
+        create: {
+          args: Prisma.FolieDouceVoteCreateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        createMany: {
+          args: Prisma.FolieDouceVoteCreateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        createManyAndReturn: {
+          args: Prisma.FolieDouceVoteCreateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>[]
+        }
+        delete: {
+          args: Prisma.FolieDouceVoteDeleteArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        update: {
+          args: Prisma.FolieDouceVoteUpdateArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        deleteMany: {
+          args: Prisma.FolieDouceVoteDeleteManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateMany: {
+          args: Prisma.FolieDouceVoteUpdateManyArgs<ExtArgs>
+          result: BatchPayload
+        }
+        updateManyAndReturn: {
+          args: Prisma.FolieDouceVoteUpdateManyAndReturnArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>[]
+        }
+        upsert: {
+          args: Prisma.FolieDouceVoteUpsertArgs<ExtArgs>
+          result: runtime.Types.Utils.PayloadToResult<Prisma.$FolieDouceVotePayload>
+        }
+        aggregate: {
+          args: Prisma.FolieDouceVoteAggregateArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.AggregateFolieDouceVote>
+        }
+        groupBy: {
+          args: Prisma.FolieDouceVoteGroupByArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FolieDouceVoteGroupByOutputType>[]
+        }
+        count: {
+          args: Prisma.FolieDouceVoteCountArgs<ExtArgs>
+          result: runtime.Types.Utils.Optional<Prisma.FolieDouceVoteCountAggregateOutputType> | number
+        }
+      }
+    }
     Link: {
       payload: Prisma.$LinkPayload<ExtArgs>
       fields: Prisma.LinkFieldRefs
@@ -2149,6 +2224,20 @@ export const FlightRecommendationOptionScalarFieldEnum = {
 export type FlightRecommendationOptionScalarFieldEnum = (typeof FlightRecommendationOptionScalarFieldEnum)[keyof typeof FlightRecommendationOptionScalarFieldEnum]
 
 
+export const FolieDouceVoteScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  nameKey: 'nameKey',
+  choice: 'choice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FolieDouceVoteScalarFieldEnum = (typeof FolieDouceVoteScalarFieldEnum)[keyof typeof FolieDouceVoteScalarFieldEnum]
+
+
 export const LinkScalarFieldEnum = {
   id: 'id',
   tripId: 'tripId',
@@ -2551,6 +2640,20 @@ export type ListEnumMealFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaM
 
 
 /**
+ * Reference to a field of type 'FolieDouceChoice'
+ */
+export type EnumFolieDouceChoiceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FolieDouceChoice'>
+    
+
+
+/**
+ * Reference to a field of type 'FolieDouceChoice[]'
+ */
+export type ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'FolieDouceChoice[]'>
+    
+
+
+/**
  * Reference to a field of type 'UploadPurpose'
  */
 export type EnumUploadPurposeFieldRefInput<$PrismaModel> = FieldRefInputType<$PrismaModel, 'UploadPurpose'>
@@ -2699,6 +2802,7 @@ export type GlobalOmitConfig = {
   scheduleDay?: Prisma.ScheduleDayOmit
   flightRecommendation?: Prisma.FlightRecommendationOmit
   flightRecommendationOption?: Prisma.FlightRecommendationOptionOmit
+  folieDouceVote?: Prisma.FolieDouceVoteOmit
   link?: Prisma.LinkOmit
   note?: Prisma.NoteOmit
   guestSubmission?: Prisma.GuestSubmissionOmit

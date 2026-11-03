@@ -61,6 +61,11 @@ enum Meal {
   OWN
 }
 
+enum FolieDouceChoice {
+  GENERAL_ADMISSION
+  VIP_TABLE
+}
+
 enum UploadPurpose {
   FLIGHT_CONFIRMATION
   OTHER
@@ -97,6 +102,7 @@ model Trip {
   scheduleDays        ScheduleDay[]
   links               Link[]
   flightRecommendations FlightRecommendation[]
+  folieDouceVotes       FolieDouceVote[]
   notes               Note[]
   conversations       Conversation[]
 
@@ -325,6 +331,23 @@ model FlightRecommendationOption {
   recommendation   FlightRecommendation @relation(fields: [recommendationId], references: [id], onDelete: Cascade)
 
   @@unique([recommendationId, sortOrder])
+}
+
+model FolieDouceVote {
+  id        String           @id
+  tripId    String
+  firstName String
+  lastName  String
+  nameKey   String
+  choice    FolieDouceChoice
+  createdAt DateTime         @default(now()) @db.Timestamptz(3)
+  updatedAt DateTime         @updatedAt @db.Timestamptz(3)
+  trip      Trip             @relation(fields: [tripId], references: [id], onDelete: Restrict)
+
+  // One current response per normalized name within the trip. Resubmitting
+  // their name lets a guest change their choice without adding a duplicate.
+  @@unique([tripId, nameKey])
+  @@index([tripId, choice])
 }
 
 model Link {

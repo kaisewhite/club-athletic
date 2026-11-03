@@ -2,7 +2,6 @@ import { ArrowRight } from "@phosphor-icons/react/ssr";
 import { getOpenSpots } from "@/lib/db/repository.server";
 import { getEurUsdRate } from "../lib/exchange-rates.server";
 import { PageHeading } from "../components/trip-details";
-import { ArrowText } from "../components/arrow-text";
 import type { Route } from "./+types/spots";
 
 export async function loader() {
@@ -32,21 +31,26 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     .format(new Date(`${data.usdRate.date}T00:00:00Z`));
 
   return <section aria-labelledby="pricing-heading">
-    <PageHeading id="pricing-heading" sub="The total open spots are broken down by room below. See the room guide to compare assignments.">Rooms &amp; prices</PageHeading>
-    <div className="spots-hero">
-      <div className="spots-open-summary">
-        <div className="spots-heading"><span>Open spots</span> <span className="spots-count">{data.openCount}</span></div>
-        <p>Each room below shows how many spots are currently available in that room.</p>
-        <a className="spots-room-link" href="/rooms">Compare room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a>
+    <PageHeading id="pricing-heading" sub="Room-by-room pricing and availability for the trip.">Rooms &amp; prices</PageHeading>
+    <section className="pricing-overview" aria-label="Trip price and availability">
+      <div className="pricing-overview-top">
+        <div className="pricing-total">
+          <p className="pricing-overview-label">{data.pricing.currency} · {data.pricing.description}</p>
+          <p className="pricing-total-range">{data.pricing.rangeLabel}</p>
+          {data.pricing.currency === "EUR" && <div className="pricing-estimate">
+            <span className="pricing-overview-label">Estimated USD · {data.pricing.description}</span>
+            <span className="pricing-estimate-value">{usdRange ? `≈ ${usdRange}` : "USD rate unavailable"}</span>
+            {rateDate && <span className="pricing-rate-date">ECB rate · {rateDate}</span>}
+          </div>}
+        </div>
+        <div className="pricing-availability">
+          <span className="pricing-overview-label">Open spots</span>
+          <strong className="pricing-open-count">{data.openCount}</strong>
+          <a href="/rooms">Compare room assignments <ArrowRight size="1em" aria-hidden="true" /></a>
+        </div>
       </div>
-      <dl className="spots-currencies">
-        <div className="spots-currency"><dt>{data.pricing.currency} · <ArrowText>{data.pricing.description}</ArrowText></dt><dd className="spots-price"><ArrowText>{data.pricing.rangeLabel}</ArrowText></dd></div>
-        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>Estimated USD price · <ArrowText>{data.pricing.description}</ArrowText></dt>
-          <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">USD rate unavailable</span>}</dd>
-        </div>}
-      </dl>
-      <p className="detail-note">Payment is in full; there is no deposit. If you drop out by November 15, you’ll receive a full refund. After November 15, you’ll need to find your own replacement.</p>
-    </div>
+      <p className="pricing-payment-terms">Payment is in full; there is no deposit. If you drop out by November 15, you’ll receive a full refund. After November 15, you’ll need to find your own replacement.</p>
+    </section>
     <div className="pricing-details">
       <section className="pricing-room-list" aria-labelledby="pricing-room-heading">
         <div className="pricing-room-list-heading"><h3 className="detail-kicker" id="pricing-room-heading">Available spots by room</h3><a href="/rooms">Room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div>
@@ -62,22 +66,22 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
       </section>
     </div>
     <section className="pricing-inclusions" aria-labelledby="pricing-inclusions-heading">
-      <h3 className="detail-kicker" id="pricing-inclusions-heading">Included in the price</h3>
-      <ul className="detail-list">
-        {data.pricing.includes.map((item) => <li key={item}><span>{item}</span></li>)}
-      </ul>
-      <p className="detail-note" style={{ marginTop: 12 }}>Not included: {data.pricing.excludes.map((item, index) => <span key={`${index}-${item}`}>{index > 0 && ", "}<ArrowText>{item}</ArrowText></span>)}.</p>
-      {data.pricing.breakdown && <div className="pricing-cost-breakdown">
-        <h4 className="detail-kicker price-breakdown-heading">Price breakdown</h4>
-        <dl className="price-breakdown" aria-label="Price breakdown">
-          <div className="price-breakdown-row"><dt>Room rate</dt><dd className="price-breakdown-muted">Depends on the room</dd></div>
-          <div className="price-breakdown-row"><dt>Taxes</dt><dd>{breakdownPrice(data.pricing.breakdown.taxes)}</dd></div>
-          <div className="price-breakdown-row"><dt>Shuttle</dt><dd>{breakdownPrice(data.pricing.breakdown.shuttle)}</dd></div>
-          <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{breakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
-          <div className="price-breakdown-row"><dt>Chef</dt><dd>{breakdownPrice(data.pricing.breakdown.chef)}</dd></div>
-        </dl>
-        {data.pricing.note && <p className="detail-note" style={{ marginTop: 12 }}><ArrowText>{data.pricing.note}</ArrowText></p>}
-      </div>}
+      <h3 className="detail-kicker" id="pricing-inclusions-heading">Price details</h3>
+      <table className="pricing-facts-table" aria-label="Included items and price breakdown">
+        <thead><tr><th scope="col">Price detail</th><th scope="col">Amount or status</th></tr></thead>
+        <tbody>
+          <tr><th scope="row">Included in the price</th><td><ul className="pricing-included-list">{data.pricing.includes.map((item) => <li key={item}>{item.replace("↔", "to and from")}</li>)}</ul></td></tr>
+          <tr><th scope="row">Not included</th><td>{data.pricing.excludes.join(", ")}</td></tr>
+          {data.pricing.breakdown && <>
+            <tr><th scope="row">Room rate</th><td className="price-breakdown-muted">Depends on the room</td></tr>
+            <tr><th scope="row">Taxes</th><td>{breakdownPrice(data.pricing.breakdown.taxes)}</td></tr>
+            <tr><th scope="row">Shuttle</th><td>{breakdownPrice(data.pricing.breakdown.shuttle)}</td></tr>
+            <tr><th scope="row">Incidentals</th><td>{breakdownPrice(data.pricing.breakdown.incidentals)}</td></tr>
+            <tr><th scope="row">Chef</th><td>{breakdownPrice(data.pricing.breakdown.chef)}</td></tr>
+          </>}
+          {data.pricing.note && <tr><th scope="row">Price note</th><td>{data.pricing.note}</td></tr>}
+        </tbody>
+      </table>
     </section>
     <div className="pricing-records">
       <details className="detail-card service-agreement">

@@ -258,6 +258,24 @@ export async function getGuestInstagramProfiles(tripKey = DEFAULT_TRIP_KEY) {
   })).guests.map(({ displayName, instagramUrl }) => ({ displayName, href: instagramUrl ?? undefined })));
 }
 
+export async function getFolieDouceVotes(tripKey = DEFAULT_TRIP_KEY) {
+  return withReadDatabase(async (db) => {
+    const { folieDouceVotes } = await db.trip.findUniqueOrThrow({
+      where: { seedKey: tripKey },
+      select: {
+        folieDouceVotes: {
+          orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
+          select: { id: true, firstName: true, lastName: true, choice: true },
+        },
+      },
+    });
+    return {
+      vip: folieDouceVotes.filter((vote) => vote.choice === "VIP_TABLE"),
+      generalAdmission: folieDouceVotes.filter((vote) => vote.choice === "GENERAL_ADMISSION"),
+    };
+  });
+}
+
 export type TripOverview = Awaited<ReturnType<typeof getTripOverview>>;
 export type Schedule = Awaited<ReturnType<typeof getSchedule>>;
 export type FlightTable = Awaited<ReturnType<typeof getFlightTable>>;

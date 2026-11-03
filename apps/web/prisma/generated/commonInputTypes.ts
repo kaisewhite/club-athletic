@@ -507,6 +507,23 @@ export type EnumMealWithAggregatesFilter<$PrismaModel = never> = {
   _max?: Prisma.NestedEnumMealFilter<$PrismaModel>
 }
 
+export type EnumFolieDouceChoiceFilter<$PrismaModel = never> = {
+  equals?: $Enums.FolieDouceChoice | Prisma.EnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  in?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel> | $Enums.FolieDouceChoice
+}
+
+export type EnumFolieDouceChoiceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FolieDouceChoice | Prisma.EnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  in?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFolieDouceChoiceWithAggregatesFilter<$PrismaModel> | $Enums.FolieDouceChoice
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel>
+}
+
 export type EnumUploadPurposeFilter<$PrismaModel = never> = {
   equals?: $Enums.UploadPurpose | Prisma.EnumUploadPurposeFieldRefInput<$PrismaModel>
   in?: $Enums.UploadPurpose[] | Prisma.ListEnumUploadPurposeFieldRefInput<$PrismaModel>
@@ -980,6 +997,23 @@ export type NestedEnumMealWithAggregatesFilter<$PrismaModel = never> = {
   _count?: Prisma.NestedIntFilter<$PrismaModel>
   _min?: Prisma.NestedEnumMealFilter<$PrismaModel>
   _max?: Prisma.NestedEnumMealFilter<$PrismaModel>
+}
+
+export type NestedEnumFolieDouceChoiceFilter<$PrismaModel = never> = {
+  equals?: $Enums.FolieDouceChoice | Prisma.EnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  in?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel> | $Enums.FolieDouceChoice
+}
+
+export type NestedEnumFolieDouceChoiceWithAggregatesFilter<$PrismaModel = never> = {
+  equals?: $Enums.FolieDouceChoice | Prisma.EnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  in?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  notIn?: $Enums.FolieDouceChoice[] | Prisma.ListEnumFolieDouceChoiceFieldRefInput<$PrismaModel>
+  not?: Prisma.NestedEnumFolieDouceChoiceWithAggregatesFilter<$PrismaModel> | $Enums.FolieDouceChoice
+  _count?: Prisma.NestedIntFilter<$PrismaModel>
+  _min?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel>
+  _max?: Prisma.NestedEnumFolieDouceChoiceFilter<$PrismaModel>
 }
 
 export type NestedEnumUploadPurposeFilter<$PrismaModel = never> = {

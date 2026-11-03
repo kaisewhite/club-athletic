@@ -158,7 +158,7 @@
 @media (max-width: 859px) {
   .bm-room-table,
   .bm-room-table tbody { display: block; width: 100%; }
-  .bm-room-table { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+  .bm-room-table { border: 1px solid var(--border); border-radius: 0; overflow: hidden; }
   .bm-room-table thead { display: none; }
   .bm-room-table tbody tr {
     display: grid;

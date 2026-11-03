@@ -1,4 +1,4 @@
-import { getAdminGuests, type AdminGuests } from "@/lib/db/repository.server";
+import { getAdminGuests, getFolieDouceVotes, type AdminGuests } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramLink } from "../components/guest-instagram-link";
 import { ArrowText } from "../components/arrow-text";
@@ -14,7 +14,8 @@ export function headers() {
 }
 
 export async function loader() {
-  return { guests: await getAdminGuests() };
+  const [guests, folieDouceVotes] = await Promise.all([getAdminGuests(), getFolieDouceVotes()]);
+  return { guests, folieDouceVotes };
 }
 
 const day = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short", day: "numeric", month: "short" });
@@ -36,6 +37,14 @@ function Group({ title, rows }: { title: string; rows: Row[] }) {
 }
 
 type AdminFlight = AdminGuests[number]["flights"][number];
+type FolieDouceVote = Awaited<ReturnType<typeof getFolieDouceVotes>>["vip"][number];
+
+function FolieDouceGroup({ title, votes }: { title: string; votes: FolieDouceVote[] }) {
+  return <section className="admin-folie-group" aria-label={title}>
+    <h3>{title} <span>{votes.length}</span></h3>
+    {votes.length ? <ul>{votes.map((vote) => <li key={vote.id}>{[vote.firstName, vote.lastName].filter(Boolean).join(" ")}</li>)}</ul> : <p className="admin-missing">No responses yet</p>}
+  </section>;
+}
 
 /** Airport-local, like the Flights page: the query supplies the local wall time, so only its calendar day is formatted. */
 function LocalTime({ local }: { local: string }) {
@@ -90,9 +99,17 @@ function GuestCard({ guest }: { guest: AdminGuests[number] }) {
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
-  const { guests } = loaderData;
+  const { guests, folieDouceVotes } = loaderData;
+  const voteCount = folieDouceVotes.vip.length + folieDouceVotes.generalAdmission.length;
   return <section aria-labelledby="admin-heading">
-    <PageHeading id="admin-heading" sub={`${guests.length} guests · contact details, rooms, preferences and flights.`}>Admin</PageHeading>
+    <PageHeading id="admin-heading" sub={`${guests.length} guests · contact details, rooms, preferences, flights and ${voteCount} La Folie Douce responses.`}>Admin</PageHeading>
+    <section className="admin-folie" aria-labelledby="admin-folie-heading">
+      <h2 id="admin-folie-heading">La Folie Douce</h2>
+      <div className="admin-folie-groups">
+        <FolieDouceGroup title="VIP table" votes={folieDouceVotes.vip} />
+        <FolieDouceGroup title="General Admission" votes={folieDouceVotes.generalAdmission} />
+      </div>
+    </section>
     <div className="admin-guests">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</div>
   </section>;
 }

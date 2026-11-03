@@ -63,6 +63,7 @@ export const ModelName = {
   ScheduleDay: 'ScheduleDay',
   FlightRecommendation: 'FlightRecommendation',
   FlightRecommendationOption: 'FlightRecommendationOption',
+  FolieDouceVote: 'FolieDouceVote',
   Link: 'Link',
   Note: 'Note',
   GuestSubmission: 'GuestSubmission',
@@ -294,6 +295,20 @@ export const FlightRecommendationOptionScalarFieldEnum = {
 } as const
 
 export type FlightRecommendationOptionScalarFieldEnum = (typeof FlightRecommendationOptionScalarFieldEnum)[keyof typeof FlightRecommendationOptionScalarFieldEnum]
+
+
+export const FolieDouceVoteScalarFieldEnum = {
+  id: 'id',
+  tripId: 'tripId',
+  firstName: 'firstName',
+  lastName: 'lastName',
+  nameKey: 'nameKey',
+  choice: 'choice',
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
+} as const
+
+export type FolieDouceVoteScalarFieldEnum = (typeof FolieDouceVoteScalarFieldEnum)[keyof typeof FolieDouceVoteScalarFieldEnum]
 
 
 export const LinkScalarFieldEnum = {

@@ -30,6 +30,7 @@ export default [
   route("chalet", "routes/chalet.tsx"),
   route("rooms", "routes/rooms.tsx"),
   route("spots", "routes/spots.tsx"),
+  route("folie-douce", "routes/folie-douce.tsx"),
   route("chef", "routes/chef.tsx"),
   route("tasks", "routes/tasks.tsx"),
   route("links", "routes/links.tsx"),

@@ -1,0 +1,45 @@
+.folie-page { display: grid; gap: clamp(32px, 5vw, 52px); }
+.folie-guide, .folie-questionnaire, .folie-results { max-width: 860px; }
+.folie-guide > h3, .folie-section-heading h3 { margin: 0; color: var(--text); font: 700 20px/1.25 var(--font-display); }
+.folie-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px 28px; margin-top: 18px; }
+.folie-facts p { margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.6; }
+.folie-facts strong { color: var(--text); }
+.folie-section-heading { margin-bottom: 18px; }
+.folie-section-heading p { margin: 5px 0 0; color: var(--text-dim); font-size: 13px; }
+.folie-vote-form { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px 20px; align-items: start; }
+.folie-field { display: grid; gap: 6px; color: var(--text); font-size: 13px; font-weight: 600; }
+.folie-field > span { color: var(--text); font-size: 13px; font-weight: 600; }
+.folie-field small { color: var(--text-dim); font-size: 12px; font-weight: 400; }
+.folie-field input { width: 100%; min-height: 44px; padding: 9px 11px; border: 1px solid var(--border-strong); border-radius: 0; background: var(--surface); color: var(--text); font: 14px/1.4 var(--font-sans); }
+.folie-field input:focus-visible, .folie-choice:focus-within { outline: 2px solid var(--text); outline-offset: 2px; }
+.folie-choice-fieldset { display: grid; grid-column: 1 / -1; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px 20px; margin: 0; padding: 0; border: 0; }
+.folie-choice-fieldset legend { margin-bottom: 8px; color: var(--text); font-size: 13px; font-weight: 600; }
+.folie-choice { display: flex; align-items: flex-start; gap: 10px; min-height: 62px; padding: 11px 12px; border: 1px solid var(--border-subtle); border-radius: 0; cursor: pointer; }
+.folie-choice:has(input:checked) { border-color: var(--brand); background: var(--surface); }
+.folie-choice input { flex: none; margin: 3px 0 0; accent-color: var(--brand); }
+.folie-choice span { display: grid; gap: 3px; }
+.folie-choice strong { color: var(--text); font-size: 14px; }
+.folie-choice small { color: var(--text-dim); font-size: 12px; }
+.folie-honeypot { position: absolute; left: -10000px; width: 1px; height: 1px; overflow: hidden; }
+.folie-form-submit { display: flex; grid-column: 1 / -1; align-items: center; flex-wrap: wrap; gap: 12px 16px; }
+.folie-form-submit button { min-height: 44px; padding: 9px 16px; border: 0; border-radius: 0; background: var(--text); color: var(--surface); font: 600 14px/1.3 var(--font-sans); cursor: pointer; }
+.folie-form-submit button:hover { opacity: .88; }
+.folie-form-submit button:focus-visible { outline: 2px solid var(--text); outline-offset: 3px; }
+.folie-form-submit button:disabled { cursor: wait; opacity: .6; }
+.folie-form-submit p { margin: 0; color: var(--text-dim); font-size: 13px; }
+.folie-form-submit p[data-ok="false"] { color: var(--danger); }
+.folie-vote-groups { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 32px; }
+.folie-vote-group { min-width: 0; }
+.folie-vote-group-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; padding-bottom: 9px; border-bottom: 1px solid var(--border-subtle); }
+.folie-vote-group-heading h3 { margin: 0; color: var(--text); font: 600 16px/1.3 var(--font-display); }
+.folie-vote-group-heading span { color: var(--text-dim); font-size: 12px; white-space: nowrap; }
+.folie-vote-group ul { display: grid; gap: 8px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--text-muted); font-size: 14px; }
+.folie-vote-group > p { margin: 12px 0 0; color: var(--text-faint); font-size: 13px; }
+
+@media (max-width: 859px) {
+  .folie-page { gap: 32px; }
+  .folie-facts, .folie-vote-groups { grid-template-columns: 1fr; gap: 14px; }
+  .folie-vote-form { grid-template-columns: 1fr; gap: 14px; }
+  .folie-choice-fieldset { grid-template-columns: 1fr; gap: 8px; }
+  .folie-form-submit { align-items: flex-start; flex-direction: column; }
+}
