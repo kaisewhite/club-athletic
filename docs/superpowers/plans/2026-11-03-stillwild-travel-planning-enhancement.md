@@ -60,12 +60,12 @@ Translate its planning clarity rather than its commerce model: one memorable Mé
 
 ### Task 2: Implement shared editorial shell and motion foundation
 **Files:** `apps/web/app/components/app-shell.tsx`, `apps/web/app/root.tsx`, `apps/web/src/styles.css`, existing shared components under `apps/web/app/components/**`
-- [ ] Improve page shell hierarchy, route mastheads, chapter navigation and footer cross-links using existing content and existing responsive navigation behavior.
-- [ ] Build the smallest shared page-intro/metadata/timeline primitives needed to make route layouts consistent; do not add a UI dependency or parallel abstraction.
-- [ ] Keep current color, spacing, typography, radius and Tailwind token values unchanged; preserve Hanken Grotesk and Inter only for new layout work.
-- [ ] Add or consolidate motion custom properties for durations `instant`, `fast`, `normal`, `moderate`, `slow` and easings `standard`, `decelerate`, `accelerate`; reserve `linear` for looping indicators only.
-- [ ] Apply brief transitions, visible-by-default reveals, reduced-motion duration collapse at `:root`, and total reveal stagger no longer than 500 ms.
-- [ ] Preserve SSR-visible content, keyboard access, visible focus, 44px minimum touch targets, safe-area spacing and the 859/860 seam; keep mobile-only overrides in `@media (max-width: 859px)`.
+- [x] Improve page shell hierarchy, route mastheads, chapter navigation and footer cross-links using existing content and existing responsive navigation behavior.
+- [x] Build the smallest shared page-intro/metadata/timeline primitives needed to make route layouts consistent; do not add a UI dependency or parallel abstraction.
+- [x] Keep current color, spacing, typography, radius and Tailwind token values unchanged; preserve Hanken Grotesk and Inter only for new layout work.
+- [x] Add or consolidate motion custom properties for durations `instant`, `fast`, `normal`, `moderate`, `slow` and easings `standard`, `decelerate`, `accelerate`; reserve `linear` for looping indicators only.
+- [x] Apply brief transitions, visible-by-default reveals, reduced-motion duration collapse at `:root`, and total reveal stagger no longer than 500 ms.
+- [x] Preserve SSR-visible content, keyboard access, visible focus, 44px minimum touch targets, safe-area spacing and the 859/860 seam; keep mobile-only overrides in `@media (max-width: 859px)`.
 
 ### Task 3: Recompose the home and planning chapters
 **Files:** `apps/web/app/routes/overview.tsx`, `schedule.tsx`, `flights.tsx`, `shuttle.tsx`, `chalet.tsx`, `rooms.tsx`, `spots.tsx`
@@ -115,7 +115,7 @@ Translate its planning clarity rather than its commerce model: one memorable Mé
 | --- | --- | --- | --- | --- |
 | Plan document reviewer | Review completeness, scope alignment, decomposition, buildability and final acceptance of this plan | Approved | Round 1: no issues or recommendations (2026-11-03) | Reconciled; no edits required |
 | Discovery agent | Task 1: inspect actual route loaders, tests, media and data boundaries; report a concrete implementation map | Complete | Route/data map and behavior test inventory returned 2026-11-03; existing loaders/APIs suffice. Poster is local alpine panorama; chalet image is a 6-panel composite. | Reviewed; spot counts derive from AVAILABLE rows in both room/pricing loaders; investigate visible discrepancy only at presentation/confirmed source data. |
-| Shell/motion agent | Task 2: shared editorial shell and motion foundation | Rework required | Initial diff reviewed; mobile CSS test output: 1 file, 21 tests passed; `git diff --check` passed. Existing `PageHeading` provides heading+subtitle but lacks a shared masthead wrapper. | Add minimal wrapper styling/API, then review again. | None |
+| Shell/motion agent | Task 2: shared editorial shell and motion foundation | Complete | Added keyboard skip link/route target, shared duration/easing properties, reduced-motion collapse, touch-sized navigation controls and `page-masthead` wrapper around existing `PageHeading`. Tests: 1 file/21 mobile CSS convention tests passed; `git diff --check` passed. | Reviewed after rework; existing heading semantics and token values preserved. | None |
 | Planning routes agent | Task 3: overview, schedule, flights, shuttle, chalet, rooms, spots | Not started | — | — |
 | Group routes agent | Task 4: chef, tasks, links, guests, FAQ, guest-details | Not started | — | — |
 | Chat agent | Task 5: chat interactions and layout | Not started | — | — |

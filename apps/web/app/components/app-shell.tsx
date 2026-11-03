@@ -175,6 +175,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
   useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
   return (
     <div className="app-shell">
+      <a className="skip-link" href="#route-content">Skip to trip content</a>
       {wide && <TopNav newChat={newChat} />}
       <main className="shell-main">
         {!wide && <header className="mobile-header">
@@ -201,7 +202,7 @@ export function AppShell(_props?: { daysUntil?: number }) {
         </div>}
         {/* `home-route` is the full-height chat layout, so it belongs to /chat;
             the home page is an ordinary page whose hero runs edge to edge. */}
-        <div key={location.key} className={location.pathname === "/chat" ? "route-content home-route" : location.pathname === "/" ? "route-content page-route home-page" : "route-content page-route"}>
+        <div id="route-content" tabIndex={-1} key={location.key} className={location.pathname === "/chat" ? "route-content home-route" : location.pathname === "/" ? "route-content page-route home-page" : "route-content page-route"}>
           <Outlet context={{ chatResetVersion, newChat, resettingChat, selectedConversationId, selectConversation: setSelectedConversationId }} />
         </div>
       </main>
