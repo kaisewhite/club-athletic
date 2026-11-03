@@ -10,6 +10,8 @@ import Chef, { loader as chefLoader } from "../../app/routes/chef";
 import Tasks, { loader as tasksLoader } from "../../app/routes/tasks";
 import Links, { loader as linksLoader } from "../../app/routes/links";
 import Guests, { loader as guestsLoader } from "../../app/routes/guests";
+import FAQ from "../../app/routes/faq";
+import { MemoryRouter } from "react-router";
 
 const { findUniqueOrThrow } = vi.hoisted(() => ({ findUniqueOrThrow: vi.fn() }));
 const { getEurUsdRate } = vi.hoisted(() => ({ getEurUsdRate: vi.fn() }));
@@ -62,6 +64,21 @@ const pricing = { minPerPerson: 1620.55, maxPerPerson: 1790.55, currency: "EUR",
 beforeEach(() => { findUniqueOrThrow.mockReset(); getEurUsdRate.mockReset(); getEurUsdRate.mockResolvedValue({ rate: 1.2, date: "2026-10-01" }); });
 
 describe("database-backed read-only detail pages", () => {
+  it("puts trip and room-sharing questions in the same FAQ table", () => {
+    const tiles = Array.from({ length: 10 }, (_, index) => ({
+      to: "/spots", question: `Question ${index + 1}`, lead: `Fact ${index + 1}`,
+      kicker: `Question ${index + 1}`, sub: `Detail ${index + 1}`, accent: false,
+    }));
+    const page = document.createElement("div");
+    const faqView = FAQ({ loaderData: { tiles } as never } as never);
+    page.innerHTML = renderToStaticMarkup(<MemoryRouter initialEntries={["/faq"]}>{faqView}</MemoryRouter>);
+    expect(page.querySelectorAll("table")).toHaveLength(1);
+    expect(page.querySelectorAll(".faq-table-row")).toHaveLength(14);
+    expect(page.querySelectorAll(".faq-question-link")).toHaveLength(10);
+    expect(page.textContent).toContain("Room Sharing, Bathrooms & Storage");
+    expect(page.textContent).toContain("If sharing a room is not right for you");
+  });
+
   it("renders eight rooms, nine named guests, ten available beds and one not-offered bed", async () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors, sleepsMax: 20 }, _count: { guests: 9 } });
     const page = renderPage(Rooms, await roomsLoader());
@@ -109,7 +126,7 @@ describe("database-backed read-only detail pages", () => {
       expect(link?.getAttribute("href")).toMatch(/^https:\/\/www\.instagram\.com\//);
     }
   });
-  it("renders Trip pricing, inclusions and organizer room prices and descriptions", async () => {
+  it("labels per-room open spot counts on Trip pricing", async () => {
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: floors.map((floor) => ({ ...floor,
       rooms: floor.rooms.filter((room) => room.spots.some((spot) => spot.status === "AVAILABLE"))
         .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE") })),
@@ -122,7 +139,8 @@ describe("database-backed read-only detail pages", () => {
     expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $1,945–$2,149");
     expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
-    expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent)).toEqual(["4", "2", "4"]);
+    expect([...page.querySelectorAll(".open-room-count")].map((node) => node.getAttribute("aria-label"))).toEqual(["4 open spots", "2 open spots", "4 open spots"]);
+    expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual(["4 spots open", "2 spots open", "4 spots open"]);
     expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);
     expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,740.55 / $2,088.66 per person", "€1,620.55 / $1,944.66 per person", "€1,790.55 / $2,148.66 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);

@@ -62,7 +62,10 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
             {room.pricePerPerson === null ? <span className="open-room-price">Price depends on the room</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
             {room.description && <span className="open-room-note">{room.description}</span>}
           </div>
-          <span className="open-room-count">{room.openCount}</span>
+          <span className="open-room-count" aria-label={`${room.openCount} open ${room.openCount === 1 ? "spot" : "spots"}`}>
+            <strong>{room.openCount}{" "}</strong>
+            <span>{room.openCount === 1 ? "spot open" : "spots open"}</span>
+          </span>
         </div>)}
       </div>
     </div>

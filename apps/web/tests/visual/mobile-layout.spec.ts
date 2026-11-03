@@ -193,40 +193,24 @@ for (const [width, height] of VIEWPORTS) {
       }
     });
 
-    test("each FAQ row answers on one line and never states a figure twice", async ({ page }) => {
+    test("all trip and room-sharing FAQs use one question-and-answer table", async ({ page }) => {
       await openFrozen(page, "/faq");
-      const tiles = await page.locator(".overview-tile").evaluateAll((els) => els.map((el) => {
-        const lead = el.querySelector(".tile-lead");
-        const sub = el.querySelector(".tile-sub");
+      await expect(page.locator(".faq-table")).toHaveCount(1);
+      const entries = await page.locator(".faq-table-row").evaluateAll((els) => els.map((el) => {
+        const question = el.querySelector("th[scope='row']");
+        const answer = el.querySelector("td[data-label='Answer']");
         return {
-          lead: lead?.textContent?.trim() ?? null,
-          sub: sub?.textContent?.trim() ?? "",
-          leadTop: lead ? Math.round(lead.getBoundingClientRect().top) : null,
-          subTop: sub ? Math.round(sub.getBoundingClientRect().top) : null,
-          // The answer is one inline run now, so a span's own rect is just its
-          // LAST wrapped line. The readable measure is the block that holds it.
-          answerWidth: el.querySelector(".tile-answer")!.getBoundingClientRect().width,
+          question: question?.textContent?.trim() ?? "",
+          answer: answer?.textContent?.trim() ?? "",
+          answerWidth: answer?.getBoundingClientRect().width ?? 0,
         };
       }));
-      expect(tiles).toHaveLength(10);
-      for (const tile of tiles) {
-        // Owner, 2026-09-28: "we don't need to state 10:30 twice." A row carries
-        // its figure EITHER as the lead OR inside the sentence — never both.
-        if (tile.lead && tile.subTop !== null) {
-          // Matched on digit boundaries, not as a substring: a plain `toContain`
-          // reads the "9" inside "€1,690" as the lead being restated, which is
-          // how this fired the day the open-spot count first reached one digit.
-          const escaped = tile.lead.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
-          const restated = new RegExp(`(?<![\\d,.])${escaped}(?![\\d,.])`);
-          expect(tile.sub, `"${tile.lead}" is repeated inside its own sentence`).not.toMatch(restated);
-          // Lead and sentence share one line box, so the answer is one line, not
-          // the old 24px figure stacked above a second row.
-          expect(Math.abs(tile.leadTop! - tile.subTop), "lead and sentence are not on one line").toBeLessThanOrEqual(2);
-        }
-        if (mobile) expect(tile.answerWidth, `answer measure at ${width}px`).toBeGreaterThan(width * 0.6);
+      expect(entries).toHaveLength(14);
+      expect(entries.every((entry) => entry.question && entry.answer)).toBe(true);
+      expect(page.locator(".faq-question-link")).toHaveCount(10);
+      for (const entry of entries) {
+        if (mobile) expect(entry.answerWidth, `answer measure at ${width}px`).toBeGreaterThan(width * 0.6);
       }
-      // The two rows whose sentence already carries the figure drop the lead.
-      expect(tiles.filter((tile) => tile.lead === null)).toHaveLength(2);
     });
 
     // The horizontal-scroller check covered the home schedule ticker, which the

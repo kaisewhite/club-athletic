@@ -1,8 +1,7 @@
-import { Link } from "react-router";
 import { getTripOverview } from "@/lib/db/repository.server";
 import { faqTiles } from "../lib/faq-content.server";
 import { PageHeading } from "../components/trip-details";
-import { RoomSharingFaq } from "../components/room-sharing-faq";
+import { FaqTable, roomSharingFaqEntries, roomSharingFaqNote } from "../components/room-sharing-faq";
 import type { Route } from "./+types/faq";
 
 export async function loader() {
@@ -10,18 +9,20 @@ export async function loader() {
 }
 
 export default function FAQ({ loaderData: data }: Route.ComponentProps) {
+  const tripRows = data.tiles.map((tile) => ({
+    section: "Trip",
+    question: tile.question,
+    to: tile.to,
+    answer: <>
+      {tile.lead && <strong className={`faq-answer-lead${tile.accent ? " text-accent" : ""}`}>{tile.lead}</strong>}
+      {tile.sub && <span className="faq-answer-copy">{tile.sub}</span>}
+    </>,
+  }));
+  const roomRows = roomSharingFaqEntries.map((row, index) => index === 0
+    ? { ...row, section: "Room Sharing, Bathrooms & Storage" }
+    : row);
   return <section aria-labelledby="faq-heading">
     <PageHeading id="faq-heading" sub="Quick answers to common questions.">FAQ</PageHeading>
-    <div className="overview-tiles faq-tiles">
-      {data.tiles.map((tile) => <Link className="overview-tile" to={tile.to} key={tile.kicker} aria-label={tile.question}>
-        <div className="tile-question">{tile.question}</div>
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="m9 18 6-6-6-6" /></svg>
-        <div className="tile-answer">
-          {tile.lead && <span className={`tile-lead${tile.accent ? " text-accent" : ""}`}>{tile.lead}</span>}
-          {tile.sub && <span className="tile-sub">{tile.sub}</span>}
-        </div>
-      </Link>)}
-    </div>
-    <RoomSharingFaq />
+    <FaqTable rows={[...tripRows, ...roomRows]} note={roomSharingFaqNote} label="Trip and room-sharing questions and answers" />
   </section>;
 }
