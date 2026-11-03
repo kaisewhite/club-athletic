@@ -21,6 +21,8 @@ export default [
   route("chat", "routes/chat.tsx"),
   route("guests", "routes/guests.tsx"),
   route("guest-details", "routes/guest-details.tsx"),
+  // Password-gated organizer view; deliberately absent from the navigation.
+  route("admin", "routes/admin.tsx"),
   route("faq", "routes/faq.tsx"),
   route("schedule", "routes/schedule.tsx"),
   route("flights", "routes/flights.tsx"),

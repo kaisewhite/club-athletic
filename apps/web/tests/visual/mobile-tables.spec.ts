@@ -82,7 +82,7 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
   test.describe(`bedroom map mobile detail rows at ${width}px`, () => {
     test.use({ viewport: { width, height } });
 
-    test("keeps the row name and labeled floor/description values visible without overlap", async ({ page }) => {
+    test("keeps bedroom details and assignments visible without overlap", async ({ page }) => {
       await openFrozen(page, "/rooms");
 
       const rows = page.locator(".bm-room-table tbody tr");
@@ -139,8 +139,8 @@ for (const [width, height] of [[320, 568], [375, 812], [390, 844], [412, 915], [
       for (const row of results) {
         expect(row.bedroom, "row heading must identify the bedroom").toMatch(/^Bedroom\s+\d+/);
         expect(row.bedroomRect).not.toBeNull();
-        expect(row.fields.map((field) => field.name)).toEqual(["Floor / door", "Description"]);
-        expect(row.fields.map((field) => field.labelText)).toEqual(["Floor / door", "Description"]);
+        expect(row.fields.map((field) => field.name)).toEqual(["Floor / door", "Description", "Room assignments"]);
+        expect(row.fields.map((field) => field.labelText)).toEqual(["Floor / door", "Description", "Room assignments"]);
         expect(row.fields.every((field) => field.labelVisible && field.labelAccessible && field.cellDisplay === "grid" && !field.scrolls)).toBe(true);
         for (const field of row.fields) {
           expect(field.label).not.toBeNull();

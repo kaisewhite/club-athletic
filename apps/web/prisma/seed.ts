@@ -306,7 +306,6 @@ async function removeDroppedGuest(tx: Prisma.TransactionClient, displayName: str
   });
   await tx.spot.updateMany({ where: { guestId: guest.id }, data: { guestId: null, status: "AVAILABLE" } });
   await tx.guestTask.deleteMany({ where: { guestId: guest.id } });
-  await tx.payment.deleteMany({ where: { guestId: guest.id } });
   await tx.guest.delete({ where: { id: guest.id } });
   await tx.auditLog.create({
     data: {

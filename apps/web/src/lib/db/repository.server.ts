@@ -2,6 +2,7 @@
 import { withReadDatabase } from "./client.server";
 import type { Prisma } from "../../../prisma/generated/client";
 import { buildFlightTable, flightSelect } from "./flights";
+import { airportLocalTime } from "./airport-timezones";
 import { countOpenSpots, getTripPricing } from "./projections";
 
 // A lookup key, not a duplicate of editable trip facts.
@@ -268,3 +269,37 @@ export type OpenSpots = Awaited<ReturnType<typeof getOpenSpots>>;
 export type ChefSummary = Awaited<ReturnType<typeof getChefSummary>>;
 export type GuestTasks = Awaited<ReturnType<typeof getGuestTasks>>;
 export type Links = Awaited<ReturnType<typeof getLinks>>;
+
+/** Each guest's details and current flights, for the unlisted /admin page only. */
+export async function getAdminGuests(tripKey = DEFAULT_TRIP_KEY) {
+  return withReadDatabase(async (db) => {
+    const { guests } = await db.trip.findUniqueOrThrow({
+      where: { seedKey: tripKey },
+      select: {
+        guests: {
+          orderBy: [{ status: "asc" }, { displayName: "asc" }],
+          select: {
+            id: true, firstName: true, lastName: true, displayName: true, status: true,
+            instagramUrl: true, email: true, phone: true, venmoHandle: true, dietaryNotes: true, favoriteCocktails: true,
+            spot: { select: { index: true, room: { select: { name: true } } } },
+            tasks: { orderBy: { type: "asc" }, select: { id: true, type: true, done: true, completedAt: true, notes: true } },
+            flights: {
+              where: { supersededById: null }, orderBy: { direction: "asc" },
+              select: { id: true, direction: true, airline: true, flightNumber: true, origin: true, destination: true, scheduledDeparture: true, scheduledArrival: true, terminal: true, confirmationCode: true },
+            },
+          },
+        },
+      },
+    });
+    return guests.map((guest) => ({
+      ...guest,
+      flights: guest.flights.map((flight) => ({
+        ...flight,
+        departureLocal: airportLocalTime(flight.scheduledDeparture, flight.origin),
+        arrivalLocal: airportLocalTime(flight.scheduledArrival, flight.destination),
+      })),
+    }));
+  });
+}
+
+export type AdminGuests = Awaited<ReturnType<typeof getAdminGuests>>;

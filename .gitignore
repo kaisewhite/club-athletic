@@ -17,3 +17,4 @@ cdk.out*
 test-results/
 playwright-report/
 .worktrees/
+apps/web/docs/design/screenshots/

@@ -21,10 +21,10 @@
 .pricing-record-toggle { display: grid; place-items: center; flex: none; width: 34px; height: 34px; border: 1px solid var(--border-strong); border-radius: 50%; color: var(--text-muted); }
 .pricing-record-toggle::before { content: "+"; font-size: 20px; line-height: 1; }
 .pricing-records details[open] .pricing-record-toggle::before { content: "−"; }
-.pricing-record-content { margin-top: 16px; padding-top: 14px; border-top: 1px solid var(--border-subtle); }
+.pricing-record-content { margin-top: 16px; padding-top: 0; border: 0; }
 .pricing-record-content > .detail-note { margin: 0 0 14px; }
-.pricing-record-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); margin: 0; padding: 0; border-top: 1px solid var(--border-subtle); font-size: 13px; }
-.pricing-record-facts > div { display: flex; justify-content: space-between; gap: 12px; padding: 9px 0; border-bottom: 1px solid var(--border-subtle); }
+.pricing-record-facts { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px 24px; margin: 0; padding: 0; border: 0; font-size: 13px; }
+.pricing-record-facts > div { display: flex; justify-content: space-between; gap: 12px; padding: 4px 0; border: 0; }
 .pricing-record-facts dt { color: var(--text-dim); }
 .pricing-record-facts dd { margin: 0; color: var(--text); text-align: right; font-variant-numeric: tabular-nums; }
 .pricing-record-facts .pricing-record-total { grid-column: 1 / -1; color: var(--text); font-weight: 600; }
@@ -39,10 +39,14 @@
 .flight-recs { margin: 20px 0 24px; display: flex; flex-direction: column; gap: 16px; }
 .flight-hotels { margin-top: 4px; }
 .flight-rec-title { margin: 0 0 6px; font-family: var(--font-display); font-weight: 700; font-size: 17px; letter-spacing: -.01em; }
+.flight-rec-date-arrival { white-space: nowrap; }
 .flight-rec-copy { margin: 0 0 10px; font-size: 14px; line-height: 1.6; color: var(--text-muted); }
 .flight-rec-outro { margin: 10px 0 0; font-size: 13px; color: var(--text-dim); }
 .flight-rec-table th[scope="row"] { white-space: nowrap; }
 .flight-rec-route { font-variant-numeric: tabular-nums; white-space: nowrap; }
+.flight-rec .detail-table-wrap { overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.flight-rec-table tbody tr { border: 0; }
+.flight-rec-table tbody th, .flight-rec-table tbody td { border: 0; }
 .shuttle-outbound { background: var(--surface); color: var(--text); border: 1px solid var(--border); }
 .shuttle-outbound .detail-kicker { color: var(--brand-dim); }
 .flight-rule-kicker { display: inline-block; padding: 4px 8px; border-radius: var(--radius-sm); background: var(--accent); }
@@ -126,6 +130,7 @@
 .detail-table thead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .detail-table thead th { padding: 10px 16px; font-weight: 500; }
 .detail-table tbody tr { border-top: 1px solid var(--border-subtle); font-size: 14px; line-height: 1.571; }
+.detail-table.flight-rec-table tbody tr { border: 0; }
 .detail-table tbody th, .detail-table tbody td { padding: 12px 16px; }
 .detail-table tbody th { font-weight: 600; }
 .detail-table td { color: var(--text-muted); }
@@ -332,8 +337,9 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 16px;
-    padding: 14px 16px;
-    border-top: 1px solid var(--border-subtle);
+    margin-bottom: 18px;
+    padding: 0;
+    border: 0;
   }
   .flight-rec-table tbody th[scope="row"] {
     grid-column: 1 / -1;

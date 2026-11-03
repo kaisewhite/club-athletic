@@ -1,12 +1,25 @@
 import { useEffect, useRef, useState } from "react";
 import { SHEET_HTML, SHEET_SIZE } from "./sheet";
+import { GuestInstagramLink } from "../guest-instagram-link";
+import { roomTypeLabel } from "../../lib/room-types";
 import "./bedroom-map.css";
 
 type BedroomMapFloor = {
   id: string;
   name: string;
   code: string;
-  rooms: { id: string; name: string; description: string | null }[];
+  rooms: {
+    id: string;
+    name: string;
+    type: keyof typeof roomTypeLabel;
+    description: string | null;
+    spots: {
+      id: string;
+      index: number;
+      status: "ASSIGNED" | "AVAILABLE" | "NOT_OFFERED";
+      guest: { displayName: string; instagramUrl: string | null } | null;
+    }[];
+  }[];
 };
 
 // Positions on the authored drawing, in the same floor/room order as the loader.
@@ -54,7 +67,26 @@ export function BedroomMap({ floors }: { floors: BedroomMapFloor[] }) {
     return () => { if (element.open) element.close(); };
   }, [expanded]);
   return (
-    <figure className="bm" aria-label="Chalet F bedroom map">
+    <section className="bm" aria-label="Chalet F bedrooms">
+      <section className="bm-details" aria-labelledby="bm-details-heading">
+        <h3 id="bm-details-heading">Bedroom details &amp; assignments</h3>
+        <table className="bm-room-table">
+          <thead><tr><th scope="col">Bedroom</th><th scope="col">Floor / door</th><th scope="col">Description</th><th scope="col">Room assignments</th></tr></thead>
+          <tbody>{rooms.map((room) => <tr key={room.id}>
+            <th scope="row"><span className="bm-bedroom-name">{room.name}</span><span className="bm-bedroom-type">{roomTypeLabel[room.type]}</span></th>
+            <td data-label="Floor / door"><span className="bm-mobile-field-label">Floor / door</span><span className="bm-mobile-field-value">{room.floor.name} · {room.floor.code}</span></td>
+            <td data-label="Description"><span className="bm-mobile-field-label">Description</span><span className="bm-mobile-field-value">{room.description ?? "Details pending"}</span></td>
+            <td data-label="Room assignments"><span className="bm-mobile-field-label">Room assignments</span><span className="bm-mobile-field-value">
+              <ul className="bm-assignment-list">{room.spots.map((spot) => <li key={spot.id}>
+                <span className="bm-assignment-spot">Spot {spot.index}</span>
+                {spot.status === "NOT_OFFERED" ? <span className="spot-not-offered">Not offered</span>
+                  : spot.status === "AVAILABLE" ? <span className="spot-available">Available</span>
+                  : <span className="spot-assigned">{spot.guest ? <GuestInstagramLink displayName={spot.guest.displayName} instagramUrl={spot.guest.instagramUrl} /> : "Guest not listed"}</span>}
+              </li>)}</ul>
+            </span></td>
+          </tr>)}</tbody>
+        </table>
+      </section>
       <div className="bm-map-wrap">
         <button className="bm-expand" type="button" onClick={() => setExpanded(true)} aria-label="Enlarge bedroom map">
           <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" aria-hidden="true"><path d="M8 3H3v5M16 3h5v5M3 16v5h5M21 16v5h-5" /></svg>
@@ -68,17 +100,6 @@ export function BedroomMap({ floors }: { floors: BedroomMapFloor[] }) {
         <div className="bm-dialog-bar"><span>Chalet F bedroom map</span><button ref={closeButton} type="button" onClick={() => setExpanded(false)} aria-label="Close enlarged map">Close</button></div>
         <div className="bm-dialog-scroll" tabIndex={0}><div className="bm-expanded-canvas"><MapDrawing rooms={rooms} /></div></div>
       </dialog>}
-      <figcaption className="bm-details">
-        <h3>Bedroom details</h3>
-        <table className="bm-room-table">
-          <thead><tr><th scope="col">Bedroom</th><th scope="col">Floor / door</th><th scope="col">Description</th></tr></thead>
-          <tbody>{rooms.map((room) => <tr key={room.id}>
-            <th scope="row">{room.name}</th>
-            <td data-label="Floor / door"><span className="bm-mobile-field-label">Floor / door</span><span className="bm-mobile-field-value">{room.floor.name} · {room.floor.code}</span></td>
-            <td data-label="Description"><span className="bm-mobile-field-label">Description</span><span className="bm-mobile-field-value">{room.description}</span></td>
-          </tr>)}</tbody>
-        </table>
-      </figcaption>
-    </figure>
+    </section>
   );
 }

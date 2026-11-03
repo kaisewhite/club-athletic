@@ -1,5 +1,6 @@
 import { act } from "react";
-import { createRoot, type Root } from "react-dom/client";
+import { createRoot, hydrateRoot, type Root } from "react-dom/client";
+import { renderToString } from "react-dom/server";
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { GuestInstagramAvatar } from "../../app/components/guest-instagram-preview";
 
@@ -13,10 +14,13 @@ afterEach(async () => {
   container?.remove();
   root = undefined;
   container = undefined;
+  vi.restoreAllMocks();
 });
 
 describe("GuestInstagramAvatar", () => {
   it("falls back to the dynamic avatar route before showing initials", async () => {
+    // happy-dom reports every image as complete; a browser reports a pending one as not yet complete.
+    vi.spyOn(HTMLImageElement.prototype, "complete", "get").mockReturnValue(false);
     container = document.createElement("div");
     document.body.append(container);
     root = createRoot(container);
@@ -38,5 +42,21 @@ describe("GuestInstagramAvatar", () => {
 
     expect(image?.hidden).toBe(true);
     expect(fallback?.hidden).toBe(false);
+  });
+
+  it("falls back when the static avatar already failed before hydration", async () => {
+    const element = <GuestInstagramAvatar profileUrl="https://www.instagram.com/newguest" displayName="New Guest" />;
+    container = document.createElement("div");
+    container.innerHTML = renderToString(element);
+    document.body.append(container);
+    const image = container.querySelector("img")!;
+    // The server-rendered image 404ed, and its error event fired before React attached onError.
+    Object.defineProperty(image, "complete", { configurable: true, get: () => true });
+    Object.defineProperty(image, "naturalWidth", { configurable: true, get: () => 0 });
+
+    await act(async () => { root = hydrateRoot(container!, element); });
+
+    expect(image.getAttribute("src")).toBe("/api/guest-avatars/newguest");
+    expect(image.dataset.dynamicFallback).toBe("true");
   });
 });

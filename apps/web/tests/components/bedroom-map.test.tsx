@@ -11,7 +11,7 @@ it("opens the authored map at full size and closes it without changing the inlin
   const container = document.createElement("div");
   document.body.append(container);
   const root = createRoot(container);
-  const floors = [{ id: "floor", name: "Lower floor", code: "R9", rooms: [{ id: "room", name: "Bedroom 6", description: null }] }];
+  const floors = [{ id: "floor", name: "Lower floor", code: "R9", rooms: [{ id: "room", name: "Bedroom 6", type: "DOUBLE" as const, description: null, spots: [{ id: "spot", index: 1, status: "AVAILABLE" as const, guest: null }] }] }];
   try {
     await act(async () => root.render(<BedroomMap floors={floors} />));
     expect(container.querySelectorAll(".bm-sheet")).toHaveLength(1);

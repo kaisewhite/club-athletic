@@ -23,7 +23,7 @@ export default function Shuttle({ loaderData: { shuttles } }: Route.ComponentPro
   return <section aria-labelledby="shuttle-heading">
     <PageHeading id="shuttle-heading" sub="Pickup and drop-off times and locations.">Shuttle</PageHeading>
     <div className="shuttle-guide">
-      <div className="travel-chapter-heading"><span>01</span><h3>Airport transfers</h3></div>
+      <div className="travel-chapter-heading"><h3>Airport transfers</h3></div>
       <div className="shuttle-plans">{shuttles.map((shuttle) => {
       const toChalet = shuttle.direction === "INBOUND";
       const pickupStops = splitStops(shuttle.pickupLocation);

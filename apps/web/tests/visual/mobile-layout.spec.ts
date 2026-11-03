@@ -127,20 +127,33 @@ for (const [width, height] of VIEWPORTS) {
       }
     });
 
-    test("rooms stack to one column below the seam, and long names stay short", async ({ page }) => {
+    test("rooms stack to one block per room below the seam, and long names stay short", async ({ page }) => {
       await openFrozen(page, "/rooms");
-      const grids = page.locator(".room-grid");
-      const count = await grids.count();
+      // Since 2026-11-03 the room guide is the bedroom table under the floor map;
+      // below the seam each row becomes its own stacked block instead of a table row.
+      const rows = page.locator(".bm-room-table tbody tr");
+      const count = await rows.count();
       expect(count).toBeGreaterThan(0);
-      for (let index = 0; index < count; index += 1) {
-        const columns = await grids.nth(index).evaluate((el) => getComputedStyle(el).gridTemplateColumns);
-        const tracks = columns.split(" ").filter(Boolean).length;
-        // Below the seam every floor is one column. Above it, `auto-fit` is the
-        // desktop design and is left exactly as it is.
-        if (mobile) expect(tracks, `floor ${index} has ${tracks} columns at ${width}px`).toBe(1);
+      const layout = await page.evaluate(() => {
+        const table = document.querySelector(".bm-room-table")!;
+        return {
+          table: getComputedStyle(table).display,
+          head: getComputedStyle(table.querySelector("thead")!).display,
+          rows: [...table.querySelectorAll("tbody tr")].map((row) => ({ display: getComputedStyle(row).display, right: row.getBoundingClientRect().right })),
+        };
+      });
+      if (mobile) {
+        expect(layout.table, `the room table is a stack at ${width}px`).toBe("block");
+        expect(layout.head).toBe("none");
+        for (const [index, row] of layout.rows.entries()) {
+          expect(row.display, `room ${index} is one block at ${width}px`).toBe("grid");
+          expect(row.right, `room ${index} fits the viewport at ${width}px`).toBeLessThanOrEqual(width);
+        }
+      } else {
+        expect(layout.table).toBe("table");
       }
       // §2.15 names this string: it must not wrap into three lines.
-      const longest = page.locator(".room-name", { hasText: LONGEST.room });
+      const longest = page.locator(".bm-bedroom-name", { hasText: new RegExp(`^${LONGEST.room}$`) });
       await expect(longest).toHaveCount(1);
       const lines = await lineCount(longest);
       expect(lines, `"${LONGEST.room}" wrapped to ${lines} lines at ${width}px`).toBeLessThanOrEqual(2);
@@ -282,7 +295,7 @@ for (const [width, height] of VIEWPORTS) {
       // than that." Named explicitly so this check cannot be satisfied by the
       // sweep below simply declining to look at something.
       const CONTROLS: [string, string][] = [
-        ["/", ".mobile-nav-toggle"], ["/faq", ".overview-tile"], ["/", ".week-heading a"],
+        ["/", ".mobile-nav-toggle"], ["/faq", ".faq-question-link"], ["/", ".week-heading a"],
         ["/chat", ".suggestions button"], ["/chat", ".send"], ["/chat", ".chat-attach"],
         ["/links", ".resource-link-title"], ["/chalet", ".chalet-listings a"],
         ["/flights", ".flight-mobile-sorting button"], ["/flights", ".flight-guest-card h4 a"],
@@ -360,7 +373,7 @@ for (const [width, height] of VIEWPORTS) {
     test("the longest real trip strings are the ones being measured", async ({ page }) => {
       // Guards the checks above against a reseed that shortens the worst case.
       await openFrozen(page, "/rooms");
-      await expect(page.locator(".room-name", { hasText: LONGEST.room })).toHaveCount(1);
+      await expect(page.locator(".bm-bedroom-name", { hasText: new RegExp(`^${LONGEST.room}$`) })).toHaveCount(1);
       await openFrozen(page, "/tasks");
       await expect(page.locator(".task-table tbody th", { hasText: LONGEST.guest })).toHaveCount(1);
       await openFrozen(page, "/schedule");

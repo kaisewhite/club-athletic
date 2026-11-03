@@ -32,7 +32,7 @@ function datedSectionTitle(title: string, sectionId: string, dates: TripDates, o
   const arrival = dateForWeekday(dates.startDate, arrivalDay, "on-or-before");
   const departure = dateForWeekday(arrival, departureDay, "before");
   const optionNumber = title.match(/^Option\s+\d+/i)?.[0] ?? "Option";
-  return <>{optionNumber} — {formatDate(departure)} <span><span className="sr-only">to</span><ArrowRight size="1em" aria-hidden="true" /></span> {formatDate(arrival, true)}</>;
+  return <>{optionNumber} — {formatDate(departure)} <span className="flight-rec-date-arrival"><span className="sr-only">to</span><ArrowRight size="1em" aria-hidden="true" /> {formatDate(arrival, true)}</span></>;
 }
 
 /**

@@ -129,10 +129,9 @@ const styles = `
 .group-flights > h3 { font: 700 24px var(--font-display); letter-spacing: -.02em; margin: 0 0 8px; }
 .group-flights > p { margin: 0 0 8px; color: var(--text-muted); }
 .group-flights .flight-help { font-size: 13px; color: var(--text-dim); margin-bottom: 16px; }
-.flight-table-frame { border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; background: var(--surface); }
-.flight-table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; background: var(--surface); }
-.flight-table th, .flight-table td { padding: 12px 10px; overflow-wrap: anywhere; vertical-align: top; border-bottom: 1px solid var(--border); }
-.flight-table tbody tr:last-child td, .flight-table tbody tr:last-child th { border-bottom: 0; }
+.flight-table-frame { overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.flight-table { width: 100%; table-layout: fixed; border-collapse: collapse; text-align: left; background: transparent; }
+.flight-table th, .flight-table td { padding: 14px 10px; overflow-wrap: anywhere; vertical-align: top; border: 0; }
 .flight-table thead { color: var(--text-dim); font-size: 11px; }
 .flight-table thead th { font-weight: 600; }
 .flight-table tbody { font-size: 13px; }
@@ -160,9 +159,9 @@ const styles = `
   .flight-cards, .flight-guest-card { -webkit-tap-highlight-color: transparent; }
 }
 .flight-cards { list-style: none; padding: 0; margin: 0; display: grid; gap: 12px; }
-.flight-guest-card { min-width: 0; overflow-wrap: anywhere; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); padding: 18px; }
+.flight-guest-card { min-width: 0; overflow-wrap: anywhere; background: transparent; border: 0; border-radius: 0; padding: 18px 0; }
 .flight-guest-card h4 { margin: 0 0 8px; font-size: 16px; }
-.flight-card-leg { margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border-subtle); }
+.flight-card-leg { margin-top: 18px; padding: 0; border: 0; }
 .flight-card-leg h5 { margin: 0 0 8px; color: var(--text-dim); text-transform: uppercase; letter-spacing: .08em; font-size: 11px; }
 .flight-card-leg dl { margin: 0; font-size: 13px; }
 .flight-card-leg dt { color: var(--text-dim); font-size: 11px; margin-top: 8px; }

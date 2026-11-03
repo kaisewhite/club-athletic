@@ -83,21 +83,22 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors, sleepsMax: 20 }, _count: { guests: 9 } });
     const page = renderPage(Rooms, await roomsLoader());
     expect(page.textContent).toContain("9 confirmed guests · 10 open spots · sleeps up to 20");
-    expect(page.querySelectorAll(".room-card")).toHaveLength(8);
     expect(page.querySelectorAll(".spot-available")).toHaveLength(10);
     expect(page.querySelectorAll(".spot-not-offered")).toHaveLength(1);
-    expect(page.querySelector(".room-card")?.textContent).toContain("Spot 2not offered");
-    expect(page.querySelectorAll(".has-open-spots")).toHaveLength(3);
+    expect(page.querySelector(".bm-room-table tbody tr")?.textContent).toContain("Spot 2Not offered");
+    expect([...page.querySelectorAll(".bm-room-table tbody tr")].filter((row) => row.querySelector(".spot-available"))).toHaveLength(3);
     for (const name of names) expect(page.textContent).toContain(name);
     // The bedroom map is the owner's own sheet, embedded verbatim: the defs
     // sheet, three floor drawings and the leader-line overlay, every bedroom
-    // called out, and the mapping table.
+    // called out, and a single table combining bedroom details and assignments.
     const sheet = page.querySelector(".bm-sheet")!;
     expect(page.querySelector<HTMLButtonElement>(".bm-expand")?.getAttribute("aria-label")).toBe("Enlarge bedroom map");
     expect(page.querySelector(".bm-dialog")).toBeNull();
     expect(sheet.querySelectorAll("svg")).toHaveLength(5);
     for (const n of [1, 2, 3, 4, 5, 6, 7, 8]) expect(sheet.textContent).toContain(`Bedroom ${n}`);
     expect(page.querySelectorAll(".bm-room-table tbody tr")).toHaveLength(8);
+    expect(page.querySelectorAll(".room-assignment-guide")).toHaveLength(0);
+    expect(page.querySelector(".bm-details")!.compareDocumentPosition(sheet) & Node.DOCUMENT_POSITION_FOLLOWING).toBeTruthy();
     expect(sheet.innerHTML).not.toMatch(/sc-|\{\{/);
   });
   it("links guest names to Instagram on rooms and chef pages", async () => {
@@ -107,7 +108,7 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors: roomFloors, sleepsMax: 20 }, _count: { guests: 11 } });
     const roomsPage = renderPage(Rooms, await roomsLoader());
     for (const [name, handle] of [["Christie Navarre", "xtnavarre"], ["Christine Calvo", "christinecalvo_"], ["Valeriia Stobolva", "valeriiastolbova"], ["Wayne Martindale", "_wayne.em_"]] as const) {
-      const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".spot-assigned a")].find((anchor) => anchor.querySelector("span")?.textContent === name);
+      const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".bm-room-table .spot-assigned a")].find((anchor) => anchor.querySelector("span")?.textContent === name);
       expect(link?.getAttribute("href")).toBe(`https://www.instagram.com/${handle}`);
       expect(link?.target).toBe("_blank");
       expect(link?.rel).toContain("noopener");
@@ -139,10 +140,10 @@ describe("database-backed read-only detail pages", () => {
     expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $1,945–$2,149");
     expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item.replace("↔", "and"));
-    expect([...page.querySelectorAll(".open-room-count")].map((node) => node.getAttribute("aria-label"))).toEqual(["4 open spots", "2 open spots", "4 open spots"]);
-    expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual(["4 spots open", "2 spots open", "4 spots open"]);
-    expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);
-    expect([...page.querySelectorAll(".open-room-price")].map((note) => note.textContent)).toEqual(["€1,740.55 / $2,088.66 per person", "€1,620.55 / $1,944.66 per person", "€1,790.55 / $2,148.66 per person"]);
+    const roomRows = [...page.querySelectorAll<HTMLTableRowElement>(".pricing-room-table tbody tr")];
+    expect(roomRows).toHaveLength(3);
+    expect(roomRows.map((row) => row.querySelector('[data-label="Availability"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Availability4 spots open", "Availability2 spots open", "Availability4 spots open"]);
+    expect(roomRows.map((row) => row.querySelector('[data-label="Price per person"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Price per person€1,740.55 / $2,088.66 per person", "Price per person€1,620.55 / $1,944.66 per person", "Price per person€1,790.55 / $2,148.66 per person"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const breakdown = page.querySelector(".price-breakdown");
     expect(breakdown?.getAttribute("aria-label")).toBe("Price breakdown");

@@ -186,13 +186,10 @@ model Guest {
   status                GuestStatus
   dietaryNotes          String?
   favoriteCocktails     String?
-  emergencyContact      Json?               @db.JsonB
-  notes                 String?
   createdVia            GuestCreatedVia
   trip                  Trip                @relation(fields: [tripId], references: [id], onDelete: Restrict)
   spot                  Spot?
   tasks                 GuestTask[]
-  payments              Payment[]
   flights               Flight[]
   pendingExtractions    PendingExtraction[] @relation("IntakeGuest")
   createdForExtractions PendingExtraction[] @relation("IntakeCreatedGuest")
@@ -212,20 +209,6 @@ model GuestTask {
   guest       Guest         @relation(fields: [guestId], references: [id], onDelete: Restrict)
 
   @@unique([guestId, type])
-}
-
-model Payment {
-  id        String    @id
-  guestId   String
-  amount    Decimal   @db.Decimal(10, 2)
-  currency  String    @db.Char(3)
-  method    String?
-  paidAt    DateTime? @db.Timestamptz(3)
-  reference String?
-  status    String
-  guest     Guest     @relation(fields: [guestId], references: [id], onDelete: Restrict)
-
-  @@index([guestId])
 }
 
 model Flight {
