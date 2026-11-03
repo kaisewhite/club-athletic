@@ -3,10 +3,7 @@ import { ArrowText } from "./arrow-text";
 import "./trip-details.css";
 
 export function PageHeading({ id, children, sub }: { id: string; children: ReactNode; sub?: ReactNode }) {
-  return <header className="page-masthead" aria-labelledby={id}>
-    <h2 id={id}>{children}<span className="text-accent">.</span></h2>
-    {sub && <p className="page-sub">{sub}</p>}
-  </header>;
+  return <><h2 id={id}>{children}<span className="text-accent">.</span></h2>{sub && <p className="page-sub">{sub}</p>}</>;
 }
 
 export function DetailList({ items }: { items: string[] }) {
