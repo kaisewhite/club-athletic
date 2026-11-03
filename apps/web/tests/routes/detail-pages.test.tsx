@@ -57,7 +57,7 @@ const floors = [
 const pricing = { minPerPerson: 1620.55, maxPerPerson: 1790.55, currency: "EUR", description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
   note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
-  includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
+    includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
   excludes: ["flights", "ski pass", "rentals", "nights out"],
 };
 
@@ -138,7 +138,7 @@ describe("database-backed read-only detail pages", () => {
     expect([...page.querySelectorAll(".spots-currency dt")].map((node) => node.textContent)).toEqual(["EUR · per person, all-in", "Estimated USD price · per person, all-in"]);
     expect(page.querySelector(".spots-price-usd")?.textContent).toContain("≈ $1,945–$2,149");
     expect(page.querySelector(".spots-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
-    for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item);
+    for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item.replace("↔", "and"));
     expect([...page.querySelectorAll(".open-room-count")].map((node) => node.getAttribute("aria-label"))).toEqual(["4 open spots", "2 open spots", "4 open spots"]);
     expect([...page.querySelectorAll(".open-room-count")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual(["4 spots open", "2 spots open", "4 spots open"]);
     expect(page.querySelectorAll(".open-room-price")).toHaveLength(3);

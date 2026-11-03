@@ -3,14 +3,14 @@ import { guestDetailsSchema, guestDetailsSubmissionSchema } from "../../src/lib/
 
 const valid = {
   firstName: " Alex ", lastName: "Guest", phone: "(415) 555-0132", venmoHandle: "@alex-guest",
-  instagramHandle: "@alex.guest", dietaryNotes: "None.", favoriteCocktails: "Margarita, Negroni",
+  instagramHandle: "@alex.guest", dietaryNotes: "None.", favoriteCocktails: "Margarita, Negroni", roomId: "room-1",
 };
 
 describe("guest details validation", () => {
   it("trims text, normalizes phone numbers and Instagram profiles, and maps None to null", () => {
     expect(guestDetailsSchema.parse(valid)).toEqual({
       firstName: "Alex", lastName: "Guest", phone: "+14155550132", venmoHandle: "@alex-guest",
-      instagramHandle: "@alex.guest", dietaryNotes: null, favoriteCocktails: "Margarita, Negroni",
+      instagramHandle: "@alex.guest", dietaryNotes: null, favoriteCocktails: "Margarita, Negroni", roomId: "room-1",
     });
   });
 
@@ -36,5 +36,11 @@ describe("guest details validation", () => {
   it("requires an idempotency key and rejects unrecognized fields", () => {
     expect(guestDetailsSubmissionSchema.safeParse({ ...valid, submissionId: "not-a-uuid" }).success).toBe(false);
     expect(guestDetailsSchema.safeParse({ ...valid, extra: "unexpected" }).success).toBe(false);
+  });
+
+  it("requires a non-empty room choice", () => {
+    expect(guestDetailsSchema.safeParse({ ...valid, roomId: "" }).success).toBe(false);
+    const { roomId: _roomId, ...missingRoom } = valid;
+    expect(guestDetailsSchema.safeParse(missingRoom).success).toBe(false);
   });
 });

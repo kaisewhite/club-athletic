@@ -1,10 +1,12 @@
 import { useSyncExternalStore } from "react";
+import { ArrowDown, ArrowUp, ArrowsDownUp } from "@phosphor-icons/react/ssr";
 import {
   createSortedRowModel, flexRender, rowSortingFeature,
   sortFn_alphanumeric, sortFn_basic, sortFn_text, tableFeatures, useTable,
   type Column, type ColumnDef, type Row,
 } from "@tanstack/react-table";
 import type { FlightTable } from "@/lib/db/repository.server";
+import { ArrowText } from "./arrow-text";
 import { GuestInstagramLink } from "./guest-instagram-link";
 
 type GuestFlight = FlightTable[number];
@@ -30,7 +32,7 @@ function FlightName({ leg }: { leg: Leg | null }) {
   const number = [leg.airline, leg.flightNumber].filter(Boolean).join(" ");
   // Route, and the flight number when it is known. Nothing about where the row
   // came from or when it was confirmed (owner, 2026-09-29: "keep this clean").
-  return <><span className="flight-route">{leg.origin} → {leg.destination}</span>{number && <> · {number}</>}</>;
+  return <><span className="flight-route"><ArrowText>{`${leg.origin} → ${leg.destination}`}</ArrowText></span>{number && <> · {number}</>}</>;
 }
 
 function FlightTime({ local }: { local: string | undefined }) {
@@ -70,7 +72,7 @@ function SortButton({ column }: { column: Column<typeof features, GuestFlight, u
   const sorted = column.getIsSorted();
   return <button type="button" className="flight-sort" onClick={column.getToggleSortingHandler()}
     aria-label={`Sort by ${String(column.columnDef.header)}${sorted ? `, currently ${sorted === "asc" ? "ascending" : "descending"}` : ""}`}>
-    {String(column.columnDef.header)} <span aria-hidden="true">{sorted === "asc" ? "↑" : sorted === "desc" ? "↓" : "↕"}</span>
+    {String(column.columnDef.header)} <span aria-hidden="true">{sorted === "asc" ? <ArrowUp size="1em" /> : sorted === "desc" ? <ArrowDown size="1em" /> : <ArrowsDownUp size="1em" />}</span>
   </button>;
 }
 

@@ -13,8 +13,16 @@ export async function loader() {
 export default function Flights({ loaderData: { flights, recommendations, rules, hotelLinks } }: Route.ComponentProps) {
   return <section aria-labelledby="flights-heading">
     <PageHeading id="flights-heading" sub="Times are based on the group shuttle from Geneva (GVA).">Flights</PageHeading>
-    <FlightBookingRules rules={rules} />
-    <FlightRecommendationsSection sections={recommendations} hotelLinks={hotelLinks} tripDates={{ startDate: rules.startDate, endDate: rules.endDate }} />
-    <GroupFlightTable flights={flights} />
+    <div className="flight-planning-section">
+      <div className="travel-chapter-heading"><span>01</span><h3>Plan your arrival and return</h3></div>
+      <FlightBookingRules rules={rules} />
+    </div>
+    <div className="flight-planning-section flight-options-section">
+      <div className="travel-chapter-heading"><span>02</span><h3>Flight options</h3></div>
+      <FlightRecommendationsSection sections={recommendations} hotelLinks={hotelLinks} tripDates={{ startDate: rules.startDate, endDate: rules.endDate }} />
+    </div>
+    <div className="flight-planning-section flight-group-section">
+      <GroupFlightTable flights={flights} />
+    </div>
   </section>;
 }

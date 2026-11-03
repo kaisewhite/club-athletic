@@ -1,5 +1,6 @@
 import { getShuttles } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
+import { ArrowText } from "../components/arrow-text";
 import type { Route } from "./+types/shuttle";
 
 // Both ends of this transfer use the same local clock, including DST.
@@ -21,14 +22,16 @@ export default function Shuttle({ loaderData: { shuttles } }: Route.ComponentPro
   const returnStops = outbound ? splitStops(outbound.pickupLocation) : [];
   return <section aria-labelledby="shuttle-heading">
     <PageHeading id="shuttle-heading" sub="Pickup and drop-off times and locations.">Shuttle</PageHeading>
-    <div className="detail-grid">{shuttles.map((shuttle) => {
+    <div className="shuttle-guide">
+      <div className="travel-chapter-heading"><span>01</span><h3>Airport transfers</h3></div>
+      <div className="shuttle-plans">{shuttles.map((shuttle) => {
       const toChalet = shuttle.direction === "INBOUND";
       const pickupStops = splitStops(shuttle.pickupLocation);
       const dropoffStops = splitStops(shuttle.dropoffLocation);
       const pickupTimes = pickupStops.length > 1
         ? [shuttle.departWindowStart, shuttle.departWindowEnd]
         : [];
-      return <article className={`detail-card${toChalet ? " shuttle-outbound" : ""}`} key={shuttle.id}>
+      return <article className={`shuttle-plan${toChalet ? " shuttle-outbound" : ""}`} key={shuttle.id}>
         <h3 className="detail-kicker" style={{ marginBottom: 0 }}>{toChalet ? "To the chalet" : "Back to the airport"} · {localDate(shuttle.departWindowStart)}</h3>
         <div className="shuttle-time">{localTime(shuttle.departWindowStart)}{localTime(shuttle.departWindowStart) !== localTime(shuttle.departWindowEnd) && `–${localTime(shuttle.departWindowEnd)}`}</div>
         <div className="shuttle-locations">
@@ -37,7 +40,7 @@ export default function Shuttle({ loaderData: { shuttles } }: Route.ComponentPro
             <ol className="shuttle-stop-list">
               {pickupStops.map((stop, index) => <li className={`shuttle-stop${pickupStops.length === 1 ? " shuttle-stop-single" : ""}`} key={`${stop}-${index}`}>
                 <span className="shuttle-stop-index">{pickupStops.length > 1 ? `Stop ${index + 1}` : ""}{pickupTimes[index] && ` · ${localTime(pickupTimes[index]!)}`}</span>
-                <span className="shuttle-stop-address">{stop}</span>
+                <span className="shuttle-stop-address"><ArrowText>{stop}</ArrowText></span>
               </li>)}
             </ol>
           </div>
@@ -46,23 +49,24 @@ export default function Shuttle({ loaderData: { shuttles } }: Route.ComponentPro
             <ol className="shuttle-stop-list">
               {dropoffStops.map((stop, index) => <li className={`shuttle-stop${dropoffStops.length === 1 ? " shuttle-stop-single" : ""}`} key={`${stop}-${index}`}>
                 <span className="shuttle-stop-index">{dropoffStops.length > 1 ? `Stop ${index + 1}` : ""}</span>
-                <span className="shuttle-stop-address">{stop}</span>
+                <span className="shuttle-stop-address"><ArrowText>{stop}</ArrowText></span>
               </li>)}
             </ol>
           </div>
         </div>
       </article>;
-    })}</div>
-    <div className="shuttle-explainer">
-      <h3 className="detail-kicker">What to know</h3>
-      <ul className="shuttle-explainer-list">
+      })}</div>
+      <aside className="shuttle-explainer">
+        <h3 className="detail-kicker">What to know</h3>
+        <ul className="shuttle-explainer-list">
         {inbound && <>
           <li>For the trip to Méribel, meet the shuttle outside baggage claim at Geneva Airport (GVA).</li>
           <li>The shuttle leaves GVA between {localTime(inbound.departWindowStart)} and {localTime(inbound.departWindowEnd)}.</li>
-          {chaletStops.length > 1 && <li>At the chalet, the shuttle stops at {chaletStops[0]} first, then {chaletStops[1]}.</li>}
+          {chaletStops.length > 1 && <li>At the chalet, the shuttle stops at <ArrowText>{chaletStops[0]!}</ArrowText> first, then <ArrowText>{chaletStops[1]!}</ArrowText>.</li>}
         </>}
-        {outbound && returnStops.length > 1 && <li>For the trip home, be ready at {returnStops[0]} at {localTime(outbound.departWindowStart)}. The shuttle then stops at {returnStops[1]} at {localTime(outbound.departWindowEnd)}.</li>}
-      </ul>
+        {outbound && returnStops.length > 1 && <li>For the trip home, be ready at <ArrowText>{returnStops[0]!}</ArrowText> at {localTime(outbound.departWindowStart)}. The shuttle then stops at <ArrowText>{returnStops[1]!}</ArrowText> at {localTime(outbound.departWindowEnd)}.</li>}
+        </ul>
+      </aside>
     </div>
   </section>;
 }

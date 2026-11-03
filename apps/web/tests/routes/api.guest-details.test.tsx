@@ -1,15 +1,16 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { saveGuestDetails, GuestDetailsNameMatchError } = vi.hoisted(() => {
+const { saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError } = vi.hoisted(() => {
   class GuestDetailsNameMatchError extends Error {}
-  return { saveGuestDetails: vi.fn(), GuestDetailsNameMatchError };
+  class GuestDetailsRoomFullError extends Error { constructor() { super("That room no longer has an open spot. Choose another room."); } }
+  return { saveGuestDetails: vi.fn(), GuestDetailsNameMatchError, GuestDetailsRoomFullError };
 });
-vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, GuestDetailsNameMatchError }));
+vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError }));
 import { action, loader } from "../../app/routes/api.guest-details";
 
 const valid = {
   submissionId: "7c54ef87-76d0-4c5b-87ea-a17b897d8291", firstName: "Alex", lastName: "Guest", phone: "+1 415 555 0132",
-  venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: "None", favoriteCocktails: "Margarita",
+  venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: "None", favoriteCocktails: "Margarita", roomId: "room-1",
 };
 
 beforeEach(() => { saveGuestDetails.mockReset(); saveGuestDetails.mockResolvedValue({ duplicate: false, created: false, guestId: "guest-1" }); });
@@ -29,7 +30,7 @@ describe("guest details API", () => {
     expect(await response.json()).toEqual({ ok: true, created: false, duplicate: false });
     expect(saveGuestDetails).toHaveBeenCalledWith({
       submissionId: valid.submissionId,
-      details: { firstName: "Alex", lastName: "Guest", phone: "+14155550132", venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: null, favoriteCocktails: "Margarita" },
+      details: { firstName: "Alex", lastName: "Guest", phone: "+14155550132", venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: null, favoriteCocktails: "Margarita", roomId: "room-1" },
     });
   });
 
@@ -61,5 +62,20 @@ describe("guest details API", () => {
     const response = await action({ request: request(valid) });
     expect(response.status).toBe(409);
     expect(await response.json()).toMatchObject({ ok: false, error: "The name matches more than one guest." });
+  });
+
+  it("returns 400 when roomId is missing", async () => {
+    const { roomId: _roomId, ...missingRoom } = valid;
+    const response = await action({ request: request(missingRoom) });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ fieldErrors: { roomId: expect.any(String) } });
+    expect(saveGuestDetails).not.toHaveBeenCalled();
+  });
+
+  it("returns 409 when the selected room is full", async () => {
+    saveGuestDetails.mockRejectedValue(new GuestDetailsRoomFullError());
+    const response = await action({ request: request(valid) });
+    expect(response.status).toBe(409);
+    expect(await response.json()).toMatchObject({ ok: false, code: "ROOM_FULL", error: "That room no longer has an open spot. Choose another room." });
   });
 });

@@ -1,5 +1,5 @@
 import { createTextLimiter } from "../../src/lib/chat/rate-limit.server";
-import { GuestDetailsNameMatchError, saveGuestDetails } from "../../src/lib/db/guest-submissions.server";
+import { GuestDetailsNameMatchError, GuestDetailsRoomFullError, saveGuestDetails } from "../../src/lib/db/guest-submissions.server";
 import { guestDetailsSubmissionSchema } from "../../src/lib/guest-details-schema";
 
 const MAX_BODY_BYTES = 8 * 1024;
@@ -78,6 +78,7 @@ export async function action({ request }: { request: Request }) {
     return Response.json({ ok: true, created: result.created, duplicate: result.duplicate }, { status: 200 });
   } catch (error) {
     if (error instanceof GuestDetailsNameMatchError) return Response.json({ ok: false, error: error.message }, { status: 409 });
+    if (error instanceof GuestDetailsRoomFullError) return Response.json({ ok: false, code: "ROOM_FULL", error: error.message }, { status: 409 });
     console.error("Guest details submission failed.", error instanceof Error ? error.name : "Unknown error");
     return Response.json({ ok: false, error: "We couldn’t save your details. Try again in a moment." }, { status: 503 });
   }

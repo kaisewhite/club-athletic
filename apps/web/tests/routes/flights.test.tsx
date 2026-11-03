@@ -129,17 +129,17 @@ describe("Flights route", () => {
     const rows = [...tables[0]!.querySelectorAll("tbody tr")];
     expect(rows.map((row) => row.querySelector("th")?.textContent)).toEqual(["United UA956", "SWISS LX23"]);
     expect([...page.querySelectorAll(".flight-rec > .flight-rec-title")].map((heading) => heading.textContent)).toEqual([
-      "Option 1 — Fri, Jan 29 → Sat, Jan 30, 2027",
-      "Option 2 — Thu, Jan 28 → Fri, Jan 29, 2027",
+      "Option 1 — Fri, Jan 29 to Sat, Jan 30, 2027",
+      "Option 2 — Thu, Jan 28 to Fri, Jan 29, 2027",
       "Return — Sat, Feb 6, 2027",
     ]);
     expect(rows[0]?.querySelectorAll("td")).toHaveLength(3);
     expect(rows[1]?.querySelectorAll("td")).toHaveLength(3);
     expect(tables[0]?.textContent).not.toContain("Group shuttle");
     for (const text of [
-      "Option 1 — Fri, Jan 29 → Sat, Jan 30, 2027", "5:30 PM Fri", "7:30 AM Sat",
+      "Option 1 — Fri, Jan 29 to Sat, Jan 30, 2027", "5:30 PM Fri", "7:30 AM Sat",
       "SWISS LX23", "7:25 PM Fri", "9:15 AM Sat",
-      "Option 2 — Thu, Jan 28 → Fri, Jan 29, 2027", "5:35 PM Thu", "7:25 AM Fri",
+      "Option 2 — Thu, Jan 28 to Fri, Jan 29, 2027", "5:35 PM Thu", "7:25 AM Fri",
       "Return — Sat, Feb 6, 2027", "11:40 AM", "2:20 PM", "9:15 AM", "12:20 PM",
       "Book 11:00 AM or later.", "Schedules change",
     ]) expect(page.textContent).toContain(text);
@@ -165,7 +165,7 @@ describe("Flights route", () => {
     expect(page.querySelectorAll(".flight-table tbody tr:first-child td")).toHaveLength(6);
     expect(page.textContent).not.toContain("from screenshot");
     expect(page.textContent).not.toContain("entered by organizer");
-    expect(page.textContent).toContain("EWR → GVA");
+    expect(page.textContent).toContain("EWR to GVA");
     expect(page.textContent).toContain("Thu 28 Jan · 17:35");
     expect(page.textContent).toContain("Fri 29 Jan · 07:25");
     expect(page.textContent).toContain("Sat 6 Feb · 11:00");
@@ -180,7 +180,7 @@ describe("Flights route", () => {
     expect(page.querySelector("#flight-summary")).toBeNull();
     expect(page.textContent).not.toContain("No flights recorded yet");
     // A leg with no airline or number still shows its route, and nothing else.
-    expect(page.querySelector(".flight-route")?.textContent).toBe("EWR → GVA");
+    expect(page.querySelector(".flight-route")?.textContent).toBe("EWR to GVA");
     expect(page.querySelector(".flight-provenance")).toBeNull();
     expect(page.querySelectorAll(".flight-friday")).toHaveLength(0);
     expect(page.textContent).not.toMatch(/undefined|null|Invalid Date/);

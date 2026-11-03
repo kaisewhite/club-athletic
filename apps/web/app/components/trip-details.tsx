@@ -1,4 +1,5 @@
 import type { ReactNode } from "react";
+import { ArrowText } from "./arrow-text";
 import "./trip-details.css";
 
 export function PageHeading({ id, children, sub }: { id: string; children: ReactNode; sub?: ReactNode }) {
@@ -9,5 +10,5 @@ export function PageHeading({ id, children, sub }: { id: string; children: React
 }
 
 export function DetailList({ items }: { items: string[] }) {
-  return <ul className="detail-list">{items.map((item) => <li key={item}>{item}</li>)}</ul>;
+  return <ul className="detail-list">{items.map((item) => <li key={item}><ArrowText>{item}</ArrowText></li>)}</ul>;
 }

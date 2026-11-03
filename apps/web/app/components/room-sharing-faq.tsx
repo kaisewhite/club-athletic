@@ -1,5 +1,7 @@
+import { ArrowUpRight } from "@phosphor-icons/react/ssr";
 import { Fragment, type ReactNode } from "react";
 import { Link } from "react-router";
+import { ArrowText } from "./arrow-text";
 
 export type FaqTableRow = {
   question: string;
@@ -15,11 +17,11 @@ export function FaqTable({ rows, note, label }: { rows: FaqTableRow[]; note?: st
       {rows.map((row, index) => <Fragment key={row.question}>
         {row.section && row.section !== rows[index - 1]?.section && <tbody className="faq-table-section"><tr><th scope="rowgroup" colSpan={2}>{row.section}</th></tr></tbody>}
         <tbody><tr className="faq-table-row">
-          <th scope="row">{row.to ? <Link className="faq-question-link" to={row.to}>{row.question}<span aria-hidden="true">↗</span></Link> : row.question}</th>
-          <td data-label="Answer">{row.answer}</td>
+          <th scope="row">{row.to ? <Link className="faq-question-link" to={row.to}><ArrowText>{row.question}</ArrowText><span aria-hidden="true"><ArrowUpRight size="1em" /></span></Link> : <ArrowText>{row.question}</ArrowText>}</th>
+          <td data-label="Answer">{typeof row.answer === "string" ? <ArrowText>{row.answer}</ArrowText> : row.answer}</td>
         </tr></tbody>
       </Fragment>)}
-      {note && <tbody className="faq-table-note"><tr><td colSpan={2}>{note}</td></tr></tbody>}
+      {note && <tbody className="faq-table-note"><tr><td colSpan={2}><ArrowText>{note}</ArrowText></td></tr></tbody>}
     </table>
   </div>;
 }

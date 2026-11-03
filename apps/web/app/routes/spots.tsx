@@ -1,6 +1,8 @@
+import { ArrowRight } from "@phosphor-icons/react/ssr";
 import { getOpenSpots } from "@/lib/db/repository.server";
 import { getEurUsdRate } from "../lib/exchange-rates.server";
-import { DetailList } from "../components/trip-details";
+import { DetailList, PageHeading } from "../components/trip-details";
+import { ArrowText } from "../components/arrow-text";
 import type { Route } from "./+types/spots";
 
 export async function loader() {
@@ -29,20 +31,25 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
   const rateDate = data.usdRate && new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
     .format(new Date(`${data.usdRate.date}T00:00:00Z`));
 
-  return <section aria-label="Pricing">
+  return <section aria-labelledby="pricing-heading">
+    <PageHeading id="pricing-heading" sub="The total open spots are broken down by room below. See the room guide to compare assignments.">Rooms &amp; prices</PageHeading>
     <div className="spots-hero">
-      <div className="spots-heading">Open spots <span className="spots-count">{data.openCount}</span></div>
+      <div className="spots-open-summary">
+        <div className="spots-heading">Open spots <span className="spots-count">{data.openCount}</span></div>
+        <p>Each room below shows how many spots are currently available in that room.</p>
+        <a className="spots-room-link" href="/rooms">Compare room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a>
+      </div>
       <dl className="spots-currencies">
-        <div className="spots-currency"><dt>{data.pricing.currency} · {data.pricing.description}</dt><dd className="spots-price">{data.pricing.rangeLabel}</dd></div>
-        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>Estimated USD price · {data.pricing.description}</dt>
+        <div className="spots-currency"><dt>{data.pricing.currency} · <ArrowText>{data.pricing.description}</ArrowText></dt><dd className="spots-price"><ArrowText>{data.pricing.rangeLabel}</ArrowText></dd></div>
+        {data.pricing.currency === "EUR" && <div className="spots-currency"><dt>Estimated USD price · <ArrowText>{data.pricing.description}</ArrowText></dt>
           <dd className="spots-price spots-price-usd">{usdRange ? <>≈ {usdRange}<small className="spots-rate-date">ECB rate · {rateDate}</small></> : <span className="spots-usd-unavailable">USD rate unavailable</span>}</dd>
         </div>}
       </dl>
       <p className="detail-note">Payment is in full; there is no deposit. If you drop out by November 15, you’ll receive a full refund. After November 15, you’ll need to find your own replacement.</p>
     </div>
-    <div className="detail-grid">
+    <div className="detail-grid pricing-details">
       <div className="detail-card"><h3 className="detail-kicker">Included in the price</h3><DetailList items={data.pricing.includes} />
-        <p className="detail-note" style={{ marginTop: 12 }}>Not included: {data.pricing.excludes.join(", ")}.</p>
+        <p className="detail-note" style={{ marginTop: 12 }}>Not included: {data.pricing.excludes.map((item, index) => <span key={`${index}-${item}`}>{index > 0 && ", "}<ArrowText>{item}</ArrowText></span>)}.</p>
         {data.pricing.breakdown && <>
           <h4 className="detail-kicker price-breakdown-heading">Price breakdown</h4>
           <dl className="price-breakdown" aria-label="Price breakdown">
@@ -52,22 +59,25 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
             <div className="price-breakdown-row"><dt>Incidentals</dt><dd>{breakdownPrice(data.pricing.breakdown.incidentals)}</dd></div>
             <div className="price-breakdown-row"><dt>Chef</dt><dd>{breakdownPrice(data.pricing.breakdown.chef)}</dd></div>
           </dl>
-          {data.pricing.note && <p className="detail-note" style={{ marginTop: 12 }}>{data.pricing.note}</p>}
+          {data.pricing.note && <p className="detail-note" style={{ marginTop: 12 }}><ArrowText>{data.pricing.note}</ArrowText></p>}
         </>}
       </div>
-      <div className="detail-card"><h3 className="detail-kicker" style={{ marginBottom: 6 }}>Open rooms</h3>
-        {data.openRooms.map((room) => <div className="open-room" key={room.id}>
+      <section className="pricing-room-list" aria-labelledby="pricing-room-heading">
+        <div className="pricing-room-list-heading"><h3 className="detail-kicker" id="pricing-room-heading">Available spots by room</h3><a href="/rooms">Room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div>
+        <ol className="pricing-open-rooms">
+        {data.openRooms.map((room) => <li className="open-room" key={room.id}>
           <div className="open-room-text">
-            <span className="open-room-name">{room.shortName} <span className="open-room-floor">· {room.floorName}</span></span>
-            {room.pricePerPerson === null ? <span className="open-room-price">Price depends on the room</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
-            {room.description && <span className="open-room-note">{room.description}</span>}
+            <span className="open-room-name"><ArrowText>{room.shortName}</ArrowText> <span className="open-room-floor">· <ArrowText>{room.floorName}</ArrowText></span></span>
+            {room.pricePerPerson === null ? <span className="open-room-price">Price pending</span> : <span className="open-room-price">{roomPrice(room.pricePerPerson)} per person</span>}
+            {room.description && <span className="open-room-note"><ArrowText>{room.description}</ArrowText></span>}
           </div>
           <span className="open-room-count" aria-label={`${room.openCount} open ${room.openCount === 1 ? "spot" : "spots"}`}>
             <strong>{room.openCount}{" "}</strong>
             <span>{room.openCount === 1 ? "spot open" : "spots open"}</span>
           </span>
-        </div>)}
-      </div>
+        </li>)}
+        </ol>
+      </section>
     </div>
     <div className="pricing-records">
       <details className="detail-card service-agreement">
@@ -167,9 +177,9 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
         The open spots are all bunks, and the two bunk rooms are the bottom-left
         and bottom-right frames, so a guest reading the counts above can see the
         beds they would actually be claiming. */}
-    <figure className="chalet-gallery">
-      <figcaption>Inside the chalet</figcaption>
-      <img src="/chalet-rooms.webp" alt="Six photos of Chalet Falcon Lodge F: the lounge and fireplace, the living area onto the balcony, the master double, the children's quad bunk room, a double bedroom, and the bunk cabin." width={1536} height={1024} />
+    <figure className="chalet-gallery spots-room-photo">
+      <figcaption>Bunk room interior</figcaption>
+      <div className="spots-photo-crop"><img src="/chalet-rooms.webp" alt="Bunk beds in a room at Falcon Lodge F." width={1536} height={1024} /></div>
     </figure>
   </section>;
 }

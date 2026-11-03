@@ -3,6 +3,7 @@
 // cursor, status/detail recovery, settlement and the existing composer reducer.
 // Initial hydration/revalidation belongs to React Router, not edge's SPA cache.
 import { useEffect, useMemo, useReducer, useRef, useState, type ReactNode } from "react";
+import { ArrowDown } from "@phosphor-icons/react/ssr";
 import { useRevalidator } from "react-router";
 import type { ActivityEvent, ConversationChatCapability, ConversationDetails, ConversationSessionStateFrame, SessionEventRow, StreamDelta } from "@/lib/chat/contracts";
 import { CHAT_SEND_ACK_TIMEOUT_MS, chatUiReducer, initialChatUiState } from "@/lib/chat/chat-state";
@@ -374,7 +375,7 @@ export function ChatPanel({ initialConversation, selectedId = null, onConversati
     </> : children}
     <div className={`composer-shell${threadMode ? "" : " home-composer"}`}>
       {threadMode && !pinned && <div className="chat-jump-row">
-        <button type="button" className="chat-jump" onClick={scrollToLatest}>Jump to latest ↓</button>
+        <button type="button" className="chat-jump" onClick={scrollToLatest}>Jump to latest <ArrowDown size="1em" aria-hidden="true" /></button>
       </div>}
       {!threadMode ? <div className="home-composer-content">
         <h1 className="home-composer-heading" id="overview-heading">How can I help?</h1>

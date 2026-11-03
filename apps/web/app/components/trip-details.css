@@ -224,6 +224,48 @@
 .guest-copy-all:hover { color: var(--text); }
 .guest-copy-all:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 
+/* Planning chapters use open rules and short labels; data tables keep their
+   existing semantics and edit/copy behavior. */
+.food-plan-section + .food-plan-section { margin-top: 34px; }
+.food-plan-section > .detail-table-wrap { border: 0; border-block: 1px solid var(--border); border-radius: 0; background: transparent; }
+.chef-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 0; margin: 18px 0 28px; border-block: 1px solid var(--border); }
+.chef-stat { min-width: 0; padding: 12px 16px 14px 0; border: 0; border-radius: 0; background: transparent; }
+.chef-stat + .chef-stat { padding-left: 16px; border-left: 1px solid var(--border-subtle); }
+.chef-stat-value { font-size: clamp(16px, 2vw, 20px); overflow-wrap: anywhere; }
+.food-preferences-section > .detail-note { margin: 4px 0 12px; }
+.food-preferences-section .chef-dietary-card { position: relative; }
+
+.readiness-links { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 12px 0 26px; padding-block: 8px; border-block: 1px solid var(--border-subtle); }
+.readiness-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
+.readiness-links a:hover { color: var(--brand-dim); }
+.readiness-links a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.readiness-section > .detail-table-wrap { border: 0; border-block: 1px solid var(--border); border-radius: 0; background: transparent; }
+
+.resource-guide { border-top: 1px solid var(--border); }
+.resource-guide .link-section { margin: 0; padding: 0; }
+.resource-guide .link-section + .link-section { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
+.resource-section-heading { display: flex; align-items: baseline; gap: 14px; padding: 12px 0 4px; }
+.resource-section-heading > span { color: var(--brand-dim); font-size: 11px; font-variant-numeric: tabular-nums; }
+.resource-section-heading .detail-kicker { margin: 0; color: var(--text); font-size: 13px; }
+.resource-guide .link-list { overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.resource-guide .resource-link { padding: 10px 0 14px; border: 0; border-bottom: 1px solid var(--border-subtle); transition: color var(--motion-duration-fast) var(--motion-ease-standard); }
+.resource-guide .resource-link + .resource-link { border-top: 0; }
+.resource-guide .resource-link:hover { background: transparent; }
+
+.guest-directory-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 18px 0 8px; padding: 10px 0; border-block: 1px solid var(--border-subtle); }
+.guest-directory-heading > span { color: var(--text-faint); font-size: 11px; letter-spacing: .04em; }
+.guest-directory-heading h3 { margin: 0; font: 600 17px/1.3 var(--font-display); }
+.guest-directory .guest-list { overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.guest-directory .guest-link-entry:first-child { border-top: 1px solid var(--border-subtle); }
+.guest-directory .guest-link-entry .link-row { min-height: 66px; padding-inline: 0; }
+
+.faq-table-intro { display: flex; align-items: baseline; gap: 14px; margin: 12px 0 8px; padding: 10px 0; border-block: 1px solid var(--border-subtle); }
+.faq-table-intro > span { color: var(--brand-dim); font-size: 11px; font-variant-numeric: tabular-nums; }
+.faq-table-intro p { margin: 0; color: var(--text); font: 600 14px/1.3 var(--font-display); }
+.faq-chapter .faq-table-wrap { border-radius: 0; }
+.faq-chapter .faq-table { table-layout: fixed; }
+.faq-chapter .faq-table tbody th { font-weight: 600; }
+
 @media (prefers-reduced-motion: reduce) {
   .chalet-address, .link-row, .dietary-cell-edit, .dietary-copy-button { transition: none; }
 }
@@ -237,6 +279,15 @@
    rule and `tests/unit/mobile-css-convention.test.ts` for the check.
    ========================================================================== */
 @media (max-width: 859px) {
+  .chef-stats { grid-template-columns: 1fr; margin: 14px 0 24px; }
+  .chef-stat { padding: 10px 0; }
+  .chef-stat + .chef-stat { padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
+  .food-plan-section .detail-table-wrap, .readiness-section .detail-table-wrap { overflow: visible; }
+  .readiness-links { gap: 4px 18px; margin-bottom: 18px; }
+  .resource-guide .link-section + .link-section { margin-top: 20px; padding-top: 12px; }
+  .guest-directory-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
+  .guest-directory .guest-link-entry .link-row { min-height: 66px; }
+  .faq-chapter .faq-table { table-layout: fixed; }
   .open-room { column-gap: 14px; padding: 14px 0; }
   .open-room-count { min-width: 86px; padding-left: 12px; }
   .open-room-count strong { font-size: 38px; }

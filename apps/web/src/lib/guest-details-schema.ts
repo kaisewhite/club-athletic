@@ -28,6 +28,7 @@ export const guestDetailsSchema = z.object({
     .refine((value) => !value || normalizeInstagram(value) !== null, "Enter an Instagram handle or profile link."),
   dietaryNotes: cleanText(500, "Dietary restrictions").transform((value) => /^none\.?$/i.test(value) ? null : value),
   favoriteCocktails: cleanText(300, "Favorite cocktails").transform((value) => /^none\.?$/i.test(value) ? null : value),
+  roomId: cleanText(100, "Room choice"),
 }).strict();
 
 export const guestDetailsSubmissionSchema = guestDetailsSchema.extend({

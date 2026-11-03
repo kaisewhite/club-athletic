@@ -1,6 +1,9 @@
 import { useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
+import { useRevalidator } from "react-router";
 import { guestDetailsSchema } from "../../src/lib/guest-details-schema";
+import { formatRoomType } from "../lib/room-types";
+import { GuestInstagramLink } from "./guest-instagram-link";
 import "./guest-details.css";
 
 type GuestDetailsValues = {
@@ -11,16 +14,18 @@ type GuestDetailsValues = {
   instagramHandle: string;
   dietaryNotes: string;
   favoriteCocktails: string;
+  roomId: string;
 };
 type FieldName = keyof GuestDetailsValues;
-type ResponseBody = { ok: boolean; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean };
+type RoomOption = { id: string; name: string; shortName: string; type: string; floorName: string; openCount: number; occupants: { displayName: string; instagramUrl: string | null }[]; priceLabel: string | null; description: string | null };
+type ResponseBody = { ok: boolean; code?: string; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean };
 
 const fieldSchemas = guestDetailsSchema.shape;
 const fieldNamesByStep: Record<number, FieldName[]> = {
-  1: ["firstName", "lastName"], 2: ["phone"], 3: ["venmoHandle", "instagramHandle"],
-  4: ["dietaryNotes"], 5: ["favoriteCocktails"],
+  1: ["roomId"], 2: ["firstName", "lastName"], 3: ["phone"],
+  4: ["venmoHandle", "instagramHandle"], 5: ["dietaryNotes"], 6: ["favoriteCocktails"],
 };
-const stepNames = ["Your name", "Mobile / WhatsApp number", "Venmo & Instagram", "Dietary restrictions", "Cocktail favorites", "Payment & cancellation policy", "Trip details & group chat"];
+const stepNames = ["Select a room", "Your name", "Mobile / WhatsApp number", "Venmo & Instagram", "Dietary restrictions", "Cocktail favorites", "Payment & cancellation policy", "Trip details & group chat"];
 
 function errorText(error: unknown) {
   return fieldErrors(error).join(" ");
@@ -35,7 +40,8 @@ function validateField<Name extends FieldName>(name: Name, value: string) {
   return result.success ? undefined : result.error.issues[0]?.message ?? "Check this answer.";
 }
 
-export function GuestDetailsForm() {
+export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
+  const revalidator = useRevalidator();
   const [step, setStep] = useState(0);
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
@@ -44,7 +50,7 @@ export function GuestDetailsForm() {
   const honeypot = useRef<HTMLInputElement>(null);
   const form = useForm({
     defaultValues: {
-      firstName: "", lastName: "", phone: "", venmoHandle: "", instagramHandle: "", dietaryNotes: "", favoriteCocktails: "",
+      firstName: "", lastName: "", phone: "", venmoHandle: "", instagramHandle: "", dietaryNotes: "", favoriteCocktails: "", roomId: "",
     } satisfies GuestDetailsValues,
     onSubmit: async ({ value }) => {
       setBusy(true);
@@ -57,6 +63,10 @@ export function GuestDetailsForm() {
         });
         const result = await response.json() as ResponseBody;
         if (!response.ok || !result.ok) {
+          if (response.status === 409 && result.code === "ROOM_FULL") {
+            setStep(1);
+            await revalidator.revalidate();
+          }
           if (result.fieldErrors) {
             const firstError = Object.entries(result.fieldErrors).find(([, message]) => message);
             const target = firstError?.[0] as FieldName | undefined;
@@ -66,7 +76,7 @@ export function GuestDetailsForm() {
           return;
         }
         setFinished(true);
-        setStep(8);
+        setStep(9);
       } catch {
         setFormError("We couldn’t reach the server. Check your connection and try again.");
       } finally {
@@ -81,7 +91,8 @@ export function GuestDetailsForm() {
       await Promise.all(fields.map((name) => form.validateField(name, "blur")));
       const invalid = fields.find((name) => (form.getFieldMeta(name)?.errors.length ?? 0) > 0);
       if (invalid) {
-        document.getElementById(`guest-${invalid}`)?.focus();
+        if (invalid === "roomId") document.querySelector<HTMLInputElement>('input[name="roomId"]')?.focus();
+        else document.getElementById(`guest-${invalid}`)?.focus();
         return;
       }
     }
@@ -94,7 +105,7 @@ export function GuestDetailsForm() {
   const onNextKey = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void continueStep(); }
   };
-  const progress = step > 0 && step < 8 ? Math.round((step / 7) * 100) : 100;
+  const progress = step > 0 && step < 9 ? Math.round((step / 8) * 100) : 100;
 
   return <div className="guest-details-flow">
     {step === 0 && <section className="guest-details-card" aria-labelledby="guest-form-welcome">
@@ -104,15 +115,41 @@ export function GuestDetailsForm() {
       <button type="button" className="guest-details-primary" onClick={() => setStep(1)}>Start</button>
     </section>}
 
-    {step > 0 && step < 8 && <form className="guest-details-card" noValidate onSubmit={(event) => { event.preventDefault(); if (step === 7) void form.handleSubmit(); else void continueStep(); }}>
-      <div className="guest-details-progress" aria-label={`Step ${step} of 7`}>
-        <span className="guest-details-progress-label">{step <= 5 ? `Question ${step} of 5` : `Step ${step} of 7`}</span>
+    {step > 0 && step < 9 && <form className="guest-details-card" noValidate onSubmit={(event) => { event.preventDefault(); if (step === 8) void form.handleSubmit(); else void continueStep(); }}>
+      <div className="guest-details-progress" aria-label={step <= 6 ? `Question ${step} of 6` : `Step ${step} of 8`}>
+        <span className="guest-details-progress-label">{step <= 6 ? `Question ${step} of 6` : `Step ${step} of 8`}</span>
         <div className="guest-details-progress-track" role="progressbar" aria-valuemin={0} aria-valuemax={100} aria-valuenow={progress} aria-valuetext={stepNames[step - 1]}>
           <span style={{ width: `${progress}%` }} />
         </div>
       </div>
 
       {step === 1 && <section aria-labelledby="guest-question-title">
+        <h2 id="guest-question-title">Select a room</h2>
+        <p className="guest-details-copy">Choose a room with an open spot. You can see who is already assigned.</p>
+        <form.Field name="roomId" validators={{ onChange: ({ value }) => validateField("roomId", value), onBlur: ({ value }) => validateField("roomId", value) }}>{(field) => <fieldset className="guest-room-options" aria-describedby={field.state.meta.errors.length ? "guest-room-error" : undefined}>
+          <legend className="guest-room-legend">Available rooms</legend>
+          {rooms.filter((room) => room.openCount > 0).map((room) => <div className="guest-room-option" key={room.id}>
+            <label className="guest-room-option-choice">
+              <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => { clearAfterEdit(); field.handleChange(room.id); }} />
+              <span className="guest-room-option-content">
+                <span className="guest-room-option-heading"><strong>{room.name}</strong><span>{formatRoomType(room.type)}</span></span>
+                <span>{room.floorName}{room.priceLabel ? ` · ${room.priceLabel} per person` : ""}</span>
+                {room.description && <span>{room.description}</span>}
+                <span className="guest-room-open">{room.openCount} open {room.openCount === 1 ? "spot" : "spots"}</span>
+              </span>
+            </label>
+            <div className="guest-room-occupants">
+              <span>Currently assigned</span>
+              {room.occupants.length
+                ? <ul>{room.occupants.map((guest) => <li key={guest.displayName}><GuestInstagramLink displayName={guest.displayName} instagramUrl={guest.instagramUrl} /></li>)}</ul>
+                : <span className="guest-room-empty">No one yet</span>}
+            </div>
+          </div>)}
+          {field.state.meta.errors.length > 0 && <span className="guest-details-field-error" id="guest-room-error">{errorText(field.state.meta.errors)}</span>}
+        </fieldset>}</form.Field>
+      </section>}
+
+      {step === 2 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Your name</h2>
         <p className="guest-details-copy">Enter your first and last name.</p>
         <div className="guest-details-name-fields">
@@ -121,13 +158,13 @@ export function GuestDetailsForm() {
         </div>
       </section>}
 
-      {step === 2 && <section aria-labelledby="guest-question-title">
+      {step === 3 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Mobile / WhatsApp number</h2>
         <p className="guest-details-copy">Use +country code for international numbers. US numbers use the default country code.</p>
         <form.Field name="phone" validators={{ onBlur: ({ value }) => validateField("phone", value) }}>{(field) => <FieldInput field={field} id="guest-phone" label="Mobile / WhatsApp number" type="tel" autoComplete="tel" placeholder="(555) 555-5555" onEdit={clearAfterEdit} />}</form.Field>
       </section>}
 
-      {step === 3 && <section aria-labelledby="guest-question-title">
+      {step === 4 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Venmo &amp; Instagram</h2>
         <p className="guest-details-copy">Add your payment and social handles.</p>
         <div className="guest-details-name-fields">
@@ -136,26 +173,26 @@ export function GuestDetailsForm() {
         </div>
       </section>}
 
-      {step === 4 && <section aria-labelledby="guest-question-title">
+      {step === 5 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Any food allergies or dietary restrictions?</h2>
         <p className="guest-details-copy">Please include allergies, dietary restrictions, or anything the chef should know. If none, write “None.”</p>
         <form.Field name="dietaryNotes" validators={{ onBlur: ({ value }) => validateField("dietaryNotes", value) }}>{(field) => <FieldTextArea field={field} id="guest-dietaryNotes" label="Dietary restrictions" maxLength={500} onEdit={clearAfterEdit} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
-      {step === 5 && <section aria-labelledby="guest-question-title">
+      {step === 6 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">What are your favorite cocktails?</h2>
         <p className="guest-details-copy">List a few favorites so we can plan drinks for the chalet. Examples: Espresso Martini, Hugo Spritz, Negroni, Margarita, Aperol Spritz, Old Fashioned, Gin Gimlet, French 75—or anything else.</p>
         <form.Field name="favoriteCocktails" validators={{ onBlur: ({ value }) => validateField("favoriteCocktails", value) }}>{(field) => <FieldTextArea field={field} id="guest-favoriteCocktails" label="Favorite cocktails" maxLength={300} onEdit={clearAfterEdit} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
-      {step === 6 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
-        <p className="guest-details-eyebrow">Question 6</p>
+      {step === 7 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
+        <p className="guest-details-eyebrow">Step 7</p>
         <h2 id="guest-question-title">Payment &amp; cancellation policy</h2>
         <p>Payment is due in full — there is no deposit. You may drop out through November 15 for a full refund. After November 15, if you can no longer attend, you’ll need to find your own replacement to take over your spot/payment.</p>
       </section>}
 
-      {step === 7 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
-        <p className="guest-details-eyebrow">Question 7</p>
+      {step === 8 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
+        <p className="guest-details-eyebrow">Step 8</p>
         <h2 id="guest-question-title">Trip details &amp; group chat</h2>
         <p>Everything you need for the trip — including flight guidance, shuttle timing, chalet details, and FAQs — is here:</p>
         <p><a href="https://meribel.clubathletic.org/" target="_blank" rel="noopener noreferrer">https://meribel.clubathletic.org/</a></p>
@@ -167,7 +204,7 @@ export function GuestDetailsForm() {
       {formError && <p className="guest-details-error" role="alert">{formError}</p>}
       <div className="guest-details-actions">
         <button type="button" className="guest-details-back" onClick={back} disabled={busy}>Back</button>
-        {step < 7 ? <button key="continue" type="button" className="guest-details-primary" onClick={() => void continueStep()}>Continue</button>
+        {step < 8 ? <button key="continue" type="button" className="guest-details-primary" onClick={() => void continueStep()}>Continue</button>
           : <button key="finish" type="submit" className="guest-details-primary" disabled={busy}>{busy ? "Sending…" : "Finish"}</button>}
       </div>
     </form>}

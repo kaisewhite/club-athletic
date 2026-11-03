@@ -18,6 +18,8 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <div className="chef-stat"><div className="chef-stat-label">Last dinner</div><div className="chef-stat-value">{data.lastDinner ? tripDate(data.lastDinner.date) : "Not scheduled"}</div></div>
       <div className="chef-stat"><div className="chef-stat-label">Last breakfast</div><div className="chef-stat-value">{data.lastBreakfast ? tripDate(data.lastBreakfast.date) : "Not scheduled"}</div></div>
     </div>
+    <section className="food-plan-section" aria-labelledby="chef-meals-heading">
+      <div className="travel-chapter-heading"><span>01</span><h3 id="chef-meals-heading">Meal schedule</h3></div>
     {/* `chef-meal-table` and the `data-meal` labels are hooks for the mobile
         one-row-per-day layout in `trip-details.css` (TODO §2.15). They add no
         desktop styling of their own: above the 860px seam this is the same
@@ -26,8 +28,10 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
       <thead><tr><th scope="col">Day</th><th scope="col">Breakfast</th><th scope="col">Dinner</th></tr></thead>
       <tbody>{data.scheduleDays.map((day) => <tr key={day.id}><th scope="row">{day.dow} {day.dayNumber}</th><td data-meal="Breakfast">{mealLabel[day.breakfast]}</td><td data-meal="Dinner">{mealLabel[day.dinner]}</td></tr>)}</tbody>
     </table></div>
+    </section>
+    <section className="food-plan-section food-preferences-section" aria-labelledby="food-preferences-heading">
+    <div className="travel-chapter-heading"><span>02</span><h3 id="food-preferences-heading">Guest food preferences</h3></div>
     <p className="detail-note">Add any allergies or dietary needs below before the trip.</p>
-    <h3 className="dietary-heading">Guest food preferences</h3>
     <div className="detail-table-wrap chef-dietary-card">
       <DietaryCopyButton guests={data.guests.map(({ displayName, dietaryNotes, favoriteCocktails }) => ({ displayName, dietaryNotes, favoriteCocktails }))} />
       <table className="detail-table" aria-label="Guest food preferences">
@@ -38,5 +42,6 @@ export default function Chef({ loaderData: data }: Route.ComponentProps) {
         <DietaryGuestAdd />
       </div>
     </div>
+    </section>
   </section>;
 }

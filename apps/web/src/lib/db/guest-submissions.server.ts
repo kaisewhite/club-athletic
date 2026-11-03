@@ -5,7 +5,7 @@ import { instagramProfileUrl, type GuestDetails } from "../guest-details-schema"
 
 const TRIP_KEY = "meribel-2027";
 
-type SubmissionTransaction = Pick<Prisma.TransactionClient, "trip" | "guest" | "guestSubmission" | "auditLog">;
+type SubmissionTransaction = Pick<Prisma.TransactionClient, "trip" | "guest" | "guestSubmission" | "auditLog" | "spot">;
 type SubmissionDatabase = {
   transaction<T>(operation: (tx: SubmissionTransaction) => Promise<T>): Promise<T>;
   findSubmission(submissionId: string): Promise<{ guestId: string } | null>;
@@ -17,6 +17,10 @@ export class GuestDetailsNameMatchError extends Error {
   constructor(readonly matchCount: number) {
     super("The name matches more than one guest. Contact the organizer to update your details.");
   }
+}
+
+export class GuestDetailsRoomFullError extends Error {
+  constructor() { super("That room no longer has an open spot. Choose another room."); }
 }
 
 const withSubmissionDatabase: WithSubmissionDatabase = async (operation) => {
@@ -78,6 +82,12 @@ export async function saveGuestDetails(
           const guest = created
             ? await tx.guest.create({ data: { id: create(), tripId: trip.id, ...data, status: "CONFIRMED", createdVia: "WEBSITE" }, select: { id: true } })
             : await tx.guest.update({ where: { id: matches[0]!.id }, data, select: { id: true } });
+          const oldSpot = await tx.spot.findFirst({ where: { guestId: guest.id, status: "ASSIGNED" }, select: { id: true } });
+          if (oldSpot) await tx.spot.updateMany({ where: { id: oldSpot.id, guestId: guest.id, status: "ASSIGNED" }, data: { status: "AVAILABLE", guestId: null } });
+          const availableSpot = await tx.spot.findFirst({ where: { roomId: details.roomId, status: "AVAILABLE" }, orderBy: { index: "asc" }, select: { id: true } });
+          if (!availableSpot) throw new GuestDetailsRoomFullError();
+          const claimed = await tx.spot.updateMany({ where: { id: availableSpot.id, roomId: details.roomId, status: "AVAILABLE" }, data: { status: "ASSIGNED", guestId: guest.id } });
+          if (claimed.count !== 1) throw new GuestDetailsRoomFullError();
           await tx.guestSubmission.create({ data: { submissionId, source: "website", sourceRef: null, guestId: guest.id, submittedAt: now() } });
           await tx.auditLog.create({ data: {
             id: create(), action: created ? "GUEST_DETAILS_CREATE" : "GUEST_DETAILS_UPDATE", entity: "Guest", entityId: guest.id,

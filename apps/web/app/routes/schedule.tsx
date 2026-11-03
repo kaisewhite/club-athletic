@@ -1,7 +1,10 @@
+import { ArrowRight } from "@phosphor-icons/react/ssr";
 import { getSchedule } from "@/lib/db/repository.server";
 import { Link } from "react-router";
 import { dayEntries } from "../lib/schedule-display";
 import { ScheduleCopyButton } from "../components/schedule-copy-button";
+import { ArrowText } from "../components/arrow-text";
+import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/schedule";
 
 export async function loader() {
@@ -11,11 +14,15 @@ export async function loader() {
 export default function Schedule({ loaderData }: Route.ComponentProps) {
   return (
     <section aria-labelledby="schedule-heading">
-      <h2 id="schedule-heading">The week<span className="text-accent">.</span></h2>
-      <p className="page-sub">Events and chef meals. Open days are yours to plan.</p>
-      <div className="schedule-list">
+      <PageHeading id="schedule-heading" sub="Events and chef meals. Open days are yours to plan.">The week</PageHeading>
+      <div className="schedule-guide-note">
+        <span className="schedule-guide-mark" aria-hidden="true"></span>
+        <p>Follow the fixed plans below. Anything marked TBD is still to be confirmed.</p>
+        <Link to="/flights">Plan your arrival <ArrowRight size="1em" aria-hidden="true" /></Link>
+      </div>
+      <div className="schedule-list" aria-label="Daily schedule">
         {loaderData.schedule.map((day) => <div className="schedule-row" key={day.id}>
-          <div><div className="day-label">{day.dow}</div><div className="schedule-day-number">{day.dayNumber}</div></div>
+          <div className="schedule-date"><div className="day-label">{day.dow}</div><div className="schedule-day-number">{day.dayNumber}</div></div>
           {/* Breakfast, the event and dinner are the same kind of thing — something
               happening at a time — so they get the same row shape, and a day
               lists only the ones that are happening (see dayEntries). Owner,
@@ -25,7 +32,7 @@ export default function Schedule({ loaderData }: Route.ComponentProps) {
           <ol className="schedule-entries">
             {dayEntries(day).map((entry) => <li key={entry.key} className="schedule-entry">
               <span className="schedule-time">{entry.time ?? "TBD"}</span>
-              <span className="schedule-entry-title"><span className="schedule-entry-name">{entry.title}</span>{entry.detail && <span className="schedule-entry-detail">{entry.detail}</span>}{entry.href && <Link className="schedule-entry-link" to={entry.href}>See early-arrival options on Flights →</Link>}</span>
+              <span className="schedule-entry-title"><span className="schedule-entry-name"><ArrowText>{entry.title}</ArrowText></span>{entry.detail && <span className="schedule-entry-detail"><ArrowText>{entry.detail}</ArrowText></span>}{entry.href && <Link className="schedule-entry-link" to={entry.href}>See early-arrival options on Flights <ArrowRight size="1em" aria-hidden="true" /></Link>}</span>
             </li>)}
           </ol>
           <ScheduleCopyButton dayLabel={`${day.dow} ${day.dayNumber} schedule`} text={[

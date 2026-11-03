@@ -1,3 +1,4 @@
+import { X } from "@phosphor-icons/react/ssr";
 import { useEffect, useState, type ReactNode } from "react";
 import { useDropzone } from "react-dropzone";
 import { UPLOAD_ACCEPT, UPLOAD_ERRORS, UPLOAD_FILE_BYTES, publicAttachment } from "@/lib/chat/upload-policy";
@@ -46,7 +47,7 @@ export function ChatAttachment({ file, disabled, onChange, children }: {
     {file && <div className="chat-attachment-chip">
       {preview && <img src={preview} alt="Selected attachment preview" />}
       <span>{file.type === "application/pdf" ? "attachment.pdf" : "Image attachment"}</span>
-      <button type="button" disabled={disabled} onClick={() => { setError(null); onChange(null); }} aria-label="Remove attachment">×</button>
+      <button type="button" disabled={disabled} onClick={() => { setError(null); onChange(null); }} aria-label="Remove attachment"><X size="1em" aria-hidden="true" /></button>
     </div>}
     {error && <p role="alert" className="chat-notice">{error}</p>}
     {isDragActive && <p role="status" className="chat-notice">Drop one image or PDF here</p>}

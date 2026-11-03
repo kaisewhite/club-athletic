@@ -116,7 +116,7 @@ it("keeps the mobile and desktop chrome free of redundant trip metadata", async 
   expect(headings).toHaveLength(1);
   expect(headings[0]!.id).toBe("trip-welcome-title");
   expect(headings[0]!.textContent).toContain("Three Valleys.");
-  expect(container.querySelector('.home-welcome a[href="/faq"]')?.textContent).toContain("See common questions");
+  expect(container.querySelector('.trip-chapters a[href="/faq"]')?.textContent).toContain("Trip questions");
 });
 
 it("starts a fresh chat view on a document load of /chat", async () => {

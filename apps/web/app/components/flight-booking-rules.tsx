@@ -1,6 +1,7 @@
 import type { CSSProperties } from "react";
 import type { FlightRules } from "@/lib/db/repository.server";
 import { tripDate } from "../lib/schedule-display";
+import { ArrowText } from "./arrow-text";
 
 const kicker: CSSProperties = { fontSize: 11, letterSpacing: ".1em", textTransform: "uppercase", color: "var(--text)", fontWeight: 700, margin: 0 };
 const time: CSSProperties = { fontFamily: "var(--font-display)", fontWeight: 700, fontSize: 56, lineHeight: 1, letterSpacing: "-.04em", margin: "10px 0 4px" };
@@ -27,14 +28,14 @@ export function FlightBookingRules({ rules }: { rules: FlightRules }) {
       <h3 className="flight-rule-kicker" style={kicker}>Getting there · {tripDate(rules.startDate, "long")}</h3>
       <div style={time}>{rules.arrivalCutoff}</div>
       <div style={rule}>Your flight needs to land in Geneva by {spoken(rules.arrivalCutoff)}</div>
-      <p style={copy}>Aim for {spoken(rules.arrivalTarget)} or earlier for bags and delays.{rules.inbound && <> Shuttle leaves {rules.inbound.pickup} {rules.inbound.from}–{rules.inbound.to}.</>}</p>
+      <p style={copy}>Aim for {spoken(rules.arrivalTarget)} or earlier for bags and delays.{rules.inbound && <> Shuttle leaves <ArrowText>{rules.inbound.pickup}</ArrowText> <ArrowText>{rules.inbound.from}</ArrowText>–<ArrowText>{rules.inbound.to}</ArrowText>.</>}</p>
       <p style={note}>Land later and you'll likely miss it — plan your own transfer.</p>
     </article>
     <article className="detail-card">
       <h3 className="flight-rule-kicker" style={kicker}>Going home · {tripDate(rules.endDate, "long")}</h3>
       <div style={time}>{rules.returnCutoff}</div>
       <div style={rule}>Book a flight leaving Geneva at {spoken(rules.returnCutoff)} or later</div>
-      <p style={copy}>{rules.outbound && <>Chalet pickup {rules.outbound.from === rules.outbound.to ? rules.outbound.from : `${rules.outbound.from}–${rules.outbound.to}`}, ~{hours(rules.outbound.durationMinutes)} to GVA, then check-in and security.</>}</p>
+      <p style={copy}>{rules.outbound && <>Chalet pickup <ArrowText>{rules.outbound.from === rules.outbound.to ? rules.outbound.from : `${rules.outbound.from}–${rules.outbound.to}`}</ArrowText>, ~{hours(rules.outbound.durationMinutes)} to GVA, then check-in and security.</>}</p>
       <p style={note}>Anything earlier and you won't make it through security in time.</p>
     </article>
     <article className="detail-card">
@@ -43,8 +44,8 @@ export function FlightBookingRules({ rules }: { rules: FlightRules }) {
       <p style={{ ...copy, marginBottom: 12 }}>Fly Thursday evening, land Friday morning, sleep by the airport, meet the shuttle Saturday. Flights in the recommendations below.</p>
       <div style={{ fontSize: 13, display: "flex", flexDirection: "column", gap: 6 }}>
         {rules.hotels.map((hotel) => <div key={hotel.id}>
-          <a href={hotel.href} target="_blank" rel="noopener noreferrer">{hotel.label.replace(/\s*\(Friday night\)$/, "")}</a>
-          {hotel.note && <span style={{ color: "var(--text-dim)" }}> — {hotel.note}</span>}
+          <a href={hotel.href} target="_blank" rel="noopener noreferrer"><ArrowText>{hotel.label.replace(/\s*\(Friday night\)$/, "")}</ArrowText></a>
+          {hotel.note && <span style={{ color: "var(--text-dim)" }}> — <ArrowText>{hotel.note}</ArrowText></span>}
         </div>)}
       </div>
     </article>

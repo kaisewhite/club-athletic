@@ -1,3 +1,4 @@
+import { ArrowRight } from "@phosphor-icons/react/ssr";
 import { useEffect, useRef } from "react";
 import { Link } from "react-router";
 import "./trip-info.css";
@@ -30,7 +31,7 @@ export function TripInfo() {
             Ski days, après, chef-prepared meals, and plans with the group, based at Falcon Lodge F.
           </p>
           <div className="trip-welcome-actions">
-            <Link to="/spots" className="trip-welcome-primary">See rooms &amp; prices <span aria-hidden="true">→</span></Link>
+            <Link to="/spots" className="trip-welcome-primary">See rooms &amp; prices <span aria-hidden="true"><ArrowRight size="1em" /></span></Link>
             <Link to="/chat" className="trip-welcome-secondary">Ask the trip guide</Link>
           </div>
         </div>

@@ -8,6 +8,28 @@
 .guest-details-progress-track { height: 4px; overflow: hidden; background: var(--surface-alt); }
 .guest-details-progress-track span { display: block; height: 100%; background: var(--brand); transition: width 180ms ease-out; }
 .guest-details-name-fields { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.guest-room-options { display: grid; min-width: 0; margin: 0; padding: 0; border: 0; }
+.guest-room-legend { margin-bottom: 4px; color: var(--text-dim); font-size: 13px; }
+.guest-room-option { display: grid; gap: 10px; padding: 16px 0 16px 14px; border-bottom: 1px solid var(--border-subtle); border-left: 2px solid transparent; color: var(--text-dim); font-size: 13px; line-height: 1.5; }
+.guest-room-option:has(input:checked) { border-left-color: var(--brand); }
+.guest-room-option-choice { display: flex; align-items: flex-start; gap: 12px; min-height: 44px; cursor: pointer; }
+.guest-room-option-choice input { width: 20px; height: 20px; margin: 2px 0 0; accent-color: var(--brand); flex: 0 0 auto; }
+.guest-room-option-choice input:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+.guest-room-option-content { display: grid; gap: 3px; }
+.guest-room-option-heading { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; color: var(--text); }
+.guest-room-option-heading strong { font: 700 17px/1.25 var(--font-display); }
+.guest-room-option-heading span { color: var(--text-dim); font-size: 13px; }
+.guest-room-open { color: var(--brand-dim); font-weight: 600; }
+.guest-room-occupants { display: grid; gap: 4px; padding-left: 32px; }
+.guest-room-occupants > span:first-child { color: var(--text-dim); font-size: 12px; }
+.guest-room-occupants ul { margin: 0; padding-left: 18px; color: var(--text); list-style: disc; }
+.guest-room-occupants li { min-height: 28px; }
+.guest-room-occupants li::marker { color: var(--brand-dim); }
+.guest-room-empty { color: var(--text-dim); }
+.guest-room-occupants .guest-instagram-link, .guest-room-occupants .guest-instagram-label { display: inline-flex; align-items: center; gap: .35em; min-height: 28px; color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
+.guest-room-occupants .guest-instagram-link:hover { color: var(--text); text-decoration-color: var(--accent); }
+.guest-room-occupants .guest-instagram-link:focus-visible { outline: 2px solid var(--accent); outline-offset: 3px; border-radius: 2px; }
+.guest-room-occupants .guest-instagram-arrow { display: inline; flex: none; color: var(--brand-dim); }
 .guest-details-label { display: grid; align-content: start; gap: 7px; margin-bottom: 18px; color: var(--text); font-size: 14px; font-weight: 600; }
 .guest-details-label input, .guest-details-label textarea { width: 100%; min-height: 48px; padding: 11px 12px; border: 1px solid var(--border-strong); border-radius: var(--radius-sm); background: var(--surface); color: var(--text); font: inherit; font-size: 16px; font-weight: 400; }
 .guest-details-label textarea { min-height: 132px; resize: vertical; line-height: 1.5; }
