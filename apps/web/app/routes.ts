@@ -11,6 +11,8 @@ export default [
   route("api/guests/dietary", "routes/api.guests.dietary.ts"),
   route("api/guest-avatars/:handle", "routes/api.guest-avatars.ts"),
   route("api/guest-details", "routes/api.guest-details.ts"),
+  route("api/flight-details", "routes/api.flight-details.ts"),
+  route("api/flight-lookup", "routes/api.flight-lookup.ts"),
   route("api/chat/conversations", "routes/api.chat.conversations.ts"),
   route("api/chat/conversations/:conversationId", "routes/api.chat.conversation.ts"),
   route("api/chat/conversations/:conversationId/status", "routes/api.chat.status.ts"),

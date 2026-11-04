@@ -30,6 +30,7 @@ export type SpotStatus = (typeof SpotStatus)[keyof typeof SpotStatus]
 
 
 export const GuestStatus = {
+  PENDING: 'PENDING',
   CONFIRMED: 'CONFIRMED',
   INVITED: 'INVITED',
   WAITLIST: 'WAITLIST',

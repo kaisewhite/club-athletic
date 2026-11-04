@@ -64,7 +64,7 @@ export async function getFlightTable(tripKey = DEFAULT_TRIP_KEY) {
         startDate: true, endDate: true, timezone: true,
         flightArrivalTarget: true, flightArrivalCutoff: true, flightReturnCutoff: true,
         guests: {
-          orderBy: [...guestOrder], select: {
+          where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: {
             ...guestIdentity,
             flights: {
               where: { supersededById: null, confirmedByGuest: true },
@@ -300,6 +300,7 @@ export async function getAdminGuests(tripKey = DEFAULT_TRIP_KEY) {
             id: true, firstName: true, lastName: true, displayName: true, status: true,
             instagramUrl: true, email: true, phone: true, venmoHandle: true, dietaryNotes: true, favoriteCocktails: true,
             spot: { select: { index: true, room: { select: { name: true } } } },
+            preferredRoom: { select: { name: true } },
             tasks: { orderBy: { type: "asc" }, select: { id: true, type: true, done: true, completedAt: true, notes: true } },
             flights: {
               where: { supersededById: null }, orderBy: { direction: "asc" },

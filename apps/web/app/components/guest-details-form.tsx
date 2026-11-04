@@ -1,4 +1,4 @@
-import { useRef, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useForm } from "@tanstack/react-form";
 import { useRevalidator } from "react-router";
 import { guestDetailsSchema } from "../../src/lib/guest-details-schema";
@@ -20,12 +20,16 @@ type FieldName = keyof GuestDetailsValues;
 type RoomOption = { id: string; name: string; shortName: string; type: string; floorName: string; openCount: number; occupants: { displayName: string; instagramUrl: string | null }[]; priceLabel: string | null; description: string | null };
 type ResponseBody = { ok: boolean; code?: string; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean };
 
+function isResponseBody(value: unknown): value is ResponseBody {
+  return typeof value === "object" && value !== null && "ok" in value && typeof value.ok === "boolean";
+}
+
 const fieldSchemas = guestDetailsSchema.shape;
 const fieldNamesByStep: Record<number, FieldName[]> = {
-  1: ["roomId"], 2: ["firstName", "lastName"], 3: ["phone"],
+  1: ["firstName", "lastName"], 2: ["roomId"], 3: ["phone"],
   4: ["venmoHandle", "instagramHandle"], 5: ["dietaryNotes"], 6: ["favoriteCocktails"],
 };
-const stepNames = ["Select a room", "Your name", "Mobile / WhatsApp number", "Venmo & Instagram", "Dietary restrictions", "Cocktail favorites", "Payment & cancellation policy", "Trip details & group chat"];
+const stepNames = ["Your name", "Select a room", "Mobile / WhatsApp number", "Venmo & Instagram", "Dietary restrictions", "Cocktail favorites", "Payment & cancellation policy", "Trip details & group chat"];
 
 function errorText(error: unknown) {
   return fieldErrors(error).join(" ");
@@ -45,9 +49,58 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   const [step, setStep] = useState(0);
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
   const [finished, setFinished] = useState(false);
   const submissionId = useRef<string | null>(null);
+  const timers = useRef(new Map<FieldName, ReturnType<typeof setTimeout>>());
+  const latestValues = useRef(new Map<FieldName, string>());
+  const requests = useRef(new Map<FieldName, Promise<boolean>>());
+  const saveQueue = useRef(Promise.resolve());
   const honeypot = useRef<HTMLInputElement>(null);
+  useEffect(() => {
+    const key = "club-athletic-guest-details-submission";
+    try {
+      const stored = sessionStorage.getItem(key);
+      submissionId.current = stored && /^[0-9a-f-]{36}$/i.test(stored) ? stored : crypto.randomUUID();
+      sessionStorage.setItem(key, submissionId.current);
+    } catch { submissionId.current = crypto.randomUUID(); }
+    return () => { for (const timer of timers.current.values()) clearTimeout(timer); };
+  }, []);
+
+  const persistField = (name: FieldName): Promise<boolean> => {
+    const value = latestValues.current.get(name);
+    if (value === undefined) return Promise.resolve(true);
+    const active = requests.current.get(name);
+    if (active) return active.then(() => latestValues.current.get(name) === value ? true : persistField(name));
+    const request = saveQueue.current.then(() => fetch("/api/guest-details", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "field", submissionId: submissionId.current, field: name, value }) }))
+      .then(async (response) => { const payload: unknown = await response.json().catch(() => null); return response.ok && isResponseBody(payload) && payload.ok; })
+      .catch(() => false)
+      .then((ok) => {
+        if (requests.current.get(name) === request) requests.current.delete(name);
+        if (ok && latestValues.current.get(name) === value) latestValues.current.delete(name);
+        setSaveState(ok ? (latestValues.current.size ? "saving" : "saved") : "error");
+        return ok;
+      });
+    saveQueue.current = request.then(() => undefined, () => undefined);
+    requests.current.set(name, request);
+    return request;
+  };
+  const scheduleAutosave = (name: FieldName, value: string, immediate = false) => {
+    latestValues.current.set(name, value);
+    const old = timers.current.get(name);
+    if (old) clearTimeout(old);
+    setSaveState("saving");
+    if (immediate) { void persistField(name); return; }
+    timers.current.set(name, setTimeout(() => { timers.current.delete(name); void persistField(name); }, 500));
+  };
+  const flushFields = async (fields: FieldName[]) => {
+    for (const name of fields) {
+      const timer = timers.current.get(name);
+      if (timer) { clearTimeout(timer); timers.current.delete(name); }
+    }
+    const results = await Promise.all(fields.map((name) => persistField(name)));
+    return results.every(Boolean);
+  };
   const form = useForm({
     defaultValues: {
       firstName: "", lastName: "", phone: "", venmoHandle: "", instagramHandle: "", dietaryNotes: "", favoriteCocktails: "", roomId: "",
@@ -55,16 +108,26 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
     onSubmit: async ({ value }) => {
       setBusy(true);
       setFormError("");
-      submissionId.current ??= crypto.randomUUID();
       try {
+        submissionId.current ??= crypto.randomUUID();
         const response = await fetch("/api/guest-details", {
           method: "POST", headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ ...value, submissionId: submissionId.current, website: honeypot.current?.value ?? "" }),
         });
-        const result = await response.json() as ResponseBody;
+        let payload: unknown;
+        try { payload = await response.json(); }
+        catch {
+          setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
+          return;
+        }
+        if (!isResponseBody(payload)) {
+          setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
+          return;
+        }
+        const result = payload;
         if (!response.ok || !result.ok) {
           if (response.status === 409 && result.code === "ROOM_FULL") {
-            setStep(1);
+            setStep(2);
             await revalidator.revalidate();
           }
           if (result.fieldErrors) {
@@ -77,8 +140,9 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
         }
         setFinished(true);
         setStep(9);
+        try { sessionStorage.removeItem("club-athletic-guest-details-submission"); } catch { /* storage may be unavailable */ }
       } catch {
-        setFormError("We couldn’t reach the server. Check your connection and try again.");
+        setFormError("We couldn’t reach the server. Your answers are still here; check your connection and try again.");
       } finally {
         setBusy(false);
       }
@@ -95,13 +159,19 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
         else document.getElementById(`guest-${invalid}`)?.focus();
         return;
       }
+      if (!await flushFields(fields)) {
+        setFormError("This answer has not reached the database yet. Check your connection and try again.");
+        return;
+      }
     }
     setFormError("");
     setStep((current) => current + 1);
   };
 
   const back = () => { setFormError(""); setStep((current) => Math.max(0, current - 1)); };
-  const clearAfterEdit = () => { setFormError(""); if (formError) submissionId.current = null; };
+  const clearAfterEdit = () => { setFormError(""); };
+  const onFieldEdit = (name: FieldName, value: string) => { clearAfterEdit(); scheduleAutosave(name, value); };
+  const onFieldBlur = (name: FieldName, value: string) => { scheduleAutosave(name, value, true); };
   const onNextKey = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void continueStep(); }
   };
@@ -124,13 +194,22 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       </div>
 
       {step === 1 && <section aria-labelledby="guest-question-title">
+        <h2 id="guest-question-title">Your name</h2>
+        <p className="guest-details-copy">Enter your first name and, if you use one, your last name.</p>
+        <div className="guest-details-name-fields">
+          <form.Field name="firstName" validators={{ onBlur: ({ value }) => validateField("firstName", value) }}>{(field) => <FieldInput field={field} id="guest-firstName" label="First name" autoComplete="given-name" onEdit={(value) => onFieldEdit("firstName", value)} onBlur={(value) => onFieldBlur("firstName", value)} />}</form.Field>
+          <form.Field name="lastName" validators={{ onBlur: ({ value }) => validateField("lastName", value) }}>{(field) => <FieldInput field={field} id="guest-lastName" label="Last name (optional)" autoComplete="family-name" onEdit={(value) => onFieldEdit("lastName", value)} onBlur={(value) => onFieldBlur("lastName", value)} />}</form.Field>
+        </div>
+      </section>}
+
+      {step === 2 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Select a room</h2>
         <p className="guest-details-copy">Choose a room with an open spot. You can see who is already assigned.</p>
         <form.Field name="roomId" validators={{ onChange: ({ value }) => validateField("roomId", value), onBlur: ({ value }) => validateField("roomId", value) }}>{(field) => <fieldset className="guest-room-options" aria-describedby={field.state.meta.errors.length ? "guest-room-error" : undefined}>
           <legend className="guest-room-legend">Available rooms</legend>
           {rooms.filter((room) => room.openCount > 0).map((room) => <div className="guest-room-option" key={room.id}>
             <label className="guest-room-option-choice">
-              <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => { clearAfterEdit(); field.handleChange(room.id); }} />
+              <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => { clearAfterEdit(); field.handleChange(room.id); scheduleAutosave("roomId", room.id); }} />
               <span className="guest-room-option-content">
                 <span className="guest-room-option-heading"><strong>{room.name}</strong><span>{formatRoomType(room.type)}</span></span>
                 <span>{room.floorName}{room.priceLabel ? ` · ${room.priceLabel} per person` : ""}</span>
@@ -149,40 +228,31 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
         </fieldset>}</form.Field>
       </section>}
 
-      {step === 2 && <section aria-labelledby="guest-question-title">
-        <h2 id="guest-question-title">Your name</h2>
-        <p className="guest-details-copy">Enter your first and last name.</p>
-        <div className="guest-details-name-fields">
-          <form.Field name="firstName" validators={{ onBlur: ({ value }) => validateField("firstName", value) }}>{(field) => <FieldInput field={field} id="guest-firstName" label="First name" autoComplete="given-name" onEdit={clearAfterEdit} />}</form.Field>
-          <form.Field name="lastName" validators={{ onBlur: ({ value }) => validateField("lastName", value) }}>{(field) => <FieldInput field={field} id="guest-lastName" label="Last name" autoComplete="family-name" onEdit={clearAfterEdit} />}</form.Field>
-        </div>
-      </section>}
-
       {step === 3 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Mobile / WhatsApp number</h2>
         <p className="guest-details-copy">Use +country code for international numbers. US numbers use the default country code.</p>
-        <form.Field name="phone" validators={{ onBlur: ({ value }) => validateField("phone", value) }}>{(field) => <FieldInput field={field} id="guest-phone" label="Mobile / WhatsApp number" type="tel" autoComplete="tel" placeholder="(555) 555-5555" onEdit={clearAfterEdit} />}</form.Field>
+        <form.Field name="phone" validators={{ onBlur: ({ value }) => validateField("phone", value) }}>{(field) => <FieldInput field={field} id="guest-phone" label="Mobile / WhatsApp number" type="tel" autoComplete="tel" placeholder="(555) 555-5555" onEdit={(value) => onFieldEdit("phone", value)} onBlur={(value) => onFieldBlur("phone", value)} />}</form.Field>
       </section>}
 
       {step === 4 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Venmo &amp; Instagram</h2>
         <p className="guest-details-copy">Add your payment and social handles.</p>
         <div className="guest-details-name-fields">
-          <form.Field name="venmoHandle" validators={{ onBlur: ({ value }) => validateField("venmoHandle", value) }}>{(field) => <FieldInput field={field} id="guest-venmoHandle" label="Venmo handle" description="Include the @ if you use one." autoComplete="off" onEdit={clearAfterEdit} />}</form.Field>
-          <form.Field name="instagramHandle" validators={{ onBlur: ({ value }) => validateField("instagramHandle", value) }}>{(field) => <FieldInput field={field} id="guest-instagramHandle" label="Instagram handle (optional)" description="Include the @ if you use one." autoComplete="off" onEdit={clearAfterEdit} />}</form.Field>
+          <form.Field name="venmoHandle" validators={{ onBlur: ({ value }) => validateField("venmoHandle", value) }}>{(field) => <FieldInput field={field} id="guest-venmoHandle" label="Venmo handle" description="Include the @ if you use one." autoComplete="off" onEdit={(value) => onFieldEdit("venmoHandle", value)} onBlur={(value) => onFieldBlur("venmoHandle", value)} />}</form.Field>
+          <form.Field name="instagramHandle" validators={{ onBlur: ({ value }) => validateField("instagramHandle", value) }}>{(field) => <FieldInput field={field} id="guest-instagramHandle" label="Instagram handle (optional)" description="Include the @ if you use one." autoComplete="off" onEdit={(value) => onFieldEdit("instagramHandle", value)} onBlur={(value) => onFieldBlur("instagramHandle", value)} />}</form.Field>
         </div>
       </section>}
 
       {step === 5 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Any food allergies or dietary restrictions?</h2>
         <p className="guest-details-copy">Please include allergies, dietary restrictions, or anything the chef should know. If none, write “None.”</p>
-        <form.Field name="dietaryNotes" validators={{ onBlur: ({ value }) => validateField("dietaryNotes", value) }}>{(field) => <FieldTextArea field={field} id="guest-dietaryNotes" label="Dietary restrictions" maxLength={500} onEdit={clearAfterEdit} onKeyDown={onNextKey} />}</form.Field>
+        <form.Field name="dietaryNotes" validators={{ onBlur: ({ value }) => validateField("dietaryNotes", value) }}>{(field) => <FieldTextArea field={field} id="guest-dietaryNotes" label="Dietary restrictions" maxLength={500} onEdit={(value) => onFieldEdit("dietaryNotes", value)} onBlur={(value) => onFieldBlur("dietaryNotes", value)} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
       {step === 6 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">What are your favorite cocktails?</h2>
         <p className="guest-details-copy">List a few favorites so we can plan drinks for the chalet. Examples: Espresso Martini, Hugo Spritz, Negroni, Margarita, Aperol Spritz, Old Fashioned, Gin Gimlet, French 75—or anything else.</p>
-        <form.Field name="favoriteCocktails" validators={{ onBlur: ({ value }) => validateField("favoriteCocktails", value) }}>{(field) => <FieldTextArea field={field} id="guest-favoriteCocktails" label="Favorite cocktails" maxLength={300} onEdit={clearAfterEdit} onKeyDown={onNextKey} />}</form.Field>
+        <form.Field name="favoriteCocktails" validators={{ onBlur: ({ value }) => validateField("favoriteCocktails", value) }}>{(field) => <FieldTextArea field={field} id="guest-favoriteCocktails" label="Favorite cocktails" maxLength={300} onEdit={(value) => onFieldEdit("favoriteCocktails", value)} onBlur={(value) => onFieldBlur("favoriteCocktails", value)} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
       {step === 7 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
@@ -202,6 +272,7 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       </section>}
 
       {formError && <p className="guest-details-error" role="alert">{formError}</p>}
+      <p className="guest-details-save-status" role="status" aria-live="polite">{saveState === "saving" ? "Saving your answers…" : saveState === "saved" ? "Answers saved" : saveState === "error" ? "Could not save. Continue to retry." : ""}</p>
       <div className="guest-details-actions">
         <button type="button" className="guest-details-back" onClick={back} disabled={busy}>Back</button>
         {step < 8 ? <button key="continue" type="button" className="guest-details-primary" onClick={() => void continueStep()}>Continue</button>
@@ -218,9 +289,9 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   </div>;
 }
 
-function FieldInput({ field, id, label, description, type = "text", autoComplete, placeholder, onEdit }: {
+function FieldInput({ field, id, label, description, type = "text", autoComplete, placeholder, onEdit, onBlur }: {
   field: { name: FieldName; state: { value: string; meta: { errors: unknown[] } }; handleBlur: () => void; handleChange: (value: string) => void };
-  id: string; label: string; description?: string; type?: string; autoComplete: string; placeholder?: string; onEdit: () => void;
+  id: string; label: string; description?: string; type?: string; autoComplete: string; placeholder?: string; onEdit: (value: string) => void; onBlur: (value: string) => void;
 }) {
   const errorId = `${id}-error`;
   const descriptionId = `${id}-description`;
@@ -229,21 +300,21 @@ function FieldInput({ field, id, label, description, type = "text", autoComplete
   return <label className="guest-details-label" htmlFor={id}>
     <span>{label}</span>
     {description && <span className="guest-details-hint" id={descriptionId}>{description}</span>}
-    <input id={id} name={field.name} type={type} autoComplete={autoComplete} placeholder={placeholder} value={field.state.value} maxLength={field.name === "firstName" || field.name === "lastName" ? 80 : 100} onBlur={field.handleBlur} onChange={(event) => { onEdit(); field.handleChange(event.target.value); }} aria-invalid={errors.length > 0} aria-describedby={describedBy} />
+    <input id={id} name={field.name} type={type} autoComplete={autoComplete} placeholder={placeholder} value={field.state.value} maxLength={field.name === "firstName" || field.name === "lastName" ? 80 : 100} onChange={(event) => { field.handleChange(event.target.value); onEdit(event.target.value); }} onBlur={() => { field.handleBlur(); onBlur(field.state.value); }} aria-invalid={errors.length > 0} aria-describedby={describedBy} />
     {errors.length > 0 && <span className="guest-details-field-error" id={errorId}>{errorText(errors)}</span>}
   </label>;
 }
 
-function FieldTextArea({ field, id, label, maxLength, onEdit, onKeyDown }: {
+function FieldTextArea({ field, id, label, maxLength, onEdit, onBlur, onKeyDown }: {
   field: { name: FieldName; state: { value: string; meta: { errors: unknown[] } }; handleBlur: () => void; handleChange: (value: string) => void };
-  id: string; label: string; maxLength: number; onEdit: () => void; onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  id: string; label: string; maxLength: number; onEdit: (value: string) => void; onBlur: (value: string) => void; onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }) {
   const errorId = `${id}-error`;
   const errors = fieldErrors(field.state.meta.errors);
   const remaining = maxLength - field.state.value.length;
   return <label className="guest-details-label" htmlFor={id}>
     <span>{label}</span>
-    <textarea id={id} name={field.name} rows={4} maxLength={maxLength} value={field.state.value} onBlur={field.handleBlur} onChange={(event) => { onEdit(); field.handleChange(event.target.value); }} onKeyDown={onKeyDown} aria-invalid={errors.length > 0} aria-describedby={errors.length ? errorId : undefined} />
+    <textarea id={id} name={field.name} rows={4} maxLength={maxLength} value={field.state.value} onChange={(event) => { field.handleChange(event.target.value); onEdit(event.target.value); }} onBlur={() => { field.handleBlur(); onBlur(field.state.value); }} onKeyDown={onKeyDown} aria-invalid={errors.length > 0} aria-describedby={errors.length ? errorId : undefined} />
     <span className="guest-details-hint">{remaining} characters left. Press Enter to continue; Shift+Enter for a new line.</span>
     {errors.length > 0 && <span className="guest-details-field-error" id={errorId}>{errorText(errors)}</span>}
   </label>;

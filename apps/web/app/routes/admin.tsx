@@ -73,7 +73,7 @@ function GuestCard({ guest }: { guest: AdminGuests[number] }) {
       <h3 id={`admin-guest-${guest.id}`}>{guest.displayName}</h3>
       {fullName !== guest.displayName && <span className="admin-full-name">{fullName}</span>}
       <span className="admin-status">{humanize(guest.status)}</span>
-      <span className="admin-room">{guest.spot ? `${guest.spot.room.name} · spot ${guest.spot.index}` : "No room yet"}</span>
+      <span className="admin-room">{guest.spot ? `${guest.spot.room.name} · spot ${guest.spot.index}` : guest.preferredRoom ? `${guest.preferredRoom.name} · selected` : "No room yet"}</span>
     </header>
     <div className="admin-details">
       <Group title="Contact" rows={[

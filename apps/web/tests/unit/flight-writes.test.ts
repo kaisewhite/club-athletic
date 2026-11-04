@@ -4,11 +4,11 @@ import { resolve } from "node:path";
 import type { Flight, PendingExtraction } from "../../prisma/generated/client";
 import { flightCandidateSchema, isAffirmativeFlightConfirmation } from "../../src/lib/db/flight-contract";
 import { withFlightWriteDatabase, type AuditInsert, type FlightWriteTransaction, type GuestIdentity, type IntakeMessage, type WithFlightWriteDatabase } from "../../src/lib/db/flight-write-client.server";
-import { createGuestFromAgent, FlightWriteRefusal, recordFlight, resolveFlightLocalTime, type RecordFlightInput } from "../../src/lib/db/flight-writes.server";
+import { createGuestFromAgent, FlightWriteRefusal, PublicFlightEditConflict, PublicFlightEditError, recordFlight, resolveFlightLocalTime, savePublicFlightEdit, type PublicFlightLegEdit, type RecordFlightInput } from "../../src/lib/db/flight-writes.server";
 import { matchGuestCandidates } from "../../src/lib/db/guest-lookup.server";
 
-const ownedClient = vi.hoisted(() => ({ disconnect: vi.fn().mockResolvedValue(undefined) }));
-vi.mock("../../prisma/generated/client", () => ({ PrismaClient: class { $disconnect = ownedClient.disconnect; } }));
+const ownedClient = vi.hoisted(() => ({ disconnect: vi.fn().mockResolvedValue(undefined), dbNull: {} }));
+vi.mock("../../prisma/generated/client", () => ({ Prisma: { DbNull: ownedClient.dbNull }, PrismaClient: class { $disconnect = ownedClient.disconnect; } }));
 vi.mock("@prisma/adapter-pg", () => ({ PrismaPg: class {} }));
 
 const now = new Date("2026-09-26T12:00:00Z");
@@ -61,6 +61,8 @@ function harness() {
         return draft.messages.some((m) => m.conversationId === conversationId && m.role === "user" && m.seq > afterSeq && (beforeSeq === undefined || m.seq < beforeSeq));
       },
       async getUpload(id) { return id === "upload" ? draft.upload : null; },
+      async guestInTrip(id, tripKey) { return draft.guests.find((g) => g.id === id && g.tripId === "trip" && tripKey === "meribel-2027") ?? null; },
+      async updateGuestDisplayName(id, displayName) { const found = draft.guests.find((g) => g.id === id)!; found.displayName = displayName; return found; },
       async listGuests(tripId) { return draft.guests.filter((g) => g.tripId === tripId); },
       async createGuest(data) { calls.push("guest:insert"); draft.guests.push(data); return data; },
       async currentFlight(guestId, direction) { return draft.flights.find((flight) => flight.guestId === guestId && flight.direction === direction && !flight.supersededById) ?? null; },
@@ -72,7 +74,8 @@ function harness() {
       async createFlight(data) {
         calls.push(`insert:${data.direction}:${data.id}`);
         if (draft.flights.some((f) => f.guestId === data.guestId && f.direction === data.direction && !f.supersededById)) throw new Error("live unique constraint");
-        draft.flights.push({ ...data, terminal: null, notes: null, supersededById: null, supersededAt: null, rawExtraction: JSON.parse(JSON.stringify(data.rawExtraction)) });
+        draft.flights.push({ ...data, terminal: data.terminal ?? null, notes: data.notes ?? null, supersededById: null, supersededAt: null,
+          rawExtraction: data.rawExtraction === ownedClient.dbNull ? null : JSON.parse(JSON.stringify(data.rawExtraction)) });
         return { id: data.id };
       },
       async createAudit(data) {
@@ -211,6 +214,77 @@ describe("flight write boundary", () => {
     h.state.pending.claimedFirstName = "Kaise";
     h.state.messages.find((message) => message.id === "name")!.content = "My name is Kaise";
     await expect(recordFlight(input, h.deps)).resolves.toMatchObject({ duplicate: false });
+  });
+});
+
+describe("public Group Flights edits", () => {
+  const inboundEdit: PublicFlightLegEdit = {
+    direction: "INBOUND", expectedFlightId: "old", airline: "United", flightNumber: "UA956",
+    origin: "EWR", destination: "GVA", departureDate: "2027-01-29", departureTime: "17:35",
+    arrivalDate: "2027-01-30", arrivalTime: "07:25",
+  };
+  const outboundEdit: PublicFlightLegEdit = {
+    direction: "OUTBOUND", expectedFlightId: null, airline: null, flightNumber: null,
+    origin: "GVA", destination: "EWR", departureDate: "2027-02-06", departureTime: "11:00",
+    arrivalDate: "2027-02-06", arrivalTime: "15:00",
+  };
+
+  it("lets an unauthenticated public edit change the displayed name and any existing leg while retaining history/private fields", async () => {
+    const h = harness();
+    const result = await savePublicFlightEdit({ guestId: "guest", displayName: "  New Public Name  ", legs: [inboundEdit] }, h.deps);
+    expect(result).toMatchObject({ guestId: "guest", displayName: "New Public Name", legs: [{ direction: "INBOUND" }] });
+    expect(h.state.guests[0]?.displayName).toBe("New Public Name");
+    expect(h.state.flights[0]).toMatchObject({ id: "old", supersededById: result.legs[0]?.flightId, confirmationCode: "ORIGINAL", notes: "retain" });
+    expect(h.state.flights[1]).toMatchObject({ id: result.legs[0]?.flightId, source: "ORGANIZER", confirmedByGuest: true,
+      confirmationCode: "ORIGINAL", notes: "retain", rawExtraction: null });
+    expect(h.state.audits).toHaveLength(3);
+    expect(h.state.audits.every((audit) => audit.source === "GUEST" && !("claimedGuestName" in audit))).toBe(true);
+    expect(h.state.audits.some((audit) => audit.entity === "Guest" && audit.action === "UPDATE")).toBe(true);
+  });
+
+  it("adds a missing flight leg and rejects a concurrent second add using the expected-null check", async () => {
+    const h = harness();
+    const result = await savePublicFlightEdit({ guestId: "guest", legs: [outboundEdit] }, h.deps);
+    expect(result.legs).toEqual([{ direction: "OUTBOUND", flightId: result.legs[0]?.flightId }]);
+    expect(h.state.flights.find((flight) => flight.id === result.legs[0]?.flightId)).toMatchObject({ direction: "OUTBOUND", source: "ORGANIZER", confirmedByGuest: true });
+    await expect(savePublicFlightEdit({ guestId: "guest", legs: [outboundEdit] }, h.deps)).rejects.toBeInstanceOf(PublicFlightEditConflict);
+  });
+
+  it("saves both directions and the displayed guest name in one row transaction", async () => {
+    const h = harness();
+    const result = await savePublicFlightEdit({ guestId: "guest", displayName: "Updated Guest", legs: [inboundEdit, outboundEdit] }, h.deps);
+    expect(result.displayName).toBe("Updated Guest");
+    expect(result.legs.map((leg) => leg.direction)).toEqual(["INBOUND", "OUTBOUND"]);
+    expect(h.state.flights.filter((flight) => !flight.supersededById)).toHaveLength(2);
+    expect(h.state.audits).toHaveLength(4);
+  });
+
+  it("rejects a stale edit to an existing leg and a guest outside the trip", async () => {
+    const h = harness();
+    await savePublicFlightEdit({ guestId: "guest", legs: [inboundEdit] }, h.deps);
+    await expect(savePublicFlightEdit({ guestId: "guest", legs: [inboundEdit] }, h.deps)).rejects.toBeInstanceOf(PublicFlightEditConflict);
+    h.state.guests[0]!.tripId = "other-trip";
+    await expect(savePublicFlightEdit({ guestId: "guest", legs: [outboundEdit] }, h.deps)).rejects.toThrow("not in this trip");
+  });
+
+  it("rolls back row-wide name and leg changes when an audit write fails", async () => {
+    const h = harness(); h.options.failAuditAt = 1;
+    const before = structuredClone(h.state);
+    await expect(savePublicFlightEdit({ guestId: "guest", displayName: "Edited", legs: [inboundEdit] }, h.deps)).rejects.toThrow("audit failure");
+    expect(h.state).toEqual(before);
+  });
+
+  it.each(["", " ", "x".repeat(81), "Line\nBreak", "Control\u0001Name"])("rejects invalid public display names %j", async (displayName) => {
+    const h = harness();
+    await expect(savePublicFlightEdit({ guestId: "guest", displayName, legs: [] }, h.deps)).rejects.toBeInstanceOf(PublicFlightEditError);
+    expect(h.state.audits).toHaveLength(0);
+  });
+
+  it("rejects invalid flight chronology without changing the database", async () => {
+    const h = harness();
+    const before = structuredClone(h.state);
+    await expect(savePublicFlightEdit({ guestId: "guest", legs: [{ ...inboundEdit, arrivalDate: "2027-01-29", arrivalTime: "16:00" }] }, h.deps)).rejects.toBeInstanceOf(PublicFlightEditError);
+    expect(h.state).toEqual(before);
   });
 });
 

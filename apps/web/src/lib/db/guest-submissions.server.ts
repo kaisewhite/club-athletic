@@ -5,10 +5,10 @@ import { instagramProfileUrl, type GuestDetails } from "../guest-details-schema"
 
 const TRIP_KEY = "meribel-2027";
 
-type SubmissionTransaction = Pick<Prisma.TransactionClient, "trip" | "guest" | "guestSubmission" | "auditLog" | "spot">;
+type SubmissionTransaction = Pick<Prisma.TransactionClient, "trip" | "guest" | "guestSubmission" | "auditLog" | "spot" | "room">;
 type SubmissionDatabase = {
   transaction<T>(operation: (tx: SubmissionTransaction) => Promise<T>): Promise<T>;
-  findSubmission(submissionId: string): Promise<{ guestId: string } | null>;
+  findSubmission(submissionId: string): Promise<{ guestId: string; status: string } | null>;
 };
 type WithSubmissionDatabase = <T>(operation: (db: SubmissionDatabase) => Promise<T>) => Promise<T>;
 type Dependencies = { withDatabase?: WithSubmissionDatabase; createId?: () => string; now?: () => Date };
@@ -30,7 +30,7 @@ const withSubmissionDatabase: WithSubmissionDatabase = async (operation) => {
   try {
     return await operation({
       transaction: (callback) => db.$transaction((tx) => callback(tx), { maxWait: 10_000, timeout: 20_000, isolationLevel: Prisma.TransactionIsolationLevel.Serializable }),
-      findSubmission: (submissionId) => db.guestSubmission.findUnique({ where: { submissionId }, select: { guestId: true } }),
+      findSubmission: (submissionId) => db.guestSubmission.findUnique({ where: { submissionId }, select: { guestId: true, guest: { select: { status: true } } } }).then((row) => row ? { guestId: row.guestId, status: row.guest.status } : null),
     });
   } finally {
     await db.$disconnect();
@@ -39,6 +39,53 @@ const withSubmissionDatabase: WithSubmissionDatabase = async (operation) => {
 
 function normalizeName(value: string) {
   return value.normalize("NFKD").replace(/\p{Diacritic}/gu, "").trim().replace(/\s+/g, " ").toLocaleLowerCase("en-US");
+}
+
+const autosaveFields = ["firstName", "lastName", "phone", "venmoHandle", "instagramHandle", "dietaryNotes", "favoriteCocktails", "roomId"] as const;
+export type GuestAutosaveField = typeof autosaveFields[number];
+
+export async function saveGuestDetailsField({ submissionId, field, value }: { submissionId: string; field: GuestAutosaveField; value: string }, deps: Dependencies = {}) {
+  const create = deps.createId ?? createId;
+  const now = deps.now ?? (() => new Date());
+  const withDatabase = deps.withDatabase ?? withSubmissionDatabase;
+  return withDatabase((db) => db.transaction(async (tx) => {
+    const trip = await tx.trip.findUnique({ where: { seedKey: TRIP_KEY }, select: { id: true } });
+    if (!trip) throw new Error("Méribel trip not found.");
+    let submission = await tx.guestSubmission.findUnique({ where: { submissionId }, select: { guestId: true } });
+    if (!submission) {
+      if (field !== "firstName" || !value.trim()) throw new Error("Enter a first name before saving other answers.");
+      const firstName = value.trim();
+      const guest = await tx.guest.create({ data: { id: create(), tripId: trip.id, firstName, lastName: "", displayName: firstName, status: "PENDING", createdVia: "WEBSITE" }, select: { id: true } });
+      submission = await tx.guestSubmission.create({ data: { submissionId, source: "website", guestId: guest.id, submittedAt: now() }, select: { guestId: true } });
+    }
+    let guest = await tx.guest.findUnique({ where: { id: submission.guestId }, select: { id: true, firstName: true, lastName: true, status: true } });
+    if (!guest) throw new Error("Guest autosave record was not found.");
+    if (guest.status !== "PENDING") return { saved: true, guestId: guest.id };
+    let data: Prisma.GuestUpdateInput = {};
+    const text = value.trim();
+    switch (field) {
+      case "firstName": data = { firstName: text, displayName: `${text}${guest.lastName ? ` ${guest.lastName}` : ""}` }; break;
+      case "lastName": data = { lastName: text }; break;
+      case "phone": data = { phone: text || null }; break;
+      case "venmoHandle": data = { venmoHandle: text || null }; break;
+      case "instagramHandle": data = { instagramUrl: instagramProfileUrl(text) }; break;
+      case "dietaryNotes": data = { dietaryNotes: !text || /^none\.?$/i.test(text) ? null : text }; break;
+      case "favoriteCocktails": data = { favoriteCocktails: !text || /^none\.?$/i.test(text) ? null : text }; break;
+      case "roomId": {
+        const room = await tx.room.findFirst({ where: { id: text, floor: { property: { trips: { some: { id: trip.id } } } } }, select: { id: true } });
+        if (!room) throw new Error("Choose a valid room.");
+        data = { preferredRoom: { connect: { id: room.id } } };
+        break;
+      }
+    }
+    if (field === "firstName" || field === "lastName") {
+      const firstName = field === "firstName" ? text : guest.firstName;
+      const lastName = field === "lastName" ? text : guest.lastName;
+      data = { firstName, lastName, displayName: `${firstName}${lastName ? ` ${lastName}` : ""}` };
+    }
+    await tx.guest.update({ where: { id: guest.id }, data });
+    return { saved: true, guestId: guest.id };
+  }));
 }
 
 function isPrismaCode(error: unknown, code: string) {
@@ -57,17 +104,20 @@ export async function saveGuestDetails(
       try {
         return await db.transaction(async (tx) => {
           const existingSubmission = await tx.guestSubmission.findUnique({ where: { submissionId }, select: { guestId: true } });
-          if (existingSubmission) return { duplicate: true as const, created: false, guestId: existingSubmission.guestId };
+          if (existingSubmission) {
+            const linked = await tx.guest.findUnique({ where: { id: existingSubmission.guestId }, select: { status: true } });
+            if (linked?.status === "CONFIRMED") return { duplicate: true as const, created: false, guestId: existingSubmission.guestId };
+          }
 
           const trip = await tx.trip.findUnique({ where: { seedKey: TRIP_KEY }, select: { id: true } });
           if (!trip) throw new Error("Méribel trip not found.");
-          const candidates = await tx.guest.findMany({ where: { tripId: trip.id }, select: { id: true, firstName: true, lastName: true } });
+          const candidates = await tx.guest.findMany({ where: { tripId: trip.id, status: { not: "PENDING" } }, select: { id: true, firstName: true, lastName: true } });
           const firstName = normalizeName(details.firstName);
           const lastName = normalizeName(details.lastName);
           const matches = candidates.filter((guest) => normalizeName(guest.firstName) === firstName && normalizeName(guest.lastName) === lastName);
           if (matches.length > 1) throw new GuestDetailsNameMatchError(matches.length);
 
-          const displayName = `${details.firstName} ${details.lastName}`;
+          const displayName = `${details.firstName}${details.lastName ? ` ${details.lastName}` : ""}`;
           const data = {
             firstName: details.firstName,
             lastName: details.lastName,
@@ -79,16 +129,24 @@ export async function saveGuestDetails(
             favoriteCocktails: details.favoriteCocktails,
           };
           const created = matches.length === 0;
+          const pending = existingSubmission ? await tx.guest.findUnique({ where: { id: existingSubmission.guestId }, select: { id: true, status: true } }) : null;
           const guest = created
-            ? await tx.guest.create({ data: { id: create(), tripId: trip.id, ...data, status: "CONFIRMED", createdVia: "WEBSITE" }, select: { id: true } })
+            ? pending?.status === "PENDING"
+              ? await tx.guest.update({ where: { id: pending.id }, data: { ...data, status: "CONFIRMED", preferredRoomId: null }, select: { id: true } })
+              : await tx.guest.create({ data: { id: create(), tripId: trip.id, ...data, status: "CONFIRMED", createdVia: "WEBSITE" }, select: { id: true } })
             : await tx.guest.update({ where: { id: matches[0]!.id }, data, select: { id: true } });
+          if (pending?.status === "PENDING" && guest.id !== pending.id) {
+            await tx.guestSubmission.update({ where: { submissionId }, data: { guestId: guest.id } });
+            await tx.guest.delete({ where: { id: pending.id } });
+          }
           const oldSpot = await tx.spot.findFirst({ where: { guestId: guest.id, status: "ASSIGNED" }, select: { id: true } });
           if (oldSpot) await tx.spot.updateMany({ where: { id: oldSpot.id, guestId: guest.id, status: "ASSIGNED" }, data: { status: "AVAILABLE", guestId: null } });
           const availableSpot = await tx.spot.findFirst({ where: { roomId: details.roomId, status: "AVAILABLE" }, orderBy: { index: "asc" }, select: { id: true } });
           if (!availableSpot) throw new GuestDetailsRoomFullError();
           const claimed = await tx.spot.updateMany({ where: { id: availableSpot.id, roomId: details.roomId, status: "AVAILABLE" }, data: { status: "ASSIGNED", guestId: guest.id } });
           if (claimed.count !== 1) throw new GuestDetailsRoomFullError();
-          await tx.guestSubmission.create({ data: { submissionId, source: "website", sourceRef: null, guestId: guest.id, submittedAt: now() } });
+          if (existingSubmission) await tx.guestSubmission.update({ where: { submissionId }, data: { guestId: guest.id, processedAt: now() } });
+          else await tx.guestSubmission.create({ data: { submissionId, source: "website", sourceRef: null, guestId: guest.id, submittedAt: now() } });
           await tx.auditLog.create({ data: {
             id: create(), action: created ? "GUEST_DETAILS_CREATE" : "GUEST_DETAILS_UPDATE", entity: "Guest", entityId: guest.id,
             after: { submissionId, fields: Object.keys(data) }, source: "GUEST",

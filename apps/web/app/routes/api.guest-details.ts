@@ -1,9 +1,10 @@
 import { createTextLimiter } from "../../src/lib/chat/rate-limit.server";
-import { GuestDetailsNameMatchError, GuestDetailsRoomFullError, saveGuestDetails } from "../../src/lib/db/guest-submissions.server";
+import { GuestDetailsNameMatchError, GuestDetailsRoomFullError, saveGuestDetails, saveGuestDetailsField } from "../../src/lib/db/guest-submissions.server";
 import { guestDetailsSubmissionSchema } from "../../src/lib/guest-details-schema";
 
 const MAX_BODY_BYTES = 8 * 1024;
 const writeLimiter = createTextLimiter();
+const autosaveLimiter = createTextLimiter(Date.now, 10_000, 120, 1_000);
 
 async function readBody(request: Request): Promise<string | null> {
   if (!request.body) return "";
@@ -49,18 +50,36 @@ export async function action({ request }: { request: Request }) {
   if (Number(request.headers.get("content-length") ?? 0) > MAX_BODY_BYTES) {
     return Response.json({ ok: false, error: "Form submission is too large." }, { status: 413 });
   }
-  const retryAfter = writeLimiter.take(rateLimitKey(request));
-  if (retryAfter > 0) return Response.json({ ok: false, error: "Too many submissions. Try again shortly." }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
-
   const raw = await readBody(request);
   if (raw === null) return Response.json({ ok: false, error: "Form submission is too large." }, { status: 413 });
   let payload: unknown;
   try { payload = JSON.parse(raw); }
   catch { return Response.json({ ok: false, error: "Invalid request body." }, { status: 400 }); }
+  const autosave = typeof payload === "object" && payload !== null && "kind" in payload && payload.kind === "field";
+  const retryAfter = (autosave ? autosaveLimiter : writeLimiter).take(rateLimitKey(request));
+  if (retryAfter > 0) return Response.json({ ok: false, error: "Too many submissions. Try again shortly." }, { status: 429, headers: { "Retry-After": String(retryAfter) } });
   if (typeof payload === "object" && payload !== null && "website" in payload && typeof payload.website === "string" && payload.website.trim()) {
-    return Response.json({ ok: true, created: false });
+    return Response.json({ ok: false, error: "We couldn’t verify this submission. Refresh the form and try again." }, { status: 400 });
   }
   if (typeof payload === "object" && payload !== null && "website" in payload) delete (payload as { website?: unknown }).website;
+
+  if (autosave) {
+    const candidate = payload as Record<string, unknown>;
+    const allowed = ["firstName", "lastName", "phone", "venmoHandle", "instagramHandle", "dietaryNotes", "favoriteCocktails", "roomId"];
+    const maxLengths: Record<string, number> = { firstName: 80, lastName: 80, phone: 64, venmoHandle: 100, instagramHandle: 100, dietaryNotes: 500, favoriteCocktails: 300, roomId: 100 };
+    if (typeof candidate.submissionId !== "string" || !/^[0-9a-f]{8}-[0-9a-f]{4}-[1-8][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(candidate.submissionId)
+      || typeof candidate.field !== "string" || !allowed.includes(candidate.field)
+      || typeof candidate.value !== "string" || candidate.value.length > (maxLengths[String(candidate.field)] ?? 0) || /[\p{Cc}\p{Cf}]/u.test(candidate.value)) {
+      return Response.json({ ok: false, error: "Check this answer and try again." }, { status: 400 });
+    }
+    try {
+      await saveGuestDetailsField({ submissionId: candidate.submissionId, field: candidate.field as Parameters<typeof saveGuestDetailsField>[0]["field"], value: candidate.value });
+      return Response.json({ ok: true }, { status: 200 });
+    } catch (error) {
+      console.error("Guest details autosave failed.", error instanceof Error ? error.name : "Unknown error");
+      return Response.json({ ok: false, error: "We couldn’t save this answer. Your text is still here; try again." }, { status: 503 });
+    }
+  }
 
   const parsed = guestDetailsSubmissionSchema.safeParse(payload);
   if (!parsed.success) {

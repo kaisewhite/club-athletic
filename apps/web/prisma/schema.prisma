@@ -25,6 +25,7 @@ enum SpotStatus {
 }
 
 enum GuestStatus {
+  PENDING
   CONFIRMED
   INVITED
   WAITLIST
@@ -157,6 +158,7 @@ model Room {
   sortOrder      Int
   floor          Floor    @relation(fields: [floorId], references: [id], onDelete: Restrict)
   spots          Spot[]
+  preferredBy    Guest[]
 
   @@unique([floorId, name])
   @@index([floorId, sortOrder])
@@ -195,6 +197,8 @@ model Guest {
   createdVia            GuestCreatedVia
   trip                  Trip                @relation(fields: [tripId], references: [id], onDelete: Restrict)
   spot                  Spot?
+  preferredRoomId       String?
+  preferredRoom         Room?               @relation(fields: [preferredRoomId], references: [id], onDelete: SetNull)
   tasks                 GuestTask[]
   flights               Flight[]
   pendingExtractions    PendingExtraction[] @relation("IntakeGuest")
@@ -203,6 +207,7 @@ model Guest {
 
   // Guest_lastName_lower_idx is an expression index, maintained in migration SQL.
   @@index([tripId])
+  @@index([preferredRoomId])
 }
 
 model GuestTask {

@@ -48,9 +48,9 @@ const leg = (changes: Partial<Leg> = {}): Leg => ({
   terminal: null, source: "AGENT_EXTRACTION", confirmedAt: new Date("2026-09-20T12:00:00Z"),
   supersededById: null, confirmedByGuest: true, ...changes,
 });
-const outbound = () => leg({ id: "return", direction: "OUTBOUND", origin: "GVA", destination: "EWR",
+const outbound = (changes: Partial<Leg> = {}) => leg({ id: "return", direction: "OUTBOUND", origin: "GVA", destination: "EWR",
   scheduledDeparture: new Date("2027-02-06T10:00:00Z"), scheduledArrival: new Date("2027-02-06T19:00:00Z"),
-  departureLocal: "2027-02-06T11:00:00+01:00", arrivalLocal: "2027-02-06T14:00:00-05:00", source: "ORGANIZER",
+  departureLocal: "2027-02-06T11:00:00+01:00", arrivalLocal: "2027-02-06T14:00:00-05:00", source: "ORGANIZER", ...changes,
 });
 
 function staticPage(flights: FlightTable) {
@@ -93,10 +93,13 @@ async function mount(flights: FlightTable) {
   await act(async () => root?.render(<GroupFlightTable flights={flights} />));
   return container;
 }
-async function clickSort(page: HTMLElement, label: string) {
-  const button = [...page.querySelectorAll("button")].find((node) => node.getAttribute("aria-label")?.startsWith(`Sort by ${label}`));
-  expect(button).toBeDefined();
-  await act(async () => button!.click());
+function setInputValue(input: HTMLInputElement, value: string) {
+  const setter = Object.getOwnPropertyDescriptor(HTMLInputElement.prototype, "value")?.set;
+  act(() => {
+    setter?.call(input, value);
+    input.dispatchEvent(new Event("input", { bubbles: true }));
+    input.dispatchEvent(new Event("change", { bubbles: true }));
+  });
 }
 
 describe("Flights route", () => {
@@ -108,7 +111,7 @@ describe("Flights route", () => {
     expect(result.flights).toBe(flights);
   });
 
-  it("renders the exact three booking cards and two hotel destinations without a write surface", () => {
+  it("renders the exact booking guidance and offers a row editor without opening inputs by default", () => {
     const page = staticPage([]);
     expect(page.querySelector("#flights-heading")?.textContent).toBe("Flights.");
     expect(page.querySelector("#flights-heading .text-accent")?.textContent).toBe(".");
@@ -119,6 +122,7 @@ describe("Flights route", () => {
       "https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/",
     ]);
     expect(page.querySelectorAll("form, input, textarea, select")).toHaveLength(0);
+    expect(page.querySelectorAll(".flight-row-edit")).toHaveLength(0);
   });
 
   it("renders the recommendations without the removed shuttle verdict column", () => {
@@ -162,7 +166,7 @@ describe("Flights route", () => {
     const statuses: Guest["status"][] = ["On the shuttle", "Tight", "Misses the shuttle", "Not booked"];
     const page = staticPage(statuses.map((status, index) => guest(index === 0 ? "Kaise" : status, { status, inbound: leg(), outbound: outbound(), arrivingFriday: true, arrivalMarker: "Arriving Friday" })));
     expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
-    expect(page.querySelectorAll(".flight-table tbody tr:first-child td")).toHaveLength(4);
+    expect(page.querySelectorAll(".flight-table tbody tr:first-child td")).toHaveLength(5);
     expect(page.textContent).not.toContain("from screenshot");
     expect(page.textContent).not.toContain("entered by organizer");
     expect(page.textContent).toContain("EWR to GVA");
@@ -186,30 +190,98 @@ describe("Flights route", () => {
     expect(page.textContent).not.toMatch(/undefined|null|Invalid Date/);
   });
 
-  it("sorts arrivals chronologically with missing flights last in either direction", async () => {
-    const page = await mount([guest("Missing"), guest("Later", { inbound: leg({ scheduledArrival: new Date("2027-01-30T07:00:00Z") }) }), guest("Earlier", { inbound: leg() })]);
-    const order = () => [...page.querySelectorAll("tbody th")].map((node) => node.textContent);
-    expect(order()).toEqual(["Earlier", "Later", "Missing"]);
-    expect(page.querySelector('[aria-sort="ascending"]')?.textContent).toContain("Arrival times");
-    await clickSort(page, "Arrival times");
-    expect(order()).toEqual(["Later", "Earlier", "Missing"]);
-    expect(page.querySelector('[aria-sort="descending"]')?.textContent).toContain("Arrival times");
+  it("keeps the supplied guest order and has no sort controls", async () => {
+    const page = await mount([guest("Zoe"), guest("Amy")]);
+    expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
+    expect(page.textContent).not.toContain("Sort by");
+    expect(page.querySelectorAll(".flight-sort, .flight-mobile-sorting")).toHaveLength(0);
   });
 
-  it("switches to cards below 860px, retaining the same model and sorting state", async () => {
+  it("switches to cards below 860px without adding sort controls", async () => {
     const page = await mount([guest("Zoe"), guest("Amy")]);
-    await clickSort(page, "Guest");
-    expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
+    expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
     await act(async () => { narrow = true; listeners.forEach((fn) => fn()); });
     expect(window.matchMedia).toHaveBeenCalledWith("(max-width: 859px)");
     expect(page.querySelector("table")).toBeNull();
-    expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Amy", "Zoe"]);
+    expect(page.querySelectorAll(".flight-mobile-sorting, select")).toHaveLength(0);
+    expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
     expect(page.querySelectorAll(".flight-card-leg")).toHaveLength(4);
     expect(page.querySelectorAll(".flight-status, .flight-friday")).toHaveLength(0);
-    await clickSort(page, "Guest");
-    expect([...page.querySelectorAll(".flight-guest-card h4")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
+    const edit = page.querySelector<HTMLButtonElement>('[aria-label="Edit flight details for Zoe"]')!;
+    expect(getComputedStyle(edit).minHeight).toBe("44px");
+    expect(edit.querySelector("svg")).not.toBeNull();
+    await act(async () => edit.click());
+    expect(page.querySelectorAll(".flight-guest-card .flight-row-editor")).toHaveLength(0);
+    expect(page.querySelector('dialog.flight-lookup-dialog')).not.toBeNull();
+    expect(page.querySelector('[aria-label="Arriving flight number"]')).not.toBeNull();
+    expect(page.querySelector('[aria-label="Arriving flight departure date"]')).not.toBeNull();
+    expect(page.querySelector('[aria-label="Arrival flight from"]')).toBeNull();
+    expect([...page.querySelectorAll(".flight-guest-card")].map((card) => card.querySelector("h4")?.textContent ?? card.querySelector<HTMLInputElement>('[aria-label="Guest name"]')?.value)).toEqual(["Zoe", "Amy"]);
+    await act(async () => page.querySelector<HTMLButtonElement>('[aria-label="Close flight lookup"]')!.click());
     await act(async () => { narrow = false; listeners.forEach((fn) => fn()); });
     expect(page.querySelectorAll(".flight-guest-card")).toHaveLength(0);
     expect([...page.querySelectorAll("tbody th")].map((node) => node.textContent)).toEqual(["Zoe", "Amy"]);
+  });
+
+  it("prefills a flight lookup only when both flight number and date are available", async () => {
+    const page = await mount([guest("Paired fields", { inbound: leg({ departureLocal: "" }), outbound: outbound({ flightNumber: null }) })]);
+    await act(async () => page.querySelector<HTMLButtonElement>('[aria-label="Edit flight details for Paired fields"]')!.click());
+    for (const label of ["Arriving flight number", "Arriving flight departure date", "Departing flight number", "Departing flight departure date"]) {
+      expect(page.querySelector<HTMLInputElement>(`[aria-label="${label}"]`)?.value).toBe("");
+    }
+  });
+
+  it("looks up and saves a guest flight from only its number and departure date", async () => {
+    const fetchedFlight = { airline: "United Airlines", flightNumber: "UA956", origin: "EWR", destination: "GVA", departureDate: "2027-01-28", departureTime: "17:35", arrivalDate: "2027-01-29", arrivalTime: "07:25" };
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true, flight: fetchedFlight }) })
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true, guestId: "Another Guest", displayName: "Another Guest", legs: [{ direction: "INBOUND", flightId: "flight-edited" }] }) });
+    vi.stubGlobal("fetch", fetchMock);
+    const page = await mount([guest("Kristy", { inbound: leg() }), guest("Another Guest")]);
+    expect(page.querySelectorAll(".flight-row-edit")).toHaveLength(2);
+    const edit = page.querySelector<HTMLButtonElement>('[aria-label="Edit flight details for Another Guest"]')!;
+    expect(edit.querySelector("svg")).not.toBeNull();
+    edit.focus();
+    await act(async () => edit.click());
+    expect(page.querySelector('dialog.flight-lookup-dialog')?.textContent).toContain("Enter each flight number and its departure date");
+    const flightNumber = page.querySelector<HTMLInputElement>('[aria-label="Arriving flight number"]')!;
+    const departureDate = page.querySelector<HTMLInputElement>('[aria-label="Arriving flight departure date"]')!;
+    setInputValue(flightNumber, "UA956"); setInputValue(departureDate, "2027-01-28");
+    const submit = page.querySelector<HTMLButtonElement>(".flight-lookup-submit")!;
+    await act(async () => { submit.click(); await Promise.resolve(); await Promise.resolve(); });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    const [lookupUrl, lookupInit] = fetchMock.mock.calls[0] as [string, RequestInit];
+    expect(lookupUrl).toBe("/api/flight-lookup");
+    expect(JSON.parse(String(lookupInit.body))).toEqual({ flightNumber: "UA956", departureDate: "2027-01-28" });
+    const [saveUrl, saveInit] = fetchMock.mock.calls[1] as [string, RequestInit];
+    expect(saveUrl).toBe("/api/flight-details");
+    const payload = JSON.parse(String(saveInit.body));
+    expect(payload).toMatchObject({ guestId: "Another Guest", legs: [{ direction: "INBOUND", expectedFlightId: null, airline: "United Airlines", flightNumber: "UA956", origin: "EWR", destination: "GVA", departureDate: "2027-01-28", departureTime: "17:35", arrivalDate: "2027-01-29", arrivalTime: "07:25" }] });
+    expect(payload).not.toHaveProperty("submissionId");
+    expect(payload).not.toHaveProperty("claimedGuestName");
+    expect(payload).not.toHaveProperty("confirmationCode");
+    expect(payload).not.toHaveProperty("terminal");
+    expect(payload).not.toHaveProperty("notes");
+    expect(payload).not.toHaveProperty("rawExtraction");
+    expect(page.querySelector('dialog.flight-lookup-dialog')).not.toBeNull();
+    expect(page.querySelector('[role="status"]')?.textContent).toBe("Flight details saved for Another Guest.");
+    expect(page.textContent).toContain("EWR to GVA");
+    await act(async () => page.querySelector<HTMLButtonElement>(".flight-lookup-saved button")!.click());
+    expect(page.querySelector('dialog.flight-lookup-dialog')).toBeNull();
+  });
+
+  it("keeps the lookup dialog open when a save becomes stale", async () => {
+    const fetchMock = vi.fn()
+      .mockResolvedValueOnce({ ok: true, json: async () => ({ ok: true, flight: { airline: "United", flightNumber: "UA956", origin: "EWR", destination: "GVA", departureDate: "2027-01-28", departureTime: "17:35", arrivalDate: "2027-01-29", arrivalTime: "07:25" } }) })
+      .mockResolvedValueOnce({ ok: false, json: async () => ({ ok: false, error: "A flight was added while you were editing. Reload and try again." }) });
+    vi.stubGlobal("fetch", fetchMock);
+    const page = await mount([guest("No Flights")]);
+    await act(async () => page.querySelector<HTMLButtonElement>('[aria-label="Edit flight details for No Flights"]')!.click());
+    setInputValue(page.querySelector<HTMLInputElement>('[aria-label="Arriving flight number"]')!, "UA956");
+    setInputValue(page.querySelector<HTMLInputElement>('[aria-label="Arriving flight departure date"]')!, "2027-01-28");
+    await act(async () => { page.querySelector<HTMLButtonElement>(".flight-lookup-submit")!.click(); await Promise.resolve(); await Promise.resolve(); });
+    expect(fetchMock).toHaveBeenCalledTimes(2);
+    expect(page.querySelector('[role="alert"]')?.textContent).toContain("A flight was added while you were editing");
+    expect(page.querySelector('dialog.flight-lookup-dialog')).not.toBeNull();
   });
 });

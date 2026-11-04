@@ -246,16 +246,16 @@
 .readiness-links a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .readiness-section > .detail-table-wrap { border: 0; border-block: 1px solid var(--border); border-radius: 0; background: transparent; }
 
-.resource-guide { border-top: 1px solid var(--border); }
+.resource-guide { display: grid; gap: 24px; }
 .resource-guide .link-section { margin: 0; padding: 0; }
-.resource-guide .link-section + .link-section { margin-top: 28px; padding-top: 16px; border-top: 1px solid var(--border-subtle); }
-.resource-section-heading { display: flex; align-items: baseline; gap: 14px; padding: 12px 0 4px; }
+.resource-guide .link-section + .link-section { margin: 0; padding: 0; border: 0; }
+.resource-section-heading { display: flex; align-items: baseline; gap: 14px; padding: 0 0 10px; }
 .resource-section-heading > span { color: var(--brand-dim); font-size: 11px; font-variant-numeric: tabular-nums; }
 .resource-section-heading .detail-kicker { margin: 0; color: var(--text); font-size: 13px; }
-.resource-guide .link-list { overflow: visible; border: 0; border-radius: 0; background: transparent; }
-.resource-guide .resource-link { padding: 10px 0 14px; border: 0; border-bottom: 1px solid var(--border-subtle); transition: color var(--motion-duration-fast) var(--motion-ease-standard); }
-.resource-guide .resource-link + .resource-link { border-top: 0; }
-.resource-guide .resource-link:hover { background: transparent; }
+.resource-guide .link-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px; overflow: visible; border: 0; border-radius: 0; background: transparent; }
+.resource-guide .resource-link { min-width: 0; padding: 12px 14px 14px; border: 1px solid var(--border-subtle); transition: background 120ms cubic-bezier(.4,0,.2,1); }
+.resource-guide .resource-link + .resource-link { border-top: 1px solid var(--border-subtle); }
+.resource-guide .resource-link:hover { background: var(--hover); }
 
 .guest-directory-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 18px 0 8px; padding: 10px 0; border-block: 1px solid var(--border-subtle); }
 .guest-directory-heading > span { color: var(--text-faint); font-size: 11px; letter-spacing: .04em; }
@@ -289,7 +289,8 @@
   .chef-stat + .chef-stat { padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
   .food-plan-section .detail-table-wrap, .readiness-section .detail-table-wrap { overflow: visible; }
   .readiness-links { gap: 4px 18px; margin-bottom: 18px; }
-  .resource-guide .link-section + .link-section { margin-top: 20px; padding-top: 12px; }
+  .resource-guide { gap: 20px; }
+  .resource-guide .link-list { grid-template-columns: 1fr; }
   .guest-directory-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
   .guest-directory .guest-link-entry .link-row { min-height: 66px; }
   .faq-chapter .faq-table { table-layout: fixed; }
@@ -337,13 +338,14 @@
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
     gap: 12px 16px;
-    margin-bottom: 18px;
-    padding: 12px 0 0;
+    margin-bottom: 0;
+    padding: 14px 16px 16px;
     border-top: 1px solid var(--border-subtle);
   }
   .flight-rec-table tbody tr:first-child { border-top: 0; }
   .flight-rec-table tbody th[scope="row"] {
     grid-column: 1 / -1;
+    width: auto;
     padding: 0;
     white-space: normal;
     overflow-wrap: anywhere;
@@ -355,6 +357,8 @@
     overflow-wrap: anywhere;
     font-size: 14px;
   }
+  .flight-rec-table tbody td:nth-child(3),
+  .flight-rec-table tbody td:nth-child(4) { white-space: normal; }
   .flight-rec-table tbody td::before {
     content: attr(data-label);
     display: block;

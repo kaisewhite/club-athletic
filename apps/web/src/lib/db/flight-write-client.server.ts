@@ -5,15 +5,21 @@ export type GuestIdentity = Pick<Guest, "id" | "tripId" | "firstName" | "lastNam
 export type IntakeMessage = Pick<Message, "id" | "conversationId" | "role" | "content" | "seq" | "payload">;
 export type FlightInsert = Pick<Flight, "id" | "guestId" | "direction" | "airline" | "flightNumber" |
   "origin" | "destination" | "scheduledDeparture" | "scheduledArrival" | "confirmationCode" |
-  "source" | "uploadId" | "confirmedByGuest" | "confirmedAt" | "extractionConfidence"> & {
-    rawExtraction: Prisma.InputJsonValue;
+  "source" | "uploadId" | "confirmedByGuest" | "confirmedAt" | "extractionConfidence"> &
+  Partial<Pick<Flight, "terminal" | "notes">> & {
+    rawExtraction: Prisma.InputJsonValue | Prisma.NullableJsonNullValueInput;
   };
 export type GuestInsert = GuestIdentity & { status: "INVITED"; createdVia: "AGENT" };
-export type AuditInsert = {
+export type AgentAuditInsert = {
   id: string; action: "INSERT" | "SUPERSEDE"; entity: "Guest" | "Flight";
   entityId: string; conversationId: string; claimedGuestName: string; source: "AGENT";
   before?: Prisma.InputJsonValue; after: Prisma.InputJsonValue;
 };
+export type PublicEditAuditInsert = {
+  id: string; action: "INSERT" | "SUPERSEDE" | "UPDATE"; entity: "Guest" | "Flight";
+  entityId: string; source: "GUEST"; before?: Prisma.InputJsonValue; after: Prisma.InputJsonValue;
+};
+export type AuditInsert = AgentAuditInsert | PublicEditAuditInsert;
 
 /** Method-level capability IS the enforcement boundary: no raw SQL, itinerary
  * update, guest update, or delete is exposed to domain code, and this module stays
@@ -25,6 +31,8 @@ export interface FlightWriteTransaction {
   getMessage(id: string): Promise<IntakeMessage | null>;
   hasUserMessageAfter(conversationId: string, afterSeq: number, beforeSeq?: number): Promise<boolean>;
   getUpload(id: string): Promise<{ conversationId: string; purpose: string } | null>;
+  guestInTrip(id: string, tripKey: string): Promise<GuestIdentity | null>;
+  updateGuestDisplayName(id: string, displayName: string): Promise<GuestIdentity>;
   listGuests(tripId: string): Promise<GuestIdentity[]>;
   createGuest(data: GuestInsert): Promise<GuestIdentity>;
   currentFlight(guestId: string, direction: "INBOUND" | "OUTBOUND"): Promise<Flight | null>;
@@ -59,7 +67,9 @@ function transactionCapability(tx: Prisma.TransactionClient): FlightWriteTransac
       return !!await tx.message.findFirst({ where: { conversationId, role: "user", seq: { gt: afterSeq, ...(beforeSeq === undefined ? {} : { lt: beforeSeq }) } }, select: { id: true } });
     },
     getUpload: (id) => tx.upload.findUnique({ where: { id }, select: { conversationId: true, purpose: true } }),
-    listGuests: (tripId) => tx.guest.findMany({ where: { tripId }, select: guestSelect }),
+    guestInTrip: (id, tripKey) => tx.guest.findFirst({ where: { id, status: "CONFIRMED", trip: { seedKey: tripKey } }, select: guestSelect }),
+    updateGuestDisplayName: (id, displayName) => tx.guest.update({ where: { id }, data: { displayName }, select: guestSelect }),
+    listGuests: (tripId) => tx.guest.findMany({ where: { tripId, status: { not: "PENDING" } }, select: guestSelect }),
     createGuest: (data) => tx.guest.create({ data, select: guestSelect }),
     currentFlight: (guestId, direction) => tx.flight.findFirst({ where: { guestId, direction, supersededById: null } }),
     async supersedeFlight(id, replacementId, at) {

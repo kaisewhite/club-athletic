@@ -1,6 +1,6 @@
 import { createId } from "@paralleldrive/cuid2";
 import { formatInTimeZone, fromZonedTime } from "date-fns-tz";
-import type { PendingExtraction, Prisma } from "../../../prisma/generated/client";
+import { Prisma, type PendingExtraction } from "../../../prisma/generated/client";
 import { airportTimeZone } from "./airport-timezones";
 import { flightExtractionSchema, isAffirmativeFlightConfirmation, isExplicitGuestCreationConsent, matchesIntakeReadback, type FlightCandidate } from "./flight-contract";
 import { matchGuestCandidates, normalizeGuestName } from "./guest-lookup.server";
@@ -15,6 +15,28 @@ const json = (value: object): Prisma.InputJsonValue => JSON.parse(JSON.stringify
 export type FlightWriteDependencies = { withDatabase?: WithFlightWriteDatabase; now?: () => Date; createId?: () => string };
 type PendingInput = { conversationId: string; pendingExtractionId: string; version: number };
 export type RecordFlightInput = PendingInput & { guestId: string | null; confirmedByGuest: boolean | null; toolCallId: string };
+export type PublicFlightLegEdit = {
+  direction: "INBOUND" | "OUTBOUND";
+  expectedFlightId: string | null;
+  airline: string | null;
+  flightNumber: string | null;
+  origin: string;
+  destination: string;
+  departureDate: string;
+  departureTime: string;
+  arrivalDate: string;
+  arrivalTime: string;
+};
+export type PublicFlightEditInput = {
+  guestId: string;
+  displayName?: string;
+  legs: PublicFlightLegEdit[];
+};
+export class PublicFlightEditError extends Error {}
+export class PublicFlightEditNotFound extends PublicFlightEditError {}
+export class PublicFlightEditConflict extends PublicFlightEditError {}
+
+const PUBLIC_TRIP_KEY = "meribel-2027";
 
 /** Parse an explicit local calendar date/time and reject DST gaps and folds.
  * The reviewed airport map contains one-hour DST transitions; examine both
@@ -72,6 +94,94 @@ function completedLeg(candidate: FlightCandidate) {
   requireThat(scheduledArrival > scheduledDeparture, "Arrival must be after departure.");
   return { ...candidate, direction: candidate.direction, flightNumber: candidate.flightNumber,
     origin: candidate.origin, destination: candidate.destination, scheduledDeparture, scheduledArrival };
+}
+
+function publicLeg(candidate: PublicFlightLegEdit) {
+  const origin = candidate.origin.trim().toUpperCase();
+  const destination = candidate.destination.trim().toUpperCase();
+  if (!/^[A-Z]{3}$/.test(origin) || !/^[A-Z]{3}$/.test(destination) || origin === destination) {
+    throw new PublicFlightEditError("Enter two different three-letter airport codes.");
+  }
+  const scheduledDeparture = resolveFlightLocalTime(candidate.departureDate, candidate.departureTime, origin);
+  const scheduledArrival = resolveFlightLocalTime(candidate.arrivalDate, candidate.arrivalTime, destination);
+  if (scheduledArrival <= scheduledDeparture) throw new PublicFlightEditError("Arrival must be after departure.");
+  const airline = candidate.airline?.trim() || null;
+  const flightNumber = candidate.flightNumber?.trim() || null;
+  if ((airline?.length ?? 0) > 80 || (flightNumber?.length ?? 0) > 30) {
+    throw new PublicFlightEditError("Airline or flight number is too long.");
+  }
+  return { ...candidate, origin, destination, airline, flightNumber, scheduledDeparture, scheduledArrival };
+}
+
+/** Public Group Flights editor. No identity or row-ownership check is performed;
+ * writes are limited to the current trip, visible fields, and one current leg per direction. */
+export async function savePublicFlightEdit(input: PublicFlightEditInput, deps: FlightWriteDependencies = {}) {
+  if (!input.guestId.trim()) throw new PublicFlightEditError("Choose a guest row.");
+  const displayName = input.displayName?.trim();
+  if (input.displayName !== undefined && (!displayName || displayName.length > 80 || /[\p{Cc}\p{Cf}]/u.test(displayName))) {
+    throw new PublicFlightEditError("The displayed name must be 1–80 characters without line breaks or control characters.");
+  }
+  if (!input.legs.length && input.displayName === undefined) throw new PublicFlightEditError("There are no changes to save.");
+  if (input.legs.length > 2 || new Set(input.legs.map(({ direction }) => direction)).size !== input.legs.length) {
+    throw new PublicFlightEditError("Edit each flight direction once.");
+  }
+  const legs = input.legs.map(publicLeg);
+  const now = (deps.now ?? (() => new Date()))();
+  const allocateId = deps.createId ?? createId;
+  return (deps.withDatabase ?? withFlightWriteDatabase)((db) => db.transaction(async (tx) => {
+    const guest = await tx.guestInTrip(input.guestId, PUBLIC_TRIP_KEY);
+    if (!guest) throw new PublicFlightEditNotFound("That guest is not in this trip.");
+    const lockKeys = [
+      ...legs.map(({ direction }) => `flight:${guest.id}:${direction}`),
+      ...(displayName !== undefined && displayName !== guest.displayName ? [`guest-display-name:${guest.id}`] : []),
+    ].sort();
+    for (const key of lockKeys) await tx.lock(key);
+
+    const savedLegs: { direction: "INBOUND" | "OUTBOUND"; flightId: string }[] = [];
+    for (const leg of legs) {
+      const current = await tx.currentFlight(guest.id, leg.direction);
+      if (leg.expectedFlightId !== null && current?.id !== leg.expectedFlightId) {
+        throw new PublicFlightEditConflict("This flight changed while you were editing. Reload and try again.");
+      }
+      if (leg.expectedFlightId === null && current?.confirmedByGuest) {
+        throw new PublicFlightEditConflict("A flight was added while you were editing. Reload and try again.");
+      }
+      const id = allocateId();
+      if (current) {
+        await tx.supersedeFlight(current.id, id, now);
+        await tx.createAudit({ id: allocateId(), action: "SUPERSEDE", entity: "Flight", entityId: current.id, source: "GUEST",
+          before: json(current), after: json({ ...current, supersededById: id, supersededAt: now }) });
+      }
+      const rawExtraction = current?.confirmedByGuest
+        ? current.rawExtraction === null ? Prisma.DbNull : JSON.parse(JSON.stringify(current.rawExtraction)) as Prisma.InputJsonValue
+        : { entryMethod: "public-group-flights" };
+      const data = {
+        id, guestId: guest.id, direction: leg.direction, airline: leg.airline, flightNumber: leg.flightNumber,
+        origin: leg.origin, destination: leg.destination, scheduledDeparture: leg.scheduledDeparture, scheduledArrival: leg.scheduledArrival,
+        confirmationCode: current?.confirmedByGuest ? current.confirmationCode : null,
+        terminal: current?.confirmedByGuest ? current.terminal : null,
+        notes: current?.confirmedByGuest ? current.notes : null,
+        source: current?.confirmedByGuest ? current.source : "ORGANIZER" as const,
+        uploadId: current?.confirmedByGuest ? current.uploadId : null,
+        confirmedByGuest: true, confirmedAt: now,
+        extractionConfidence: current?.confirmedByGuest ? current.extractionConfidence : null,
+        rawExtraction,
+      };
+      await tx.createFlight(data);
+      await tx.createAudit({ id: allocateId(), action: "INSERT", entity: "Flight", entityId: id, source: "GUEST",
+        after: json({ ...data, rawExtraction: rawExtraction === Prisma.DbNull ? null : rawExtraction }) });
+      savedLegs.push({ direction: leg.direction, flightId: id });
+    }
+
+    let savedDisplayName = guest.displayName;
+    if (displayName !== undefined && displayName !== guest.displayName) {
+      const updated = await tx.updateGuestDisplayName(guest.id, displayName);
+      savedDisplayName = updated.displayName;
+      await tx.createAudit({ id: allocateId(), action: "UPDATE", entity: "Guest", entityId: guest.id, source: "GUEST",
+        before: json({ displayName: guest.displayName }), after: json({ displayName: updated.displayName }) });
+    }
+    return { guestId: guest.id, displayName: savedDisplayName, legs: savedLegs };
+  }));
 }
 
 export async function recordFlight(input: RecordFlightInput, deps: FlightWriteDependencies = {}) {

@@ -196,6 +196,13 @@ export function intakeHarness() {
               ),
             getUpload: async (id) =>
               await tx.upload.findFirst({ where: { id } }),
+            guestInTrip: async (id) =>
+              (tables.guest!.find((guest) => guest.id === id) as any) ?? null,
+            updateGuestDisplayName: async (id, displayName) => {
+              const guest = tables.guest!.find((row) => row.id === id)!;
+              guest.displayName = displayName;
+              return guest as any;
+            },
             listGuests: async () => tables.guest as any,
             createGuest: async (data) => {
               tables.guest!.push(data);

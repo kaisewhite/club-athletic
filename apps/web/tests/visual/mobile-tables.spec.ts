@@ -46,7 +46,7 @@ for (const width of [320, 375, 390, 412, 768, 820, 859]) {
           const failures: string[] = [];
 
           for (const cell of cells) {
-            if (cell.scrollWidth > cell.clientWidth + 1) failures.push(cell.textContent ?? "empty cell");
+            if (cell.scrollWidth > cell.clientWidth + 1) failures.push(`${cell.className || cell.tagName} horizontal ${cell.scrollWidth}/${cell.clientWidth}: ${cell.textContent ?? "empty cell"}`);
           }
 
           return failures;
@@ -240,7 +240,7 @@ for (const width of [1280, 1440]) {
       expect(audit.rowCount).toBe(13);
       expect(audit.headerRowCount).toBe(2);
       expect(audit.bodyRowCount).toBe(11);
-      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 11 }, () => 7));
+      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 11 }, () => 6));
       expect(audit.failures).toEqual([]);
     });
   });

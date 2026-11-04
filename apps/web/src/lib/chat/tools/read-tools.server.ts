@@ -22,6 +22,7 @@ export async function listTripGuests() {
           where: { seedKey: "meribel-2027" },
           select: {
             guests: {
+              where: { status: "CONFIRMED" },
               take: 100,
               orderBy: { id: "asc" },
               select: {

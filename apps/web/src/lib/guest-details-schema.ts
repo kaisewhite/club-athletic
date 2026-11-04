@@ -2,6 +2,7 @@ import { parsePhoneNumber, isValidPhoneNumber } from "libphonenumber-js/min";
 import { z } from "zod";
 
 const cleanText = (max: number, label: string) => z.string().trim().min(1, `${label} is required.`).max(max, `${label} must be ${max} characters or fewer.`).refine((value) => !/[\p{Cc}\p{Cf}]/u.test(value), `${label} contains unsupported characters.`);
+const optionalName = z.string().trim().max(80, "Last name must be 80 characters or fewer.").refine((value) => !/[\p{Cc}\p{Cf}]/u.test(value), "Last name contains unsupported characters.");
 
 function normalizeInstagram(value: string) {
   const candidate = value.trim().replace(/^@/, "");
@@ -19,7 +20,7 @@ function normalizeInstagram(value: string) {
 
 export const guestDetailsSchema = z.object({
   firstName: cleanText(80, "First name"),
-  lastName: cleanText(80, "Last name"),
+  lastName: optionalName,
   phone: z.string().trim().min(1, "Mobile / WhatsApp number is required.").max(64, "Enter a valid phone number.")
     .refine((value) => isValidPhoneNumber(value, "US"), "Enter a valid phone number, including the country code if needed.")
     .transform((value) => parsePhoneNumber(value, "US").number),

@@ -39,6 +39,7 @@ export type GuestMinAggregateOutputType = {
   dietaryNotes: string | null
   favoriteCocktails: string | null
   createdVia: $Enums.GuestCreatedVia | null
+  preferredRoomId: string | null
 }
 
 export type GuestMaxAggregateOutputType = {
@@ -56,6 +57,7 @@ export type GuestMaxAggregateOutputType = {
   dietaryNotes: string | null
   favoriteCocktails: string | null
   createdVia: $Enums.GuestCreatedVia | null
+  preferredRoomId: string | null
 }
 
 export type GuestCountAggregateOutputType = {
@@ -73,6 +75,7 @@ export type GuestCountAggregateOutputType = {
   dietaryNotes: number
   favoriteCocktails: number
   createdVia: number
+  preferredRoomId: number
   _all: number
 }
 
@@ -92,6 +95,7 @@ export type GuestMinAggregateInputType = {
   dietaryNotes?: true
   favoriteCocktails?: true
   createdVia?: true
+  preferredRoomId?: true
 }
 
 export type GuestMaxAggregateInputType = {
@@ -109,6 +113,7 @@ export type GuestMaxAggregateInputType = {
   dietaryNotes?: true
   favoriteCocktails?: true
   createdVia?: true
+  preferredRoomId?: true
 }
 
 export type GuestCountAggregateInputType = {
@@ -126,6 +131,7 @@ export type GuestCountAggregateInputType = {
   dietaryNotes?: true
   favoriteCocktails?: true
   createdVia?: true
+  preferredRoomId?: true
   _all?: true
 }
 
@@ -216,6 +222,7 @@ export type GuestGroupByOutputType = {
   dietaryNotes: string | null
   favoriteCocktails: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId: string | null
   _count: GuestCountAggregateOutputType | null
   _min: GuestMinAggregateOutputType | null
   _max: GuestMaxAggregateOutputType | null
@@ -254,8 +261,10 @@ export type GuestWhereInput = {
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
   favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.StringNullableFilter<"Guest"> | string | null
   trip?: Prisma.XOR<Prisma.TripScalarRelationFilter, Prisma.TripWhereInput>
   spot?: Prisma.XOR<Prisma.SpotNullableScalarRelationFilter, Prisma.SpotWhereInput> | null
+  preferredRoom?: Prisma.XOR<Prisma.RoomNullableScalarRelationFilter, Prisma.RoomWhereInput> | null
   tasks?: Prisma.GuestTaskListRelationFilter
   flights?: Prisma.FlightListRelationFilter
   pendingExtractions?: Prisma.PendingExtractionListRelationFilter
@@ -278,8 +287,10 @@ export type GuestOrderByWithRelationInput = {
   dietaryNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   favoriteCocktails?: Prisma.SortOrderInput | Prisma.SortOrder
   createdVia?: Prisma.SortOrder
+  preferredRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
   trip?: Prisma.TripOrderByWithRelationInput
   spot?: Prisma.SpotOrderByWithRelationInput
+  preferredRoom?: Prisma.RoomOrderByWithRelationInput
   tasks?: Prisma.GuestTaskOrderByRelationAggregateInput
   flights?: Prisma.FlightOrderByRelationAggregateInput
   pendingExtractions?: Prisma.PendingExtractionOrderByRelationAggregateInput
@@ -305,8 +316,10 @@ export type GuestWhereUniqueInput = Prisma.AtLeast<{
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
   favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.StringNullableFilter<"Guest"> | string | null
   trip?: Prisma.XOR<Prisma.TripScalarRelationFilter, Prisma.TripWhereInput>
   spot?: Prisma.XOR<Prisma.SpotNullableScalarRelationFilter, Prisma.SpotWhereInput> | null
+  preferredRoom?: Prisma.XOR<Prisma.RoomNullableScalarRelationFilter, Prisma.RoomWhereInput> | null
   tasks?: Prisma.GuestTaskListRelationFilter
   flights?: Prisma.FlightListRelationFilter
   pendingExtractions?: Prisma.PendingExtractionListRelationFilter
@@ -329,6 +342,7 @@ export type GuestOrderByWithAggregationInput = {
   dietaryNotes?: Prisma.SortOrderInput | Prisma.SortOrder
   favoriteCocktails?: Prisma.SortOrderInput | Prisma.SortOrder
   createdVia?: Prisma.SortOrder
+  preferredRoomId?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.GuestCountOrderByAggregateInput
   _max?: Prisma.GuestMaxOrderByAggregateInput
   _min?: Prisma.GuestMinOrderByAggregateInput
@@ -352,6 +366,7 @@ export type GuestScalarWhereWithAggregatesInput = {
   dietaryNotes?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   favoriteCocktails?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaWithAggregatesFilter<"Guest"> | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.StringNullableWithAggregatesFilter<"Guest"> | string | null
 }
 
 export type GuestCreateInput = {
@@ -370,6 +385,7 @@ export type GuestCreateInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
@@ -392,6 +408,7 @@ export type GuestUncheckedCreateInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
@@ -416,6 +433,7 @@ export type GuestUpdateInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
@@ -438,6 +456,7 @@ export type GuestUncheckedUpdateInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
@@ -461,6 +480,7 @@ export type GuestCreateManyInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
 }
 
 export type GuestUpdateManyMutationInput = {
@@ -494,6 +514,7 @@ export type GuestUncheckedUpdateManyInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
 }
 
 export type GuestListRelationFilter = {
@@ -526,6 +547,7 @@ export type GuestCountOrderByAggregateInput = {
   dietaryNotes?: Prisma.SortOrder
   favoriteCocktails?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
+  preferredRoomId?: Prisma.SortOrder
 }
 
 export type GuestMaxOrderByAggregateInput = {
@@ -543,6 +565,7 @@ export type GuestMaxOrderByAggregateInput = {
   dietaryNotes?: Prisma.SortOrder
   favoriteCocktails?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
+  preferredRoomId?: Prisma.SortOrder
 }
 
 export type GuestMinOrderByAggregateInput = {
@@ -560,6 +583,7 @@ export type GuestMinOrderByAggregateInput = {
   dietaryNotes?: Prisma.SortOrder
   favoriteCocktails?: Prisma.SortOrder
   createdVia?: Prisma.SortOrder
+  preferredRoomId?: Prisma.SortOrder
 }
 
 export type GuestScalarRelationFilter = {
@@ -606,6 +630,48 @@ export type GuestUncheckedUpdateManyWithoutTripNestedInput = {
   connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
   update?: Prisma.GuestUpdateWithWhereUniqueWithoutTripInput | Prisma.GuestUpdateWithWhereUniqueWithoutTripInput[]
   updateMany?: Prisma.GuestUpdateManyWithWhereWithoutTripInput | Prisma.GuestUpdateManyWithWhereWithoutTripInput[]
+  deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
+}
+
+export type GuestCreateNestedManyWithoutPreferredRoomInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput> | Prisma.GuestCreateWithoutPreferredRoomInput[] | Prisma.GuestUncheckedCreateWithoutPreferredRoomInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutPreferredRoomInput | Prisma.GuestCreateOrConnectWithoutPreferredRoomInput[]
+  createMany?: Prisma.GuestCreateManyPreferredRoomInputEnvelope
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+}
+
+export type GuestUncheckedCreateNestedManyWithoutPreferredRoomInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput> | Prisma.GuestCreateWithoutPreferredRoomInput[] | Prisma.GuestUncheckedCreateWithoutPreferredRoomInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutPreferredRoomInput | Prisma.GuestCreateOrConnectWithoutPreferredRoomInput[]
+  createMany?: Prisma.GuestCreateManyPreferredRoomInputEnvelope
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+}
+
+export type GuestUpdateManyWithoutPreferredRoomNestedInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput> | Prisma.GuestCreateWithoutPreferredRoomInput[] | Prisma.GuestUncheckedCreateWithoutPreferredRoomInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutPreferredRoomInput | Prisma.GuestCreateOrConnectWithoutPreferredRoomInput[]
+  upsert?: Prisma.GuestUpsertWithWhereUniqueWithoutPreferredRoomInput | Prisma.GuestUpsertWithWhereUniqueWithoutPreferredRoomInput[]
+  createMany?: Prisma.GuestCreateManyPreferredRoomInputEnvelope
+  set?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  disconnect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  delete?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  update?: Prisma.GuestUpdateWithWhereUniqueWithoutPreferredRoomInput | Prisma.GuestUpdateWithWhereUniqueWithoutPreferredRoomInput[]
+  updateMany?: Prisma.GuestUpdateManyWithWhereWithoutPreferredRoomInput | Prisma.GuestUpdateManyWithWhereWithoutPreferredRoomInput[]
+  deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
+}
+
+export type GuestUncheckedUpdateManyWithoutPreferredRoomNestedInput = {
+  create?: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput> | Prisma.GuestCreateWithoutPreferredRoomInput[] | Prisma.GuestUncheckedCreateWithoutPreferredRoomInput[]
+  connectOrCreate?: Prisma.GuestCreateOrConnectWithoutPreferredRoomInput | Prisma.GuestCreateOrConnectWithoutPreferredRoomInput[]
+  upsert?: Prisma.GuestUpsertWithWhereUniqueWithoutPreferredRoomInput | Prisma.GuestUpsertWithWhereUniqueWithoutPreferredRoomInput[]
+  createMany?: Prisma.GuestCreateManyPreferredRoomInputEnvelope
+  set?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  disconnect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  delete?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  connect?: Prisma.GuestWhereUniqueInput | Prisma.GuestWhereUniqueInput[]
+  update?: Prisma.GuestUpdateWithWhereUniqueWithoutPreferredRoomInput | Prisma.GuestUpdateWithWhereUniqueWithoutPreferredRoomInput[]
+  updateMany?: Prisma.GuestUpdateManyWithWhereWithoutPreferredRoomInput | Prisma.GuestUpdateManyWithWhereWithoutPreferredRoomInput[]
   deleteMany?: Prisma.GuestScalarWhereInput | Prisma.GuestScalarWhereInput[]
 }
 
@@ -722,6 +788,7 @@ export type GuestCreateWithoutTripInput = {
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
@@ -743,6 +810,7 @@ export type GuestUncheckedCreateWithoutTripInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
@@ -795,6 +863,79 @@ export type GuestScalarWhereInput = {
   dietaryNotes?: Prisma.StringNullableFilter<"Guest"> | string | null
   favoriteCocktails?: Prisma.StringNullableFilter<"Guest"> | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFilter<"Guest"> | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.StringNullableFilter<"Guest"> | string | null
+}
+
+export type GuestCreateWithoutPreferredRoomInput = {
+  id: string
+  seedKey?: string | null
+  firstName: string
+  lastName: string
+  displayName: string
+  instagramUrl?: string | null
+  email?: string | null
+  phone?: string | null
+  venmoHandle?: string | null
+  status: $Enums.GuestStatus
+  dietaryNotes?: string | null
+  favoriteCocktails?: string | null
+  createdVia: $Enums.GuestCreatedVia
+  trip: Prisma.TripCreateNestedOneWithoutGuestsInput
+  spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
+  flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
+  pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
+  createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
+  submissions?: Prisma.GuestSubmissionCreateNestedManyWithoutGuestInput
+}
+
+export type GuestUncheckedCreateWithoutPreferredRoomInput = {
+  id: string
+  seedKey?: string | null
+  tripId: string
+  firstName: string
+  lastName: string
+  displayName: string
+  instagramUrl?: string | null
+  email?: string | null
+  phone?: string | null
+  venmoHandle?: string | null
+  status: $Enums.GuestStatus
+  dietaryNotes?: string | null
+  favoriteCocktails?: string | null
+  createdVia: $Enums.GuestCreatedVia
+  spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
+  tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
+  flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
+  pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
+  createdForExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutCreatedGuestInput
+  submissions?: Prisma.GuestSubmissionUncheckedCreateNestedManyWithoutGuestInput
+}
+
+export type GuestCreateOrConnectWithoutPreferredRoomInput = {
+  where: Prisma.GuestWhereUniqueInput
+  create: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput>
+}
+
+export type GuestCreateManyPreferredRoomInputEnvelope = {
+  data: Prisma.GuestCreateManyPreferredRoomInput | Prisma.GuestCreateManyPreferredRoomInput[]
+  skipDuplicates?: boolean
+}
+
+export type GuestUpsertWithWhereUniqueWithoutPreferredRoomInput = {
+  where: Prisma.GuestWhereUniqueInput
+  update: Prisma.XOR<Prisma.GuestUpdateWithoutPreferredRoomInput, Prisma.GuestUncheckedUpdateWithoutPreferredRoomInput>
+  create: Prisma.XOR<Prisma.GuestCreateWithoutPreferredRoomInput, Prisma.GuestUncheckedCreateWithoutPreferredRoomInput>
+}
+
+export type GuestUpdateWithWhereUniqueWithoutPreferredRoomInput = {
+  where: Prisma.GuestWhereUniqueInput
+  data: Prisma.XOR<Prisma.GuestUpdateWithoutPreferredRoomInput, Prisma.GuestUncheckedUpdateWithoutPreferredRoomInput>
+}
+
+export type GuestUpdateManyWithWhereWithoutPreferredRoomInput = {
+  where: Prisma.GuestScalarWhereInput
+  data: Prisma.XOR<Prisma.GuestUpdateManyMutationInput, Prisma.GuestUncheckedUpdateManyWithoutPreferredRoomInput>
 }
 
 export type GuestCreateWithoutSpotInput = {
@@ -812,6 +953,7 @@ export type GuestCreateWithoutSpotInput = {
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
@@ -834,6 +976,7 @@ export type GuestUncheckedCreateWithoutSpotInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
@@ -872,6 +1015,7 @@ export type GuestUpdateWithoutSpotInput = {
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
@@ -894,6 +1038,7 @@ export type GuestUncheckedUpdateWithoutSpotInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
@@ -917,6 +1062,7 @@ export type GuestCreateWithoutTasksInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
@@ -938,6 +1084,7 @@ export type GuestUncheckedCreateWithoutTasksInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
@@ -977,6 +1124,7 @@ export type GuestUpdateWithoutTasksInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
@@ -998,6 +1146,7 @@ export type GuestUncheckedUpdateWithoutTasksInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
@@ -1021,6 +1170,7 @@ export type GuestCreateWithoutFlightsInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
@@ -1042,6 +1192,7 @@ export type GuestUncheckedCreateWithoutFlightsInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedCreateNestedManyWithoutGuestInput
@@ -1081,6 +1232,7 @@ export type GuestUpdateWithoutFlightsInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
@@ -1102,6 +1254,7 @@ export type GuestUncheckedUpdateWithoutFlightsInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
@@ -1125,6 +1278,7 @@ export type GuestCreateWithoutSubmissionsInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
@@ -1146,6 +1300,7 @@ export type GuestUncheckedCreateWithoutSubmissionsInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
@@ -1185,6 +1340,7 @@ export type GuestUpdateWithoutSubmissionsInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
@@ -1206,6 +1362,7 @@ export type GuestUncheckedUpdateWithoutSubmissionsInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
@@ -1229,6 +1386,7 @@ export type GuestCreateWithoutPendingExtractionsInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   createdForExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutCreatedGuestInput
@@ -1250,6 +1408,7 @@ export type GuestUncheckedCreateWithoutPendingExtractionsInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
@@ -1278,6 +1437,7 @@ export type GuestCreateWithoutCreatedForExtractionsInput = {
   createdVia: $Enums.GuestCreatedVia
   trip: Prisma.TripCreateNestedOneWithoutGuestsInput
   spot?: Prisma.SpotCreateNestedOneWithoutGuestInput
+  preferredRoom?: Prisma.RoomCreateNestedOneWithoutPreferredByInput
   tasks?: Prisma.GuestTaskCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightCreateNestedManyWithoutGuestInput
   pendingExtractions?: Prisma.PendingExtractionCreateNestedManyWithoutGuestInput
@@ -1299,6 +1459,7 @@ export type GuestUncheckedCreateWithoutCreatedForExtractionsInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
   spot?: Prisma.SpotUncheckedCreateNestedOneWithoutGuestInput
   tasks?: Prisma.GuestTaskUncheckedCreateNestedManyWithoutGuestInput
   flights?: Prisma.FlightUncheckedCreateNestedManyWithoutGuestInput
@@ -1338,6 +1499,7 @@ export type GuestUpdateWithoutPendingExtractionsInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
@@ -1359,6 +1521,7 @@ export type GuestUncheckedUpdateWithoutPendingExtractionsInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
@@ -1393,6 +1556,7 @@ export type GuestUpdateWithoutCreatedForExtractionsInput = {
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
@@ -1414,6 +1578,7 @@ export type GuestUncheckedUpdateWithoutCreatedForExtractionsInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
@@ -1435,6 +1600,7 @@ export type GuestCreateManyTripInput = {
   dietaryNotes?: string | null
   favoriteCocktails?: string | null
   createdVia: $Enums.GuestCreatedVia
+  preferredRoomId?: string | null
 }
 
 export type GuestUpdateWithoutTripInput = {
@@ -1452,6 +1618,7 @@ export type GuestUpdateWithoutTripInput = {
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
   spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  preferredRoom?: Prisma.RoomUpdateOneWithoutPreferredByNestedInput
   tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
   pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
@@ -1473,6 +1640,7 @@ export type GuestUncheckedUpdateWithoutTripInput = {
   dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
   tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
   flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
@@ -1484,6 +1652,87 @@ export type GuestUncheckedUpdateWithoutTripInput = {
 export type GuestUncheckedUpdateManyWithoutTripInput = {
   id?: Prisma.StringFieldUpdateOperationsInput | string
   seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
+  dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  preferredRoomId?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+}
+
+export type GuestCreateManyPreferredRoomInput = {
+  id: string
+  seedKey?: string | null
+  tripId: string
+  firstName: string
+  lastName: string
+  displayName: string
+  instagramUrl?: string | null
+  email?: string | null
+  phone?: string | null
+  venmoHandle?: string | null
+  status: $Enums.GuestStatus
+  dietaryNotes?: string | null
+  favoriteCocktails?: string | null
+  createdVia: $Enums.GuestCreatedVia
+}
+
+export type GuestUpdateWithoutPreferredRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
+  dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  trip?: Prisma.TripUpdateOneRequiredWithoutGuestsNestedInput
+  spot?: Prisma.SpotUpdateOneWithoutGuestNestedInput
+  tasks?: Prisma.GuestTaskUpdateManyWithoutGuestNestedInput
+  flights?: Prisma.FlightUpdateManyWithoutGuestNestedInput
+  pendingExtractions?: Prisma.PendingExtractionUpdateManyWithoutGuestNestedInput
+  createdForExtractions?: Prisma.PendingExtractionUpdateManyWithoutCreatedGuestNestedInput
+  submissions?: Prisma.GuestSubmissionUpdateManyWithoutGuestNestedInput
+}
+
+export type GuestUncheckedUpdateWithoutPreferredRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tripId?: Prisma.StringFieldUpdateOperationsInput | string
+  firstName?: Prisma.StringFieldUpdateOperationsInput | string
+  lastName?: Prisma.StringFieldUpdateOperationsInput | string
+  displayName?: Prisma.StringFieldUpdateOperationsInput | string
+  instagramUrl?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  email?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  phone?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  venmoHandle?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  status?: Prisma.EnumGuestStatusFieldUpdateOperationsInput | $Enums.GuestStatus
+  dietaryNotes?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  favoriteCocktails?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  createdVia?: Prisma.EnumGuestCreatedViaFieldUpdateOperationsInput | $Enums.GuestCreatedVia
+  spot?: Prisma.SpotUncheckedUpdateOneWithoutGuestNestedInput
+  tasks?: Prisma.GuestTaskUncheckedUpdateManyWithoutGuestNestedInput
+  flights?: Prisma.FlightUncheckedUpdateManyWithoutGuestNestedInput
+  pendingExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutGuestNestedInput
+  createdForExtractions?: Prisma.PendingExtractionUncheckedUpdateManyWithoutCreatedGuestNestedInput
+  submissions?: Prisma.GuestSubmissionUncheckedUpdateManyWithoutGuestNestedInput
+}
+
+export type GuestUncheckedUpdateManyWithoutPreferredRoomInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  seedKey?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  tripId?: Prisma.StringFieldUpdateOperationsInput | string
   firstName?: Prisma.StringFieldUpdateOperationsInput | string
   lastName?: Prisma.StringFieldUpdateOperationsInput | string
   displayName?: Prisma.StringFieldUpdateOperationsInput | string
@@ -1579,8 +1828,10 @@ export type GuestSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   dietaryNotes?: boolean
   favoriteCocktails?: boolean
   createdVia?: boolean
+  preferredRoomId?: boolean
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   spot?: boolean | Prisma.Guest$spotArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
   tasks?: boolean | Prisma.Guest$tasksArgs<ExtArgs>
   flights?: boolean | Prisma.Guest$flightsArgs<ExtArgs>
   pendingExtractions?: boolean | Prisma.Guest$pendingExtractionsArgs<ExtArgs>
@@ -1604,7 +1855,9 @@ export type GuestSelectCreateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   dietaryNotes?: boolean
   favoriteCocktails?: boolean
   createdVia?: boolean
+  preferredRoomId?: boolean
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
 export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
@@ -1622,7 +1875,9 @@ export type GuestSelectUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensi
   dietaryNotes?: boolean
   favoriteCocktails?: boolean
   createdVia?: boolean
+  preferredRoomId?: boolean
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
 }, ExtArgs["result"]["guest"]>
 
 export type GuestSelectScalar = {
@@ -1640,12 +1895,14 @@ export type GuestSelectScalar = {
   dietaryNotes?: boolean
   favoriteCocktails?: boolean
   createdVia?: boolean
+  preferredRoomId?: boolean
 }
 
-export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "instagramUrl" | "email" | "phone" | "venmoHandle" | "status" | "dietaryNotes" | "favoriteCocktails" | "createdVia", ExtArgs["result"]["guest"]>
+export type GuestOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetOmit<"id" | "seedKey" | "tripId" | "firstName" | "lastName" | "displayName" | "instagramUrl" | "email" | "phone" | "venmoHandle" | "status" | "dietaryNotes" | "favoriteCocktails" | "createdVia" | "preferredRoomId", ExtArgs["result"]["guest"]>
 export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
   spot?: boolean | Prisma.Guest$spotArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
   tasks?: boolean | Prisma.Guest$tasksArgs<ExtArgs>
   flights?: boolean | Prisma.Guest$flightsArgs<ExtArgs>
   pendingExtractions?: boolean | Prisma.Guest$pendingExtractionsArgs<ExtArgs>
@@ -1655,9 +1912,11 @@ export type GuestInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs =
 }
 export type GuestIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
 }
 export type GuestIncludeUpdateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   trip?: boolean | Prisma.TripDefaultArgs<ExtArgs>
+  preferredRoom?: boolean | Prisma.Guest$preferredRoomArgs<ExtArgs>
 }
 
 export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -1665,6 +1924,7 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
   objects: {
     trip: Prisma.$TripPayload<ExtArgs>
     spot: Prisma.$SpotPayload<ExtArgs> | null
+    preferredRoom: Prisma.$RoomPayload<ExtArgs> | null
     tasks: Prisma.$GuestTaskPayload<ExtArgs>[]
     flights: Prisma.$FlightPayload<ExtArgs>[]
     pendingExtractions: Prisma.$PendingExtractionPayload<ExtArgs>[]
@@ -1686,6 +1946,7 @@ export type $GuestPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs 
     dietaryNotes: string | null
     favoriteCocktails: string | null
     createdVia: $Enums.GuestCreatedVia
+    preferredRoomId: string | null
   }, ExtArgs["result"]["guest"]>
   composites: {}
 }
@@ -2082,6 +2343,7 @@ export interface Prisma__GuestClient<T, Null = never, ExtArgs extends runtime.Ty
   readonly [Symbol.toStringTag]: "PrismaPromise"
   trip<T extends Prisma.TripDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.TripDefaultArgs<ExtArgs>>): Prisma.Prisma__TripClient<runtime.Types.Result.GetResult<Prisma.$TripPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   spot<T extends Prisma.Guest$spotArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$spotArgs<ExtArgs>>): Prisma.Prisma__SpotClient<runtime.Types.Result.GetResult<Prisma.$SpotPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
+  preferredRoom<T extends Prisma.Guest$preferredRoomArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$preferredRoomArgs<ExtArgs>>): Prisma.Prisma__RoomClient<runtime.Types.Result.GetResult<Prisma.$RoomPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | null, null, ExtArgs, GlobalOmitOptions>
   tasks<T extends Prisma.Guest$tasksArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$tasksArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestTaskPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   flights<T extends Prisma.Guest$flightsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$flightsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$FlightPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   pendingExtractions<T extends Prisma.Guest$pendingExtractionsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Guest$pendingExtractionsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$PendingExtractionPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
@@ -2130,6 +2392,7 @@ export interface GuestFieldRefs {
   readonly dietaryNotes: Prisma.FieldRef<"Guest", 'String'>
   readonly favoriteCocktails: Prisma.FieldRef<"Guest", 'String'>
   readonly createdVia: Prisma.FieldRef<"Guest", 'GuestCreatedVia'>
+  readonly preferredRoomId: Prisma.FieldRef<"Guest", 'String'>
 }
     
 
@@ -2547,6 +2810,25 @@ export type Guest$spotArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
    */
   include?: Prisma.SpotInclude<ExtArgs> | null
   where?: Prisma.SpotWhereInput
+}
+
+/**
+ * Guest.preferredRoom
+ */
+export type Guest$preferredRoomArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Room
+   */
+  select?: Prisma.RoomSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Room
+   */
+  omit?: Prisma.RoomOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.RoomInclude<ExtArgs> | null
+  where?: Prisma.RoomWhereInput
 }
 
 /**

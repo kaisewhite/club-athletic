@@ -2115,7 +2115,8 @@ export const GuestScalarFieldEnum = {
   status: 'status',
   dietaryNotes: 'dietaryNotes',
   favoriteCocktails: 'favoriteCocktails',
-  createdVia: 'createdVia'
+  createdVia: 'createdVia',
+  preferredRoomId: 'preferredRoomId'
 } as const
 
 export type GuestScalarFieldEnum = (typeof GuestScalarFieldEnum)[keyof typeof GuestScalarFieldEnum]

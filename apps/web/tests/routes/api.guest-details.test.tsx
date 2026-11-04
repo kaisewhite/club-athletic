@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError } = vi.hoisted(() => {
+const { saveGuestDetails, saveGuestDetailsField, GuestDetailsNameMatchError, GuestDetailsRoomFullError } = vi.hoisted(() => {
   class GuestDetailsNameMatchError extends Error {}
   class GuestDetailsRoomFullError extends Error { constructor() { super("That room no longer has an open spot. Choose another room."); } }
-  return { saveGuestDetails: vi.fn(), GuestDetailsNameMatchError, GuestDetailsRoomFullError };
+  return { saveGuestDetails: vi.fn(), saveGuestDetailsField: vi.fn(), GuestDetailsNameMatchError, GuestDetailsRoomFullError };
 });
-vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError }));
+vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, saveGuestDetailsField, GuestDetailsNameMatchError, GuestDetailsRoomFullError }));
 import { action, loader } from "../../app/routes/api.guest-details";
 
 const valid = {
@@ -13,7 +13,7 @@ const valid = {
   venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: "None", favoriteCocktails: "Margarita", roomId: "room-1",
 };
 
-beforeEach(() => { saveGuestDetails.mockReset(); saveGuestDetails.mockResolvedValue({ duplicate: false, created: false, guestId: "guest-1" }); });
+beforeEach(() => { saveGuestDetails.mockReset(); saveGuestDetailsField.mockReset(); saveGuestDetails.mockResolvedValue({ duplicate: false, created: false, guestId: "guest-1" }); saveGuestDetailsField.mockResolvedValue({ saved: true, guestId: "guest-1" }); });
 afterEach(() => vi.restoreAllMocks());
 
 function request(body: unknown, init: { method?: string; headers?: Record<string, string> } = {}) {
@@ -24,6 +24,20 @@ function request(body: unknown, init: { method?: string; headers?: Record<string
 }
 
 describe("guest details API", () => {
+  it("persists each autosaved field through the Guest database boundary", async () => {
+    const payload = { kind: "field", submissionId: valid.submissionId, field: "firstName", value: "Alex" };
+    const response = await action({ request: request(payload) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true });
+    expect(saveGuestDetailsField).toHaveBeenCalledWith({ submissionId: payload.submissionId, field: "firstName", value: "Alex" });
+    expect(saveGuestDetails).not.toHaveBeenCalled();
+  });
+
+  it("rejects invalid autosave fields", async () => {
+    const response = await action({ request: request({ kind: "field", submissionId: valid.submissionId, field: "status", value: "CONFIRMED" }) });
+    expect(response.status).toBe(400);
+    expect(saveGuestDetailsField).not.toHaveBeenCalled();
+  });
   it("accepts a validated submission and passes normalized values to the write boundary", async () => {
     const response = await action({ request: request(valid) });
     expect(response.status).toBe(200);
@@ -50,10 +64,10 @@ describe("guest details API", () => {
     expect((await loader()).status).toBe(405);
   });
 
-  it("uses the honeypot response without creating a guest", async () => {
+  it("rejects the honeypot without reporting a successful submission", async () => {
     const response = await action({ request: request({ ...valid, website: "bot" }) });
-    expect(response.status).toBe(200);
-    expect(await response.json()).toEqual({ ok: true, created: false });
+    expect(response.status).toBe(400);
+    expect(await response.json()).toMatchObject({ ok: false, error: expect.stringContaining("couldn’t verify") });
     expect(saveGuestDetails).not.toHaveBeenCalled();
   });
 

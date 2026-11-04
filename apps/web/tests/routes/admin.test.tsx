@@ -2,8 +2,8 @@ import { renderToStaticMarkup } from "react-dom/server";
 import { createRoutesStub } from "react-router";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 
-const { getAdminGuests } = vi.hoisted(() => ({ getAdminGuests: vi.fn() }));
-vi.mock("@/lib/db/repository.server", () => ({ getAdminGuests }));
+const { getAdminGuests, getFolieDouceVotes } = vi.hoisted(() => ({ getAdminGuests: vi.fn(), getFolieDouceVotes: vi.fn() }));
+vi.mock("@/lib/db/repository.server", () => ({ getAdminGuests, getFolieDouceVotes }));
 
 import Admin, { headers, loader } from "../../app/routes/admin";
 
@@ -31,6 +31,8 @@ function render(loaderData: Awaited<ReturnType<typeof loader>>) {
 beforeEach(() => {
   getAdminGuests.mockReset();
   getAdminGuests.mockResolvedValue([guest]);
+  getFolieDouceVotes.mockReset();
+  getFolieDouceVotes.mockResolvedValue({ vip: [], generalAdmission: [] });
 });
 
 describe("/admin", () => {

@@ -67,7 +67,7 @@ describe("guest details writes", () => {
     const claimSpot = vi.fn();
     const tx = {
       guestSubmission: { findUnique: async () => ({ guestId: "guest-1" }), create: vi.fn() },
-      trip: { findUnique: vi.fn() }, guest: { findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
+      trip: { findUnique: vi.fn() }, guest: { findUnique: async () => ({ status: "CONFIRMED" }), findMany: vi.fn(), create: vi.fn(), update: vi.fn() },
       spot: { findFirst: vi.fn(), updateMany: claimSpot }, auditLog: { create: vi.fn() },
     };
     const result = await saveGuestDetails({ submissionId: "7c54ef87-76d0-4c5b-87ea-a17b897d8291", details }, dependencies(tx));

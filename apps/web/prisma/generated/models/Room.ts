@@ -262,6 +262,7 @@ export type RoomWhereInput = {
   sortOrder?: Prisma.IntFilter<"Room"> | number
   floor?: Prisma.XOR<Prisma.FloorScalarRelationFilter, Prisma.FloorWhereInput>
   spots?: Prisma.SpotListRelationFilter
+  preferredBy?: Prisma.GuestListRelationFilter
 }
 
 export type RoomOrderByWithRelationInput = {
@@ -277,6 +278,7 @@ export type RoomOrderByWithRelationInput = {
   sortOrder?: Prisma.SortOrder
   floor?: Prisma.FloorOrderByWithRelationInput
   spots?: Prisma.SpotOrderByRelationAggregateInput
+  preferredBy?: Prisma.GuestOrderByRelationAggregateInput
 }
 
 export type RoomWhereUniqueInput = Prisma.AtLeast<{
@@ -296,6 +298,7 @@ export type RoomWhereUniqueInput = Prisma.AtLeast<{
   sortOrder?: Prisma.IntFilter<"Room"> | number
   floor?: Prisma.XOR<Prisma.FloorScalarRelationFilter, Prisma.FloorWhereInput>
   spots?: Prisma.SpotListRelationFilter
+  preferredBy?: Prisma.GuestListRelationFilter
 }, "id" | "floorId_name">
 
 export type RoomOrderByWithAggregationInput = {
@@ -344,6 +347,7 @@ export type RoomCreateInput = {
   sortOrder: number
   floor: Prisma.FloorCreateNestedOneWithoutRoomsInput
   spots?: Prisma.SpotCreateNestedManyWithoutRoomInput
+  preferredBy?: Prisma.GuestCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomUncheckedCreateInput = {
@@ -358,6 +362,7 @@ export type RoomUncheckedCreateInput = {
   pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder: number
   spots?: Prisma.SpotUncheckedCreateNestedManyWithoutRoomInput
+  preferredBy?: Prisma.GuestUncheckedCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomUpdateInput = {
@@ -372,6 +377,7 @@ export type RoomUpdateInput = {
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   floor?: Prisma.FloorUpdateOneRequiredWithoutRoomsNestedInput
   spots?: Prisma.SpotUpdateManyWithoutRoomNestedInput
+  preferredBy?: Prisma.GuestUpdateManyWithoutPreferredRoomNestedInput
 }
 
 export type RoomUncheckedUpdateInput = {
@@ -386,6 +392,7 @@ export type RoomUncheckedUpdateInput = {
   pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   spots?: Prisma.SpotUncheckedUpdateManyWithoutRoomNestedInput
+  preferredBy?: Prisma.GuestUncheckedUpdateManyWithoutPreferredRoomNestedInput
 }
 
 export type RoomCreateManyInput = {
@@ -495,6 +502,11 @@ export type RoomScalarRelationFilter = {
   isNot?: Prisma.RoomWhereInput
 }
 
+export type RoomNullableScalarRelationFilter = {
+  is?: Prisma.RoomWhereInput | null
+  isNot?: Prisma.RoomWhereInput | null
+}
+
 export type RoomCreateNestedManyWithoutFloorInput = {
   create?: Prisma.XOR<Prisma.RoomCreateWithoutFloorInput, Prisma.RoomUncheckedCreateWithoutFloorInput> | Prisma.RoomCreateWithoutFloorInput[] | Prisma.RoomUncheckedCreateWithoutFloorInput[]
   connectOrCreate?: Prisma.RoomCreateOrConnectWithoutFloorInput | Prisma.RoomCreateOrConnectWithoutFloorInput[]
@@ -559,6 +571,22 @@ export type RoomUpdateOneRequiredWithoutSpotsNestedInput = {
   update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutSpotsInput, Prisma.RoomUpdateWithoutSpotsInput>, Prisma.RoomUncheckedUpdateWithoutSpotsInput>
 }
 
+export type RoomCreateNestedOneWithoutPreferredByInput = {
+  create?: Prisma.XOR<Prisma.RoomCreateWithoutPreferredByInput, Prisma.RoomUncheckedCreateWithoutPreferredByInput>
+  connectOrCreate?: Prisma.RoomCreateOrConnectWithoutPreferredByInput
+  connect?: Prisma.RoomWhereUniqueInput
+}
+
+export type RoomUpdateOneWithoutPreferredByNestedInput = {
+  create?: Prisma.XOR<Prisma.RoomCreateWithoutPreferredByInput, Prisma.RoomUncheckedCreateWithoutPreferredByInput>
+  connectOrCreate?: Prisma.RoomCreateOrConnectWithoutPreferredByInput
+  upsert?: Prisma.RoomUpsertWithoutPreferredByInput
+  disconnect?: Prisma.RoomWhereInput | boolean
+  delete?: Prisma.RoomWhereInput | boolean
+  connect?: Prisma.RoomWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.RoomUpdateToOneWithWhereWithoutPreferredByInput, Prisma.RoomUpdateWithoutPreferredByInput>, Prisma.RoomUncheckedUpdateWithoutPreferredByInput>
+}
+
 export type RoomCreateWithoutFloorInput = {
   id: string
   name: string
@@ -570,6 +598,7 @@ export type RoomCreateWithoutFloorInput = {
   pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder: number
   spots?: Prisma.SpotCreateNestedManyWithoutRoomInput
+  preferredBy?: Prisma.GuestCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomUncheckedCreateWithoutFloorInput = {
@@ -583,6 +612,7 @@ export type RoomUncheckedCreateWithoutFloorInput = {
   pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder: number
   spots?: Prisma.SpotUncheckedCreateNestedManyWithoutRoomInput
+  preferredBy?: Prisma.GuestUncheckedCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomCreateOrConnectWithoutFloorInput = {
@@ -638,6 +668,7 @@ export type RoomCreateWithoutSpotsInput = {
   pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder: number
   floor: Prisma.FloorCreateNestedOneWithoutRoomsInput
+  preferredBy?: Prisma.GuestCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomUncheckedCreateWithoutSpotsInput = {
@@ -651,6 +682,7 @@ export type RoomUncheckedCreateWithoutSpotsInput = {
   description?: string | null
   pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder: number
+  preferredBy?: Prisma.GuestUncheckedCreateNestedManyWithoutPreferredRoomInput
 }
 
 export type RoomCreateOrConnectWithoutSpotsInput = {
@@ -680,6 +712,7 @@ export type RoomUpdateWithoutSpotsInput = {
   pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   floor?: Prisma.FloorUpdateOneRequiredWithoutRoomsNestedInput
+  preferredBy?: Prisma.GuestUpdateManyWithoutPreferredRoomNestedInput
 }
 
 export type RoomUncheckedUpdateWithoutSpotsInput = {
@@ -693,6 +726,79 @@ export type RoomUncheckedUpdateWithoutSpotsInput = {
   description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  preferredBy?: Prisma.GuestUncheckedUpdateManyWithoutPreferredRoomNestedInput
+}
+
+export type RoomCreateWithoutPreferredByInput = {
+  id: string
+  name: string
+  shortName: string
+  type: $Enums.RoomType
+  ensuite?: boolean | null
+  balcony?: boolean | null
+  description?: string | null
+  pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sortOrder: number
+  floor: Prisma.FloorCreateNestedOneWithoutRoomsInput
+  spots?: Prisma.SpotCreateNestedManyWithoutRoomInput
+}
+
+export type RoomUncheckedCreateWithoutPreferredByInput = {
+  id: string
+  floorId: string
+  name: string
+  shortName: string
+  type: $Enums.RoomType
+  ensuite?: boolean | null
+  balcony?: boolean | null
+  description?: string | null
+  pricePerPerson?: runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sortOrder: number
+  spots?: Prisma.SpotUncheckedCreateNestedManyWithoutRoomInput
+}
+
+export type RoomCreateOrConnectWithoutPreferredByInput = {
+  where: Prisma.RoomWhereUniqueInput
+  create: Prisma.XOR<Prisma.RoomCreateWithoutPreferredByInput, Prisma.RoomUncheckedCreateWithoutPreferredByInput>
+}
+
+export type RoomUpsertWithoutPreferredByInput = {
+  update: Prisma.XOR<Prisma.RoomUpdateWithoutPreferredByInput, Prisma.RoomUncheckedUpdateWithoutPreferredByInput>
+  create: Prisma.XOR<Prisma.RoomCreateWithoutPreferredByInput, Prisma.RoomUncheckedCreateWithoutPreferredByInput>
+  where?: Prisma.RoomWhereInput
+}
+
+export type RoomUpdateToOneWithWhereWithoutPreferredByInput = {
+  where?: Prisma.RoomWhereInput
+  data: Prisma.XOR<Prisma.RoomUpdateWithoutPreferredByInput, Prisma.RoomUncheckedUpdateWithoutPreferredByInput>
+}
+
+export type RoomUpdateWithoutPreferredByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  shortName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumRoomTypeFieldUpdateOperationsInput | $Enums.RoomType
+  ensuite?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  balcony?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  floor?: Prisma.FloorUpdateOneRequiredWithoutRoomsNestedInput
+  spots?: Prisma.SpotUpdateManyWithoutRoomNestedInput
+}
+
+export type RoomUncheckedUpdateWithoutPreferredByInput = {
+  id?: Prisma.StringFieldUpdateOperationsInput | string
+  floorId?: Prisma.StringFieldUpdateOperationsInput | string
+  name?: Prisma.StringFieldUpdateOperationsInput | string
+  shortName?: Prisma.StringFieldUpdateOperationsInput | string
+  type?: Prisma.EnumRoomTypeFieldUpdateOperationsInput | $Enums.RoomType
+  ensuite?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  balcony?: Prisma.NullableBoolFieldUpdateOperationsInput | boolean | null
+  description?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
+  pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
+  sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
+  spots?: Prisma.SpotUncheckedUpdateManyWithoutRoomNestedInput
 }
 
 export type RoomCreateManyFloorInput = {
@@ -718,6 +824,7 @@ export type RoomUpdateWithoutFloorInput = {
   pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   spots?: Prisma.SpotUpdateManyWithoutRoomNestedInput
+  preferredBy?: Prisma.GuestUpdateManyWithoutPreferredRoomNestedInput
 }
 
 export type RoomUncheckedUpdateWithoutFloorInput = {
@@ -731,6 +838,7 @@ export type RoomUncheckedUpdateWithoutFloorInput = {
   pricePerPerson?: Prisma.NullableDecimalFieldUpdateOperationsInput | runtime.Decimal | runtime.DecimalJsLike | number | string | null
   sortOrder?: Prisma.IntFieldUpdateOperationsInput | number
   spots?: Prisma.SpotUncheckedUpdateManyWithoutRoomNestedInput
+  preferredBy?: Prisma.GuestUncheckedUpdateManyWithoutPreferredRoomNestedInput
 }
 
 export type RoomUncheckedUpdateManyWithoutFloorInput = {
@@ -752,10 +860,12 @@ export type RoomUncheckedUpdateManyWithoutFloorInput = {
 
 export type RoomCountOutputType = {
   spots: number
+  preferredBy: number
 }
 
 export type RoomCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   spots?: boolean | RoomCountOutputTypeCountSpotsArgs
+  preferredBy?: boolean | RoomCountOutputTypeCountPreferredByArgs
 }
 
 /**
@@ -775,6 +885,13 @@ export type RoomCountOutputTypeCountSpotsArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.SpotWhereInput
 }
 
+/**
+ * RoomCountOutputType without action
+ */
+export type RoomCountOutputTypeCountPreferredByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.GuestWhereInput
+}
+
 
 export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -789,6 +906,7 @@ export type RoomSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   sortOrder?: boolean
   floor?: boolean | Prisma.FloorDefaultArgs<ExtArgs>
   spots?: boolean | Prisma.Room$spotsArgs<ExtArgs>
+  preferredBy?: boolean | Prisma.Room$preferredByArgs<ExtArgs>
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["room"]>
 
@@ -837,6 +955,7 @@ export type RoomOmit<ExtArgs extends runtime.Types.Extensions.InternalArgs = run
 export type RoomInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
   floor?: boolean | Prisma.FloorDefaultArgs<ExtArgs>
   spots?: boolean | Prisma.Room$spotsArgs<ExtArgs>
+  preferredBy?: boolean | Prisma.Room$preferredByArgs<ExtArgs>
   _count?: boolean | Prisma.RoomCountOutputTypeDefaultArgs<ExtArgs>
 }
 export type RoomIncludeCreateManyAndReturn<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -851,6 +970,7 @@ export type $RoomPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
   objects: {
     floor: Prisma.$FloorPayload<ExtArgs>
     spots: Prisma.$SpotPayload<ExtArgs>[]
+    preferredBy: Prisma.$GuestPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: string
@@ -1259,6 +1379,7 @@ export interface Prisma__RoomClient<T, Null = never, ExtArgs extends runtime.Typ
   readonly [Symbol.toStringTag]: "PrismaPromise"
   floor<T extends Prisma.FloorDefaultArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.FloorDefaultArgs<ExtArgs>>): Prisma.Prisma__FloorClient<runtime.Types.Result.GetResult<Prisma.$FloorPayload<ExtArgs>, T, "findUniqueOrThrow", GlobalOmitOptions> | Null, Null, ExtArgs, GlobalOmitOptions>
   spots<T extends Prisma.Room$spotsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$spotsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$SpotPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  preferredBy<T extends Prisma.Room$preferredByArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.Room$preferredByArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$GuestPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -1720,6 +1841,30 @@ export type Room$spotsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.SpotScalarFieldEnum | Prisma.SpotScalarFieldEnum[]
+}
+
+/**
+ * Room.preferredBy
+ */
+export type Room$preferredByArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the Guest
+   */
+  select?: Prisma.GuestSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the Guest
+   */
+  omit?: Prisma.GuestOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.GuestInclude<ExtArgs> | null
+  where?: Prisma.GuestWhereInput
+  orderBy?: Prisma.GuestOrderByWithRelationInput | Prisma.GuestOrderByWithRelationInput[]
+  cursor?: Prisma.GuestWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.GuestScalarFieldEnum | Prisma.GuestScalarFieldEnum[]
 }
 
 /**

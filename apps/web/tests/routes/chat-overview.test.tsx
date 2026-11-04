@@ -144,7 +144,7 @@ it("splits desktop navigation into six primary pages and a More menu, with every
   const bar = [...container.querySelectorAll(".top-nav .top-nav-item")].map((link) => link.textContent);
   expect(bar).toEqual(["Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule"]);
   const more = [...container.querySelectorAll(".more-menu .more-menu-item")].map((link) => link.textContent);
-  expect(more).toEqual(["Chef", "Tasks", "Guests", "Links", "FAQ"]);
+  expect(more).toEqual(["Overview", "Chef", "Tasks", "Guests", "Links", "FAQ", "La Folie Douce"]);
   // Icon-only actions keep their names for assistive tech.
   expect(container.querySelector(".more-toggle")?.getAttribute("aria-label")).toBe("More pages");
   expect(container.querySelector(".top-nav-chat")?.getAttribute("aria-label")).toBe("Chat");
@@ -165,7 +165,7 @@ it("opens More with its links reachable, and closes it on Escape back to the tog
   expect(toggle.getAttribute("aria-expanded")).toBe("true");
   expect(panel.hasAttribute("inert")).toBe(false);
   expect(panel.dataset.open).toBe("true");
-  expect(document.activeElement?.textContent).toBe("Chef");
+  expect(document.activeElement?.textContent).toBe("Overview");
   expect(document.body.style.overflow).toBe("hidden");
   await act(async () => document.dispatchEvent(new KeyboardEvent("keydown", { key: "Escape" })));
   expect(toggle.getAttribute("aria-expanded")).toBe("false");
