@@ -8,8 +8,7 @@ import type { FlightTable } from "../../src/lib/db/repository.server";
 
 const { getFlightTable, getFlightRecommendations, getFlightRules, getLinks } = vi.hoisted(() => ({ getFlightTable: vi.fn(), getFlightRecommendations: vi.fn(), getFlightRules: vi.fn(), getLinks: vi.fn() }));
 vi.mock("../../src/lib/db/repository.server", () => ({ getFlightTable, getFlightRecommendations, getFlightRules, getLinks }));
-// The rules card's every figure is this fixture's, so an assertion on "08:30"
-// below is an assertion that the card printed the database, not a constant.
+// The rules card's guidance is rendered from this fixture's values, not constants.
 const rules = {
   startDate: new Date("2027-01-30T00:00:00Z"), endDate: new Date("2027-02-06T00:00:00Z"),
   arrivalTarget: "08:00", arrivalCutoff: "08:30", returnCutoff: "11:00",
@@ -115,9 +114,14 @@ describe("Flights route", () => {
     const page = staticPage([]);
     expect(page.querySelector("#flights-heading")?.textContent).toBe("Flights.");
     expect(page.querySelector("#flights-heading .text-accent")?.textContent).toBe(".");
-    expect(page.querySelectorAll(".detail-grid > article")).toHaveLength(3);
-    for (const text of ["08:30", "11:00", "Aim for 8:00 AM or earlier", "plan your own transfer", "Flights in the recommendations below", "under 5 min", "every ~20 min, 4:20 AM–11:40 PM"]) expect(page.textContent).toContain(text);
-    expect([...page.querySelectorAll(".detail-grid a")].map((a) => a.getAttribute("href"))).toEqual([
+    expect(page.querySelectorAll(".detail-grid > article")).toHaveLength(0);
+    expect(page.querySelector(".faq-table")?.getAttribute("aria-label")).toBe("Flight arrival and return guidance");
+    expect(page.querySelector(".faq-table-row th")?.getAttribute("data-label")).toBe("Question");
+    expect(page.querySelector(".faq-table-row td")?.getAttribute("data-label")).toBe("Answer");
+    for (const text of ["When should I land in Geneva?", "What time should my return flight leave?", "Can I arrive on Friday?", "8:30 AM", "Aim for 8:00 AM", "bags and delays", "11:00 AM or later", "Saturday 6 Feb", "04:15–04:30", "about 2 h", "under 5 min", "every ~20 min, 4:20 AM–11:40 PM", "Flight options are listed below"]) expect(page.textContent).toContain(text);
+    expect(page.textContent).not.toContain("Overnight near GVA");
+    expect(page.textContent).not.toContain("Times are based on the group shuttle");
+    expect([...page.querySelectorAll(".faq-table a")].map((a) => a.getAttribute("href"))).toEqual([
       "https://www.marriott.com/en-us/hotels/gvamc-geneva-marriott-hotel/overview/",
       "https://www.hilton.com/en/hotels/gvacchi-hilton-geneva-hotel-and-conference-centre/",
     ]);
@@ -188,6 +192,14 @@ describe("Flights route", () => {
     expect(page.querySelector(".flight-provenance")).toBeNull();
     expect(page.querySelectorAll(".flight-friday")).toHaveLength(0);
     expect(page.textContent).not.toMatch(/undefined|null|Invalid Date/);
+  });
+
+  it("puts the route above its carrier and uses a consistent United display name", () => {
+    const page = staticPage([guest("Carrier format", { inbound: leg({ airline: "United Airlines", flightNumber: "UA956" }) })]);
+    const name = page.querySelector(".flight-name");
+    expect(name?.children[0]?.textContent).toBe("EWR to GVA");
+    expect(name?.children[1]?.textContent).toBe("United UA956");
+    expect(name?.textContent).not.toContain("United Airlines");
   });
 
   it("keeps the supplied guest order and has no sort controls", async () => {

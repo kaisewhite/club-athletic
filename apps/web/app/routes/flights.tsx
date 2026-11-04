@@ -18,7 +18,7 @@ export async function loader() {
 
 export default function Flights({ loaderData: { flights, recommendations, rules, hotelLinks } }: Route.ComponentProps) {
   return <section aria-labelledby="flights-heading">
-    <PageHeading id="flights-heading" sub="Times are based on the group shuttle from Geneva (GVA).">Flights</PageHeading>
+    <PageHeading id="flights-heading">Flights</PageHeading>
     <FlightReminderDialog startDate={rules.startDate} arrivalCutoff={rules.arrivalCutoff} />
     <div className="flight-planning-section">
       <div className="travel-chapter-heading"><h3>Plan your arrival and return</h3></div>

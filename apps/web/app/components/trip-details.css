@@ -142,6 +142,8 @@
 .faq-question-link > span { flex: none; color: var(--brand-dim); }
 .faq-answer-lead { display: block; color: var(--text); font: 600 16px/1.35 var(--font-display); }
 .faq-answer-copy { display: block; margin-top: 3px; color: var(--text-muted); }
+.flight-rules-answer { margin: 0; padding-left: 18px; }
+.flight-rules-answer li + li { margin-top: 4px; }
 .faq-table-note td { color: var(--text-dim); font-size: 13px; font-style: italic; }
 .dietary-cell-button { display: block; width: 100%; min-height: 1.5em; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: text; }
 .dietary-cell-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
@@ -394,6 +396,23 @@
     content: attr(data-label);
     display: block;
     margin-bottom: 4px;
+    color: var(--text-dim);
+    font-size: 11px;
+    letter-spacing: .06em;
+    text-transform: uppercase;
+  }
+  .faq-table .faq-table-row th,
+  .faq-table .faq-table-row td {
+    display: grid;
+    grid-template-columns: 72px minmax(0, 1fr);
+    column-gap: 12px;
+    align-items: start;
+  }
+  .faq-table .faq-table-row th::before,
+  .faq-table .faq-table-row td::before {
+    content: attr(data-label);
+    display: block;
+    margin: 0;
     color: var(--text-dim);
     font-size: 11px;
     letter-spacing: .06em;

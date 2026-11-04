@@ -21,10 +21,13 @@ function Missing() { return <span style={{ color: "var(--text-faint)" }}>—</sp
 
 function FlightName({ leg }: { leg: Leg | null }) {
   if (!leg) return <Missing />;
-  const number = [leg.airline, leg.flightNumber].filter(Boolean).join(" ");
-  // Route, and the flight number when it is known. Nothing about where the row
-  // came from or when it was confirmed (owner, 2026-09-29: "keep this clean").
-  return <><span className="flight-route">{leg.origin} to {leg.destination}</span>{number && <> · {number}</>}</>;
+  const airline = leg.airline?.trim().toLowerCase() === "united airlines" ? "United" : leg.airline?.trim();
+  const carrier = [airline, leg.flightNumber].filter(Boolean).join(" ");
+  // Keep route and carrier on separate lines so the route stays easy to scan.
+  return <span className="flight-name">
+    <span className="flight-route">{leg.origin} to {leg.destination}</span>
+    {carrier && <span className="flight-carrier">{carrier}</span>}
+  </span>;
 }
 
 function FlightTime({ local }: { local: string | undefined }) {
@@ -466,7 +469,9 @@ const styles = `
 .flight-schedule dt { color: var(--text-dim); font-size: 11px; }
 .flight-schedule dd { min-width: 0; margin: 0; color: var(--text); font-variant-numeric: tabular-nums; white-space: nowrap; }
 .group-flights :is(button, a):focus-visible { outline: 2px solid var(--accent); outline-offset: 4px; border-radius: 2px; }
-.flight-route { font-weight: 600; color: var(--text); }
+.flight-name { display: grid; justify-items: start; gap: 2px; min-width: 0; }
+.flight-route { display: block; font-weight: 600; color: var(--text); }
+.flight-carrier { display: block; color: var(--text-muted); }
 .flight-row-edit, .flight-edit-save, .flight-edit-cancel { display: inline-flex; align-items: center; justify-content: center; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 0; background: transparent; color: var(--text); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .flight-row-edit { width: 44px; min-width: 44px; padding: 0; border-color: transparent; }
 .flight-row-edit:hover, .flight-edit-cancel:hover { background: var(--hover); }

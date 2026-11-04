@@ -17,7 +17,7 @@ export function FaqTable({ rows, note, label }: { rows: FaqTableRow[]; note?: st
       {rows.map((row, index) => <Fragment key={row.question}>
         {row.section && row.section !== rows[index - 1]?.section && <tbody className="faq-table-section"><tr><th scope="rowgroup" colSpan={2}>{row.section}</th></tr></tbody>}
         <tbody><tr className="faq-table-row">
-          <th scope="row">{row.to ? <Link className="faq-question-link" to={row.to}><ArrowText>{row.question}</ArrowText><span aria-hidden="true"><ArrowUpRight size="1em" /></span></Link> : <ArrowText>{row.question}</ArrowText>}</th>
+          <th scope="row" data-label="Question">{row.to ? <Link className="faq-question-link" to={row.to}><ArrowText>{row.question}</ArrowText><span aria-hidden="true"><ArrowUpRight size="1em" /></span></Link> : <ArrowText>{row.question}</ArrowText>}</th>
           <td data-label="Answer">{typeof row.answer === "string" ? <ArrowText>{row.answer}</ArrowText> : row.answer}</td>
         </tr></tbody>
       </Fragment>)}
