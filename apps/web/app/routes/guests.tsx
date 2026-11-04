@@ -6,6 +6,11 @@ import { CopyAllLinksButton } from "../components/copy-all-links-button";
 import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/guests";
 import { ArrowText } from "../components/arrow-text";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/guests", title: "Guest list · Méribel ’27 — Club Athletic", description: "Meet the guests joining Club Athletic in Méribel and find their public Instagram profiles." });
+}
 
 type GuestProfile = { displayName: string; href?: string };
 

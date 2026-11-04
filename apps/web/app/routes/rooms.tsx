@@ -4,6 +4,11 @@ import { PageHeading } from "../components/trip-details";
 import { BedroomMap } from "../components/bedroom-map/bedroom-map";
 import { RoomSharingFaq } from "../components/room-sharing-faq";
 import type { Route } from "./+types/rooms";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/rooms", title: "Room assignments · Méribel ’27 — Club Athletic", description: "View chalet room layouts, bed assignments, and room-sharing details.", image: "chalet" });
+}
 
 export async function loader() {
   const data = await getRoomsByFloor();

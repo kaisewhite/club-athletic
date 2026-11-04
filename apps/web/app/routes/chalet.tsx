@@ -5,6 +5,11 @@ import { DetailList, PageHeading } from "../components/trip-details";
 import { RoomSharingFaq } from "../components/room-sharing-faq";
 import type { Route } from "./+types/chalet";
 import { ArrowText } from "../components/arrow-text";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/chalet", title: "The chalet · Méribel ’27 — Club Athletic", description: "See the Club Athletic chalet in Méribel, its amenities, location, and property details.", image: "chalet" });
+}
 
 const amenitiesSchema = z.object({ private: z.array(z.string()), shared: z.array(z.string()) });
 

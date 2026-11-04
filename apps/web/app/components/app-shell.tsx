@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties }
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 
 const SECTIONS = [
-  ["/", "Home"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
+  ["/", "Home"], ["/overview", "Overview"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
   ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
   ["/folie-douce", "La Folie Douce"],
   ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/guest-details", "Guest details"], ["/links", "Links"], ["/faq", "FAQ"],
@@ -35,9 +35,9 @@ export function useWideLayout() {
    the footer still list every page. */
 const PRIMARY = ["/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedule"] as const;
 // Guest details is a one-off form, so it lives in the footer rather than More.
-const MORE = ["/chef", "/tasks", "/guests", "/links", "/faq", "/folie-douce"] as const;
+const MORE = ["/overview", "/chef", "/tasks", "/guests", "/links", "/faq", "/folie-douce"] as const;
 const FOOTER_GROUPS = [
-  ["The trip", ["/", "/chat", "/schedule", "/faq"]],
+  ["The trip", ["/", "/overview", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],
   ["The chalet", ["/chalet", "/rooms", "/spots", "/chef"]],
   ["The group", ["/guests", "/tasks", "/links"]],

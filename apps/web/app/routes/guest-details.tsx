@@ -1,5 +1,6 @@
 import { GuestDetailsForm } from "../components/guest-details-form";
 import { getOpenSpots, getRoomsByFloor } from "../../src/lib/db/repository.server";
+import { tripPageMeta } from "../lib/social-meta";
 
 export async function loader() {
   const [data, roomData] = await Promise.all([getOpenSpots(), getRoomsByFloor()]);
@@ -14,7 +15,7 @@ export async function loader() {
 }
 
 export function meta() {
-  return [{ title: "Guest details · Méribel ’27 — Club Athletic" }];
+  return tripPageMeta({ path: "/guest-details", title: "Guest details · Méribel ’27 — Club Athletic", description: "Share your room preferences and trip details for the Club Athletic week in Méribel.", image: "chalet" });
 }
 
 export default function GuestDetails({ loaderData }: { loaderData: Awaited<ReturnType<typeof loader>> }) {

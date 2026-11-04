@@ -18,6 +18,7 @@ export default [
   route("api/chat/conversations/:conversationId/messages", "routes/api.chat.messages.ts"),
   route("api/chat/conversations/:conversationId/cancel", "routes/api.chat.cancel.ts"),
   index("routes/overview.tsx"),
+  route("overview", "routes/trip-overview.tsx"),
   route("chat", "routes/chat.tsx"),
   route("guests", "routes/guests.tsx"),
   route("guest-details", "routes/guest-details.tsx"),

@@ -2,6 +2,11 @@ import { getGuestTasks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramLink } from "../components/guest-instagram-link";
 import type { Route } from "./+types/tasks";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/tasks", title: "Trip checklist · Méribel ’27 — Club Athletic", description: "Review guest flight and payment status and the items to complete before the trip." });
+}
 
 export async function loader() {
   return getGuestTasks();

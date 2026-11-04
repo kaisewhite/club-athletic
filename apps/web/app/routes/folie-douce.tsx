@@ -5,6 +5,7 @@ import { saveFolieDouceVote } from "../../src/lib/db/folie-douce-votes.server";
 import { getFolieDouceVotes } from "../../src/lib/db/repository.server";
 import { folieDouceVoteSchema } from "../../src/lib/folie-douce-vote-schema";
 import { PageHeading } from "../components/trip-details";
+import { tripPageMeta } from "../lib/social-meta";
 import type { Route } from "./+types/folie-douce";
 import "../components/folie-douce.css";
 
@@ -17,7 +18,7 @@ function rateLimitKey(request: Request) {
 }
 
 export function meta() {
-  return [{ title: "La Folie Douce · Méribel ’27 — Club Athletic" }];
+  return tripPageMeta({ path: "/folie-douce", title: "La Folie Douce · Méribel ’27 — Club Athletic", description: "Vote for a VIP table or general admission at La Folie Douce. See the group’s choices and read how VIP tables work." });
 }
 
 export async function loader() {

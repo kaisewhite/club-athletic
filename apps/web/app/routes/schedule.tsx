@@ -6,6 +6,11 @@ import { ScheduleCopyButton } from "../components/schedule-copy-button";
 import { ArrowText } from "../components/arrow-text";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/schedule";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/schedule", title: "Trip schedule · Méribel ’27 — Club Athletic", description: "Daily meals, events, and plans for the Club Athletic week in Méribel." });
+}
 
 export async function loader() {
   return { schedule: await getSchedule() };

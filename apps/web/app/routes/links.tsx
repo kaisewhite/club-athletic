@@ -4,6 +4,11 @@ import { getLinks } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/links";
 import { ArrowText } from "../components/arrow-text";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/links", title: "Trip links · Méribel ’27 — Club Athletic", description: "Useful booking, chalet, transport, and local information links for the Méribel trip." });
+}
 
 const INLINE_LINK = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)/g;
 

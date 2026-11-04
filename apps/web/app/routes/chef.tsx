@@ -2,6 +2,11 @@ import { getChefSummary } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { mealLabel, tripDate } from "../lib/schedule-display";
 import type { Route } from "./+types/chef";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/chef", title: "Chalet meals · Méribel ’27 — Club Athletic", description: "See which breakfasts and dinners the private chef will serve during the Méribel trip.", image: "chalet" });
+}
 import { DietaryCell, DietaryCopyButton, DietaryGuestAdd } from "../components/dietary-cell";
 import { GuestInstagramLink } from "../components/guest-instagram-link";
 import { FavoriteCocktailsCell } from "../components/cocktails-cell";

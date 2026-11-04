@@ -3,6 +3,11 @@ import { getOpenSpots } from "@/lib/db/repository.server";
 import { getEurUsdRate } from "../lib/exchange-rates.server";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/spots";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/spots", title: "Rooms and prices · Méribel ’27 — Club Athletic", description: "Compare room prices, availability, and what the Méribel trip price includes.", image: "chalet" });
+}
 
 export async function loader() {
   const data = await getOpenSpots();

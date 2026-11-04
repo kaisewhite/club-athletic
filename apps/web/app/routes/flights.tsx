@@ -5,6 +5,11 @@ import { GroupFlightTable } from "../components/flight-table";
 import { FlightReminderDialog } from "../components/flight-reminder-dialog";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/flights";
+import { tripPageMeta } from "../lib/social-meta";
+
+export function meta() {
+  return tripPageMeta({ path: "/flights", title: "Flights to Méribel · Club Athletic ’27", description: "Flight options to Geneva, airport transfer guidance, and group flight details for Méribel ’27." });
+}
 
 export async function loader() {
   const [flights, recommendations, rules, links] = await Promise.all([getFlightTable(), getFlightRecommendations(), getFlightRules(), getLinks()]);

@@ -2,9 +2,10 @@ import { useOutletContext } from "react-router";
 
 import { ChatPanel } from "../components/chat/chat-panel";
 import { ChatErrorBoundary } from "../components/chat/chat-error-boundary";
+import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return [{ title: "Chat · Méribel ’27 — Club Athletic" }];
+  return tripPageMeta({ path: "/chat", title: "Trip assistant · Méribel ’27 — Club Athletic", description: "Ask the Club Athletic trip assistant about Méribel dates, chalet, flights, transfers, and plans." });
 }
 
 /** The trip concierge. It used to sit under the home page's schedule; it now
