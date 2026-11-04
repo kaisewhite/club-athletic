@@ -1,0 +1,63 @@
+.flight-reminder {
+  width: min(520px, calc(100vw - 32px));
+  max-width: none;
+  margin: auto;
+  padding: 0;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  background: var(--surface);
+  color: var(--text);
+  box-shadow: 0 24px 64px color-mix(in srgb, var(--text) 18%, transparent);
+}
+/* A modal <dialog> is already position: fixed, so it anchors the corner button. */
+.flight-reminder-x {
+  position: absolute;
+  top: 8px;
+  right: 8px;
+  display: grid;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--radius-md);
+  background: transparent;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+.flight-reminder-x:hover { background: var(--hover); color: var(--text); }
+.flight-reminder-x:focus-visible { outline: 2px solid var(--brand); outline-offset: 2px; }
+.flight-reminder:focus { outline: none; }
+.flight-reminder::backdrop { background: color-mix(in srgb, var(--text) 55%, transparent); }
+.flight-reminder-panel { display: grid; gap: 12px; padding: clamp(24px, 5vw, 40px); padding-right: max(56px, clamp(24px, 5vw, 40px)); }
+.flight-reminder-eyebrow { margin: 0; color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
+.flight-reminder h2 { margin: 0; font: 400 clamp(28px, 6vw, 40px)/1.05 var(--font-display); text-transform: uppercase; }
+.flight-reminder-body { margin: 4px 0 12px; color: var(--text-muted); font-size: 16px; line-height: 1.6; }
+.flight-reminder-body strong { color: var(--text); font-weight: 700; }
+.flight-reminder-close {
+  justify-self: start;
+  min-width: 132px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 1px solid var(--text);
+  border-radius: var(--radius-md);
+  background: var(--text);
+  color: var(--surface);
+  font: inherit;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+}
+.flight-reminder-close:hover { background: color-mix(in srgb, var(--text) 85%, var(--surface)); }
+.flight-reminder-close:focus-visible { outline: 2px solid var(--brand); outline-offset: 3px; }
+
+@media (prefers-reduced-motion: no-preference) {
+  .flight-reminder[open] { animation: flight-reminder-in var(--motion-duration-normal, 200ms) var(--motion-ease-decelerate, ease-out); }
+  .flight-reminder[open]::backdrop { animation: flight-reminder-fade var(--motion-duration-normal, 200ms) ease-out; }
+}
+@keyframes flight-reminder-in { from { opacity: 0; transform: translateY(8px); } }
+@keyframes flight-reminder-fade { from { opacity: 0; } }
+
+@media (max-width: 859px) {
+  .flight-reminder-close { justify-self: stretch; }
+}

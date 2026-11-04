@@ -275,6 +275,7 @@ describe("database-backed read-only detail pages", () => {
             : "Useful details." }));
     findUniqueOrThrow.mockResolvedValueOnce({ links });
     const page = renderPage(Links, await linksLoader(), 1);
+    expect(page.querySelector("#links-Restaurants")?.textContent).toBe("Après");
     const rows = [...page.querySelectorAll<HTMLElement>('.resource-link[data-group]')];
     expect(rows.map((row) => row.getAttribute("data-group"))).toEqual(links.map((link) => link.group));
     expect(rows.every((row) => row.querySelector(".resource-link-details"))).toBe(true);
@@ -289,6 +290,14 @@ describe("database-backed read-only detail pages", () => {
     expect(page.querySelector('.resource-link[data-group="Ski equipment"] a[href="http://www.intersport-meribel.com/"]')?.textContent).toContain("INTERSPORT Méribel Centre");
     expect(page.querySelectorAll('.resource-link[data-group="Ski equipment"] .resource-link-details li')).toHaveLength(6);
     expect(page.querySelector('.resource-link[data-group="Restaurants"] a[href="mailto:cap-horn@maisontournier.com"]')?.textContent).toBe("cap-horn@maisontournier.com");
+    const folieDouce = page.querySelector<HTMLElement>('[data-reservation="folie-douce"]');
+    expect(folieDouce?.textContent).toContain("Monday, February 1, 2027");
+    expect(folieDouce?.textContent).toContain("Reservation not confirmed");
+    expect(folieDouce?.querySelector('a[href="sms:+33610617626"]')?.textContent).toBe("Momo Zakkari");
+    expect(folieDouce?.querySelector('a[href="tel:+33610617626"]')?.textContent).toBe("+33 6 10 61 76 26");
+    expect(folieDouce?.textContent).toContain("around 200 per person");
+    expect(folieDouce?.textContent).toContain("General Admission is available at no cost");
+    expect(page.querySelector('[data-reservation="cap-horn"]')?.textContent).toContain("Reservation details are pending");
   });
   it("renders the guest page with one compact Instagram row per guest", async () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });

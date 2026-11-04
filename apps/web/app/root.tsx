@@ -24,12 +24,14 @@ export function Layout({ children }: { children: ReactNode }) {
         <meta property="og:title" content="Méribel ’27 — Club Athletic" />
         <meta property="og:description" content="The Club Athletic Méribel ’27 trip guide: chalet, rooms, flights, shuttle, schedule, guests, and pricing." />
         <meta property="og:url" content="https://meribel.clubathletic.org/" />
-        <meta property="og:image" content="https://meribel.clubathletic.org/chalet-rooms.webp" />
-        <meta property="og:image:alt" content="The Club Athletic Méribel chalet" />
+        <meta property="og:image" content="https://meribel.clubathletic.org/video/meribel-peaks-poster.webp" />
+        <meta property="og:image:width" content="1600" />
+        <meta property="og:image:height" content="900" />
+        <meta property="og:image:alt" content="Snow-covered peaks in the Three Valleys beneath a bright mountain sky" />
         <meta name="twitter:card" content="summary_large_image" />
         <meta name="twitter:title" content="Méribel ’27 — Club Athletic" />
         <meta name="twitter:description" content="The Club Athletic Méribel ’27 trip guide: chalet, rooms, flights, shuttle, schedule, guests, and pricing." />
-        <meta name="twitter:image" content="https://meribel.clubathletic.org/chalet-rooms.webp" />
+        <meta name="twitter:image" content="https://meribel.clubathletic.org/video/meribel-peaks-poster.webp" />
         <link rel="canonical" href="https://meribel.clubathletic.org/" />
         {/* Without this, every browser visit requests `/favicon.ico`, misses static
             serving and reaches the SSR handler as a 404. */}

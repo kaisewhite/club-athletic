@@ -11,10 +11,12 @@ import { expect, type Page } from "@playwright/test";
  */
 export const FROZEN_DAYS_UNTIL = "";
 
-/** Suppress the first-visit welcome while exercising unrelated page journeys. */
+/** Suppress the first-visit welcome and the /flights reminder while exercising unrelated page journeys. */
 export async function dismissWelcomeForAcceptance(page: Page): Promise<void> {
   await page.addInitScript(() => {
     window.localStorage.setItem("club-athletic-trip-welcome-dismissed-v1", "true");
+    // The /flights arrival reminder: once per session, so pre-mark it seen for unrelated journeys.
+    window.sessionStorage.setItem("club-athletic-flight-reminder-seen-v1", "true");
   });
 }
 

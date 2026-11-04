@@ -37,10 +37,11 @@ const PRIMARY = ["/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedu
 // Guest details is a one-off form, so it lives in the footer rather than More.
 const MORE = ["/chef", "/tasks", "/guests", "/links", "/faq", "/folie-douce"] as const;
 const FOOTER_GROUPS = [
-  ["The trip", ["/", "/chat", "/schedule", "/folie-douce", "/faq"]],
+  ["The trip", ["/", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],
   ["The chalet", ["/chalet", "/rooms", "/spots", "/chef"]],
-  ["The group", ["/guests", "/guest-details", "/tasks", "/links"]],
+  ["The group", ["/guests", "/tasks", "/links"]],
+  ["Polls & surveys", ["/guest-details", "/folie-douce"]],
 ] as const;
 const labelFor = (to: string) => SECTIONS.find(([path]) => path === to)![1];
 

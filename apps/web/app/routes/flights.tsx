@@ -2,6 +2,7 @@ import { getFlightRecommendations, getFlightRules, getFlightTable, getLinks } fr
 import { FlightBookingRules } from "../components/flight-booking-rules";
 import { FlightRecommendationsSection } from "../components/flight-recommendations";
 import { GroupFlightTable } from "../components/flight-table";
+import { FlightReminderDialog } from "../components/flight-reminder-dialog";
 import { PageHeading } from "../components/trip-details";
 import type { Route } from "./+types/flights";
 
@@ -13,6 +14,7 @@ export async function loader() {
 export default function Flights({ loaderData: { flights, recommendations, rules, hotelLinks } }: Route.ComponentProps) {
   return <section aria-labelledby="flights-heading">
     <PageHeading id="flights-heading" sub="Times are based on the group shuttle from Geneva (GVA).">Flights</PageHeading>
+    <FlightReminderDialog startDate={rules.startDate} arrivalCutoff={rules.arrivalCutoff} />
     <div className="flight-planning-section">
       <div className="travel-chapter-heading"><h3>Plan your arrival and return</h3></div>
       <FlightBookingRules rules={rules} />

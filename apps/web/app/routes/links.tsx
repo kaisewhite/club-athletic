@@ -46,8 +46,23 @@ export default function Links({ loaderData }: Route.ComponentProps) {
     <PageHeading id="links-heading" sub="Links you may need, grouped by purpose.">Links</PageHeading>
     <div className="resource-guide">
     {groups.map((group, index) => <section key={group} className="link-section" aria-labelledby={`links-${group}`}>
-      <div className="resource-section-heading"><span>{String(index + 1).padStart(2, "0")}</span><h3 id={`links-${group}`} className="detail-kicker"><ArrowText>{group}</ArrowText></h3></div>
+      <div className="resource-section-heading"><span>{String(index + 1).padStart(2, "0")}</span><h3 id={`links-${group}`} className="detail-kicker"><ArrowText>{group === "Restaurants" ? "Après" : group}</ArrowText></h3></div>
       <div className="link-list">
+        {group === "Restaurants" && <>
+        <article className="resource-link" data-reservation="folie-douce">
+          <h4 className="resource-link-heading">La Folie Douce · Monday, February 1, 2027</h4>
+          <ul className="resource-link-details">
+            <li>Optional VIP reservation: text <a className="resource-link-inline" href="sms:+33610617626">Momo Zakkari</a> to hold a spot. Reservation not confirmed.</li>
+            <li>Final pricing is expected in a few weeks. Last year was around 200 per person, including tax and tip; this is an estimate.</li>
+            <li>General Admission is available at no cost. Make a reservation as desired.</li>
+            <li>Contact: <a className="resource-link-inline" href="tel:+33610617626">+33 6 10 61 76 26</a>.</li>
+          </ul>
+        </article>
+        <article className="resource-link" data-reservation="cap-horn">
+          <h4 className="resource-link-heading">Le Cap Horn</h4>
+          <ul className="resource-link-details"><li>Reservation details are pending while they are finalized with the manager.</li></ul>
+        </article>
+        </>}
         {loaderData.links.filter((link) => link.group === group).map((link) => <article className="resource-link" key={link.id} data-group={link.group}>
           <h4 className="resource-link-heading">{group === "Ski equipment" ? <ArrowText>{link.label}</ArrowText> : <a className="resource-link-title" href={link.href} target={link.href.startsWith("http") ? "_blank" : undefined} rel={link.href.startsWith("http") ? "noopener noreferrer" : undefined}>
             <span className="link-name"><ArrowText>{link.label}</ArrowText></span><span className="text-accent" aria-hidden="true"><ArrowUpRight size="1em" /></span>
