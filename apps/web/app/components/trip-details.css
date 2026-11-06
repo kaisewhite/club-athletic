@@ -128,6 +128,7 @@
 .chef-stat-label { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .chef-stat-value { font-family: var(--font-display); font-weight: 600; font-size: 20px; margin-top: 4px; letter-spacing: -.02em; font-variant-numeric: tabular-nums; }
 .detail-table-wrap, .link-list { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-md); overflow: hidden; }
+.link-list > .link-row:first-child { border-top: 0; }
 .detail-table { width: 100%; border-collapse: collapse; table-layout: fixed; text-align: left; }
 .detail-table thead { font-size: 11px; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); font-weight: 500; }
 .detail-table thead th { padding: 10px 16px; font-weight: 500; }
@@ -259,14 +260,11 @@
 .resource-guide .resource-link + .resource-link { border-top: 1px solid var(--border-subtle); }
 .resource-guide .resource-link:hover { background: var(--hover); }
 
-.guest-directory-heading { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; margin: 18px 0 8px; padding: 10px 0; border-block: 1px solid var(--border-subtle); }
-.guest-directory-heading > span { color: var(--text-faint); font-size: 11px; letter-spacing: .04em; }
-.guest-directory-heading h3 { margin: 0; font: 600 17px/1.3 var(--font-display); }
 .guest-directory .guest-list { overflow: visible; border: 0; border-radius: 0; background: transparent; }
 .guest-directory .guest-link-entry:first-child { border-top: 1px solid var(--border-subtle); }
 .guest-directory .guest-link-entry .link-row { min-height: 66px; padding-inline: 0; }
 
-.faq-table-intro { display: flex; align-items: baseline; gap: 14px; margin: 12px 0 8px; padding: 10px 0; border-block: 1px solid var(--border-subtle); }
+.faq-table-intro { display: flex; align-items: baseline; gap: 14px; margin: 12px 0 8px; padding: 10px 0; border-top: 1px solid var(--border-subtle); }
 .faq-table-intro > span { color: var(--brand-dim); font-size: 11px; font-variant-numeric: tabular-nums; }
 .faq-table-intro p { margin: 0; color: var(--text); font: 600 14px/1.3 var(--font-display); }
 .faq-chapter .faq-table-wrap { border-radius: 0; }
@@ -293,8 +291,12 @@
   .readiness-links { gap: 4px 18px; margin-bottom: 18px; }
   .resource-guide { gap: 20px; }
   .resource-guide .link-list { grid-template-columns: 1fr; }
-  .guest-directory-heading { align-items: flex-start; flex-direction: column; gap: 4px; }
   .guest-directory .guest-link-entry .link-row { min-height: 66px; }
+  .faq-table-intro { border-bottom: 0; }
+  .faq-table-wrap > .faq-table > tbody:first-of-type:not(.faq-table-section) > tr:first-child,
+  .faq-table-wrap > .faq-table > tbody.faq-table-section:first-of-type > tr:first-child,
+  .food-plan-section > .detail-table-wrap > .detail-table > tbody:first-of-type > tr:first-child,
+  .readiness-section > .detail-table-wrap > .detail-table > tbody:first-of-type > tr:first-child { border-top: 0; }
   .faq-chapter .faq-table { table-layout: fixed; }
   .open-room { column-gap: 14px; padding: 14px 0; }
   .open-room-count { min-width: 86px; padding-left: 12px; }

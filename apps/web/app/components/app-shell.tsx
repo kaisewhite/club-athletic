@@ -34,8 +34,7 @@ export function useWideLayout() {
    top bar, and the rest open from More on its far right. The mobile drawer and
    the footer still list every page. */
 const PRIMARY = ["/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedule"] as const;
-// Guest details is a one-off form, so it lives in the footer rather than More.
-const MORE = ["/overview", "/chef", "/tasks", "/guests", "/links", "/faq", "/folie-douce"] as const;
+const MORE = ["/overview", "/chef", "/tasks", "/guests", "/guest-details", "/links", "/faq", "/folie-douce"] as const;
 const FOOTER_GROUPS = [
   ["The trip", ["/", "/overview", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],

@@ -26,7 +26,6 @@ export default function Guests({ loaderData }: Route.ComponentProps) {
     <PageHeading id="guests-heading" sub="Everyone on the trip. Guests with Instagram profiles link directly.">Guests</PageHeading>
     <div className="guest-actions"><CopyAllLinksButton links={loaderData.guestProfiles.flatMap(({ href }) => href ? [href] : [])} /></div>
     <div className="guest-directory">
-    <div className="guest-directory-heading"><span>Club Athletic · Méribel ’27</span><h3>Guest list</h3></div>
     <div className="guest-list">
       {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
         {href ? <a className="link-row" href={href} target="_blank" rel="noopener noreferrer" aria-label={`${displayName} on Instagram`}>
