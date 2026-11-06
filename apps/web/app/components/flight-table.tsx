@@ -132,7 +132,6 @@ function FlightFlightFields({ direction, editor }: { direction: "inbound" | "out
     <button type="button" className="flight-lookup-button" onClick={() => editor.lookup(direction)} disabled={editor.busy || editor.lookupBusy !== null || !editor.draft[direction].flightNumber.trim() || !editor.draft[direction].departureDate}
       aria-label={`Find ${directionLabel.toLowerCase()} flight details`}><MagnifyingGlass aria-hidden="true" size={16} />{editor.lookupBusy === direction ? "Looking up…" : "Find flight"}</button>
   </div>
-  <p className="flight-lookup-credit">Flight lookup by <a href="https://aerodatabox.com/" target="_blank">AeroDataBox</a></p>
   <div className="flight-inline-fields">{fields.filter(({ key }) => key !== "flightNumber").map(({ key, label, placeholder, maxLength }) => <label className="flight-inline-field" key={key}>
     <span>{label}</span><input form={editor.formId} type="text" maxLength={maxLength} placeholder={placeholder} value={editor.draft[direction][key]} disabled={editor.busy}
       aria-label={`${directionLabel} flight ${label.toLowerCase()}`} autoCapitalize={key === "origin" || key === "destination" ? "characters" : undefined}
@@ -377,7 +376,6 @@ function FlightLookupDialog({ guest, onClose, onSaved }: { guest: GuestFlight; o
       <form onSubmit={(event) => { void submit(event); }}>
         {field("inbound", "Arriving")}
         {field("outbound", "Departing")}
-        <p className="flight-lookup-credit">Flight lookup by <a href="https://aerodatabox.com/" target="_blank" rel="noopener">AeroDataBox</a></p>
         {error && <p className="flight-edit-error" role="alert">{error}</p>}
         <button type="submit" className="flight-lookup-submit" disabled={busy !== null}>
           {busy === "finding" ? "Finding flight…" : busy === "saving" ? "Saving…" : "Find and save flights"}
@@ -495,8 +493,6 @@ const styles = `
 .flight-lookup { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; margin-bottom: 8px; }
 .flight-lookup-button { grid-column: 1 / -1; display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 8px 12px; border: 1px solid var(--border-strong); border-radius: 0; background: var(--text); color: var(--surface); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
 .flight-lookup-button:disabled { opacity: .55; cursor: not-allowed; }
-.flight-lookup-credit { margin: 0 0 8px; color: var(--text-dim); font-size: 11px; }
-.flight-lookup-credit a { color: inherit; text-decoration: underline; text-underline-offset: 2px; }
 .flight-lookup-dialog { position: fixed; inset: 0; box-sizing: border-box; width: min(calc(100% - 32px), 520px); max-height: calc(100dvh - 32px); margin: auto; overflow-y: auto; padding: 24px; border: 1px solid var(--border-strong); background: var(--surface); color: var(--text); box-shadow: 0 18px 60px rgb(0 0 0 / 24%); }
 .flight-lookup-dialog::backdrop { background: rgb(0 0 0 / 52%); }
 .flight-lookup-dialog > header { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; }
