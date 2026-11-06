@@ -298,7 +298,7 @@ for (const [width, height] of VIEWPORTS) {
         ["/", ".mobile-nav-toggle"], ["/faq", ".faq-question-link"], ["/", ".week-heading a"],
         ["/chat", ".suggestions button"], ["/chat", ".send"], ["/chat", ".chat-attach"],
         ["/links", ".resource-link-title"], ["/chalet", ".chalet-listings a"],
-        ["/flights", ".flight-mobile-sorting button"], ["/flights", ".flight-guest-card h4 a"],
+        ["/flights", ".flight-row-edit"], ["/flights", ".flight-guest-card h4 a"],
       ];
       const offenders: string[] = [];
       for (const [path, selector] of CONTROLS) {

@@ -41,6 +41,8 @@ export const project = {
       "CLAUDE_TRIP_AGENT_ID",
       "CLAUDE_TRIP_MEMORY_STORE_ID",
       "PASSPHRASE",
+      "TYPEFORM_WEBHOOK_SECRET",
+      "RAPID_API_KEY",
     ],
   },
 } as const;
