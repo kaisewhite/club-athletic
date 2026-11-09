@@ -110,6 +110,19 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
         <FolieDouceGroup title="General Admission" votes={folieDouceVotes.generalAdmission} />
       </div>
     </section>
+    <section className="admin-folie admin-refunds" aria-labelledby="admin-refunds-heading">
+      <h2 id="admin-refunds-heading">Refunds to track</h2>
+      <p className="admin-missing">People identified for refund follow-up · 7 guests</p>
+      <ul aria-label="Guests to follow up about refunds">
+        <li>Augustus</li>
+        <li>Pete</li>
+        <li>Amelia</li>
+        <li>Kristy Khoury</li>
+        <li>Valeria</li>
+        <li>Ted</li>
+        <li>Elijah</li>
+      </ul>
+    </section>
     <div className="admin-guests">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</div>
   </section>;
 }

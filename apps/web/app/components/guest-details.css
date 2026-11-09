@@ -20,6 +20,7 @@
 .guest-room-option-heading strong { font: 700 17px/1.25 var(--font-display); }
 .guest-room-option-heading span { color: var(--text-dim); font-size: 13px; }
 .guest-room-open { color: var(--brand-dim); font-weight: 600; }
+.guest-room-total { color: var(--text); font-size: 14px; font-weight: 700; }
 .guest-room-occupants { display: grid; gap: 4px; padding-left: 32px; }
 .guest-room-occupants > span:first-child { color: var(--text-dim); font-size: 12px; }
 .guest-room-occupants ul { margin: 0; padding-left: 18px; color: var(--text); list-style: disc; }

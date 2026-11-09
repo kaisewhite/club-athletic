@@ -2,11 +2,12 @@ import { ArrowRight } from "@phosphor-icons/react/ssr";
 import { getOpenSpots } from "@/lib/db/repository.server";
 import { getEurUsdRate } from "../lib/exchange-rates.server";
 import { PageHeading } from "../components/trip-details";
-import type { Route } from "./+types/spots";
+import { PricingCopyButton } from "../components/pricing-copy-button";
+import type { Route } from "./+types/pricing";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/spots", title: "Rooms and prices · Méribel ’27 — Club Athletic", description: "Compare room prices, availability, and what the Méribel trip price includes.", image: "chalet" });
+  return tripPageMeta({ path: "/pricing", title: "Rooms and prices · Méribel ’27 — Club Athletic", description: "Compare room prices, availability, and what the Méribel trip price includes.", image: "chalet" });
 }
 
 export async function loader() {
@@ -14,13 +15,14 @@ export async function loader() {
   return {
     pricing: data.pricing, openCount: data.openCount,
     usdRate: data.pricing.currency === "EUR" ? await getEurUsdRate() : null,
-    openRooms: data.openRooms.map(({ id, shortName, floorName, openCount, priceLabel, pricePerPerson, description }) => ({
-      id, shortName, floorName, openCount, priceLabel, pricePerPerson: pricePerPerson === null ? null : Number(pricePerPerson), description,
+    openRooms: data.openRooms.map(({ id, shortName, floorName, openCount, pricePerPerson, description }) => ({
+      id, shortName, floorName, openCount,
+      roomRatePerPerson: pricePerPerson === null ? null : Number(pricePerPerson), description,
     })),
   };
 }
 
-export default function Spots({ loaderData: data }: Route.ComponentProps) {
+export default function Pricing({ loaderData: data }: Route.ComponentProps) {
   const formatBreakdownPrice = (amount: number) => new Intl.NumberFormat("en-IE", {
     style: "currency", currency: data.pricing.currency,
     minimumFractionDigits: Number.isInteger(amount) ? 0 : 2, maximumFractionDigits: 2,
@@ -34,6 +36,22 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
   const usdRange = data.usdRate && `${usd.format(data.pricing.minPerPerson * data.usdRate.rate)}–${usd.format(data.pricing.maxPerPerson * data.usdRate.rate)}`;
   const rateDate = data.usdRate && new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
     .format(new Date(`${data.usdRate.date}T00:00:00Z`));
+  const pricedRooms = data.openRooms.flatMap((room) => room.roomRatePerPerson === null ? [] : [room.roomRatePerPerson]);
+  const roomRateRange = pricedRooms.length
+    ? `${formatBreakdownPrice(Math.min(...pricedRooms))}–${formatBreakdownPrice(Math.max(...pricedRooms))}`
+    : "Price pending";
+  const copyText = [
+    `Méribel ’27 · ${data.pricing.description}`,
+    `Room rate: ${roomRateRange} per person, depending on room`,
+    ...(data.pricing.breakdown ? [
+      `Taxes: ${formatBreakdownPrice(data.pricing.breakdown.taxes)}`,
+      `Shuttle: ${formatBreakdownPrice(data.pricing.breakdown.shuttle)}`,
+      `Incidentals: ${formatBreakdownPrice(data.pricing.breakdown.incidentals)}`,
+      `Chef: ${formatBreakdownPrice(data.pricing.breakdown.chef)}`,
+    ] : []),
+    `Total per person: ${data.pricing.rangeLabel}`,
+    `Not included: ${data.pricing.excludes.join(", ")}`,
+  ].join("\n");
 
   return <section aria-labelledby="pricing-heading">
     <PageHeading id="pricing-heading" sub="Room-by-room pricing and availability for the trip.">Rooms &amp; prices</PageHeading>
@@ -58,13 +76,13 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     </section>
     <div className="pricing-details">
       <section className="pricing-room-list" aria-labelledby="pricing-room-heading">
-        <div className="pricing-room-list-heading"><h3 className="detail-kicker" id="pricing-room-heading">Available spots by room</h3><a href="/rooms">Room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div>
+        <div className="pricing-room-list-heading"><h3 className="detail-kicker" id="pricing-room-heading">Available spots by room</h3><div className="pricing-room-actions"><PricingCopyButton text={copyText} /><a href="/rooms">Room assignments <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div></div>
         <table className="pricing-room-table">
-          <thead><tr><th scope="col">Bedroom</th><th scope="col">Floor / door</th><th scope="col">Price per person</th><th scope="col">Availability</th></tr></thead>
+          <thead><tr><th scope="col">Bedroom</th><th scope="col">Floor / door</th><th scope="col">Room-only rate per person</th><th scope="col">Availability</th></tr></thead>
           <tbody>{data.openRooms.map((room) => <tr key={room.id}>
             <th scope="row"><span className="pricing-bedroom-name">{room.shortName}</span>{room.description && <span className="pricing-bedroom-note">{room.description}</span>}</th>
             <td data-label="Floor / door"><span className="pricing-mobile-label">Floor / door</span><span>{room.floorName}</span></td>
-            <td data-label="Price per person"><span className="pricing-mobile-label">Price per person</span><span>{room.pricePerPerson === null ? "Price pending" : <>{roomPrice(room.pricePerPerson)} per person</>}</span></td>
+            <td data-label="Room-only rate per person"><span className="pricing-mobile-label">Room-only rate per person</span><span>{room.roomRatePerPerson === null ? "Price pending" : <>{roomPrice(room.roomRatePerPerson)} per person</>}</span></td>
             <td data-label="Availability"><span className="pricing-mobile-label">Availability</span><span><strong>{room.openCount}</strong> {room.openCount === 1 ? "spot open" : "spots open"}</span></td>
           </tr>)}</tbody>
         </table>
@@ -72,19 +90,17 @@ export default function Spots({ loaderData: data }: Route.ComponentProps) {
     </div>
     <section className="pricing-inclusions" aria-labelledby="pricing-inclusions-heading">
       <h3 className="detail-kicker" id="pricing-inclusions-heading">Price details</h3>
-      <table className="pricing-facts-table" aria-label="Included items and price breakdown">
+      <table className="pricing-facts-table" aria-label="Price breakdown">
         <thead><tr><th scope="col">Price detail</th><th scope="col">Amount or status</th></tr></thead>
         <tbody>
-          <tr><th scope="row">Included in the price</th><td><ul className="pricing-included-list">{data.pricing.includes.map((item) => <li key={item}>{item.replace("↔", "to and from")}</li>)}</ul></td></tr>
-          <tr><th scope="row">Not included</th><td>{data.pricing.excludes.join(", ")}</td></tr>
           {data.pricing.breakdown && <>
-            <tr><th scope="row">Room rate</th><td className="price-breakdown-muted">Depends on the room</td></tr>
+            <tr><th scope="row">Room rate</th><td className="price-breakdown-muted">See room rates above</td></tr>
             <tr><th scope="row">Taxes</th><td>{breakdownPrice(data.pricing.breakdown.taxes)}</td></tr>
             <tr><th scope="row">Shuttle</th><td>{breakdownPrice(data.pricing.breakdown.shuttle)}</td></tr>
             <tr><th scope="row">Incidentals</th><td>{breakdownPrice(data.pricing.breakdown.incidentals)}</td></tr>
             <tr><th scope="row">Chef</th><td>{breakdownPrice(data.pricing.breakdown.chef)}</td></tr>
           </>}
-          {data.pricing.note && <tr><th scope="row">Price note</th><td>{data.pricing.note}</td></tr>}
+          <tr><th scope="row">Not included</th><td>{data.pricing.excludes.join(", ")}</td></tr>
         </tbody>
       </table>
     </section>

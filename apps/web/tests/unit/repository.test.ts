@@ -13,12 +13,12 @@ import {
 
 const spot = (id: string, status: "AVAILABLE" | "ASSIGNED" | "NOT_OFFERED") => ({ id, status, priceOverride: null });
 const pricing = {
-  minPerPerson: 1620.55, maxPerPerson: 1790.55, currency: "EUR",
+  minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR",
   description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
-  note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
+  note: "Refund €69.45 to each of the 13 people who already paid €178.",
   includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
-  excludes: ["flights", "ski pass", "rentals", "nights out"],
+  excludes: ["flights", "ski pass", "rentals"],
 };
 const floors = [{ id: "floor", name: "Middle", rooms: [
   { id: "open", name: "Quad", pricePerPerson: null, spots: [spot("a", "AVAILABLE"), spot("b", "AVAILABLE"), spot("c", "NOT_OFFERED")] },
@@ -77,39 +77,42 @@ describe("read section repository", () => {
   });
   it("queries only available spots and preserves unknown prices and zero overrides", async () => {
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [{ id: "floor", name: "Middle", rooms: [{ id: "room", pricePerPerson: null,
+      _count: { spots: 4 },
       spots: [{ ...spot("a", "AVAILABLE"), priceOverride: 0 }, spot("b", "AVAILABLE")] }] }] } });
     const result = await getOpenSpots();
     expect(result.spots.map((item) => item.pricePerPerson)).toEqual([0, null]);
-    expect(result).toMatchObject({ openCount: 2, pricing: { ...pricing, rangeLabel: "€1,620.55–€1,790.55" } });
-    expect(result.openRooms).toMatchObject([{ id: "room", floorName: "Middle", openCount: 2, pricePerPerson: null, priceLabel: null }]);
+    expect(result).toMatchObject({ openCount: 2, pricing: { ...pricing, rangeLabel: "€1,620.15–€1,790.15" } });
+    expect(result.openRooms).toMatchObject([{ id: "room", floorName: "Middle", openCount: 2, capacity: 4, pricePerPerson: null, priceLabel: null }]);
     expect(findUniqueOrThrow.mock.calls[0]?.[0].select.pricing).toBe(true);
     expect(findUniqueOrThrow).toHaveBeenCalledTimes(1);
-    expect(findUniqueOrThrow.mock.calls[0]?.[0].select.property.select.floors.include.rooms.include.spots.where)
+    const roomsSelect = findUniqueOrThrow.mock.calls[0]?.[0].select.property.select.floors.include.rooms;
+    expect(roomsSelect.include.spots.where)
       .toEqual({ status: "AVAILABLE" });
+    expect(roomsSelect.include._count.select.spots).toBe(true);
   });
   it("returns ten available beds and source-ordered room counts with Trip pricing in one read", async () => {
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [
       { id: "middle", name: "Middle floor", rooms: [
-        { id: "4", shortName: "Bedroom 4", pricePerPerson: 1740.55, description: "Women's quad bunk — shared balcony, shared shower", spots: [1, 2, 3, 4].map((id) => spot(String(id), "AVAILABLE")) },
-        { id: "5", shortName: "Bedroom 5", pricePerPerson: 1620.55, description: "Men's bunk cabin — shared shower", spots: [5, 6].map((id) => spot(String(id), "AVAILABLE")) },
+        { id: "4", shortName: "Bedroom 4", pricePerPerson: 1090, _count: { spots: 4 }, description: "Women's quad bunk — shared balcony, shared shower", spots: [1, 2, 3, 4].map((id) => spot(String(id), "AVAILABLE")) },
+        { id: "5", shortName: "Bedroom 5", pricePerPerson: 970, _count: { spots: 2 }, description: "Men's bunk cabin — shared shower", spots: [5, 6].map((id) => spot(String(id), "AVAILABLE")) },
       ] },
       { id: "lower", name: "Lower floor", rooms: [
-        { id: "8", shortName: "Bedroom 8", pricePerPerson: 1790.55, description: "Women's quad bunk — en-suite bathroom", spots: [7, 8, 9, 10].map((id) => spot(String(id), "AVAILABLE")) },
+        { id: "8", shortName: "Bedroom 8", pricePerPerson: 1140, _count: { spots: 4 }, description: "Women's quad bunk — en-suite bathroom", spots: [7, 8, 9, 10].map((id) => spot(String(id), "AVAILABLE")) },
       ] },
     ] } });
     const result = await getOpenSpots("different-trip");
     expect(result.openCount).toBe(10);
     expect(result.spots).toHaveLength(10);
-    expect(result.openRooms.map((room) => [room.id, room.openCount, room.priceLabel])).toEqual([["4", 4, "€1,740.55"], ["5", 2, "€1,620.55"], ["8", 4, "€1,790.55"]]);
+    expect(result.openRooms.map((room) => [room.id, room.openCount, room.capacity, room.priceLabel])).toEqual([["4", 4, 4, "€1,090"], ["5", 2, 2, "€970"], ["8", 4, 4, "€1,140"]]);
     expect(findUniqueOrThrow).toHaveBeenCalledExactlyOnceWith(expect.objectContaining({ where: { seedKey: "different-trip" } }));
   });
   it("formats known room prices without replacing null prices and handles no available rooms", async () => {
     findUniqueOrThrow.mockResolvedValueOnce({ pricing, property: { floors: [{ id: "floor", name: "Upper", rooms: [
-      { id: "room", pricePerPerson: { toString: () => "1725.50" }, spots: [spot("a", "AVAILABLE")] },
+      { id: "room", pricePerPerson: { toString: () => "1725.50" }, _count: { spots: 1 }, spots: [spot("a", "AVAILABLE")] },
     ] }] } });
     expect((await getOpenSpots()).openRooms[0]?.priceLabel).toBe("€1,725.5");
     findUniqueOrThrow.mockResolvedValueOnce({ pricing, property: { floors: [] } });
-    expect(await getOpenSpots()).toEqual({ spots: [], openRooms: [], openCount: 0, pricing: { ...pricing, rangeLabel: "€1,620.55–€1,790.55" } });
+    expect(await getOpenSpots()).toEqual({ spots: [], openRooms: [], openCount: 0, pricing: { ...pricing, rangeLabel: "€1,620.15–€1,790.15" } });
   });
   it("preserves unknown capacity and empty Rooms aggregates", async () => {
     findUniqueOrThrow.mockResolvedValue({ property: { floors: [], sleepsMax: null }, _count: { guests: 0 } });

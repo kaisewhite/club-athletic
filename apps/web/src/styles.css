@@ -432,6 +432,11 @@ button:disabled, input:disabled { cursor: not-allowed; }
 .schedule-copy-button svg { display: block; width: 18px; height: 18px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
 .schedule-copy-button:hover { background: var(--hover); color: var(--text); }
 .schedule-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
+.pricing-room-actions { display: inline-flex; align-items: center; gap: 12px; }
+.pricing-copy-button { display: inline-flex; align-items: center; justify-content: center; width: 32px; min-width: 32px; height: 32px; padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text-muted); cursor: pointer; }
+.pricing-copy-button svg { display: block; width: 16px; height: 16px; fill: none; stroke: currentColor; stroke-width: 1.8; stroke-linecap: round; stroke-linejoin: round; }
+.pricing-copy-button:hover { background: var(--hover); color: var(--text); }
+.pricing-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 /* A meal with no chef sitting still gets its row — the guest needs to know — but
    it steps back so the real fixtures of the day read first. */
 a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
@@ -550,7 +555,6 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .pricing-facts-table thead th { color: var(--text-faint); font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; }
 .pricing-facts-table tbody th[scope="row"] { width: 28%; font-weight: 600; }
 .pricing-facts-table tbody td { color: var(--text-dim); }
-.pricing-included-list { display: grid; gap: 5px; margin: 0; padding: 0; list-style: none; }
 
 
 
@@ -773,6 +777,8 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .pricing-payment-terms { padding: 10px 0; }
   .pricing-details { margin-top: 20px; }
   .pricing-room-list-heading { align-items: flex-start; flex-direction: column; gap: 0; }
+  .pricing-room-actions { align-self: flex-end; }
+  .pricing-copy-button { width: 44px; min-width: 44px; height: 44px; }
   .pricing-facts-table, .pricing-facts-table tbody { display: block; width: 100%; }
   .pricing-facts-table { border: 1px solid var(--border); border-radius: 0; overflow: hidden; }
   .pricing-facts-table thead { display: none; }

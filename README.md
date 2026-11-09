@@ -2,7 +2,7 @@
 
 A single-page trip hub for one group ski trip: **Méribel (Les 3 Vallées), France —
 Chalet Falcon Lodge F, Sat 30 Jan → Sat 6 Feb 2027**. Ten pages of trip facts
-(schedule, flights, shuttle, chalet, rooms, spots & pricing, chef, tasks, links)
+(schedule, flights, shuttle, chalet, rooms, pricing, chef, tasks, links)
 plus an AI concierge that answers questions from the trip database and can record
 a guest's flight from an uploaded booking screenshot.
 
@@ -37,7 +37,7 @@ modes: Express 5 + `node:http`, Vite middleware in development, the built
 listens and stops it on `SIGINT`/`SIGTERM`.
 
 Routes: `/` plus `/schedule`, `/flights`, `/shuttle`, `/chalet`, `/rooms`,
-`/spots`, `/chef`, `/tasks`, `/links` (ten pages), `/health`, and seven
+`/pricing`, `/chef`, `/tasks`, `/links` (ten pages), `/health`, and seven
 `/api/chat/*` resource routes for conversations, messages, SSE stream, status,
 cancel and uploads.
 

@@ -55,7 +55,7 @@ export async function openFrozen(page: Page, path: string): Promise<number> {
   //       so capturing early photographs fallback metrics instead of the design.
   //       `document.fonts.ready` alone can resolve before a lazily-requested face
   //       is in, so the two families actually used are checked by name.
-  //    c. Images: `/rooms` embeds `public/bedroom-map.webp` and `/spots`
+  //    c. Images: `/rooms` embeds `public/bedroom-map.webp` and `/pricing`
 //       embeds `public/chalet-rooms.webp`.
   await expect.poll(() => page.evaluate(() => {
     const shell = document.querySelector(".app-shell");

@@ -47,16 +47,16 @@ const FLIGHT_RECOMMENDATIONS = [
     ] },
 ];
 const FLOORS = [
-  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,allIn:2115.55,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
+  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
   {name:'Middle floor',code:'R10 / F21',rooms:[
-    {name:'Bedroom 2',type:'Double room',rate:1340,allIn:1990.55,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Christie Navarre']},
-    {name:'Bedroom 3',type:'Twin room',rate:1290,allIn:1940.55,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
-    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,allIn:1740.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','','','']},
-    {name:'Bedroom 5',type:'Bunk cabin',rate:970,allIn:1620.55,description:"Men's bunk cabin · Sleeps 2 people · 1 set of bunk beds · shared shower",ensuite:false,balcony:false,spots:['Pete F.','']}]},
+    {name:'Bedroom 2',type:'Double room',rate:1340,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Christie Navarre']},
+    {name:'Bedroom 3',type:'Twin room',rate:1290,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
+    {name:'Bedroom 4',type:'Quad bunk room',rate:1090,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · shared balcony, shared shower",ensuite:false,balcony:true,spots:['Christine Calvo','','','']},
+    {name:'Bedroom 5',type:'Bunk cabin',rate:970,description:"Men's bunk cabin · Sleeps 2 people · 1 set of bunk beds · shared shower",ensuite:false,balcony:false,spots:['Pete F.','']}]},
   {name:'Lower floor',code:'R9 / F12',rooms:[
-    {name:'Bedroom 6',type:'Double room',rate:1305,allIn:1955.55,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
-    {name:'Bedroom 7',type:'Double room',rate:1305,allIn:1955.55,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Olajuwon Jones','Ted Delcima']},
-    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,allIn:1790.55,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
+    {name:'Bedroom 6',type:'Double room',rate:1305,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Augustus Shewchuck','Wayne Martindale']},
+    {name:'Bedroom 7',type:'Double room',rate:1305,description:'Double — shared terrace, en-suite shower',ensuite:true,balcony:true,spots:['Olajuwon Jones','Ted Delcima']},
+    {name:'Bedroom 8',type:'Quad bunk room',rate:1140,description:"Women's quad bunk · Sleeps 4 people · 2 sets of bunk beds · en-suite bathroom",ensuite:true,balcony:false,spots:['','','','']}]},
 ];
 const LINKS: Array<{ group: string; label: string; href: string; note: string | null }> = [
   {group:'Chalet',label:'Falcon Lodge F — Ski in Luxury',href:'https://www.skiinluxury.com/france/meribel/falcon-lodge-f',note:'Chalet photos, layout and details.'},
@@ -80,7 +80,7 @@ const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 
 SHUTTLE: Out Sat 30 Jan pickup at Geneva Airport (GVA) from 10:30–11:00 AM, drop-off at 269 Rte de l'Altiport and 181 Imp. des Fontaines. Back Sat 6 Feb pickup at 4:00 AM at 269 Rte de l'Altiport, then 4:15 AM at 181 Imp. des Fontaines, with drop-off at Geneva Airport (GVA).
 FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, spend the day in Geneva, and stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
 ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Christie Navarre. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, 3 available. Bedroom 5 bunk cabin: Pete F., 1 available. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 11 confirmed guests, 8 open spots.
-REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,740.55 per person all-in. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,790.55 per person all-in. All-in = room rate + €33.60 taxes + €108.55 shuttle + €100 incidentals + €408 chef. Not flights/ski pass/rentals. Contact the organizer to claim.
+REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,090 room rate per person. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,140 room rate per person. Add €33.60 taxes, €108.55 shuttle, €100 incidentals and €408 chef per person for an all-in range of €1,620.15–€1,790.15 for currently open bunks. Not flights/ski pass/rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
 EVENTS: Fri 29 Jan — Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
 CHALET: Central Méribel ~200 m from slopes, 326 m², 3 levels, 8 bedrooms, sleeps 10–20. Two apartments combined: F12 (sleeps 4–8) + F21 (sleeps 6–12). Lounges, two fireplaces, main kitchen + kitchenette, private outdoor hot tub, two saunas, fitness room, shared indoor pool/hammam/sauna/massage rooms, on-site ski shop and rental, ski lockers with boot warmers, underground parking, laundry. Most rooms en-suite with balcony/terrace; some bunk rooms share a shower room, may lack balcony.
@@ -106,8 +106,8 @@ const GROUP_FLIGHTS: Array<{ guest: string; direction: "INBOUND" | "OUTBOUND"; a
   { guest: "Kristy Khoury",     direction: "OUTBOUND", airline: "United", flightNumber: "UA957", origin: "GVA", destination: "EWR", departs: "2027-02-06T09:15:00+01:00", arrives: "2027-02-06T12:30:00-05:00" },
 ];
 
-// Poll responses shared by the owner on 2026-11-03. Tim Kurdi's former VIP
-// choice is intentionally omitted because he is no longer a guest.
+// Poll responses shared by the owner on 2026-11-03. Former guests' responses
+// are omitted so they do not return on a later seed.
 const FOLIE_DOUCE_VOTES = [
   { firstName: "Kaise", lastName: "", choice: "VIP_TABLE" },
   { firstName: "Kristy", lastName: "Khoury", choice: "VIP_TABLE" },
@@ -116,8 +116,6 @@ const FOLIE_DOUCE_VOTES = [
   { firstName: "Jacqueline", lastName: "Herrera", choice: "VIP_TABLE" },
   { firstName: "Valeriia", lastName: "Stobolva", choice: "VIP_TABLE" },
   { firstName: "Augustus", lastName: "Shewchuck", choice: "VIP_TABLE" },
-  { firstName: "Ari", lastName: "Stobaugh", choice: "GENERAL_ADMISSION" },
-  { firstName: "Joanna", lastName: "Gonzalez", choice: "GENERAL_ADMISSION" },
   { firstName: "Wayne", lastName: "Martindale", choice: "GENERAL_ADMISSION" },
   { firstName: "Elijah", lastName: "Jones", choice: "GENERAL_ADMISSION" },
 ] as const;
@@ -167,9 +165,7 @@ const PAID_GUESTS = new Set([
 // Seed defaults for guest food preferences. These are applied only when a guest
 // row is first created; later edits entered through the site stay authoritative.
 const DIETARY_NOTES: Record<string, string> = {
-  "Ari Stobaugh": "• Gluten (European wheat may be okay)\n• Dairy",
   "Christie Navarre": "• Gluten-free preference (not celiac or an allergy)",
-  "Joanna Gonzalez": "No allergies or dietary restrictions",
   Kaise: "• Pescatarian\n• Lactose intolerant",
   "Kristy Khoury": "• Dairy (medication helps)\n• Please don't serve dairy at every meal\n• Cooked dairy is less of an issue than milk, cream, and soft cheese",
   "Olajuwon Jones": "• No pork",
@@ -177,8 +173,6 @@ const DIETARY_NOTES: Record<string, string> = {
   "Valeriia Stobolva": "• Sensitive to peanuts",
 };
 const FAVORITE_COCKTAILS: Record<string, string> = {
-  "Ari Stobaugh": "• Dirty vodka martini",
-  "Joanna Gonzalez": "• Spicy margaritas\n• Full-bodied red wine\n• Mezcal Negroni\n• Hugo Spritz or Aperol Spritz\n• Dirty martinis",
   "Olajuwon Jones": "• Espresso Martini\n• Margarita\n• Old Fashioned",
   "Valeriia Stobolva": "• Mezcal Negroni",
 };
@@ -226,19 +220,18 @@ const PROPERTY_FACTS = {
 };
 
 const PRICING = {
-  minPerPerson: 1620.55,
-  maxPerPerson: 1790.55,
+  minPerPerson: 1620.15,
+  maxPerPerson: 1790.15,
   currency: "EUR",
   description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
-  note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
   includes: [
     "Your bed for 7 nights",
     "Private chef — 6 breakfasts, 5 dinners",
     "Group shuttle GVA ↔ chalet",
     "Taxes, incidentals and tips",
   ],
-  excludes: ["flights", "ski pass", "rentals", "nights out"],
+  excludes: ["flights", "ski pass", "rentals"],
 };
 
 function kbSection(section: string): string {
@@ -386,12 +379,12 @@ async function seed(tx: Prisma.TransactionClient): Promise<void> {
         () => tx.room.create({ data: {
           id: createId(), ...roomKey, shortName: sourceRoom.name.split(" · ")[0]!,
           type: ROOM_TYPES[sourceRoom.type]!, sortOrder: roomIndex,
-          pricePerPerson: sourceRoom.allIn, ensuite: sourceRoom.ensuite,
+          pricePerPerson: sourceRoom.rate, ensuite: sourceRoom.ensuite,
           balcony: sourceRoom.balcony, description: sourceRoom.description,
         } }));
       // Organizer pricing and room facts are content, so push them on every rerun.
       await tx.room.update({ where: { id: room.id }, data: {
-        pricePerPerson: sourceRoom.allIn, ensuite: sourceRoom.ensuite,
+        pricePerPerson: sourceRoom.rate, ensuite: sourceRoom.ensuite,
         balcony: sourceRoom.balcony, description: sourceRoom.description,
       } });
       for (const [spotIndex, displayName] of sourceRoom.spots.entries()) {

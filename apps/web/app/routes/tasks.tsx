@@ -17,7 +17,7 @@ export default function Tasks({ loaderData: data }: Route.ComponentProps) {
     <PageHeading id="tasks-heading" sub={<>Flight booking and payment status for {data.guestCount} confirmed guests. <strong className="text-text">{data.paidCount}</strong> paid.</>}>Who’s done what</PageHeading>
     <nav className="readiness-links" aria-label="Trip readiness pages">
       <a href="/flights">Flights <span aria-hidden="true">→</span></a>
-      <a href="/spots">Rooms and prices <span aria-hidden="true">→</span></a>
+      <a href="/pricing">Rooms and prices <span aria-hidden="true">→</span></a>
     </nav>
     <section className="readiness-section" aria-labelledby="readiness-table-heading">
     <div className="travel-chapter-heading"><span>01</span><h3 id="readiness-table-heading">Group flight and payment status</h3></div>

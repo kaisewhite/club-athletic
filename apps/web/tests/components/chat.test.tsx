@@ -92,7 +92,7 @@ describe("ported chat presentation and guest composer", () => {
   });
   it("parses ordered, deduplicated Source chips into real route links and leaves markdown escaped", async () => {
     await mount(<ChatThread events={[{ id: "answer", kind: "prose", text: '**Plain** <script>bad()</script>\nSource: links chalet schedule events chef pricing spots room flight shuttle' }]} />);
-    expect([...container.querySelectorAll(".chat-sources a")].map(el => el.getAttribute("href"))).toEqual(["/shuttle", "/flights", "/rooms", "/spots", "/chef", "/schedule", "/chalet", "/links"]);
+    expect([...container.querySelectorAll(".chat-sources a")].map(el => el.getAttribute("href"))).toEqual(["/shuttle", "/flights", "/rooms", "/pricing", "/chef", "/schedule", "/chalet", "/links"]);
     expect(container.querySelector("script")).toBeNull(); expect(container.querySelector(".chat-prose strong")).toBeNull();
     expect(container.textContent).toContain("**Plain** <script>bad()</script>"); expect(container.textContent).not.toContain("Source:");
     await act(async () => { container.querySelector<HTMLAnchorElement>('a[href="/flights"]')!.click(); });

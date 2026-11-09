@@ -2,10 +2,10 @@ import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties }
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
 
 const SECTIONS = [
-  ["/", "Home"], ["/overview", "Overview"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/spots", "Pricing"],
+  ["/", "Home"], ["/overview", "Overview"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/pricing", "Pricing"],
   ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
   ["/folie-douce", "La Folie Douce"],
-  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/guest-details", "Guest details"], ["/links", "Links"], ["/faq", "FAQ"],
+  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/guest-questionnaire", "Guest questionnaire"], ["/links", "Links"], ["/faq", "FAQ"],
 ] as const;
 
 /* The 860px seam, as the one query the browser itself evaluates. `innerWidth`
@@ -33,14 +33,14 @@ export function useWideLayout() {
 /* Desktop splits the same pages in two: the six a guest checks most sit in the
    top bar, and the rest open from More on its far right. The mobile drawer and
    the footer still list every page. */
-const PRIMARY = ["/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedule"] as const;
-const MORE = ["/overview", "/chef", "/tasks", "/guests", "/guest-details", "/links", "/faq", "/folie-douce"] as const;
+const PRIMARY = ["/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule"] as const;
+const MORE = ["/overview", "/chef", "/tasks", "/guests", "/guest-questionnaire", "/links", "/faq", "/folie-douce"] as const;
 const FOOTER_GROUPS = [
   ["The trip", ["/", "/overview", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],
-  ["The chalet", ["/chalet", "/rooms", "/spots", "/chef"]],
+  ["The chalet", ["/chalet", "/rooms", "/pricing", "/chef"]],
   ["The group", ["/guests", "/tasks", "/links"]],
-  ["Polls & surveys", ["/guest-details", "/folie-douce"]],
+  ["Polls & surveys", ["/guest-questionnaire", "/folie-douce"]],
 ] as const;
 const labelFor = (to: string) => SECTIONS.find(([path]) => path === to)![1];
 

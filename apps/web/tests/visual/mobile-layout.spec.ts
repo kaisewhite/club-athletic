@@ -25,7 +25,7 @@ const VIEWPORTS = [
 
 const PAGES = [
   ["home", "/"], ["chat", "/chat"], ["guests", "/guests"], ["faq", "/faq"], ["schedule", "/schedule"], ["flights", "/flights"], ["shuttle", "/shuttle"],
-  ["chalet", "/chalet"], ["rooms", "/rooms"], ["spots", "/spots"], ["chef", "/chef"],
+  ["chalet", "/chalet"], ["rooms", "/rooms"], ["spots", "/pricing"], ["chef", "/chef"],
   ["tasks", "/tasks"], ["links", "/links"],
 ] as const;
 

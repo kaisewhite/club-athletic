@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { useForm } from "@tanstack/react-form";
+import { useForm, useStore } from "@tanstack/react-form";
 import { useRevalidator } from "react-router";
 import { guestDetailsSchema } from "../../src/lib/guest-details-schema";
 import { formatRoomType } from "../lib/room-types";
@@ -17,7 +17,7 @@ type GuestDetailsValues = {
   roomId: string;
 };
 type FieldName = keyof GuestDetailsValues;
-type RoomOption = { id: string; name: string; shortName: string; type: string; floorName: string; openCount: number; occupants: { displayName: string; instagramUrl: string | null }[]; priceLabel: string | null; description: string | null };
+type RoomOption = { id: string; name: string; shortName: string; type: string; floorName: string; openCount: number; occupants: { displayName: string; instagramUrl: string | null }[]; priceLabel: string | null; totalPriceLabel: string | null; description: string | null };
 type ResponseBody = { ok: boolean; code?: string; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean };
 
 function isResponseBody(value: unknown): value is ResponseBody {
@@ -148,6 +148,8 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       }
     },
   });
+  const selectedRoomId = useStore(form.store, (state) => state.values.roomId);
+  const selectedRoom = rooms.find((room) => room.id === selectedRoomId);
 
   const continueStep = async () => {
     const fields = fieldNamesByStep[step];
@@ -179,9 +181,9 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
 
   return <div className="guest-details-flow">
     {step === 0 && <section className="guest-details-card" aria-labelledby="guest-form-welcome">
-      <p className="guest-details-eyebrow">Méribel 2027 · Guest details</p>
-      <h2 id="guest-form-welcome">Méribel 2027 — Guest Details</h2>
-      <p className="guest-details-copy">Quick guest info for chalet payments, chef planning, and trip communication. Takes about a minute.</p>
+      <p className="guest-details-eyebrow">Méribel 2027 · Guest questionnaire</p>
+      <h2 id="guest-form-welcome">Méribel 2027 — Guest Questionnaire</h2>
+      <p className="guest-details-copy">Please answer these questions so we can confirm your room choice, plan meals, and coordinate the trip.</p>
       <button type="button" className="guest-details-primary" onClick={() => setStep(1)}>Start</button>
     </section>}
 
@@ -212,7 +214,8 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
               <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => { clearAfterEdit(); field.handleChange(room.id); scheduleAutosave("roomId", room.id); }} />
               <span className="guest-room-option-content">
                 <span className="guest-room-option-heading"><strong>{room.name}</strong><span>{formatRoomType(room.type)}</span></span>
-                <span>{room.floorName}{room.priceLabel ? ` · ${room.priceLabel} per person` : ""}</span>
+                <span>{room.floorName}{room.priceLabel ? ` · Room rate ${room.priceLabel} per person` : ""}</span>
+                <strong className="guest-room-total">{room.totalPriceLabel ? `Total per person · ${room.totalPriceLabel} all-in` : "Total per person · Price pending"}</strong>
                 {room.description && <span>{room.description}</span>}
                 <span className="guest-room-open">{room.openCount} open {room.openCount === 1 ? "spot" : "spots"}</span>
               </span>
@@ -258,7 +261,12 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       {step === 7 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
         <p className="guest-details-eyebrow">Step 7</p>
         <h2 id="guest-question-title">Payment &amp; cancellation policy</h2>
-        <p>Payment is due in full — there is no deposit. You may drop out through November 15 for a full refund. After November 15, if you can no longer attend, you’ll need to find your own replacement to take over your spot/payment.</p>
+        <p>{selectedRoom?.totalPriceLabel
+          ? `Your total for ${selectedRoom.name} is ${selectedRoom.totalPriceLabel} per person, all-in.`
+          : "Your per-person room total is shown with each room choice."}</p>
+        <p>The all-in total includes your room, taxes, shuttle, incidentals, and chef. Flights, ski pass, and equipment rental are separate.</p>
+        <p>Payment is due in full — there is no deposit. Please Venmo your payment to <strong>@kaise-white</strong> using <a href="https://venmo.com/u/kaise-white" target="_blank" rel="noopener noreferrer">my Venmo profile</a>.</p>
+        <p>You may drop out through November 15 for a full refund. After November 15, if you can no longer attend, you’ll need to find your own replacement to take over your spot/payment.</p>
       </section>}
 
       {step === 8 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
@@ -283,7 +291,7 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
     {finished && <section className="guest-details-card guest-details-thanks" aria-labelledby="guest-thanks-title" role="status">
       <p className="guest-details-eyebrow">Méribel 2027</p>
       <h2 id="guest-thanks-title">Thanks — you’re all set.</h2>
-      <p className="guest-details-copy">Your guest details have been submitted.</p>
+      <p className="guest-details-copy">Your questionnaire has been submitted.</p>
       <a className="guest-details-primary guest-details-link-button" href="https://meribel.clubathletic.org/">View trip details</a>
     </section>}
   </div>;

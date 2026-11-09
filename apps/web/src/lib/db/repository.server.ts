@@ -161,7 +161,10 @@ export async function getOpenSpots(tripKey = DEFAULT_TRIP_KEY) {
           include: { rooms: {
             where: { spots: { some: { status: "AVAILABLE" } } },
             orderBy: [{ sortOrder: "asc" }, { id: "asc" }],
-            include: { spots: { where: { status: "AVAILABLE" }, orderBy: { index: "asc" } } },
+            include: {
+              _count: { select: { spots: true } },
+              spots: { where: { status: "AVAILABLE" }, orderBy: { index: "asc" } },
+            },
           } },
         } } },
       },
@@ -170,8 +173,8 @@ export async function getOpenSpots(tripKey = DEFAULT_TRIP_KEY) {
     const spots = trip.property.floors.flatMap(({ rooms, ...floor }) => rooms.flatMap(({ spots, ...room }) =>
       spots.map((spot) => ({ ...spot, room, floor, pricePerPerson: spot.priceOverride ?? room.pricePerPerson }))));
     const format = new Intl.NumberFormat("en-IE", { style: "currency", currency: pricing.currency, minimumFractionDigits: 0, maximumFractionDigits: 2 });
-    const openRooms = trip.property.floors.flatMap((floor) => floor.rooms.map(({ spots, ...room }) => ({
-      ...room, floorName: floor.name, openCount: countOpenSpots(spots),
+    const openRooms = trip.property.floors.flatMap((floor) => floor.rooms.map(({ spots, _count, ...room }) => ({
+      ...room, floorName: floor.name, openCount: countOpenSpots(spots), capacity: _count.spots,
       priceLabel: room.pricePerPerson === null ? null : format.format(Number(room.pricePerPerson)),
     })));
     return { spots, openRooms, openCount: spots.length, pricing };

@@ -20,7 +20,7 @@ beforeEach(() => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   vi.spyOn(window, "scrollTo").mockImplementation(() => {});
   vi.stubGlobal("ResizeObserver", class { observe() {} disconnect() {} });
-  mocks.trip.mockResolvedValue({ destination: "Méribel, France", resort: "Les 3 Vallées", startDate: new Date("2027-01-30Z"), endDate: new Date("2027-02-06Z"), timezone: "Europe/Paris", currency: "EUR", pricing: { minPerPerson: 1620.55, maxPerPerson: 1790.55 }, openCount: 10, guestCount: 9, capacity: 20, chefBreakfastCount: 6, chefDinnerCount: 5, flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00", property: { name: "Falcon", address: "269 Test, France", mapsUrl: "https://maps.google.com", description: "~200 m from slopes" }, shuttles: [] });
+  mocks.trip.mockResolvedValue({ destination: "Méribel, France", resort: "Les 3 Vallées", startDate: new Date("2027-01-30Z"), endDate: new Date("2027-02-06Z"), timezone: "Europe/Paris", currency: "EUR", pricing: { minPerPerson: 1620.15, maxPerPerson: 1790.15 }, openCount: 10, guestCount: 9, capacity: 20, chefBreakfastCount: 6, chefDinnerCount: 5, flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00", property: { name: "Falcon", address: "269 Test, France", mapsUrl: "https://maps.google.com", description: "~200 m from slopes" }, shuttles: [] });
   mocks.schedule.mockResolvedValue([]);
   mocks.detail.mockReset().mockResolvedValue(conversation);
   cleanup = vi.fn(); mocks.subscribe.mockReset().mockReturnValue(Object.assign(cleanup, { finished: Promise.resolve() }));
@@ -135,7 +135,7 @@ it("shows the trip info on the home page by default, with no dialog to open", as
   expect(info.tagName).toBe("SECTION");
   expect(info.textContent).toContain("January 30–February 6, 2027");
   for (const heading of ["Included", "The chalet", "Plan your budget"]) expect(info.textContent).toContain(heading);
-  expect(info.querySelector('a[href="/spots"]')?.textContent).toContain("See rooms & prices");
+  expect(info.querySelector('a[href="/pricing"]')?.textContent).toContain("See rooms & prices");
   expect(info.querySelector('a[href="/chat"]')?.textContent).toBe("Ask the trip guide");
 });
 
@@ -144,12 +144,12 @@ it("splits desktop navigation into six primary pages and a More menu, with every
   const bar = [...container.querySelectorAll(".top-nav .top-nav-item")].map((link) => link.textContent);
   expect(bar).toEqual(["Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule"]);
   const more = [...container.querySelectorAll(".more-menu .more-menu-item")].map((link) => link.textContent);
-  expect(more).toEqual(["Overview", "Chef", "Tasks", "Guests", "Links", "FAQ", "La Folie Douce"]);
+  expect(more).toEqual(["Overview", "Chef", "Tasks", "Guests", "Guest questionnaire", "Links", "FAQ", "La Folie Douce"]);
   // Icon-only actions keep their names for assistive tech.
   expect(container.querySelector(".more-toggle")?.getAttribute("aria-label")).toBe("More pages");
   expect(container.querySelector(".top-nav-chat")?.getAttribute("aria-label")).toBe("Chat");
   const footer = [...container.querySelectorAll(".site-footer a")].map((link) => link.getAttribute("href"));
-  for (const path of ["/", "/chat", "/chalet", "/rooms", "/spots", "/shuttle", "/flights", "/schedule", "/chef", "/tasks", "/guests", "/guest-details", "/links", "/faq"]) {
+  for (const path of ["/", "/chat", "/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule", "/chef", "/tasks", "/guests", "/guest-questionnaire", "/links", "/faq"]) {
     expect(footer, `footer links ${path}`).toContain(path);
   }
   expect(container.querySelector('.top-nav-chat[href="/chat"]')).not.toBeNull();

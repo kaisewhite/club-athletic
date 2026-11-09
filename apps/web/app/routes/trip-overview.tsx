@@ -52,7 +52,7 @@ export default function TripOverview({ loaderData: data }: Route.ComponentProps)
         <li><span className="trip-chapter-number">01</span><Link to="/flights"><span className="trip-chapter-title">Flights</span><span className="trip-chapter-note">Arrival and return guidance</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
         <li><span className="trip-chapter-number">02</span><Link to="/shuttle"><span className="trip-chapter-title">Airport shuttle</span><span className="trip-chapter-note">Pickup times and locations</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
         <li><span className="trip-chapter-number">03</span><Link to="/schedule"><span className="trip-chapter-title">Schedule</span><span className="trip-chapter-note">Meals and daily plans</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
-        <li><span className="trip-chapter-number">04</span><Link to="/spots"><span className="trip-chapter-title">Rooms and prices</span><span className="trip-chapter-note">Room options and cost details</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
+        <li><span className="trip-chapter-number">04</span><Link to="/pricing"><span className="trip-chapter-title">Rooms and prices</span><span className="trip-chapter-note">Room options and cost details</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
       </ol>
     </nav>
   </section>;

@@ -6,7 +6,7 @@ describe("decoded design source suffix", () => {
     const answer = parseAnswerSources("Trip answer.\nSource: links, schedule and events, pricing and spots, rooms, flights, shuttle, chalet, chef");
     expect(answer.body).toBe("Trip answer.");
     expect(answer.sources.map((source) => source.id)).toEqual(["shuttle", "flights", "rooms", "spots", "chef", "schedule", "chalet", "links"]);
-    expect(answer.sources.map((source) => source.href)).toEqual(["/shuttle", "/flights", "/rooms", "/spots", "/chef", "/schedule", "/chalet", "/links"]);
+    expect(answer.sources.map((source) => source.href)).toEqual(["/shuttle", "/flights", "/rooms", "/pricing", "/chef", "/schedule", "/chalet", "/links"]);
   });
   it.each(["The Source: Flights is quoted here.", "Source: Flights\nMore answer.", "No source required for intake.", "Resource: Flights", "Source:\nFlights"])("does not strip a non-suffix source line: %s", (text) => {
     expect(parseAnswerSources(text)).toEqual({ body: text, sources: [] });

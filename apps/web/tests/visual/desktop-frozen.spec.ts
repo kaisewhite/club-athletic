@@ -23,7 +23,7 @@ const PAGES = [
   ["shuttle", "/shuttle"],
   ["chalet", "/chalet"],
   ["rooms", "/rooms"],
-  ["spots", "/spots"],
+  ["spots", "/pricing"],
   ["chef", "/chef"],
   ["tasks", "/tasks"],
   ["links", "/links"],

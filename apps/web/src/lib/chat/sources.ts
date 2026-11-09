@@ -21,7 +21,7 @@ export function parseAnswerSources(answer: string): { body: string; sources: Ans
   for (const [keyword, id] of SRC_MAP) {
     if (suffix.includes(keyword) && !seen.has(id)) {
       seen.add(id);
-      sources.push({ id, label: SOURCE_LABELS[id], href: `/${id}` });
+      sources.push({ id, label: SOURCE_LABELS[id], href: id === "spots" ? "/pricing" : `/${id}` });
     }
   }
   return { body, sources };

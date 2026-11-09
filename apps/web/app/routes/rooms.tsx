@@ -27,7 +27,7 @@ export async function loader() {
 export default function Rooms({ loaderData: data }: Route.ComponentProps) {
   return <section aria-labelledby="rooms-heading">
     <PageHeading id="rooms-heading" sub={<>{data.guestCount} confirmed guests · {data.openCount} open spots{data.capacity !== null && <> · sleeps up to {data.capacity}</>}.</>}>Rooms</PageHeading>
-    <div className="room-guide-link"><a href="/spots">Open spots and prices <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div>
+    <div className="room-guide-link"><a href="/pricing">Open spots and prices <span aria-hidden="true"><ArrowRight size="1em" /></span></a></div>
     <BedroomMap floors={data.floors} />
     <RoomSharingFaq />
   </section>;

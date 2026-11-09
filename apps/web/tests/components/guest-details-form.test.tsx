@@ -7,9 +7,9 @@ const { revalidate } = vi.hoisted(() => ({ revalidate: vi.fn() }));
 vi.mock("react-router", async (importOriginal) => ({ ...(await importOriginal<typeof import("react-router")>()), useRevalidator: () => ({ revalidate }) }));
 
 const rooms = [
-  { id: "room-1", name: "Room One", shortName: "Room 1", type: "QUAD_BUNK", floorName: "Middle floor", openCount: 2, occupants: [{ displayName: "Alex Guest", instagramUrl: "https://www.instagram.com/alexguest/" }, { displayName: "Sam Guest", instagramUrl: null }], priceLabel: "€1,700", description: "Two single beds" },
-  { id: "room-2", name: "Room Two", shortName: "Room 2", type: "BUNK_CABIN", floorName: "Top floor", openCount: 1, occupants: [], priceLabel: null, description: null },
-  { id: "room-full", name: "Full Room", shortName: "Full", type: "DOUBLE", floorName: "Lower floor", openCount: 0, occupants: [{ displayName: "Jamie Guest", instagramUrl: null }], priceLabel: null, description: null },
+  { id: "room-1", name: "Room One", shortName: "Room 1", type: "QUAD_BUNK", floorName: "Middle floor", openCount: 2, occupants: [{ displayName: "Alex Guest", instagramUrl: "https://www.instagram.com/alexguest/" }, { displayName: "Sam Guest", instagramUrl: null }], priceLabel: "€1,700", totalPriceLabel: "€2,350.15", description: "Two single beds" },
+  { id: "room-2", name: "Room Two", shortName: "Room 2", type: "BUNK_CABIN", floorName: "Top floor", openCount: 1, occupants: [], priceLabel: null, totalPriceLabel: null, description: null },
+  { id: "room-full", name: "Full Room", shortName: "Full", type: "DOUBLE", floorName: "Lower floor", openCount: 0, occupants: [{ displayName: "Jamie Guest", instagramUrl: null }], priceLabel: null, totalPriceLabel: null, description: null },
 ];
 
 let root: Root | undefined;
@@ -88,8 +88,7 @@ describe("GuestDetailsForm", () => {
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
 
-    expect(container.textContent).toContain("Méribel 2027 — Guest Details");
-    expect(container.textContent).toContain("Takes about a minute.");
+    expect(container.textContent).toContain("Méribel 2027 — Guest Questionnaire");
     await clickButton("Start");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Your name");
     expect(container.querySelector(".guest-details-progress-label")?.textContent).toBe("Question 1 of 6");
@@ -130,7 +129,7 @@ describe("GuestDetailsForm", () => {
     await clickButton("Finish");
 
     expect(container.textContent).toContain("Thanks — you’re all set.");
-    expect(container.textContent).toContain("Your guest details have been submitted.");
+    expect(container.textContent).toContain("Your questionnaire has been submitted.");
     expect(fetch).toHaveBeenCalled();
     const [, request] = fetch.mock.calls.at(-1)!;
     const body = JSON.parse(String(request.body));

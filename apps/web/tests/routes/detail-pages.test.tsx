@@ -5,7 +5,7 @@ import type { ReadDatabase } from "../../src/lib/db/client.server";
 import Shuttle, { loader as shuttleLoader } from "../../app/routes/shuttle";
 import Chalet, { loader as chaletLoader } from "../../app/routes/chalet";
 import Rooms, { loader as roomsLoader } from "../../app/routes/rooms";
-import Spots, { loader as spotsLoader } from "../../app/routes/spots";
+import Pricing, { loader as pricingLoader } from "../../app/routes/pricing";
 import Chef, { loader as chefLoader } from "../../app/routes/chef";
 import Tasks, { loader as tasksLoader } from "../../app/routes/tasks";
 import Links, { loader as linksLoader } from "../../app/routes/links";
@@ -37,7 +37,8 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
 
 const names = ["Kaise", "Amelia Drake", "Christie Navarre", "Kristy Khoury", "Valeriia Stobolva", "Augustus Shewchuck", "Wayne Martindale", "Olajuwon Jones", "Ted Delcima"];
 const room = (number: number, type: string, occupants: (string | null)[]) => ({
-  id: `room-${number}`, name: `Bedroom ${number}`, shortName: `Bedroom ${number}`, type, pricePerPerson: ({ 4: 1740.55, 5: 1620.55, 8: 1790.55 } as Record<number, number>)[number] ?? null,
+  id: `room-${number}`, name: `Bedroom ${number}`, shortName: `Bedroom ${number}`, type, pricePerPerson: ({ 4: 1090, 5: 970, 8: 1140 } as Record<number, number>)[number] ?? null,
+  _count: { spots: occupants.length },
   description: ({ 4: "Women's quad bunk — shared balcony, shared shower", 5: "Men's bunk cabin — shared shower", 8: "Women's quad bunk — en-suite bathroom" } as Record<number, string>)[number] ?? null,
   spots: occupants.map((occupant, index) => ({ id: `${number}-${index}`, index: index + 1, priceOverride: null,
     status: occupant === null ? "NOT_OFFERED" : occupant ? "ASSIGNED" : "AVAILABLE",
@@ -54,11 +55,11 @@ const floors = [
     room(6, "DOUBLE", names.slice(5, 7)), room(7, "DOUBLE", names.slice(7, 9)), room(8, "QUAD_BUNK", ["", "", "", ""]),
   ] },
 ];
-const pricing = { minPerPerson: 1620.55, maxPerPerson: 1790.55, currency: "EUR", description: "per person, all-in",
+const pricing = { minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR", description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
   note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
     includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
-  excludes: ["flights", "ski pass", "rentals", "nights out"],
+  excludes: ["flights", "ski pass", "rentals"],
 };
 
 beforeEach(() => { findUniqueOrThrow.mockReset(); getEurUsdRate.mockReset(); getEurUsdRate.mockResolvedValue({ rate: 1.2, date: "2026-10-01" }); });
@@ -66,7 +67,7 @@ beforeEach(() => { findUniqueOrThrow.mockReset(); getEurUsdRate.mockReset(); get
 describe("database-backed read-only detail pages", () => {
   it("puts trip and room-sharing questions in the same FAQ table", () => {
     const tiles = Array.from({ length: 10 }, (_, index) => ({
-      to: "/spots", question: `Question ${index + 1}`, lead: `Fact ${index + 1}`,
+      to: "/pricing", question: `Question ${index + 1}`, lead: `Fact ${index + 1}`,
       kicker: `Question ${index + 1}`, sub: `Detail ${index + 1}`, accent: false,
     }));
     const page = document.createElement("div");
@@ -130,27 +131,30 @@ describe("database-backed read-only detail pages", () => {
   it("labels per-room open spot counts on Trip pricing", async () => {
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: floors.map((floor) => ({ ...floor,
       rooms: floor.rooms.filter((room) => room.spots.some((spot) => spot.status === "AVAILABLE"))
-        .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE") })),
+        .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE").slice(0, room.shortName === "Bedroom 4" ? 3 : undefined) })),
     })) } });
-    const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".pricing-open-count")?.textContent).toBe("10");
-    expect(page.textContent).toContain("€1,620.55–€1,790.55");
-    expect(page.querySelector(".pricing-estimate-value")?.textContent).toContain("≈ $1,945–$2,149");
+    const page = renderPage(Pricing, await pricingLoader());
+    expect(page.querySelector(".pricing-open-count")?.textContent).toBe("9");
+    expect(page.textContent).toContain("€1,620.15–€1,790.15");
+    expect(page.querySelector(".pricing-estimate-value")?.textContent).toContain("≈ $1,944–$2,148");
     expect(page.querySelector(".pricing-rate-date")?.textContent).toContain("ECB rate · Oct 1, 2026");
     expect(page.querySelector(".pricing-payment-terms")?.textContent).toContain("Payment is in full; there is no deposit.");
-    for (const item of [...pricing.includes, ...pricing.excludes]) expect(page.textContent).toContain(item.replace("↔", "to and from"));
     const roomRows = [...page.querySelectorAll<HTMLTableRowElement>(".pricing-room-table tbody tr")];
     expect(roomRows).toHaveLength(3);
-    expect(roomRows.map((row) => row.querySelector('[data-label="Availability"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Availability4 spots open", "Availability2 spots open", "Availability4 spots open"]);
-    expect(roomRows.map((row) => row.querySelector('[data-label="Price per person"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Price per person€1,740.55 / $2,088.66 per person", "Price per person€1,620.55 / $1,944.66 per person", "Price per person€1,790.55 / $2,148.66 per person"]);
+    expect(roomRows.map((row) => row.querySelector('[data-label="Availability"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Availability3 spots open", "Availability2 spots open", "Availability4 spots open"]);
+    expect(roomRows.map((row) => row.querySelector('[data-label="Room total"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Room total€4,360 / $5,232.00", "Room total€1,940 / $2,328.00", "Room total€4,560 / $5,472.00"]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const priceDetails = page.querySelector<HTMLTableElement>(".pricing-facts-table");
-    expect(priceDetails?.getAttribute("aria-label")).toBe("Included items and price breakdown");
-    expect([...priceDetails!.querySelectorAll("tbody th[scope='row']")].map((node) => node.textContent)).toEqual(["Included in the price", "Not included", "Room rate", "Taxes", "Shuttle", "Incidentals", "Chef", "Price note"]);
+    expect(priceDetails?.getAttribute("aria-label")).toBe("Price breakdown");
+    expect([...priceDetails!.querySelectorAll("tbody th[scope='row']")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef", "Refund", "Not included"]);
     expect([...priceDetails!.querySelectorAll("tbody td")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual([
-      pricing.includes.join("").replace("↔", "to and from"), pricing.excludes.join(", "), "Depends on the room", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60", pricing.note,
+      "See room totals above", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60", "Refund €69.45 to each of the 13 people who already paid €178.", pricing.excludes.join(", "),
     ]);
-    expect(page.textContent).toContain("refund €69.45");
+    expect(page.textContent).not.toContain("Included in the price");
+    expect(page.textContent).not.toContain("Your bed for 7 nights");
+    expect(page.textContent).not.toContain("All-in = room rate");
+    expect(page.textContent).not.toContain("The shuttle is now");
+    expect(page.textContent).toContain("Refund €69.45");
     const chefAgreement = page.querySelector<HTMLDetailsElement>("details.service-agreement");
     expect(chefAgreement).not.toBeNull();
     expect(chefAgreement?.hasAttribute("open")).toBe(false);
@@ -178,8 +182,8 @@ describe("database-backed read-only detail pages", () => {
   it("keeps EUR pricing visible when the daily USD rate is unavailable", async () => {
     getEurUsdRate.mockResolvedValue(null);
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: [] } });
-    const page = renderPage(Spots, await spotsLoader());
-    expect(page.querySelector(".pricing-total-range")?.textContent).toBe("€1,620.55–€1,790.55");
+    const page = renderPage(Pricing, await pricingLoader());
+    expect(page.querySelector(".pricing-total-range")?.textContent).toBe("€1,620.15–€1,790.15");
     expect(page.querySelector(".pricing-estimate-value")?.textContent).toBe("USD rate unavailable");
   });
   it("renders shuttle times and both pickup and drop-off locations", async () => {

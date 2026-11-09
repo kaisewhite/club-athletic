@@ -24,11 +24,11 @@ export function faqTiles(trip: TripOverview) {
     { to: "/chalet", question: "Where are we staying?", lead: location, kicker: "Stay", sub: "" },
     { to: "/shuttle", question: "What time does the bus leave Geneva?", lead: null, kicker: "Bus leaves Geneva", sub: `${tripDate(trip.startDate, "long")}, between ${time(inbound?.departWindowStart)} and ${time(inbound?.departWindowEnd)}` },
     { to: "/flights", question: "What time do I need to land?", lead: trip.flightArrivalCutoff, kicker: "Your flight must land by", sub: `${new Intl.DateTimeFormat("en-GB", { weekday: "long", timeZone: "UTC" }).format(trip.startDate)} morning at Geneva, or you’ll miss the bus` },
-    { to: "/spots", question: "How many beds are open?", lead: String(trip.openCount), kicker: "Beds available", sub: `left · from ${price} per person, everything included`, accent: true },
-    { to: "/spots", question: "How much is a bunk?", lead: bunkRange, kicker: "Per person, all-in", sub: "everything included · price depends on the room" },
+    { to: "/pricing", question: "How many beds are open?", lead: String(trip.openCount), kicker: "Beds available", sub: `left · from ${price} per person, everything included`, accent: true },
+    { to: "/pricing", question: "How much is a bunk?", lead: bunkRange, kicker: "Per person, all-in", sub: "everything included · price depends on the room" },
     { to: "/chef", question: "How many meals does the chef cook?", lead: null, kicker: "Meals cooked for us", sub: `${trip.chefBreakfastCount} breakfasts and ${trip.chefDinnerCount} dinners` },
     { to: "/shuttle", question: "What time is the bus back to the airport?", lead: time(outbound?.departWindowStart), kicker: "Bus back to the airport", sub: `${tripDate(trip.endDate, "long")} · book flights for ${trip.flightReturnCutoff} or later` },
     { to: "/rooms", question: "How many people are coming?", lead: trip.capacity === null ? String(trip.guestCount) : `${trip.guestCount} of ${trip.capacity}`, kicker: "People coming", sub: "see who’s sleeping where" },
-    { to: "/spots", question: "Can I drop out?", lead: "Full refund by November 15", kicker: "Drop-out policy", sub: "Paid in full; no deposit · after that, find your own replacement" },
+    { to: "/pricing", question: "Can I drop out?", lead: "Full refund by November 15", kicker: "Drop-out policy", sub: "Paid in full; no deposit · after that, find your own replacement" },
   ];
 }
