@@ -18,7 +18,7 @@ const pricing = {
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
   note: "Refund €69.45 to each of the 13 people who already paid €178.",
   includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
-  excludes: ["flights", "ski pass", "rentals"],
+  excludes: ["flights", "ski passes", "rentals"],
 };
 const floors = [{ id: "floor", name: "Middle", rooms: [
   { id: "open", name: "Quad", pricePerPerson: null, spots: [spot("a", "AVAILABLE"), spot("b", "AVAILABLE"), spot("c", "NOT_OFFERED")] },

@@ -59,7 +59,7 @@ const pricing = { minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
   note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
     includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
-  excludes: ["flights", "ski pass", "rentals"],
+  excludes: ["flights", "ski passes", "rentals"],
 };
 
 beforeEach(() => { findUniqueOrThrow.mockReset(); getEurUsdRate.mockReset(); getEurUsdRate.mockResolvedValue({ rate: 1.2, date: "2026-10-01" }); });

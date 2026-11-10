@@ -5,7 +5,7 @@ The room rate and add-ons are separate amounts. Do not add the listed add-ons to
 amount, or report the room rate as the total. For live availability and rates, call getOpenSpots.
 The all-in price is the room rate plus taxes, shuttle, incidentals and chef.
 
-Not included: flights, ski pass, and equipment rental.
+Not included: flights, ski passes, and rentals.
 
 To claim a spot, a guest contacts the organizer; you cannot reserve anything.
 How many spots are still open, and which rooms they are in, is live data — call getOpenSpots.
