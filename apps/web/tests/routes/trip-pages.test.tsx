@@ -101,9 +101,9 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
     expect(container.querySelector(".mobile-nav-toggle")?.getAttribute("aria-expanded")).toBe("false");
     await act(async () => container.querySelector<HTMLButtonElement>(".mobile-nav-toggle")!.click());
     expect(container.querySelector('.mobile-drawer .side-item.active')?.textContent).toBe("Schedule");
-    expect(container.querySelectorAll(".mobile-drawer nav a")).toHaveLength(16);
+    expect(container.querySelectorAll(".mobile-drawer nav a")).toHaveLength(15);
     expect([...container.querySelectorAll<HTMLAnchorElement>(".mobile-drawer nav a")].map((link) => link.textContent)).toEqual([
-      "Home", "Overview", "Chat", "Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule", "La Folie Douce", "Chef", "Tasks", "Guests", "Guest questionnaire", "Links", "FAQ",
+      "Chat", "Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule", "Overview", "Chef", "Tasks", "Guests", "Links", "FAQ", "Questionnaire", "La Folie Douce",
     ]);
     // One seam, subscribed to the query rather than to `resize`.
     expect(seamQueries.length).toBeGreaterThan(0);

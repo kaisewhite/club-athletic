@@ -25,11 +25,11 @@ export async function loader() {
 }
 
 export function meta() {
-  return tripPageMeta({ path: "/guest-questionnaire", title: "Guest questionnaire · Méribel ’27 — Club Athletic", description: "Choose a room and share your contact details, preferences, and trip information for Méribel.", image: "chalet" });
+  return tripPageMeta({ path: "/questionnaire", title: "Questionnaire · Méribel ’27 — Club Athletic", description: "Choose a room and share your contact details, preferences, and trip information for Méribel.", image: "chalet" });
 }
 
 export default function GuestDetails({ loaderData }: { loaderData: Awaited<ReturnType<typeof loader>> }) {
-  return <section aria-label="Méribel 2027 guest questionnaire">
+  return <section aria-label="Méribel 2027 questionnaire">
     <GuestDetailsForm rooms={loaderData.rooms} />
   </section>;
 }

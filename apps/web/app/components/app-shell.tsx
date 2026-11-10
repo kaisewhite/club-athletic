@@ -5,7 +5,7 @@ const SECTIONS = [
   ["/", "Home"], ["/overview", "Overview"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/pricing", "Pricing"],
   ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
   ["/folie-douce", "La Folie Douce"],
-  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/guest-questionnaire", "Guest questionnaire"], ["/links", "Links"], ["/faq", "FAQ"],
+  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/questionnaire", "Questionnaire"], ["/links", "Links"], ["/faq", "FAQ"],
 ] as const;
 
 /* The 860px seam, as the one query the browser itself evaluates. `innerWidth`
@@ -34,19 +34,22 @@ export function useWideLayout() {
    top bar, and the rest open from More on its far right. The mobile drawer and
    the footer still list every page. */
 const PRIMARY = ["/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule"] as const;
-const MORE = ["/overview", "/chef", "/tasks", "/guests", "/guest-questionnaire", "/links", "/faq", "/folie-douce"] as const;
+const MOBILE_PRIMARY = ["/chat", ...PRIMARY] as const;
+const MORE = ["/overview", "/chef", "/tasks", "/guests", "/questionnaire", "/links", "/faq", "/folie-douce"] as const;
+const SURVEYS = ["/questionnaire", "/folie-douce"] as const;
+const MOBILE_MORE = MORE.filter((to) => !SURVEYS.includes(to as (typeof SURVEYS)[number]));
 const FOOTER_GROUPS = [
   ["The trip", ["/", "/overview", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],
   ["The chalet", ["/chalet", "/rooms", "/pricing", "/chef"]],
   ["The group", ["/guests", "/tasks", "/links"]],
-  ["Polls & surveys", ["/guest-questionnaire", "/folie-douce"]],
+  ["Polls & surveys", ["/questionnaire", "/folie-douce"]],
 ] as const;
 const labelFor = (to: string) => SECTIONS.find(([path]) => path === to)![1];
 
-function Navigation({ className = "side-nav", onNavigate }: { className?: string; onNavigate?: () => void }) {
+function Navigation({ paths, className = "side-nav", onNavigate }: { paths: readonly string[]; className?: string; onNavigate?: () => void }) {
   return <nav aria-label="Trip pages" className={className}>
-    {SECTIONS.map(([to, label]) => <NavLink key={to} to={to} end className="side-item" onClick={onNavigate}>{label}</NavLink>)}
+    {paths.map((to) => <NavLink key={to} to={to} end className="side-item" onClick={onNavigate}>{labelFor(to)}</NavLink>)}
   </nav>;
 }
 
@@ -197,7 +200,11 @@ export function AppShell(_props?: { daysUntil?: number }) {
           <button type="button" className="mobile-nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />
           <aside ref={mobileDrawer} id="mobile-trip-navigation" className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Trip navigation">
             <div className="mobile-drawer-heading"><span>Trip pages</span><button type="button" className="mobile-drawer-close" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg></button></div>
-            <Navigation className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+            <Navigation paths={MOBILE_PRIMARY} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+            <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>More</span></div>
+            <Navigation paths={MOBILE_MORE} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+            <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>Polls &amp; Surveys</span></div>
+            <Navigation paths={SURVEYS} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
           </aside>
         </div>}
         {/* `home-route` is the full-height chat layout, so it belongs to /chat;

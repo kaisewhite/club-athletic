@@ -90,7 +90,7 @@ describe("GuestDetailsForm", () => {
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
 
-    expect(container.textContent).toContain("Méribel 2027 — Guest Questionnaire");
+    expect(container.textContent).toContain("Méribel 2027 — Questionnaire");
     await clickButton("Start");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Your name");
     expect(container.querySelector(".guest-details-progress-label")?.textContent).toBe("Question 1 of 6");

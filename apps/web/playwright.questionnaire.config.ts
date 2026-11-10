@@ -14,7 +14,7 @@ export default defineConfig({
   use: { ...devices["Desktop Chrome"], baseURL: `http://127.0.0.1:${port}` },
   webServer: {
     command: `bun run build && NODE_ENV=production PORT=${port} bash scripts/with-env.sh bun index.ts`,
-    url: `http://127.0.0.1:${port}/guest-questionnaire`,
+    url: `http://127.0.0.1:${port}/questionnaire`,
     env: { ...process.env, ...localTestEnv.values, CLUB_ATHLETIC_WEB_ENV_FILE: localTestEnv.envFile, NODE_ENV: "production", PORT: String(port) },
     reuseExistingServer: false,
     timeout: 240_000,

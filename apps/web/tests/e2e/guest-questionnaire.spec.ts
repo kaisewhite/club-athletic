@@ -20,7 +20,7 @@ test("a guest can resume a local draft and submit all details once", async ({ pa
     if (request.url().endsWith("/api/guest-details") && request.method() === "POST") submissions.push(request.postData() ?? "");
   });
 
-  await page.goto("/guest-questionnaire");
+  await page.goto("/questionnaire");
   await page.getByRole("button", { name: "Start" }).click();
   await page.getByLabel("First name").fill(dummyName);
   await page.getByLabel("Last name").fill("Questionnaire");
@@ -62,7 +62,7 @@ test("a guest can resume a local draft and submit all details once", async ({ pa
   repeatPage.on("request", (request) => {
     if (request.url().endsWith("/api/guest-details") && request.method() === "POST") submissions.push(request.postData() ?? "");
   });
-  await repeatPage.goto("/guest-questionnaire");
+  await repeatPage.goto("/questionnaire");
   await repeatPage.getByRole("button", { name: "Start" }).click();
   await repeatPage.getByLabel("First name").fill(dummyName);
   await repeatPage.getByLabel("Last name").fill("Questionnaire");

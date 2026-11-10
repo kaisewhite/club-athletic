@@ -1,5 +1,5 @@
 import { redirect } from "react-router";
 
 export function loader() {
-  return redirect("/guest-questionnaire", 301);
+  return redirect("/questionnaire", 301);
 }

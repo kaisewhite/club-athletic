@@ -181,8 +181,8 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
 
   return <div className="guest-details-flow">
     {step === 0 && <section className="guest-details-card" aria-labelledby="guest-form-welcome">
-      <p className="guest-details-eyebrow">Méribel 2027 · Guest questionnaire</p>
-      <h2 id="guest-form-welcome">Méribel 2027 — Guest Questionnaire</h2>
+      <p className="guest-details-eyebrow">Méribel 2027 · Questionnaire</p>
+      <h2 id="guest-form-welcome">Méribel 2027 — Questionnaire</h2>
       <p className="guest-details-copy">Please answer these questions so we can confirm your room choice, plan meals, and coordinate the trip.</p>
       <button type="button" className="guest-details-primary" onClick={() => setStep(1)}>Start</button>
     </section>}
