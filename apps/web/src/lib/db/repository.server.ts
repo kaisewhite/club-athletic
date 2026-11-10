@@ -298,10 +298,16 @@ export async function getAdminGuests(tripKey = DEFAULT_TRIP_KEY) {
       where: { seedKey: tripKey },
       select: {
         guests: {
+          where: {
+            OR: [
+              { status: { not: "PENDING" } },
+              { AND: [{ firstName: { not: "" } }, { lastName: { not: "" } }] },
+            ],
+          },
           orderBy: [{ status: "asc" }, { displayName: "asc" }],
           select: {
             id: true, firstName: true, lastName: true, displayName: true, status: true,
-            instagramUrl: true, email: true, phone: true, venmoHandle: true, dietaryNotes: true, favoriteCocktails: true,
+            instagramUrl: true, phone: true, venmoHandle: true, dietaryNotes: true, favoriteCocktails: true,
             spot: { select: { index: true, room: { select: { name: true } } } },
             preferredRoom: { select: { name: true } },
             tasks: { orderBy: { type: "asc" }, select: { id: true, type: true, done: true, completedAt: true, notes: true } },

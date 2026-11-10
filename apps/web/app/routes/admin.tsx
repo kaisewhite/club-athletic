@@ -79,7 +79,6 @@ function GuestCard({ guest }: { guest: AdminGuests[number] }) {
       <Group title="Contact" rows={[
         { label: "Venmo", value: guest.venmoHandle },
         { label: "Phone", value: guest.phone && <a href={`tel:${guest.phone}`}>{guest.phone}</a> },
-        { label: "Email", value: guest.email && <a href={`mailto:${guest.email}`}>{guest.email}</a> },
         { label: "Instagram", value: instagram },
       ]} />
       <Group title="Food & drink" rows={[

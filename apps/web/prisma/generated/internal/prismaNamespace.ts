@@ -2109,7 +2109,6 @@ export const GuestScalarFieldEnum = {
   lastName: 'lastName',
   displayName: 'displayName',
   instagramUrl: 'instagramUrl',
-  email: 'email',
   phone: 'phone',
   venmoHandle: 'venmoHandle',
   status: 'status',

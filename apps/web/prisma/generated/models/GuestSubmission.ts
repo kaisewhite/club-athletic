@@ -159,7 +159,7 @@ export type GuestSubmissionGroupByOutputType = {
   sourceRef: string | null
   guestId: string
   submittedAt: Date
-  processedAt: Date
+  processedAt: Date | null
   _count: GuestSubmissionCountAggregateOutputType | null
   _min: GuestSubmissionMinAggregateOutputType | null
   _max: GuestSubmissionMaxAggregateOutputType | null
@@ -189,7 +189,7 @@ export type GuestSubmissionWhereInput = {
   sourceRef?: Prisma.StringNullableFilter<"GuestSubmission"> | string | null
   guestId?: Prisma.StringFilter<"GuestSubmission"> | string
   submittedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
-  processedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"GuestSubmission"> | Date | string | null
   guest?: Prisma.XOR<Prisma.GuestScalarRelationFilter, Prisma.GuestWhereInput>
 }
 
@@ -199,7 +199,7 @@ export type GuestSubmissionOrderByWithRelationInput = {
   sourceRef?: Prisma.SortOrderInput | Prisma.SortOrder
   guestId?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
-  processedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   guest?: Prisma.GuestOrderByWithRelationInput
 }
 
@@ -212,7 +212,7 @@ export type GuestSubmissionWhereUniqueInput = Prisma.AtLeast<{
   sourceRef?: Prisma.StringNullableFilter<"GuestSubmission"> | string | null
   guestId?: Prisma.StringFilter<"GuestSubmission"> | string
   submittedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
-  processedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"GuestSubmission"> | Date | string | null
   guest?: Prisma.XOR<Prisma.GuestScalarRelationFilter, Prisma.GuestWhereInput>
 }, "submissionId">
 
@@ -222,7 +222,7 @@ export type GuestSubmissionOrderByWithAggregationInput = {
   sourceRef?: Prisma.SortOrderInput | Prisma.SortOrder
   guestId?: Prisma.SortOrder
   submittedAt?: Prisma.SortOrder
-  processedAt?: Prisma.SortOrder
+  processedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   _count?: Prisma.GuestSubmissionCountOrderByAggregateInput
   _max?: Prisma.GuestSubmissionMaxOrderByAggregateInput
   _min?: Prisma.GuestSubmissionMinOrderByAggregateInput
@@ -237,7 +237,7 @@ export type GuestSubmissionScalarWhereWithAggregatesInput = {
   sourceRef?: Prisma.StringNullableWithAggregatesFilter<"GuestSubmission"> | string | null
   guestId?: Prisma.StringWithAggregatesFilter<"GuestSubmission"> | string
   submittedAt?: Prisma.DateTimeWithAggregatesFilter<"GuestSubmission"> | Date | string
-  processedAt?: Prisma.DateTimeWithAggregatesFilter<"GuestSubmission"> | Date | string
+  processedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"GuestSubmission"> | Date | string | null
 }
 
 export type GuestSubmissionCreateInput = {
@@ -245,7 +245,7 @@ export type GuestSubmissionCreateInput = {
   source?: string
   sourceRef?: string | null
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
   guest: Prisma.GuestCreateNestedOneWithoutSubmissionsInput
 }
 
@@ -255,7 +255,7 @@ export type GuestSubmissionUncheckedCreateInput = {
   sourceRef?: string | null
   guestId: string
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type GuestSubmissionUpdateInput = {
@@ -263,7 +263,7 @@ export type GuestSubmissionUpdateInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   guest?: Prisma.GuestUpdateOneRequiredWithoutSubmissionsNestedInput
 }
 
@@ -273,7 +273,7 @@ export type GuestSubmissionUncheckedUpdateInput = {
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GuestSubmissionCreateManyInput = {
@@ -282,7 +282,7 @@ export type GuestSubmissionCreateManyInput = {
   sourceRef?: string | null
   guestId: string
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type GuestSubmissionUpdateManyMutationInput = {
@@ -290,7 +290,7 @@ export type GuestSubmissionUpdateManyMutationInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GuestSubmissionUncheckedUpdateManyInput = {
@@ -299,7 +299,7 @@ export type GuestSubmissionUncheckedUpdateManyInput = {
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   guestId?: Prisma.StringFieldUpdateOperationsInput | string
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GuestSubmissionListRelationFilter = {
@@ -386,7 +386,7 @@ export type GuestSubmissionCreateWithoutGuestInput = {
   source?: string
   sourceRef?: string | null
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type GuestSubmissionUncheckedCreateWithoutGuestInput = {
@@ -394,7 +394,7 @@ export type GuestSubmissionUncheckedCreateWithoutGuestInput = {
   source?: string
   sourceRef?: string | null
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type GuestSubmissionCreateOrConnectWithoutGuestInput = {
@@ -432,7 +432,7 @@ export type GuestSubmissionScalarWhereInput = {
   sourceRef?: Prisma.StringNullableFilter<"GuestSubmission"> | string | null
   guestId?: Prisma.StringFilter<"GuestSubmission"> | string
   submittedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
-  processedAt?: Prisma.DateTimeFilter<"GuestSubmission"> | Date | string
+  processedAt?: Prisma.DateTimeNullableFilter<"GuestSubmission"> | Date | string | null
 }
 
 export type GuestSubmissionCreateManyGuestInput = {
@@ -440,7 +440,7 @@ export type GuestSubmissionCreateManyGuestInput = {
   source?: string
   sourceRef?: string | null
   submittedAt: Date | string
-  processedAt?: Date | string
+  processedAt?: Date | string | null
 }
 
 export type GuestSubmissionUpdateWithoutGuestInput = {
@@ -448,7 +448,7 @@ export type GuestSubmissionUpdateWithoutGuestInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GuestSubmissionUncheckedUpdateWithoutGuestInput = {
@@ -456,7 +456,7 @@ export type GuestSubmissionUncheckedUpdateWithoutGuestInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 export type GuestSubmissionUncheckedUpdateManyWithoutGuestInput = {
@@ -464,7 +464,7 @@ export type GuestSubmissionUncheckedUpdateManyWithoutGuestInput = {
   source?: Prisma.StringFieldUpdateOperationsInput | string
   sourceRef?: Prisma.NullableStringFieldUpdateOperationsInput | string | null
   submittedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
-  processedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  processedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
 }
 
 
@@ -530,7 +530,7 @@ export type $GuestSubmissionPayload<ExtArgs extends runtime.Types.Extensions.Int
     sourceRef: string | null
     guestId: string
     submittedAt: Date
-    processedAt: Date
+    processedAt: Date | null
   }, ExtArgs["result"]["guestSubmission"]>
   composites: {}
 }

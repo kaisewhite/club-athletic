@@ -188,7 +188,6 @@ model Guest {
   lastName              String
   displayName           String
   instagramUrl          String?
-  email                 String?
   phone                 String?
   venmoHandle           String?
   status                GuestStatus
@@ -389,7 +388,7 @@ model GuestSubmission {
   sourceRef    String?
   guestId      String
   submittedAt  DateTime @db.Timestamptz(3)
-  processedAt  DateTime @default(now()) @db.Timestamptz(3)
+  processedAt  DateTime? @db.Timestamptz(3)
   guest        Guest    @relation(fields: [guestId], references: [id], onDelete: Restrict)
 
   @@index([guestId, submittedAt])

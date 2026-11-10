@@ -43,7 +43,7 @@ describe("guest details writes", () => {
     }, select: { id: true } }]);
     expect(calls).toContainEqual(["submission-create", { data: {
       submissionId: "7c54ef87-76d0-4c5b-87ea-a17b897d8291", source: "website", sourceRef: null,
-      guestId: "guest-1", submittedAt: new Date("2026-10-27T12:00:00.000Z"),
+      guestId: "guest-1", submittedAt: new Date("2026-10-27T12:00:00.000Z"), processedAt: new Date("2026-10-27T12:00:00.000Z"),
     } }]);
     const audit = calls.find((call) => Array.isArray(call) && call[0] === "audit") as [string, { data: { after: { fields: string[] } } }];
     expect(audit[1].data.after.fields).toEqual(["firstName", "lastName", "displayName", "phone", "venmoHandle", "instagramUrl", "dietaryNotes", "favoriteCocktails"]);
@@ -61,6 +61,25 @@ describe("guest details writes", () => {
     const result = await saveGuestDetails({ submissionId: "7c54ef87-76d0-4c5b-87ea-a17b897d8291", details }, dependencies(tx));
     expect(result.created).toBe(true);
     expect(guestCreate).toHaveBeenCalledWith({ data: expect.objectContaining({ id: "guest-new", tripId: "trip-1", status: "CONFIRMED", createdVia: "WEBSITE" }), select: { id: true } });
+  });
+
+  it("matches and confirms an existing pending guest even with a new submission id", async () => {
+    const guestUpdate = vi.fn(async () => ({ id: "guest-pending" }));
+    const guestCreate = vi.fn();
+    const tx = {
+      guestSubmission: { findUnique: async () => null, create: vi.fn() },
+      trip: { findUnique: async () => ({ id: "trip-1" }) },
+      guest: {
+        findMany: async () => [{ id: "guest-pending", firstName: "Alex", lastName: "Guest", status: "PENDING" }],
+        create: guestCreate,
+        update: guestUpdate,
+      },
+      auditLog: { create: vi.fn() },
+    };
+    const result = await saveGuestDetails({ submissionId: "7c54ef87-76d0-4c5b-87ea-a17b897d8291", details }, dependencies(tx));
+    expect(result).toMatchObject({ created: false, guestId: "guest-pending" });
+    expect(guestUpdate).toHaveBeenCalledWith({ where: { id: "guest-pending" }, data: expect.objectContaining({ status: "CONFIRMED", preferredRoomId: null }), select: { id: true } });
+    expect(guestCreate).not.toHaveBeenCalled();
   });
 
   it("returns the previous guest for an idempotent retry", async () => {

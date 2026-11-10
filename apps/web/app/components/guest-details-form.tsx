@@ -49,107 +49,113 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   const [step, setStep] = useState(0);
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
-  const [saveState, setSaveState] = useState<"idle" | "saving" | "saved" | "error">("idle");
+  const [draftReady, setDraftReady] = useState(false);
+  const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle");
+  const [submissionSaved, setSubmissionSaved] = useState(false);
   const [finished, setFinished] = useState(false);
   const submissionId = useRef<string | null>(null);
-  const timers = useRef(new Map<FieldName, ReturnType<typeof setTimeout>>());
-  const latestValues = useRef(new Map<FieldName, string>());
-  const requests = useRef(new Map<FieldName, Promise<boolean>>());
-  const saveQueue = useRef(Promise.resolve());
+  const submissionSavedRef = useRef(false);
   const honeypot = useRef<HTMLInputElement>(null);
-  useEffect(() => {
-    const key = "club-athletic-guest-details-submission";
+  const saveSubmission = async (value: GuestDetailsValues) => {
+    setBusy(true);
+    setFormError("");
     try {
-      const stored = sessionStorage.getItem(key);
-      submissionId.current = stored && /^[0-9a-f-]{36}$/i.test(stored) ? stored : crypto.randomUUID();
-      sessionStorage.setItem(key, submissionId.current);
-    } catch { submissionId.current = crypto.randomUUID(); }
-    return () => { for (const timer of timers.current.values()) clearTimeout(timer); };
-  }, []);
-
-  const persistField = (name: FieldName): Promise<boolean> => {
-    const value = latestValues.current.get(name);
-    if (value === undefined) return Promise.resolve(true);
-    const active = requests.current.get(name);
-    if (active) return active.then(() => latestValues.current.get(name) === value ? true : persistField(name));
-    const request = saveQueue.current.then(() => fetch("/api/guest-details", { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify({ kind: "field", submissionId: submissionId.current, field: name, value }) }))
-      .then(async (response) => { const payload: unknown = await response.json().catch(() => null); return response.ok && isResponseBody(payload) && payload.ok; })
-      .catch(() => false)
-      .then((ok) => {
-        if (requests.current.get(name) === request) requests.current.delete(name);
-        if (ok && latestValues.current.get(name) === value) latestValues.current.delete(name);
-        setSaveState(ok ? (latestValues.current.size ? "saving" : "saved") : "error");
-        return ok;
+      submissionId.current ??= crypto.randomUUID();
+      const response = await fetch("/api/guest-details", {
+        method: "POST", headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ ...value, submissionId: submissionId.current, website: honeypot.current?.value ?? "" }),
       });
-    saveQueue.current = request.then(() => undefined, () => undefined);
-    requests.current.set(name, request);
-    return request;
-  };
-  const scheduleAutosave = (name: FieldName, value: string, immediate = false) => {
-    latestValues.current.set(name, value);
-    const old = timers.current.get(name);
-    if (old) clearTimeout(old);
-    setSaveState("saving");
-    if (immediate) { void persistField(name); return; }
-    timers.current.set(name, setTimeout(() => { timers.current.delete(name); void persistField(name); }, 500));
-  };
-  const flushFields = async (fields: FieldName[]) => {
-    for (const name of fields) {
-      const timer = timers.current.get(name);
-      if (timer) { clearTimeout(timer); timers.current.delete(name); }
+      let payload: unknown;
+      try { payload = await response.json(); }
+      catch {
+        setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
+        return false;
+      }
+      if (!isResponseBody(payload)) {
+        setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
+        return false;
+      }
+      if (!response.ok || !payload.ok) {
+        if (response.status === 409 && payload.code === "ROOM_FULL") {
+          setStep(2);
+          await revalidator.revalidate();
+        }
+        if (payload.fieldErrors) {
+          const firstError = Object.entries(payload.fieldErrors).find(([, message]) => message);
+          const target = firstError?.[0] as FieldName | undefined;
+          if (target) {
+            const targetStep = Object.entries(fieldNamesByStep).find(([, fields]) => fields.includes(target))?.[0];
+            setStep(targetStep ? Number(targetStep) : 1);
+          }
+        }
+        setFormError(payload.error ?? "We couldn’t save your details. Try again.");
+        return false;
+      }
+      submissionSavedRef.current = true;
+      setSubmissionSaved(true);
+      return true;
+    } catch {
+      setFormError("We couldn’t reach the server. Your answers are still here; check your connection and try again.");
+      return false;
+    } finally {
+      setBusy(false);
     }
-    const results = await Promise.all(fields.map((name) => persistField(name)));
-    return results.every(Boolean);
   };
   const form = useForm({
     defaultValues: {
       firstName: "", lastName: "", phone: "", venmoHandle: "", instagramHandle: "", dietaryNotes: "", favoriteCocktails: "", roomId: "",
     } satisfies GuestDetailsValues,
     onSubmit: async ({ value }) => {
-      setBusy(true);
-      setFormError("");
-      try {
-        submissionId.current ??= crypto.randomUUID();
-        const response = await fetch("/api/guest-details", {
-          method: "POST", headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ ...value, submissionId: submissionId.current, website: honeypot.current?.value ?? "" }),
-        });
-        let payload: unknown;
-        try { payload = await response.json(); }
-        catch {
-          setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
-          return;
-        }
-        if (!isResponseBody(payload)) {
-          setFormError("The server could not confirm your submission. Your answers are still here; please try again.");
-          return;
-        }
-        const result = payload;
-        if (!response.ok || !result.ok) {
-          if (response.status === 409 && result.code === "ROOM_FULL") {
-            setStep(2);
-            await revalidator.revalidate();
-          }
-          if (result.fieldErrors) {
-            const firstError = Object.entries(result.fieldErrors).find(([, message]) => message);
-            const target = firstError?.[0] as FieldName | undefined;
-            if (target) setStep(Object.entries(fieldNamesByStep).find(([, fields]) => fields.includes(target))?.[0] ? Number(Object.entries(fieldNamesByStep).find(([, fields]) => fields.includes(target))![0]) : 1);
-          }
-          setFormError(result.error ?? "We couldn’t save your details. Try again.");
-          return;
-        }
-        setFinished(true);
-        setStep(9);
-        try { sessionStorage.removeItem("club-athletic-guest-details-submission"); } catch { /* storage may be unavailable */ }
-      } catch {
-        setFormError("We couldn’t reach the server. Your answers are still here; check your connection and try again.");
-      } finally {
-        setBusy(false);
-      }
+      if (!submissionSavedRef.current && !await saveSubmission(value)) return;
+      setFinished(true);
+      setStep(9);
+      try { sessionStorage.removeItem("club-athletic-guest-details-submission"); sessionStorage.removeItem("club-athletic-guest-details-draft"); } catch { /* storage may be unavailable */ }
     },
   });
+  const values = useStore(form.store, (state) => state.values);
   const selectedRoomId = useStore(form.store, (state) => state.values.roomId);
   const selectedRoom = rooms.find((room) => room.id === selectedRoomId);
+
+  useEffect(() => {
+    const submissionKey = "club-athletic-guest-details-submission";
+    const draftKey = "club-athletic-guest-details-draft";
+    try {
+      const storedId = sessionStorage.getItem(submissionKey);
+      submissionId.current = storedId && /^[0-9a-f-]{36}$/i.test(storedId) ? storedId : crypto.randomUUID();
+      sessionStorage.setItem(submissionKey, submissionId.current);
+      const rawDraft = sessionStorage.getItem(draftKey);
+      if (rawDraft) {
+        const draft: unknown = JSON.parse(rawDraft);
+        if (typeof draft === "object" && draft !== null && "values" in draft && "step" in draft) {
+          const saved = draft as { values?: Partial<GuestDetailsValues>; step?: unknown; submissionSaved?: unknown };
+          if (saved.values && typeof saved.values === "object") {
+            for (const name of Object.keys(fieldSchemas) as FieldName[]) {
+              const value = saved.values[name];
+              if (typeof value === "string") form.setFieldValue(name, value);
+            }
+          }
+          if (typeof saved.step === "number" && Number.isInteger(saved.step) && saved.step >= 0 && saved.step <= 8) setStep(saved.step);
+          if (saved.submissionSaved === true) {
+            submissionSavedRef.current = true;
+            setSubmissionSaved(true);
+          }
+        }
+      }
+    } catch {
+      setSaveState("error");
+    }
+    setDraftReady(true);
+  }, [form]);
+
+  useEffect(() => {
+    if (!draftReady || finished) return;
+    try {
+      sessionStorage.setItem("club-athletic-guest-details-draft", JSON.stringify({ values, step, submissionSaved }));
+      setSaveState("saved");
+    } catch {
+      setSaveState("error");
+    }
+  }, [draftReady, finished, values, step, submissionSaved]);
 
   const continueStep = async () => {
     const fields = fieldNamesByStep[step];
@@ -161,19 +167,13 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
         else document.getElementById(`guest-${invalid}`)?.focus();
         return;
       }
-      if (!await flushFields(fields)) {
-        setFormError("This answer has not reached the database yet. Check your connection and try again.");
-        return;
-      }
     }
+    if (step === 6 && !submissionSavedRef.current && !await saveSubmission(values)) return;
     setFormError("");
     setStep((current) => current + 1);
   };
 
   const back = () => { setFormError(""); setStep((current) => Math.max(0, current - 1)); };
-  const clearAfterEdit = () => { setFormError(""); };
-  const onFieldEdit = (name: FieldName, value: string) => { clearAfterEdit(); scheduleAutosave(name, value); };
-  const onFieldBlur = (name: FieldName, value: string) => { scheduleAutosave(name, value, true); };
   const onNextKey = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
     if (event.key === "Enter" && !event.shiftKey) { event.preventDefault(); void continueStep(); }
   };
@@ -197,10 +197,10 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
 
       {step === 1 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Your name</h2>
-        <p className="guest-details-copy">Enter your first name and, if you use one, your last name.</p>
+        <p className="guest-details-copy">Enter your first and last name so we can match your details to the guest list.</p>
         <div className="guest-details-name-fields">
-          <form.Field name="firstName" validators={{ onBlur: ({ value }) => validateField("firstName", value) }}>{(field) => <FieldInput field={field} id="guest-firstName" label="First name" autoComplete="given-name" onEdit={(value) => onFieldEdit("firstName", value)} onBlur={(value) => onFieldBlur("firstName", value)} />}</form.Field>
-          <form.Field name="lastName" validators={{ onBlur: ({ value }) => validateField("lastName", value) }}>{(field) => <FieldInput field={field} id="guest-lastName" label="Last name (optional)" autoComplete="family-name" onEdit={(value) => onFieldEdit("lastName", value)} onBlur={(value) => onFieldBlur("lastName", value)} />}</form.Field>
+          <form.Field name="firstName" validators={{ onBlur: ({ value }) => validateField("firstName", value) }}>{(field) => <FieldInput field={field} id="guest-firstName" label="First name" autoComplete="given-name" />}</form.Field>
+          <form.Field name="lastName" validators={{ onBlur: ({ value }) => validateField("lastName", value) }}>{(field) => <FieldInput field={field} id="guest-lastName" label="Last name" autoComplete="family-name" />}</form.Field>
         </div>
       </section>}
 
@@ -211,7 +211,7 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
           <legend className="guest-room-legend">Available rooms</legend>
           {rooms.filter((room) => room.openCount > 0).map((room) => <div className="guest-room-option" key={room.id}>
             <label className="guest-room-option-choice">
-              <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => { clearAfterEdit(); field.handleChange(room.id); scheduleAutosave("roomId", room.id); }} />
+              <input type="radio" name={field.name} value={room.id} checked={field.state.value === room.id} onChange={() => field.handleChange(room.id)} />
               <span className="guest-room-option-content">
                 <span className="guest-room-option-heading"><strong>{room.name}</strong><span>{formatRoomType(room.type)}</span></span>
                 <span>{room.floorName}{room.priceLabel ? ` · Room rate ${room.priceLabel} per person` : ""}</span>
@@ -234,28 +234,28 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       {step === 3 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Mobile / WhatsApp number</h2>
         <p className="guest-details-copy">Use +country code for international numbers. US numbers use the default country code.</p>
-        <form.Field name="phone" validators={{ onBlur: ({ value }) => validateField("phone", value) }}>{(field) => <FieldInput field={field} id="guest-phone" label="Mobile / WhatsApp number" type="tel" autoComplete="tel" placeholder="(555) 555-5555" onEdit={(value) => onFieldEdit("phone", value)} onBlur={(value) => onFieldBlur("phone", value)} />}</form.Field>
+        <form.Field name="phone" validators={{ onBlur: ({ value }) => validateField("phone", value) }}>{(field) => <FieldInput field={field} id="guest-phone" label="Mobile / WhatsApp number" type="tel" autoComplete="tel" placeholder="(555) 555-5555" />}</form.Field>
       </section>}
 
       {step === 4 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Venmo &amp; Instagram</h2>
         <p className="guest-details-copy">Add your payment and social handles.</p>
         <div className="guest-details-name-fields">
-          <form.Field name="venmoHandle" validators={{ onBlur: ({ value }) => validateField("venmoHandle", value) }}>{(field) => <FieldInput field={field} id="guest-venmoHandle" label="Venmo handle" description="Include the @ if you use one." autoComplete="off" onEdit={(value) => onFieldEdit("venmoHandle", value)} onBlur={(value) => onFieldBlur("venmoHandle", value)} />}</form.Field>
-          <form.Field name="instagramHandle" validators={{ onBlur: ({ value }) => validateField("instagramHandle", value) }}>{(field) => <FieldInput field={field} id="guest-instagramHandle" label="Instagram handle (optional)" description="Include the @ if you use one." autoComplete="off" onEdit={(value) => onFieldEdit("instagramHandle", value)} onBlur={(value) => onFieldBlur("instagramHandle", value)} />}</form.Field>
+          <form.Field name="venmoHandle" validators={{ onBlur: ({ value }) => validateField("venmoHandle", value) }}>{(field) => <FieldInput field={field} id="guest-venmoHandle" label="Venmo handle" description="Include the @ if you use one." autoComplete="off" />}</form.Field>
+          <form.Field name="instagramHandle" validators={{ onBlur: ({ value }) => validateField("instagramHandle", value) }}>{(field) => <FieldInput field={field} id="guest-instagramHandle" label="Instagram handle (optional)" description="Include the @ if you use one." autoComplete="off" />}</form.Field>
         </div>
       </section>}
 
       {step === 5 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">Any food allergies or dietary restrictions?</h2>
         <p className="guest-details-copy">Please include allergies, dietary restrictions, or anything the chef should know. If none, write “None.”</p>
-        <form.Field name="dietaryNotes" validators={{ onBlur: ({ value }) => validateField("dietaryNotes", value) }}>{(field) => <FieldTextArea field={field} id="guest-dietaryNotes" label="Dietary restrictions" maxLength={500} onEdit={(value) => onFieldEdit("dietaryNotes", value)} onBlur={(value) => onFieldBlur("dietaryNotes", value)} onKeyDown={onNextKey} />}</form.Field>
+        <form.Field name="dietaryNotes" validators={{ onBlur: ({ value }) => validateField("dietaryNotes", value) }}>{(field) => <FieldTextArea field={field} id="guest-dietaryNotes" label="Dietary restrictions" maxLength={500} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
       {step === 6 && <section aria-labelledby="guest-question-title">
         <h2 id="guest-question-title">What are your favorite cocktails?</h2>
         <p className="guest-details-copy">List a few favorites so we can plan drinks for the chalet. Examples: Espresso Martini, Hugo Spritz, Negroni, Margarita, Aperol Spritz, Old Fashioned, Gin Gimlet, French 75—or anything else.</p>
-        <form.Field name="favoriteCocktails" validators={{ onBlur: ({ value }) => validateField("favoriteCocktails", value) }}>{(field) => <FieldTextArea field={field} id="guest-favoriteCocktails" label="Favorite cocktails" maxLength={300} onEdit={(value) => onFieldEdit("favoriteCocktails", value)} onBlur={(value) => onFieldBlur("favoriteCocktails", value)} onKeyDown={onNextKey} />}</form.Field>
+        <form.Field name="favoriteCocktails" validators={{ onBlur: ({ value }) => validateField("favoriteCocktails", value) }}>{(field) => <FieldTextArea field={field} id="guest-favoriteCocktails" label="Favorite cocktails" maxLength={300} onKeyDown={onNextKey} />}</form.Field>
       </section>}
 
       {step === 7 && <section aria-labelledby="guest-question-title" className="guest-details-statement">
@@ -280,10 +280,10 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
       </section>}
 
       {formError && <p className="guest-details-error" role="alert">{formError}</p>}
-      <p className="guest-details-save-status" role="status" aria-live="polite">{saveState === "saving" ? "Saving your answers…" : saveState === "saved" ? "Answers saved" : saveState === "error" ? "Could not save. Continue to retry." : ""}</p>
+      <p className="guest-details-save-status" role="status" aria-live="polite">{saveState === "saved" ? "Draft saved in this tab" : saveState === "error" ? "Draft could not be saved in this tab." : ""}</p>
       <div className="guest-details-actions">
         <button type="button" className="guest-details-back" onClick={back} disabled={busy}>Back</button>
-        {step < 8 ? <button key="continue" type="button" className="guest-details-primary" onClick={() => void continueStep()}>Continue</button>
+        {step < 8 ? <button key="continue" type="button" className="guest-details-primary" onClick={() => void continueStep()} disabled={busy}>{busy ? "Saving…" : "Continue"}</button>
           : <button key="finish" type="submit" className="guest-details-primary" disabled={busy}>{busy ? "Sending…" : "Finish"}</button>}
       </div>
     </form>}
@@ -297,9 +297,9 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   </div>;
 }
 
-function FieldInput({ field, id, label, description, type = "text", autoComplete, placeholder, onEdit, onBlur }: {
+function FieldInput({ field, id, label, description, type = "text", autoComplete, placeholder }: {
   field: { name: FieldName; state: { value: string; meta: { errors: unknown[] } }; handleBlur: () => void; handleChange: (value: string) => void };
-  id: string; label: string; description?: string; type?: string; autoComplete: string; placeholder?: string; onEdit: (value: string) => void; onBlur: (value: string) => void;
+  id: string; label: string; description?: string; type?: string; autoComplete: string; placeholder?: string;
 }) {
   const errorId = `${id}-error`;
   const descriptionId = `${id}-description`;
@@ -308,21 +308,21 @@ function FieldInput({ field, id, label, description, type = "text", autoComplete
   return <label className="guest-details-label" htmlFor={id}>
     <span>{label}</span>
     {description && <span className="guest-details-hint" id={descriptionId}>{description}</span>}
-    <input id={id} name={field.name} type={type} autoComplete={autoComplete} placeholder={placeholder} value={field.state.value} maxLength={field.name === "firstName" || field.name === "lastName" ? 80 : 100} onChange={(event) => { field.handleChange(event.target.value); onEdit(event.target.value); }} onBlur={() => { field.handleBlur(); onBlur(field.state.value); }} aria-invalid={errors.length > 0} aria-describedby={describedBy} />
+    <input id={id} name={field.name} type={type} autoComplete={autoComplete} placeholder={placeholder} value={field.state.value} maxLength={field.name === "firstName" || field.name === "lastName" ? 80 : 100} onChange={(event) => field.handleChange(event.target.value)} onBlur={field.handleBlur} aria-invalid={errors.length > 0} aria-describedby={describedBy} />
     {errors.length > 0 && <span className="guest-details-field-error" id={errorId}>{errorText(errors)}</span>}
   </label>;
 }
 
-function FieldTextArea({ field, id, label, maxLength, onEdit, onBlur, onKeyDown }: {
+function FieldTextArea({ field, id, label, maxLength, onKeyDown }: {
   field: { name: FieldName; state: { value: string; meta: { errors: unknown[] } }; handleBlur: () => void; handleChange: (value: string) => void };
-  id: string; label: string; maxLength: number; onEdit: (value: string) => void; onBlur: (value: string) => void; onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
+  id: string; label: string; maxLength: number; onKeyDown: (event: React.KeyboardEvent<HTMLTextAreaElement>) => void;
 }) {
   const errorId = `${id}-error`;
   const errors = fieldErrors(field.state.meta.errors);
   const remaining = maxLength - field.state.value.length;
   return <label className="guest-details-label" htmlFor={id}>
     <span>{label}</span>
-    <textarea id={id} name={field.name} rows={4} maxLength={maxLength} value={field.state.value} onChange={(event) => { field.handleChange(event.target.value); onEdit(event.target.value); }} onBlur={() => { field.handleBlur(); onBlur(field.state.value); }} onKeyDown={onKeyDown} aria-invalid={errors.length > 0} aria-describedby={errors.length ? errorId : undefined} />
+    <textarea id={id} name={field.name} rows={4} maxLength={maxLength} value={field.state.value} onChange={(event) => field.handleChange(event.target.value)} onBlur={field.handleBlur} onKeyDown={onKeyDown} aria-invalid={errors.length > 0} aria-describedby={errors.length ? errorId : undefined} />
     <span className="guest-details-hint">{remaining} characters left. Press Enter to continue; Shift+Enter for a new line.</span>
     {errors.length > 0 && <span className="guest-details-field-error" id={errorId}>{errorText(errors)}</span>}
   </label>;

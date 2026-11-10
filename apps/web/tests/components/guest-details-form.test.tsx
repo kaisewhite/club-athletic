@@ -16,6 +16,8 @@ let root: Root | undefined;
 let container: HTMLDivElement;
 
 beforeEach(() => {
+  sessionStorage.removeItem("club-athletic-guest-details-submission");
+  sessionStorage.removeItem("club-athletic-guest-details-draft");
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);
   container = document.createElement("div");
   document.body.append(container);
@@ -96,10 +98,15 @@ describe("GuestDetailsForm", () => {
     expect(container.textContent).toContain("First name is required.");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Your name");
 
+    await enter("guest-firstName", "S");
+    await enter("guest-lastName", "S");
+    await clickButton("Continue");
+    expect(container.textContent).toContain("Enter your full first name, not an initial.");
+    expect(container.textContent).toContain("Enter your full last name, not an initial.");
+    expect(container.querySelector("#guest-question-title")?.textContent).toBe("Your name");
+
     await enter("guest-firstName", "Alex");
     await enter("guest-lastName", "Guest");
-    await act(async () => { await new Promise((resolve) => setTimeout(resolve, 550)); });
-    expect(fetch.mock.calls.some(([, init]) => JSON.parse(String(init?.body)).kind === "field" && JSON.parse(String(init?.body)).field === "firstName")).toBe(true);
     await clickButton("Continue");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Select a room");
     const firstRoomChoice = container.querySelector<HTMLInputElement>('input[name="roomId"][value="room-1"]')!;
@@ -112,6 +119,12 @@ describe("GuestDetailsForm", () => {
     await enter("guest-phone", "+1 415 555 0132");
     await clickButton("Continue");
 
+    await enter("guest-venmoHandle", "bad handle");
+    await enter("guest-instagramHandle", "https://example.com/alex");
+    await clickButton("Continue");
+    expect(container.querySelector("#guest-question-title")?.textContent).toBe("Venmo & Instagram");
+    expect(container.textContent).toContain("Enter a valid Venmo username");
+    expect(container.textContent).toContain("Enter an Instagram handle or profile link.");
     await enter("guest-venmoHandle", "@alex-guest");
     await enter("guest-instagramHandle", "@alex.guest");
     await clickButton("Continue");
@@ -122,6 +135,7 @@ describe("GuestDetailsForm", () => {
 
     expect(container.textContent).toContain("Payment & cancellation policy");
     expect(container.textContent).toContain("there is no deposit");
+    expect(fetch).toHaveBeenCalledTimes(1);
     await clickButton("Continue");
     expect(container.textContent).toContain("Trip details & group chat");
     expect(container.querySelector('a[href="https://meribel.clubathletic.org/"]')).toBeDefined();
@@ -157,7 +171,7 @@ describe("GuestDetailsForm", () => {
   });
 
   it("returns to step 1 and refreshes the room list after a 409", async () => {
-    const fetch = vi.fn(async (_url: string, init: RequestInit) => { const payload = JSON.parse(String(init.body)); return payload.kind === "field" ? { ok: true, status: 200, json: async () => ({ ok: true }) } : { ok: false, status: 409, json: async () => ({ ok: false, code: "ROOM_FULL", error: "That room no longer has an open spot. Choose another room." }) }; });
+    const fetch = vi.fn(async () => ({ ok: false, status: 409, json: async () => ({ ok: false, code: "ROOM_FULL", error: "That room no longer has an open spot. Choose another room." }) }));
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
     await clickButton("Start");
@@ -168,7 +182,6 @@ describe("GuestDetailsForm", () => {
     await enter("guest-venmoHandle", "@alex-guest"); await enter("guest-instagramHandle", "@alex.guest"); await clickButton("Continue");
     await enter("guest-dietaryNotes", "None"); await clickButton("Continue");
     await enter("guest-favoriteCocktails", "Margarita"); await clickButton("Continue");
-    await clickButton("Continue"); await clickButton("Finish");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Select a room");
     expect(container.querySelector(".guest-details-progress-label")?.textContent).toBe("Question 2 of 6");
     expect(container.textContent).toContain("That room no longer has an open spot. Choose another room.");
@@ -178,9 +191,7 @@ describe("GuestDetailsForm", () => {
 
   it("does not show success for an unreadable response and retries with the same submission id", async () => {
     let finalAttempts = 0;
-    const fetch = vi.fn(async (_url: string, init: RequestInit) => {
-      const payload = JSON.parse(String(init.body));
-      if (payload.kind === "field") return { ok: true, json: async () => ({ ok: true }) };
+    const fetch = vi.fn(async (_url: string, _init: RequestInit) => {
       finalAttempts++;
       return finalAttempts === 1 ? { ok: true, json: async () => { throw new Error("Invalid JSON"); } } : { ok: true, json: async () => ({ ok: true, created: true }) };
     });
@@ -193,18 +204,19 @@ describe("GuestDetailsForm", () => {
     await enter("guest-phone", "+1 415 555 0132"); await clickButton("Continue");
     await enter("guest-venmoHandle", "@alex-guest"); await enter("guest-instagramHandle", "@alex.guest"); await clickButton("Continue");
     await enter("guest-dietaryNotes", "None"); await clickButton("Continue");
-    await enter("guest-favoriteCocktails", "Margarita"); await clickButton("Continue");
-    await clickButton("Continue");
+    await enter("guest-favoriteCocktails", "Margarita");
 
-    await clickButton("Finish");
+    await clickButton("Continue");
     expect(container.textContent).toContain("The server could not confirm your submission.");
     expect(container.textContent).not.toContain("Thanks — you’re all set.");
+    await clickButton("Continue");
+    expect(container.textContent).toContain("Payment & cancellation policy");
+    await clickButton("Continue");
     await clickButton("Finish");
     expect(container.textContent).toContain("Thanks — you’re all set.");
-    const finalCalls = fetch.mock.calls.filter(([, init]) => JSON.parse(String(init?.body)).kind !== "field");
-    expect(finalCalls).toHaveLength(2);
-    const firstBody = JSON.parse(String(finalCalls[0]![1]?.body));
-    const retryBody = JSON.parse(String(finalCalls[1]![1]?.body));
+    expect(fetch).toHaveBeenCalledTimes(2);
+    const firstBody = JSON.parse(String(fetch.mock.calls[0]?.[1]?.body));
+    const retryBody = JSON.parse(String(fetch.mock.calls[1]?.[1]?.body));
     expect(retryBody.submissionId).toBe(firstBody.submissionId);
     expect(retryBody.firstName).toBe("Alex");
   });

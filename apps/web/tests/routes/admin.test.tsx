@@ -9,7 +9,7 @@ import Admin, { headers, loader } from "../../app/routes/admin";
 
 const guest = {
   id: "g1", firstName: "Jacqueline", lastName: "Herrera", displayName: "Jacqueline Herrera", status: "CONFIRMED",
-  instagramUrl: "https://www.instagram.com/Jacquelineann_1", email: "jac@example.com", phone: "+1 555 555 0100", venmoHandle: "@jac-venmo",
+  instagramUrl: "https://www.instagram.com/Jacquelineann_1", phone: "+1 555 555 0100", venmoHandle: "@jac-venmo",
   dietaryNotes: "No shellfish", favoriteCocktails: "Negroni",
   spot: { index: 2, room: { name: "Bedroom 8" } },
   tasks: [{ id: "task1", type: "PAYMENT", done: true, completedAt: new Date("2026-11-01T12:00:00Z"), notes: null }],
@@ -41,9 +41,10 @@ describe("/admin", () => {
   });
 
   it("collapses empty fields into one Not provided line and hides a duplicate full name", async () => {
-    getAdminGuests.mockResolvedValue([{ ...guest, displayName: "Jacqueline Herrera", venmoHandle: null, email: null, flights: [] }]);
+    getAdminGuests.mockResolvedValue([{ ...guest, displayName: "Jacqueline Herrera", venmoHandle: null, flights: [] }]);
     const { text } = render(await loader());
-    expect(text).toContain("Not provided: Venmo, Email");
+    expect(text).toContain("Not provided: Venmo");
+    expect(text).not.toContain("Email");
     expect(text).toContain("No flights yet");
     expect(text.match(/Jacqueline Herrera/g)).toHaveLength(1);
   });
@@ -52,7 +53,7 @@ describe("/admin", () => {
     const data = await loader();
     expect(getAdminGuests).toHaveBeenCalledOnce();
     const { text } = render(data);
-    for (const value of ["Jacqueline Herrera", "@jac-venmo", "+1 555 555 0100", "jac@example.com", "@Jacquelineann_1", "Bedroom 8 · spot 2",
+    for (const value of ["Jacqueline Herrera", "@jac-venmo", "+1 555 555 0100", "@Jacquelineann_1", "Bedroom 8 · spot 2",
       "No shellfish", "Negroni", "Payment Done Sun 1 Nov", "Arriving", "United UA956", "Departs EWR Fri 29 Jan · 17:30", "Lands GVA Sat 30 Jan · 07:30", "Confirmation ABC123 · Terminal B"]) {
       expect(text).toContain(value);
     }

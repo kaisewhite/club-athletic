@@ -17,7 +17,7 @@ const fields: Record<OperatorEntity, readonly string[]> = {
   shuttle: ["direction", "seats", "departWindowStart", "departWindowEnd", "pickupLocation", "dropoffLocation", "durationMinutes", "driverContact", "notes"],
   link: ["group", "label", "href", "note", "sortOrder"],
   note: ["seedKey", "section", "title", "content"],
-  guest: ["firstName", "lastName", "displayName", "instagramUrl", "email", "phone", "status", "dietaryNotes"],
+  guest: ["firstName", "lastName", "displayName", "instagramUrl", "phone", "status", "dietaryNotes"],
   guestTask: ["type", "done", "completedAt", "notes"],
   payment: ["amount", "currency", "method", "paidAt", "reference", "status"],
   flight: ["direction", "airline", "flightNumber", "origin", "destination", "scheduledDeparture", "scheduledArrival", "terminal", "confirmationCode", "notes", "confirmedByGuest", "confirmedAt", "extractionConfidence"],

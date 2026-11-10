@@ -1,0 +1,1 @@
+ALTER TABLE "Guest" DROP COLUMN "email";

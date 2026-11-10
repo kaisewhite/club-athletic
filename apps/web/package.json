@@ -16,6 +16,7 @@
     "test": "vitest run --project unit --project dom --passWithNoTests",
     "test:agent:live": "bun run build && bun tests/integration/live-trip-read-tools.ts && playwright test --config playwright.live.config.ts",
     "test:visual": "playwright test",
+    "test:e2e:questionnaire": "playwright test --config playwright.questionnaire.config.ts",
     "test:visual:update": "playwright test --update-snapshots",
     "sync:guest-avatars": "bun scripts/sync-guest-avatars.ts",
     "db:generate": "bash scripts/with-env.sh bunx prisma generate",

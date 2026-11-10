@@ -21,8 +21,11 @@ describe("guest details validation", () => {
 
   it.each([
     [{ ...valid, firstName: "  " }, "First name is required."],
+    [{ ...valid, firstName: "S" }, "Enter your full first name, not an initial."],
+    [{ ...valid, lastName: "S" }, "Enter your full last name, not an initial."],
     [{ ...valid, phone: "123" }, "Enter a valid phone number, including the country code if needed."],
-    [{ ...valid, venmoHandle: "alex guest" }, "Enter your Venmo handle without spaces."],
+    [{ ...valid, venmoHandle: "alex guest" }, "Enter a valid Venmo username (5–30 letters, numbers, hyphens, or underscores)."],
+    [{ ...valid, venmoHandle: "@ab" }, "Enter a valid Venmo username (5–30 letters, numbers, hyphens, or underscores)."],
     [{ ...valid, instagramHandle: "https://example.com/alex" }, "Enter an Instagram handle or profile link."],
     [{ ...valid, dietaryNotes: "x".repeat(501) }, "Dietary restrictions must be 500 characters or fewer."],
     [{ ...valid, favoriteCocktails: "" }, "Favorite cocktails is required."],
