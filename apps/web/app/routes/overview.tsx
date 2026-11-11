@@ -41,9 +41,9 @@ export default function Overview({ loaderData: data }: Route.ComponentProps) {
         </div>
         <ol className="trip-chapters-list">
           <li><span className="trip-chapter-number">01</span><Link to="/flights"><span className="trip-chapter-title">Getting there</span><span className="trip-chapter-note">Flights and airport transfers</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
-          <li><span className="trip-chapter-number">02</span><Link to="/schedule"><span className="trip-chapter-title">The week</span><span className="trip-chapter-note">Dates, meals and plans</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
+          <li><span className="trip-chapter-number">02</span><Link to="/schedule"><span className="trip-chapter-title">Schedule</span><span className="trip-chapter-note">Dates, meals and plans</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
           <li><span className="trip-chapter-number">03</span><Link to="/rooms"><span className="trip-chapter-title">Where we stay</span><span className="trip-chapter-note">Falcon Lodge F and room assignments</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
-          <li><span className="trip-chapter-number">04</span><Link to="/pricing"><span className="trip-chapter-title">Rooms and prices</span><span className="trip-chapter-note">Available spots and trip costs</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
+          <li><span className="trip-chapter-number">04</span><Link to="/pricing"><span className="trip-chapter-title">Pricing</span><span className="trip-chapter-note">Available spots and trip costs</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
           <li><span className="trip-chapter-number">05</span><Link to="/questionnaire"><span className="trip-chapter-title">Questionnaire</span><span className="trip-chapter-note">Room choice, contact info and preferences</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
           <li><span className="trip-chapter-number">06</span><Link to="/faq"><span className="trip-chapter-title">Trip questions</span><span className="trip-chapter-note">Answers to common questions</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
         </ol>

@@ -7,7 +7,7 @@ import type { Route } from "./+types/pricing";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/pricing", title: "Rooms and prices · Méribel ’27 — Club Athletic", description: "Compare room prices, availability, and what the Méribel trip price includes.", image: "chalet" });
+  return tripPageMeta({ path: "/pricing", title: "Pricing · Méribel ’27 — Club Athletic", description: "Compare room prices, availability, and what the Méribel trip price includes.", image: "chalet" });
 }
 
 export async function loader() {
@@ -54,7 +54,7 @@ export default function Pricing({ loaderData: data }: Route.ComponentProps) {
   ].join("\n");
 
   return <section aria-labelledby="pricing-heading">
-    <PageHeading id="pricing-heading" sub="Room-by-room pricing and availability for the trip.">Rooms &amp; prices</PageHeading>
+    <PageHeading id="pricing-heading" sub="Room-by-room pricing and availability for the trip.">Pricing</PageHeading>
     <section className="pricing-overview" aria-label="Trip price and availability">
       <div className="pricing-overview-top">
         <div className="pricing-total">

@@ -7,7 +7,6 @@ import Chalet, { loader as chaletLoader } from "../../app/routes/chalet";
 import Rooms, { loader as roomsLoader } from "../../app/routes/rooms";
 import Pricing, { loader as pricingLoader } from "../../app/routes/pricing";
 import Chef, { loader as chefLoader } from "../../app/routes/chef";
-import Tasks, { loader as tasksLoader } from "../../app/routes/tasks";
 import Links, { loader as linksLoader } from "../../app/routes/links";
 import Guests, { loader as guestsLoader } from "../../app/routes/guests";
 import FAQ from "../../app/routes/faq";
@@ -24,7 +23,7 @@ function renderPage<P extends { loaderData: unknown }>(Component: (props: P) => 
   const node = document.createElement("div");
   // These pure route components only consume loaderData; router metadata is unused.
   node.innerHTML = renderToStaticMarkup(Component({ loaderData: data } as P));
-  expect(node.querySelectorAll("form, input:not([disabled]), button:not(.bm-expand):not(.guest-copy-all), select, textarea")).toHaveLength(0);
+  expect(node.querySelectorAll("form, input:not([disabled]), button:not(.bm-expand):not(.guest-copy-all):not(.pricing-copy-button), select, textarea")).toHaveLength(0);
   // The accent-dot convention is the app's own page headings. The bedroom map
   // sheet is the owner's authored artwork, embedded as-is, and keeps its own.
   for (const heading of [...node.querySelectorAll("h2")].filter((h) => !h.closest(".bm-sheet"))) {
@@ -57,7 +56,7 @@ const floors = [
 ];
 const pricing = { minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR", description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
-  note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.",
+  note: "All-in = room rate + taxes + shuttle + incidentals + chef.",
     includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
   excludes: ["flights", "ski passes", "rentals"],
 };
@@ -128,7 +127,7 @@ describe("database-backed read-only detail pages", () => {
       expect(link?.getAttribute("href")).toMatch(/^https:\/\/www\.instagram\.com\//);
     }
   });
-  it("labels per-room open spot counts on Trip pricing", async () => {
+  it("labels per-room open spot counts on Pricing", async () => {
     findUniqueOrThrow.mockResolvedValue({ pricing, property: { floors: floors.map((floor) => ({ ...floor,
       rooms: floor.rooms.filter((room) => room.spots.some((spot) => spot.status === "AVAILABLE"))
         .map((room) => ({ ...room, spots: room.spots.filter((spot) => spot.status === "AVAILABLE").slice(0, room.shortName === "Bedroom 4" ? 3 : undefined) })),
@@ -142,19 +141,24 @@ describe("database-backed read-only detail pages", () => {
     const roomRows = [...page.querySelectorAll<HTMLTableRowElement>(".pricing-room-table tbody tr")];
     expect(roomRows).toHaveLength(3);
     expect(roomRows.map((row) => row.querySelector('[data-label="Availability"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Availability3 spots open", "Availability2 spots open", "Availability4 spots open"]);
-    expect(roomRows.map((row) => row.querySelector('[data-label="Room total"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual(["Room total€4,360 / $5,232.00", "Room total€1,940 / $2,328.00", "Room total€4,560 / $5,472.00"]);
+    expect(roomRows.map((row) => row.querySelector('[data-label="Room-only rate per person"]')?.textContent?.replace(/\s+/g, " ").trim())).toEqual([
+      "Room-only rate per person€1,090 / $1,308.00 per person",
+      "Room-only rate per person€970 / $1,164.00 per person",
+      "Room-only rate per person€1,140 / $1,368.00 per person",
+    ]);
     for (const description of ["Women's quad bunk — shared balcony, shared shower", "Men's bunk cabin — shared shower", "Women's quad bunk — en-suite bathroom"]) expect(page.textContent).toContain(description);
     const priceDetails = page.querySelector<HTMLTableElement>(".pricing-facts-table");
     expect(priceDetails?.getAttribute("aria-label")).toBe("Price breakdown");
-    expect([...priceDetails!.querySelectorAll("tbody th[scope='row']")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef", "Refund", "Not included"]);
+    expect([...priceDetails!.querySelectorAll("tbody th[scope='row']")].map((node) => node.textContent)).toEqual(["Room rate", "Taxes", "Shuttle", "Incidentals", "Chef", "Not included"]);
     expect([...priceDetails!.querySelectorAll("tbody td")].map((node) => node.textContent?.replace(/\s+/g, " ").trim())).toEqual([
-      "See room totals above", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60", "Refund €69.45 to each of the 13 people who already paid €178.", pricing.excludes.join(", "),
+      "See room rates above", "€33.60 / $40.32", "€108.55 / $130.26", "€100 / $120.00", "€408 / $489.60", pricing.excludes.join(", "),
     ]);
     expect(page.textContent).not.toContain("Included in the price");
     expect(page.textContent).not.toContain("Your bed for 7 nights");
     expect(page.textContent).not.toContain("All-in = room rate");
     expect(page.textContent).not.toContain("The shuttle is now");
-    expect(page.textContent).toContain("Refund €69.45");
+    expect(page.textContent).not.toMatch(/13 people who already paid|€69\.45/i);
+    expect(page.querySelector(".pricing-copy-button")?.getAttribute("aria-label")).toBe("Copy price breakdown");
     const chefAgreement = page.querySelector<HTMLDetailsElement>("details.service-agreement");
     expect(chefAgreement).not.toBeNull();
     expect(chefAgreement?.hasAttribute("open")).toBe(false);
@@ -230,28 +234,6 @@ describe("database-backed read-only detail pages", () => {
     // A dinner the chef is not cooking is a dash, whatever the reason.
     expect(rows[5]?.textContent).not.toContain("On your own");
     expect(rows[5]?.querySelector('td[data-meal="Dinner"]')?.textContent).toBe("—");
-  });
-  it("renders flight and payment status in the shared table without a Details column", async () => {
-    const storage = vi.spyOn(Storage.prototype, "getItem");
-    try {
-      findUniqueOrThrow.mockResolvedValue({
-        startDate: new Date("2027-01-30T00:00:00Z"), endDate: new Date("2027-02-06T00:00:00Z"), timezone: "Europe/Paris",
-        flightArrivalTarget: "08:00", flightArrivalCutoff: "08:30", flightReturnCutoff: "11:00",
-        guests: names.map((displayName) => ({ id: displayName, firstName: displayName, lastName: "", displayName,
-          tasks: [{ done: displayName === "Amelia Drake" }], flights: [],
-        })),
-      });
-      const page = renderPage(Tasks, await tasksLoader());
-      expect(page.textContent).toContain("1 paid");
-      expect(page.querySelectorAll('table[aria-label="Guest flight and payment status"] tbody tr')).toHaveLength(9);
-      expect(page.querySelectorAll('td[data-label="Flight"] .task-status[data-done="false"]')).toHaveLength(9);
-      expect(page.querySelector('[data-label="Payment"] .task-status[data-done="true"]')?.textContent).toBe("Paid");
-      expect([...page.querySelectorAll("thead th")].map((node) => node.textContent)).toEqual(["Guest", "Flight", "Payment"]);
-      expect(page.textContent).not.toContain("Details");
-      expect(page.querySelector('[data-label="Payment"] .task-status[data-done="false"]')?.textContent).toBe("—");
-      expect(page.querySelector('table[aria-label="Guest flight and payment status"] tbody th a')?.getAttribute("aria-label")).toBe("Kaise on Instagram");
-      expect(storage).not.toHaveBeenCalled();
-    } finally { storage.mockRestore(); }
   });
   it("preserves link destinations and source groups in order", async () => {
     const links = [

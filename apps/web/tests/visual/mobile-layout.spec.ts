@@ -26,7 +26,7 @@ const VIEWPORTS = [
 const PAGES = [
   ["home", "/"], ["chat", "/chat"], ["guests", "/guests"], ["faq", "/faq"], ["schedule", "/schedule"], ["flights", "/flights"], ["shuttle", "/shuttle"],
   ["chalet", "/chalet"], ["rooms", "/rooms"], ["spots", "/pricing"], ["chef", "/chef"],
-  ["tasks", "/tasks"], ["links", "/links"],
+  ["links", "/links"],
 ] as const;
 
 /**
@@ -114,8 +114,31 @@ for (const [width, height] of VIEWPORTS) {
       expect(visible, "the active Rooms link is outside the mobile navigation viewport").toBe(true);
     });
 
+    test("mobile drawer owns scrolling and locks the dimmed page", async ({ page }) => {
+      test.skip(!mobile || width !== 320, "exercise the shortest mobile viewport where the drawer must scroll");
+      await openFrozen(page, "/faq");
+      await page.evaluate(() => window.scrollTo(0, 320));
+      const pageScrollBefore = await page.evaluate(() => window.scrollY);
+      await page.locator(".mobile-nav-toggle").click();
+      const drawer = page.locator(".mobile-drawer");
+      await expect(drawer).toHaveCSS("overflow-y", "auto");
+      await expect(page.locator("body")).toHaveCSS("overflow", "hidden");
+      await expect(page.locator("html")).toHaveCSS("overflow", "hidden");
+      await page.mouse.move(120, Math.floor(height / 2));
+      await page.mouse.wheel(0, 480);
+      await expect.poll(() => drawer.evaluate((element) => element.scrollTop)).toBeGreaterThan(0);
+      expect(await page.evaluate(() => window.scrollY)).toBe(pageScrollBefore);
+    });
+
     test("flights renders cards below the seam and the table at or above it", async ({ page }) => {
       await openFrozen(page, "/flights");
+      if (mobile) {
+        const date = page.locator(".flight-rules-date").first();
+        await expect(date).toHaveCSS("white-space", "nowrap");
+        const dateHeight = await date.evaluate((element) => element.getBoundingClientRect().height);
+        const lineHeight = await date.evaluate((element) => Number.parseFloat(getComputedStyle(element).lineHeight));
+        expect(dateHeight, "the flight date and terminal period stay on one line").toBeLessThanOrEqual(lineHeight + 1);
+      }
       // §2.15: "below 860px, render one card per guest instead of the table …
       // Same query, different component. Desktop keeps the table."
       await expect(page.locator(".flight-cards")).toHaveCount(mobile ? 1 : 0);
@@ -161,6 +184,8 @@ for (const [width, height] of VIEWPORTS) {
 
     test("the chef meal grid becomes one row per day below the seam", async ({ page }) => {
       await openFrozen(page, "/chef");
+      const addYourself = page.locator(".dietary-add-button");
+      await expect(addYourself.first()).toHaveCSS("border-radius", "0px");
       const row = page.locator(".chef-meal-table tbody tr").first();
       const shape = await row.evaluate((el) => ({
         display: getComputedStyle(el).display,
@@ -192,23 +217,10 @@ for (const [width, height] of VIEWPORTS) {
       expect(await dietary.evaluate((el) => getComputedStyle(el).display)).toBe(mobile ? "grid" : "table-row");
     });
 
-    test("task statuses use the shared responsive table layout", async ({ page }) => {
-      await openFrozen(page, "/tasks");
-      const row = page.locator(".task-table tbody tr", { hasText: LONGEST.guest });
-      await expect(row).toHaveCount(1);
-      const display = await row.evaluate((el) => getComputedStyle(el).display);
-      if (mobile) {
-        expect(display).toBe("grid");
-        await expect(row.locator('td[data-label="Flight"]')).toBeVisible();
-        await expect(row.locator('td[data-label="Payment"]')).toBeVisible();
-      } else {
-        expect(display).toBe("table-row");
-      }
-    });
-
     test("all trip and room-sharing FAQs use one question-and-answer table", async ({ page }) => {
       await openFrozen(page, "/faq");
       await expect(page.locator(".faq-table")).toHaveCount(1);
+      if (mobile) await expect(page.locator(".faq-table-section th").first()).toHaveCSS("background-color", "rgba(0, 0, 0, 0)");
       const entries = await page.locator(".faq-table-row").evaluateAll((els) => els.map((el) => {
         const question = el.querySelector("th[scope='row']");
         const answer = el.querySelector("td[data-label='Answer']");
@@ -374,8 +386,6 @@ for (const [width, height] of VIEWPORTS) {
       // Guards the checks above against a reseed that shortens the worst case.
       await openFrozen(page, "/rooms");
       await expect(page.locator(".bm-bedroom-name", { hasText: new RegExp(`^${LONGEST.room}$`) })).toHaveCount(1);
-      await openFrozen(page, "/tasks");
-      await expect(page.locator(".task-table tbody th", { hasText: LONGEST.guest })).toHaveCount(1);
       await openFrozen(page, "/schedule");
       await expect(page.locator(".schedule-entry-title", { hasText: LONGEST.event })).toHaveCount(1);
       const lines = await lineCount(page.locator(".schedule-entry-name", { hasText: LONGEST.event }));

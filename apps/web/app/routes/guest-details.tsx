@@ -1,6 +1,7 @@
 import { GuestDetailsForm } from "../components/guest-details-form";
 import { getOpenSpots, getRoomsByFloor } from "../../src/lib/db/repository.server";
 import { tripPageMeta } from "../lib/social-meta";
+import { formatRoomDescription } from "../lib/room-types";
 
 export async function loader() {
   const [data, roomData] = await Promise.all([getOpenSpots(), getRoomsByFloor()]);
@@ -20,7 +21,7 @@ export async function loader() {
     totalPriceLabel: room.pricePerPerson === null || addOnsPerPerson === null
       ? null
       : formatPrice.format(Number(room.pricePerPerson) + addOnsPerPerson),
-    description: room.description,
+    description: formatRoomDescription(room.type, room.description),
   })) };
 }
 

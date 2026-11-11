@@ -9,7 +9,7 @@ import type { Route } from "./+types/schedule";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/schedule", title: "Trip schedule · Méribel ’27 — Club Athletic", description: "Daily meals, events, and plans for the Club Athletic week in Méribel." });
+  return tripPageMeta({ path: "/schedule", title: "Schedule · Méribel ’27 — Club Athletic", description: "Daily meals, events, and plans for the Club Athletic week in Méribel." });
 }
 
 export async function loader() {
@@ -19,7 +19,7 @@ export async function loader() {
 export default function Schedule({ loaderData }: Route.ComponentProps) {
   return (
     <section aria-labelledby="schedule-heading">
-      <PageHeading id="schedule-heading" sub="Events and chef meals. Open days are yours to plan.">The week</PageHeading>
+      <PageHeading id="schedule-heading" sub="Events and chef meals. Open days are yours to plan.">Schedule</PageHeading>
       <div className="schedule-guide-note">
         <span className="schedule-guide-mark" aria-hidden="true"></span>
         <p>Follow the fixed plans below. Anything marked TBD is still to be confirmed.</p>

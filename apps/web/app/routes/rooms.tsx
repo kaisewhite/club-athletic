@@ -5,9 +5,10 @@ import { BedroomMap } from "../components/bedroom-map/bedroom-map";
 import { RoomSharingFaq } from "../components/room-sharing-faq";
 import type { Route } from "./+types/rooms";
 import { tripPageMeta } from "../lib/social-meta";
+import { formatRoomDescription } from "../lib/room-types";
 
 export function meta() {
-  return tripPageMeta({ path: "/rooms", title: "Room assignments · Méribel ’27 — Club Athletic", description: "View chalet room layouts, bed assignments, and room-sharing details.", image: "chalet" });
+  return tripPageMeta({ path: "/rooms", title: "Rooms · Méribel ’27 — Club Athletic", description: "View chalet room layouts, bed assignments, and room-sharing details.", image: "chalet" });
 }
 
 export async function loader() {
@@ -17,7 +18,7 @@ export async function loader() {
     floors: data.floors.map(({ id, name, code, rooms }) => ({
       id, name, code,
       rooms: rooms.map(({ id, name, type, description, openCount, spots }) => ({
-        id, name, type, description, openCount,
+        id, name, type, description: formatRoomDescription(type, description), openCount,
         spots: spots.map(({ id, index, status, guest }) => ({ id, index, status, guest })),
       })),
     })),

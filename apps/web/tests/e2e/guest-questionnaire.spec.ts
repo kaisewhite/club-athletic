@@ -28,6 +28,8 @@ test("a guest can resume a local draft and submit all details once", async ({ pa
   await expect(page.getByRole("heading", { name: "Select a room" })).toBeVisible();
 
   await page.reload();
+  await expect(page.getByRole("button", { name: "Resume questionnaire" })).toBeVisible();
+  await page.getByRole("button", { name: "Resume questionnaire" }).click();
   await expect(page.getByRole("heading", { name: "Select a room" })).toBeVisible();
   expect(await getDummyGuest(dummyName)).toBeNull();
 
@@ -46,6 +48,8 @@ test("a guest can resume a local draft and submit all details once", async ({ pa
   await expect(page.getByRole("heading", { name: "Payment & cancellation policy" })).toBeVisible();
   expect(await getDummyGuest(dummyName)).toMatchObject({ status: "CONFIRMED", spot: { id: expect.any(String) } });
   await page.reload();
+  await expect(page.getByRole("button", { name: "Resume questionnaire" })).toBeVisible();
+  await page.getByRole("button", { name: "Resume questionnaire" }).click();
   await expect(page.getByRole("heading", { name: "Payment & cancellation policy" })).toBeVisible();
   await expect(page.getByText("@kaise-white")).toBeVisible();
   await page.getByRole("button", { name: "Continue" }).click();

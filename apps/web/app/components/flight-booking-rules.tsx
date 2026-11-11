@@ -13,7 +13,7 @@ const hours = (minutes: number) => (minutes % 60 === 0 ? `${minutes / 60} h` : `
 /** Arrival, return, and Friday-arrival guidance in the same Q&A table used by the FAQ. */
 export function FlightBookingRules({ rules }: { rules: FlightRules }) {
   const arrival = <ul className="flight-rules-answer">
-    <li>Land in Geneva by <strong>{spoken(rules.arrivalCutoff)}</strong> on {tripDate(rules.startDate, "long")}.</li>
+    <li>Land in Geneva by <strong>{spoken(rules.arrivalCutoff)}</strong> on <time className="flight-rules-date" dateTime={rules.startDate.toISOString().slice(0, 10)}>{tripDate(rules.startDate, "long")}.</time></li>
     <li>Aim for {spoken(rules.arrivalTarget)} to allow time for bags and delays.</li>
     {rules.inbound && <li>The shuttle leaves {rules.inbound.pickup} between {rules.inbound.from} and {rules.inbound.to}.</li>}
     <li>Arriving later means arranging your own transfer.</li>

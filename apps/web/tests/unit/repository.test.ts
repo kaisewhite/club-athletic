@@ -16,7 +16,7 @@ const pricing = {
   minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR",
   description: "per person, all-in",
   breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 },
-  note: "Refund €69.45 to each of the 13 people who already paid €178.",
+  note: "All-in room rate plus trip costs.",
   includes: ["Your bed for 7 nights", "Private chef — 6 breakfasts, 5 dinners", "Group shuttle GVA ↔ chalet", "Taxes, incidentals and tips"],
   excludes: ["flights", "ski passes", "rentals"],
 };

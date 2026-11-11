@@ -2,8 +2,15 @@ import { act } from "react";
 import { createRoot } from "react-dom/client";
 import { afterEach, expect, it, vi } from "vitest";
 import { BedroomMap } from "../../app/components/bedroom-map/bedroom-map";
+import { formatRoomDescription, roomTypeLabel } from "../../app/lib/room-types";
 
 afterEach(() => { vi.unstubAllGlobals(); document.body.innerHTML = ""; });
+
+it("uses a clear bedroom label for the master double room type", () => {
+  expect(roomTypeLabel.MASTER_DOUBLE).toBe("Master bedroom");
+  expect(formatRoomDescription("MASTER_DOUBLE", "Master double — terrace, dressing room, en-suite bath + shower"))
+    .toBe("Master bedroom — terrace, dressing room, en-suite bath + shower");
+});
 
 it("opens the authored map at full size and closes it without changing the inline map", async () => {
   vi.stubGlobal("IS_REACT_ACT_ENVIRONMENT", true);

@@ -50,6 +50,22 @@ async function enter(id: string, value: string) {
 }
 
 describe("GuestDetailsForm", () => {
+  it("shows the welcome screen before offering to resume a saved draft", async () => {
+    sessionStorage.setItem("club-athletic-guest-details-submission", "7c54ef87-76d0-4c5b-87ea-a17b897d8291");
+    sessionStorage.setItem("club-athletic-guest-details-draft", JSON.stringify({
+      values: { firstName: "Alex", lastName: "Guest", roomId: "room-1" }, step: 2, submissionSaved: false,
+    }));
+    await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
+
+    expect(container.querySelector("#guest-form-welcome")).not.toBeNull();
+    expect(container.querySelector("#guest-question-title")).toBeNull();
+    expect(container.textContent).toContain("You have a saved questionnaire. Resume where you left off.");
+    expect(JSON.parse(sessionStorage.getItem("club-athletic-guest-details-draft")!).step).toBe(2);
+
+    await clickButton("Resume questionnaire");
+    expect(container.querySelector("#guest-question-title")?.textContent).toBe("Select a room");
+  });
+
   it("lists open rooms with readable types, open-spot counts and bulleted occupant Instagram links", async () => {
     vi.stubGlobal("fetch", vi.fn(async () => ({ ok: true, json: async () => ({ ok: true }) })));
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
@@ -90,7 +106,7 @@ describe("GuestDetailsForm", () => {
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
 
-    expect(container.textContent).toContain("Méribel 2027 — Questionnaire");
+    expect(container.textContent).toContain("Questionnaire");
     await clickButton("Start");
     expect(container.querySelector("#guest-question-title")?.textContent).toBe("Your name");
     expect(container.querySelector(".guest-details-progress-label")?.textContent).toBe("Question 1 of 6");

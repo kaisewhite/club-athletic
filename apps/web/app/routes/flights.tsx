@@ -8,7 +8,7 @@ import type { Route } from "./+types/flights";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/flights", title: "Flights to Méribel · Club Athletic ’27", description: "Flight options to Geneva, airport transfer guidance, and group flight details for Méribel ’27." });
+  return tripPageMeta({ path: "/flights", title: "Flights · Méribel ’27 — Club Athletic", description: "Flight options to Geneva, airport transfer guidance, and group flight details for Méribel ’27." });
 }
 
 export async function loader() {

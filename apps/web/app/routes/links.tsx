@@ -7,7 +7,7 @@ import { ArrowText } from "../components/arrow-text";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/links", title: "Trip links · Méribel ’27 — Club Athletic", description: "Useful booking, chalet, transport, and local information links for the Méribel trip." });
+  return tripPageMeta({ path: "/links", title: "Links · Méribel ’27 — Club Athletic", description: "Useful booking, chalet, transport, and local information links for the Méribel trip." });
 }
 
 const INLINE_LINK = /\[([^\]]+)\]\(((?:https?:\/\/|mailto:|tel:)[^)]+)\)/g;

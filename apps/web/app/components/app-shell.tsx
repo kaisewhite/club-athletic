@@ -1,11 +1,16 @@
 import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties } from "react";
 import { Link, NavLink, Outlet, useLocation, useNavigate } from "react-router";
+import {
+  Airplane, Bed, CalendarBlank, ChefHat, ChatCircleDots, ClipboardText,
+  Compass, CurrencyDollar, HouseLine, LinkSimple, MusicNotes,
+  Question, UsersThree, Van,
+} from "@phosphor-icons/react/ssr";
 
 const SECTIONS = [
   ["/", "Home"], ["/overview", "Overview"], ["/chat", "Chat"], ["/chalet", "Chalet"], ["/rooms", "Rooms"], ["/pricing", "Pricing"],
   ["/shuttle", "Shuttle"], ["/flights", "Flights"], ["/schedule", "Schedule"],
   ["/folie-douce", "La Folie Douce"],
-  ["/chef", "Chef"], ["/tasks", "Tasks"], ["/guests", "Guests"], ["/questionnaire", "Questionnaire"], ["/links", "Links"], ["/faq", "FAQ"],
+  ["/chef", "Chef"], ["/guests", "Guests"], ["/questionnaire", "Questionnaire"], ["/links", "Links"], ["/faq", "FAQ"],
 ] as const;
 
 /* The 860px seam, as the one query the browser itself evaluates. `innerWidth`
@@ -35,21 +40,43 @@ export function useWideLayout() {
    the footer still list every page. */
 const PRIMARY = ["/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule"] as const;
 const MOBILE_PRIMARY = ["/chat", ...PRIMARY] as const;
-const MORE = ["/overview", "/chef", "/tasks", "/guests", "/questionnaire", "/links", "/faq", "/folie-douce"] as const;
+const MORE = ["/overview", "/chef", "/guests", "/questionnaire", "/links", "/faq", "/folie-douce"] as const;
 const SURVEYS = ["/questionnaire", "/folie-douce"] as const;
 const MOBILE_MORE = MORE.filter((to) => !SURVEYS.includes(to as (typeof SURVEYS)[number]));
 const FOOTER_GROUPS = [
   ["The trip", ["/", "/overview", "/chat", "/schedule", "/faq"]],
   ["Getting there", ["/flights", "/shuttle"]],
-  ["The chalet", ["/chalet", "/rooms", "/pricing", "/chef"]],
-  ["The group", ["/guests", "/tasks", "/links"]],
+  ["Chalet", ["/chalet", "/rooms", "/pricing", "/chef"]],
+  ["The group", ["/guests", "/links"]],
   ["Polls & surveys", ["/questionnaire", "/folie-douce"]],
 ] as const;
 const labelFor = (to: string) => SECTIONS.find(([path]) => path === to)![1];
+const NAV_ICONS = {
+  "/chat": ChatCircleDots,
+  "/chalet": HouseLine,
+  "/rooms": Bed,
+  "/pricing": CurrencyDollar,
+  "/shuttle": Van,
+  "/flights": Airplane,
+  "/schedule": CalendarBlank,
+  "/overview": Compass,
+  "/chef": ChefHat,
+  "/guests": UsersThree,
+  "/links": LinkSimple,
+  "/faq": Question,
+  "/questionnaire": ClipboardText,
+  "/folie-douce": MusicNotes,
+} as const;
 
 function Navigation({ paths, className = "side-nav", onNavigate }: { paths: readonly string[]; className?: string; onNavigate?: () => void }) {
   return <nav aria-label="Trip pages" className={className}>
-    {paths.map((to) => <NavLink key={to} to={to} end className="side-item" onClick={onNavigate}>{labelFor(to)}</NavLink>)}
+    {paths.map((to) => {
+      const Icon = NAV_ICONS[to as keyof typeof NAV_ICONS];
+      return <NavLink key={to} to={to} end className="side-item" onClick={onNavigate}>
+        <Icon className="side-item-icon" size={20} weight="regular" aria-hidden="true" />
+        <span translate="no">{labelFor(to)}</span>
+      </NavLink>;
+    })}
   </nav>;
 }
 
@@ -87,7 +114,7 @@ function TopNav({ newChat }: { newChat: () => void }) {
     <div className="top-nav-bar">
       <Link to="/" className="top-nav-brand">Méribel ’27</Link>
       <nav aria-label="Trip pages" className="top-nav-links">
-        {PRIMARY.map((to) => <NavLink key={to} to={to} end className="top-nav-item">{labelFor(to)}</NavLink>)}
+        {PRIMARY.map((to) => <NavLink key={to} to={to} end className="top-nav-item"><span translate="no">{labelFor(to)}</span></NavLink>)}
       </nav>
       <div className="top-nav-actions">
         {/* Icon-only actions: each carries its name for assistive tech and a
@@ -105,7 +132,7 @@ function TopNav({ newChat }: { newChat: () => void }) {
     <div ref={panel} id="more-pages" className="more-menu" data-open={moreOpen} inert={!moreOpen} onClick={() => setMoreOpen(false)}>
       <div className="more-menu-inner">
         <nav aria-label="More trip pages" className="more-menu-links" onClick={(event) => event.stopPropagation()}>
-          {MORE.map((to, index) => <NavLink key={to} to={to} end className="more-menu-item" style={{ "--i": index } as CSSProperties} onClick={() => setMoreOpen(false)}>{labelFor(to)}</NavLink>)}
+          {MORE.map((to, index) => <NavLink key={to} to={to} end className="more-menu-item" style={{ "--i": index } as CSSProperties} onClick={() => setMoreOpen(false)}><span translate="no">{labelFor(to)}</span></NavLink>)}
         </nav>
       </div>
     </div>
@@ -123,7 +150,7 @@ function SiteFooter() {
       </div>
       {FOOTER_GROUPS.map(([heading, paths]) => <nav key={heading} aria-label={heading} className="site-footer-group">
         <h2>{heading}</h2>
-        <ul>{paths.map((to) => <li key={to}><Link to={to}>{labelFor(to)}</Link></li>)}</ul>
+        <ul>{paths.map((to) => <li key={to}><Link to={to}><span translate="no">{labelFor(to)}</span></Link></li>)}</ul>
       </nav>)}
     </div>
   </footer>;
@@ -163,6 +190,10 @@ export function AppShell(_props?: { daysUntil?: number }) {
       return;
     }
     wasMobileNavOpen.current = true;
+    const bodyOverflow = document.body.style.overflow;
+    const rootOverflow = document.documentElement.style.overflow;
+    document.body.style.overflow = "hidden";
+    document.documentElement.style.overflow = "hidden";
     const firstLink = mobileDrawer.current?.querySelector<HTMLElement>("a");
     firstLink?.focus();
     const onKeyDown = (event: KeyboardEvent) => {
@@ -174,11 +205,15 @@ export function AppShell(_props?: { daysUntil?: number }) {
       else if (!event.shiftKey && document.activeElement === last) { event.preventDefault(); first?.focus(); }
     };
     document.addEventListener("keydown", onKeyDown);
-    return () => document.removeEventListener("keydown", onKeyDown);
+    return () => {
+      document.removeEventListener("keydown", onKeyDown);
+      document.body.style.overflow = bodyOverflow;
+      document.documentElement.style.overflow = rootOverflow;
+    };
   }, [mobileNavOpen, wide]);
   useEffect(() => { setMobileNavOpen(false); }, [location.pathname]);
   return (
-    <div className="app-shell">
+    <div className={`app-shell${mobileNavOpen ? " mobile-nav-open" : ""}${location.pathname === "/" ? " app-shell-home" : ""}`}>
       {wide && <TopNav newChat={newChat} />}
       <main className="shell-main">
         {!wide && <header className="mobile-header">
@@ -196,17 +231,6 @@ export function AppShell(_props?: { daysUntil?: number }) {
             </Link>}
           </div>
         </header>}
-        {!wide && mobileNavOpen && <div className="mobile-nav-layer">
-          <button type="button" className="mobile-nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />
-          <aside ref={mobileDrawer} id="mobile-trip-navigation" className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Trip navigation">
-            <div className="mobile-drawer-heading"><span>Trip pages</span><button type="button" className="mobile-drawer-close" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)}><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" aria-hidden="true"><path d="m18 6-12 12M6 6l12 12" /></svg></button></div>
-            <Navigation paths={MOBILE_PRIMARY} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
-            <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>More</span></div>
-            <Navigation paths={MOBILE_MORE} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
-            <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>Polls &amp; Surveys</span></div>
-            <Navigation paths={SURVEYS} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
-          </aside>
-        </div>}
         {/* `home-route` is the full-height chat layout, so it belongs to /chat;
             the home page is an ordinary page whose hero runs edge to edge. */}
         <div key={location.key} className={location.pathname === "/chat" ? "route-content home-route" : location.pathname === "/" ? "route-content page-route home-page" : "route-content page-route"}>
@@ -214,6 +238,17 @@ export function AppShell(_props?: { daysUntil?: number }) {
         </div>
       </main>
       {location.pathname !== "/chat" && <SiteFooter />}
+      {!wide && mobileNavOpen && <div className="mobile-nav-layer">
+        <button type="button" className="mobile-nav-scrim" aria-label="Close navigation" onClick={() => setMobileNavOpen(false)} />
+        <aside ref={mobileDrawer} id="mobile-trip-navigation" className="mobile-drawer" role="dialog" aria-modal="true" aria-label="Trip navigation">
+          <div className="mobile-drawer-heading"><span>Trip pages</span></div>
+          <Navigation paths={MOBILE_PRIMARY} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+          <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>More</span></div>
+          <Navigation paths={MOBILE_MORE} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+          <div className="mobile-drawer-heading mobile-drawer-more-heading"><span>Polls &amp; Surveys</span></div>
+          <Navigation paths={SURVEYS} className="side-nav" onNavigate={() => setMobileNavOpen(false)} />
+        </aside>
+      </div>}
     </div>
   );
 }

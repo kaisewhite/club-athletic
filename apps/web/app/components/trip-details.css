@@ -144,6 +144,7 @@
 .faq-answer-lead { display: block; color: var(--text); font: 600 16px/1.35 var(--font-display); }
 .faq-answer-copy { display: block; margin-top: 3px; color: var(--text-muted); }
 .flight-rules-answer { margin: 0; padding-left: 18px; }
+.flight-rules-date { white-space: nowrap; }
 .flight-rules-answer li + li { margin-top: 4px; }
 .faq-table-note td { color: var(--text-dim); font-size: 13px; font-style: italic; }
 .dietary-cell-button { display: block; width: 100%; min-height: 1.5em; padding: 0; border: 0; background: transparent; color: inherit; font: inherit; text-align: left; cursor: text; }
@@ -174,7 +175,7 @@
 .dietary-copy-button:hover { background: var(--hover); color: var(--text); }
 .dietary-copy-button:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .dietary-add-area { padding: 14px 16px; border-top: 1px solid var(--border-subtle); }
-.dietary-add-button { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border: 1px solid var(--border-strong); border-radius: 7px; background: transparent; color: var(--text); font: 500 13px/1.3 var(--font-sans); cursor: pointer; }
+.dietary-add-button { display: inline-flex; align-items: center; gap: 8px; padding: 7px 11px; border: 1px solid var(--border-strong); border-radius: 0; background: transparent; color: var(--text); font: 500 13px/1.3 var(--font-sans); cursor: pointer; }
 .dietary-add-button:hover { background: var(--hover); }
 .dietary-add-button:focus-visible, .dietary-add-cancel:focus-visible, .dietary-add-submit:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
 .dietary-add-icon { display: inline-flex; align-items: center; justify-content: center; width: 1em; height: 1em; font-size: 18px; font-weight: 400; line-height: 1; }
@@ -193,8 +194,6 @@
 .dietary-add-submit { border: 1px solid var(--text); background: var(--text); color: var(--surface); }
 .dietary-add-cancel:disabled, .dietary-add-submit:disabled { cursor: wait; opacity: .6; }
 .dietary-add-error { margin: 0; color: var(--danger); font-size: 12px; }
-.task-status { color: var(--text-dim); }
-.task-status[data-done="true"] { color: var(--text); font-weight: 600; }
 .link-section { margin-top: 24px; }
 .link-section .detail-kicker { margin-bottom: 4px; }
 .link-section .link-list { border-top: 1px solid var(--border); }
@@ -243,11 +242,6 @@
 .food-preferences-section > .detail-note { margin: 4px 0 12px; }
 .food-preferences-section .chef-dietary-card { position: relative; }
 
-.readiness-links { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 12px 0 26px; padding-block: 8px; border-block: 1px solid var(--border-subtle); }
-.readiness-links a { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; color: var(--text); font-size: 13px; font-weight: 600; text-decoration: underline; text-underline-offset: 3px; }
-.readiness-links a:hover { color: var(--brand-dim); }
-.readiness-links a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
-.readiness-section > .detail-table-wrap { border: 0; border-block: 1px solid var(--border); border-radius: 0; background: transparent; }
 
 .resource-guide { display: grid; gap: 24px; }
 .resource-guide .link-section { margin: 0; padding: 0; }
@@ -284,19 +278,18 @@
    rule and `tests/unit/mobile-css-convention.test.ts` for the check.
    ========================================================================== */
 @media (max-width: 859px) {
+  .faq-table-section th { padding-inline: 16px !important; background: transparent; text-align: left; overflow-wrap: anywhere; }
   .chef-stats { grid-template-columns: 1fr; margin: 14px 0 24px; }
   .chef-stat { padding: 10px 0; }
   .chef-stat + .chef-stat { padding-left: 0; border-top: 1px solid var(--border-subtle); border-left: 0; }
-  .food-plan-section .detail-table-wrap, .readiness-section .detail-table-wrap { overflow: visible; }
-  .readiness-links { gap: 4px 18px; margin-bottom: 18px; }
+  .food-plan-section .detail-table-wrap { overflow: visible; }
   .resource-guide { gap: 20px; }
   .resource-guide .link-list { grid-template-columns: 1fr; }
   .guest-directory .guest-link-entry .link-row { min-height: 66px; }
   .faq-table-intro { border-bottom: 0; }
   .faq-table-wrap > .faq-table > tbody:first-of-type:not(.faq-table-section) > tr:first-child,
   .faq-table-wrap > .faq-table > tbody.faq-table-section:first-of-type > tr:first-child,
-  .food-plan-section > .detail-table-wrap > .detail-table > tbody:first-of-type > tr:first-child,
-  .readiness-section > .detail-table-wrap > .detail-table > tbody:first-of-type > tr:first-child { border-top: 0; }
+  .food-plan-section > .detail-table-wrap > .detail-table > tbody:first-of-type > tr:first-child { border-top: 0; }
   .faq-chapter .faq-table { table-layout: fixed; }
   .open-room { column-gap: 14px; padding: 14px 0; }
   .open-room-count { min-width: 86px; padding-left: 12px; }

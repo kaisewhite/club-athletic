@@ -7,7 +7,7 @@ import type { Route } from "./+types/trip-overview";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/overview", title: "Trip overview · Méribel ’27 — Club Athletic", description: "Trip dates, chalet, flights, shuttle, schedule, and prices for the Club Athletic week in Méribel." });
+  return tripPageMeta({ path: "/overview", title: "Overview · Méribel ’27 — Club Athletic", description: "Trip dates, chalet, flights, shuttle, schedule, and prices for the Club Athletic week in Méribel." });
 }
 
 const date = (value: Date) => new Intl.DateTimeFormat("en-GB", {
@@ -36,7 +36,7 @@ export async function loader(_args: Route.LoaderArgs) {
 
 export default function TripOverview({ loaderData: data }: Route.ComponentProps) {
   return <section className="trip-overview-page" aria-labelledby="trip-overview-heading">
-    <PageHeading id="trip-overview-heading" sub="Dates, travel, lodging, and costs for the Méribel trip.">Trip overview</PageHeading>
+      <PageHeading id="trip-overview-heading" sub="Dates, travel, lodging, and costs for the Méribel trip.">Overview</PageHeading>
     <dl className="trip-overview-list">
       <div><dt>Dates</dt><dd>{data.dates}</dd></div>
       <div><dt>Location</dt><dd><ArrowText>{data.destination}</ArrowText></dd></div>
@@ -52,7 +52,7 @@ export default function TripOverview({ loaderData: data }: Route.ComponentProps)
         <li><span className="trip-chapter-number">01</span><Link to="/flights"><span className="trip-chapter-title">Flights</span><span className="trip-chapter-note">Arrival and return guidance</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
         <li><span className="trip-chapter-number">02</span><Link to="/shuttle"><span className="trip-chapter-title">Airport shuttle</span><span className="trip-chapter-note">Pickup times and locations</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
         <li><span className="trip-chapter-number">03</span><Link to="/schedule"><span className="trip-chapter-title">Schedule</span><span className="trip-chapter-note">Meals and daily plans</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
-        <li><span className="trip-chapter-number">04</span><Link to="/pricing"><span className="trip-chapter-title">Rooms and prices</span><span className="trip-chapter-note">Room options and cost details</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
+        <li><span className="trip-chapter-number">04</span><Link to="/pricing"><span className="trip-chapter-title">Pricing</span><span className="trip-chapter-note">Room options and cost details</span><ArrowRight size="1em" aria-hidden="true" /></Link></li>
       </ol>
     </nav>
   </section>;

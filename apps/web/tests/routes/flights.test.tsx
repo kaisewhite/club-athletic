@@ -118,6 +118,7 @@ describe("Flights route", () => {
     expect(page.querySelector(".faq-table")?.getAttribute("aria-label")).toBe("Flight arrival and return guidance");
     expect(page.querySelector(".faq-table-row th")?.getAttribute("data-label")).toBe("Question");
     expect(page.querySelector(".faq-table-row td")?.getAttribute("data-label")).toBe("Answer");
+    expect(page.querySelector(".flight-rules-date")?.textContent).toBe("Saturday 30 Jan.");
     for (const text of ["When should I land in Geneva?", "What time should my return flight leave?", "Can I arrive on Friday?", "8:30 AM", "Aim for 8:00 AM", "bags and delays", "11:00 AM or later", "Saturday 6 Feb", "04:15–04:30", "about 2 h", "under 5 min", "every ~20 min, 4:20 AM–11:40 PM", "Flight options are listed below"]) expect(page.textContent).toContain(text);
     expect(page.textContent).not.toContain("Overnight near GVA");
     expect(page.textContent).not.toContain("Times are based on the group shuttle");

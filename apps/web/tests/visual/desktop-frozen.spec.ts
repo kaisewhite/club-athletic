@@ -5,7 +5,7 @@
 // Two captures per page per width:
 //   *-viewport  the true design at that viewport, sticky top bar and all
 //   *-full      the whole document, which is the only way below-the-fold
-//               content (Rooms, Chef, Tasks) is covered at all
+//               content (Rooms, Chef) is covered at all
 // The full-page capture keeps `.sidebar { height: 100vh }` at its real viewport
 // height rather than stretching it, so the space beside long pages is bare
 // background. That is the capture, not a design bug — do not "fix" it.
@@ -25,7 +25,6 @@ const PAGES = [
   ["rooms", "/rooms"],
   ["spots", "/pricing"],
   ["chef", "/chef"],
-  ["tasks", "/tasks"],
   ["links", "/links"],
 ] as const;
 

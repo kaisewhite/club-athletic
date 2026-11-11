@@ -50,6 +50,7 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   const [formError, setFormError] = useState("");
   const [busy, setBusy] = useState(false);
   const [draftReady, setDraftReady] = useState(false);
+  const [resumeStep, setResumeStep] = useState<number | null>(null);
   const [saveState, setSaveState] = useState<"idle" | "saved" | "error">("idle");
   const [submissionSaved, setSubmissionSaved] = useState(false);
   const [finished, setFinished] = useState(false);
@@ -134,7 +135,7 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
               if (typeof value === "string") form.setFieldValue(name, value);
             }
           }
-          if (typeof saved.step === "number" && Number.isInteger(saved.step) && saved.step >= 0 && saved.step <= 8) setStep(saved.step);
+          if (typeof saved.step === "number" && Number.isInteger(saved.step) && saved.step > 0 && saved.step <= 8) setResumeStep(saved.step);
           if (saved.submissionSaved === true) {
             submissionSavedRef.current = true;
             setSubmissionSaved(true);
@@ -150,12 +151,12 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
   useEffect(() => {
     if (!draftReady || finished) return;
     try {
-      sessionStorage.setItem("club-athletic-guest-details-draft", JSON.stringify({ values, step, submissionSaved }));
+      sessionStorage.setItem("club-athletic-guest-details-draft", JSON.stringify({ values, step: step === 0 && resumeStep !== null ? resumeStep : step, submissionSaved }));
       setSaveState("saved");
     } catch {
       setSaveState("error");
     }
-  }, [draftReady, finished, values, step, submissionSaved]);
+  }, [draftReady, finished, values, step, resumeStep, submissionSaved]);
 
   const continueStep = async () => {
     const fields = fieldNamesByStep[step];
@@ -181,10 +182,11 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
 
   return <div className="guest-details-flow">
     {step === 0 && <section className="guest-details-card" aria-labelledby="guest-form-welcome">
-      <p className="guest-details-eyebrow">Méribel 2027 · Questionnaire</p>
-      <h2 id="guest-form-welcome">Méribel 2027 — Questionnaire</h2>
+      <p className="guest-details-eyebrow">Méribel 2027</p>
+      <h2 id="guest-form-welcome" translate="no">Questionnaire</h2>
       <p className="guest-details-copy">Please answer these questions so we can confirm your room choice, plan meals, and coordinate the trip.</p>
-      <button type="button" className="guest-details-primary" onClick={() => setStep(1)}>Start</button>
+      {resumeStep !== null && <p className="guest-details-copy">You have a saved questionnaire. Resume where you left off.</p>}
+      <button type="button" className="guest-details-primary" onClick={() => { setStep(resumeStep ?? 1); setResumeStep(null); }}>{resumeStep === null ? "Start" : "Resume questionnaire"}</button>
     </section>}
 
     {step > 0 && step < 9 && <form className="guest-details-card" noValidate onSubmit={(event) => { event.preventDefault(); if (step === 8) void form.handleSubmit(); else void continueStep(); }}>

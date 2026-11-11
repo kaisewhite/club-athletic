@@ -38,6 +38,6 @@ export default [
   route("spots", "routes/legacy-spots.ts"),
   route("folie-douce", "routes/folie-douce.tsx"),
   route("chef", "routes/chef.tsx"),
-  route("tasks", "routes/tasks.tsx"),
+  route("tasks", "routes/legacy-tasks.ts"),
   route("links", "routes/links.tsx"),
 ] satisfies RouteConfig;

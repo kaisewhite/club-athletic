@@ -7,7 +7,7 @@ import type { Route } from "./+types/faq";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/faq", title: "Trip FAQ · Méribel ’27 — Club Athletic", description: "Answers about the Méribel trip, chalet, room sharing, and group plans." });
+  return tripPageMeta({ path: "/faq", title: "FAQ · Méribel ’27 — Club Athletic", description: "Answers about the Méribel trip, chalet, room sharing, and group plans." });
 }
 
 export async function loader() {

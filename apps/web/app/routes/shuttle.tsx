@@ -5,7 +5,7 @@ import type { Route } from "./+types/shuttle";
 import { tripPageMeta } from "../lib/social-meta";
 
 export function meta() {
-  return tripPageMeta({ path: "/shuttle", title: "Airport shuttle · Méribel ’27 — Club Athletic", description: "Pickup times, stops, and transfer details between Geneva Airport and the Méribel chalet." });
+  return tripPageMeta({ path: "/shuttle", title: "Shuttle · Méribel ’27 — Club Athletic", description: "Pickup times, stops, and transfer details between Geneva Airport and the Méribel chalet." });
 }
 
 // Both ends of this transfer use the same local clock, including DST.

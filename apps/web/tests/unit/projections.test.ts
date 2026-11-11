@@ -22,7 +22,7 @@ describe("derived section counts", () => {
 
 
 describe("Trip pricing JSON", () => {
-  const value = { minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR", description: "per person, all-in", breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 }, note: "All-in = room rate + taxes + shuttle + incidentals + chef. The shuttle is now €108.55 per person for 33 riders; refund €69.45 to each of the 13 people who already paid €178.", includes: ["Bed", "Chef"], excludes: ["Flights"] };
+  const value = { minPerPerson: 1620.15, maxPerPerson: 1790.15, currency: "EUR", description: "per person, all-in", breakdown: { taxes: 33.6, shuttle: 108.55, incidentals: 100, chef: 408 }, note: "All-in room rate plus trip costs.", includes: ["Bed", "Chef"], excludes: ["Flights"] };
   it("preserves every pricing field and formats the seeded range", () => {
     expect(getTripPricing(value)).toEqual({ ...value, rangeLabel: "€1,620.15–€1,790.15" });
   });

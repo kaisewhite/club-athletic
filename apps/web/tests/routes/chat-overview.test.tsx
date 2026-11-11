@@ -144,12 +144,12 @@ it("splits desktop navigation into six primary pages and a More menu, with every
   const bar = [...container.querySelectorAll(".top-nav .top-nav-item")].map((link) => link.textContent);
   expect(bar).toEqual(["Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule"]);
   const more = [...container.querySelectorAll(".more-menu .more-menu-item")].map((link) => link.textContent);
-  expect(more).toEqual(["Overview", "Chef", "Tasks", "Guests", "Questionnaire", "Links", "FAQ", "La Folie Douce"]);
+  expect(more).toEqual(["Overview", "Chef", "Guests", "Questionnaire", "Links", "FAQ", "La Folie Douce"]);
   // Icon-only actions keep their names for assistive tech.
   expect(container.querySelector(".more-toggle")?.getAttribute("aria-label")).toBe("More pages");
   expect(container.querySelector(".top-nav-chat")?.getAttribute("aria-label")).toBe("Chat");
   const footer = [...container.querySelectorAll(".site-footer a")].map((link) => link.getAttribute("href"));
-  for (const path of ["/", "/chat", "/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule", "/chef", "/tasks", "/guests", "/questionnaire", "/links", "/faq"]) {
+  for (const path of ["/", "/chat", "/chalet", "/rooms", "/pricing", "/shuttle", "/flights", "/schedule", "/chef", "/guests", "/questionnaire", "/links", "/faq"]) {
     expect(footer, `footer links ${path}`).toContain(path);
   }
   expect(container.querySelector('.top-nav-chat[href="/chat"]')).not.toBeNull();

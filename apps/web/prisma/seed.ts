@@ -47,7 +47,7 @@ const FLIGHT_RECOMMENDATIONS = [
     ] },
 ];
 const FLOORS = [
-  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master double',rate:1465,description:'Master double — terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
+  {name:'Upper floor',code:'R11 / F21',rooms:[{name:'Bedroom 1',type:'Master bedroom',rate:1465,description:'Master bedroom — double bed, terrace, dressing room, en-suite bath + shower',ensuite:true,balcony:true,spots:['Kaise',null]}]},
   {name:'Middle floor',code:'R10 / F21',rooms:[
     {name:'Bedroom 2',type:'Double room',rate:1340,description:'Double — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Amelia Drake','Christie Navarre']},
     {name:'Bedroom 3',type:'Twin room',rate:1290,description:'Twin — shared balcony, en-suite shower',ensuite:true,balcony:true,spots:['Kristy Khoury','Valeriia Stobolva']},
@@ -79,7 +79,7 @@ const LINKS: Array<{ group: string; label: string; href: string; note: string | 
 const KB = `TRIP: Méribel (Les 3 Vallées), France. Chalet Falcon Lodge F, 269 Rte de l'Altiport, 73550 Les Allues. Official trip dates Sat 30 Jan – Sat 6 Feb 2027; optional early arrival in Geneva Fri 29 Jan.
 SHUTTLE: Out Sat 30 Jan pickup at Geneva Airport (GVA) from 10:30–11:00 AM, drop-off at 269 Rte de l'Altiport and 181 Imp. des Fontaines. Back Sat 6 Feb pickup at 4:00 AM at 269 Rte de l'Altiport, then 4:15 AM at 181 Imp. des Fontaines, with drop-off at Geneva Airport (GVA).
 FLIGHTS: To catch the shuttle land at GVA by 9:30 AM Saturday (aim 8:30 or earlier). Landing after 9:30 → arrange own transport. Return: book from GVA at 10:00 AM or later, never earlier. Optional: arrive Friday, spend the day in Geneva, and stay near GVA (Geneva Marriott — free shuttle, <5 min; Hilton Geneva — free shuttle every ~20 min, 4:20 AM–11:40 PM). Example early flight EWR→GVA Thu 5:35 PM → Fri 7:25 AM.
-ROOMS: Upper floor (R11/F21) Bedroom 1 master double: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Christie Navarre. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, 3 available. Bedroom 5 bunk cabin: Pete F., 1 available. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 11 confirmed guests, 8 open spots.
+ROOMS: Upper floor (R11/F21) Bedroom 1 master bedroom: Kaise (spot 2 N/A). Middle floor (R10/F21): Bedroom 2 double: Amelia Drake, Christie Navarre. Bedroom 3 twin: Kristy Khoury, Valeriia Stobolva. Bedroom 4 quad bunk: Christine Calvo, 3 available. Bedroom 5 bunk cabin: Pete F., 1 available. Lower floor (R9/F12): Bedroom 6 double: Augustus Shewchuck, Wayne Martindale. Bedroom 7 double: Olajuwon Jones, Ted Delcima. Bedroom 8 quad bunk: 4 available. 11 confirmed guests, 8 open spots.
 REMAINING SPOTS: Bedroom 4: women's quad bunk, shared balcony and shared shower, 3 open spots, €1,090 room rate per person. Bedroom 8: women's quad bunk, en-suite bathroom, 4 open spots, €1,140 room rate per person. Add €33.60 taxes, €108.55 shuttle, €100 incidentals and €408 chef per person for an all-in range of €1,620.15–€1,790.15 for currently open bunks. Not included: flights, ski passes and rentals. Contact the organizer to claim.
 CHEF: 6 breakfasts (Sun 31 Jan – Fri 5 Feb), 5 dinners (Sat 30 Jan – Tue 2 Feb, plus Fri 5 Feb). No chef dinner Wed 3 (Le Cap Horn) or Thu 4 Feb (final night out).
 EVENTS: Fri 29 Jan — Land in Geneva in the morning, spend the day in the city, and stay overnight near the airport. Sat 30 Jan — Arrive at Geneva (GVA), transfer to the chalet in Méribel, and relax; optional group viewing of NFL playoff games upon arrival. Sun 31 Jan — Skiing and après drinks at Rond Point; Club Athletic buys rounds. Mon 1 Feb — La Folie Douce, 3–5 p.m. Tue 2 Feb — Après gathering at randomly assigned chalets to meet others, followed by a night out. Wed 3 Feb — Cap Horn, followed by going out in Courchevel; no buses. Thu 4 Feb — Doron Pub for the final big night out. Fri 5 Feb — Rond Point for a chill ski day; many people leave in the morning. Sat 6 Feb — Early-morning transfer to GVA and flights home.
@@ -178,7 +178,7 @@ const FAVORITE_COCKTAILS: Record<string, string> = {
 };
 
 const ROOM_TYPES: Record<string, RoomType> = {
-  "Master double": "MASTER_DOUBLE",
+  "Master bedroom": "MASTER_DOUBLE",
   "Double room": "DOUBLE",
   "Twin room": "TWIN",
   "Quad bunk room": "QUAD_BUNK",

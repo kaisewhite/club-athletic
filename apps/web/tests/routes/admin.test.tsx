@@ -63,4 +63,14 @@ describe("/admin", () => {
     expect(text).not.toMatch(/[A-Z]+_[A-Z]+/);
     for (const removed of ["Emergency contact", "Notes", "Added via", "Form submissions", "Payments"]) expect(text).not.toContain(removed);
   });
+
+  it("tracks the seven refund follow-ups on the admin page", async () => {
+    const { text } = render(await loader());
+    expect(text).toContain("Refunds to track");
+    expect(text).toContain("People identified for refund follow-up · 7 guests");
+    for (const name of ["Augustus", "Pete", "Amelia", "Kristy Khoury", "Valeria", "Ted", "Elijah"]) {
+      expect(text).toContain(name);
+    }
+    expect(text).not.toMatch(/refund.*13 people|13 people.*refund/i);
+  });
 });
