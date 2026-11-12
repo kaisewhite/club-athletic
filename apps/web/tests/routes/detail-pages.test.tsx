@@ -102,12 +102,9 @@ describe("database-backed read-only detail pages", () => {
     expect(sheet.innerHTML).not.toMatch(/sc-|\{\{/);
   });
   it("links guest names to Instagram on rooms and chef pages", async () => {
-    const roomFloors = floors.map((floor) => ({ ...floor, rooms: floor.rooms.map((item) => item.name === "Bedroom 4"
-      ? room(4, "QUAD_BUNK", ["Christine Calvo", "", "", ""])
-      : item) }));
-    findUniqueOrThrow.mockResolvedValue({ property: { floors: roomFloors, sleepsMax: 20 }, _count: { guests: 11 } });
+    findUniqueOrThrow.mockResolvedValue({ property: { floors, sleepsMax: 20 }, _count: { guests: 10 } });
     const roomsPage = renderPage(Rooms, await roomsLoader());
-    for (const [name, handle] of [["Christie Navarre", "xtnavarre"], ["Christine Calvo", "christinecalvo_"], ["Valeriia Stobolva", "valeriiastolbova"], ["Wayne Martindale", "_wayne.em_"]] as const) {
+    for (const [name, handle] of [["Christie Navarre", "xtnavarre"], ["Valeriia Stobolva", "valeriiastolbova"], ["Wayne Martindale", "_wayne.em_"]] as const) {
       const link = [...roomsPage.querySelectorAll<HTMLAnchorElement>(".bm-room-table .spot-assigned a")].find((anchor) => anchor.querySelector("span")?.textContent === name);
       expect(link?.getAttribute("href")).toBe(`https://www.instagram.com/${handle}`);
       expect(link?.target).toBe("_blank");
@@ -117,12 +114,11 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockReset();
     findUniqueOrThrow.mockResolvedValue({ chefBreakfastCount: 6, chefDinnerCount: 5, scheduleDays: [], guests: [
       { id: "christie", displayName: "Christie Navarre", dietaryNotes: null },
-      { id: "christine", displayName: "Christine Calvo", dietaryNotes: null },
       { id: "valeriia", displayName: "Valeriia Stobolva", dietaryNotes: null },
       { id: "wayne", displayName: "Wayne Martindale", dietaryNotes: null },
     ] });
     const chefPage = renderPage(Chef, await chefLoader());
-    for (const name of ["Christie Navarre", "Christine Calvo", "Valeriia Stobolva", "Wayne Martindale"]) {
+    for (const name of ["Christie Navarre", "Valeriia Stobolva", "Wayne Martindale"]) {
       const link = [...chefPage.querySelectorAll<HTMLAnchorElement>('table[aria-label="Guest food preferences"] th a')].find((anchor) => anchor.textContent === name);
       expect(link?.getAttribute("href")).toMatch(/^https:\/\/www\.instagram\.com\//);
     }
@@ -289,7 +285,8 @@ describe("database-backed read-only detail pages", () => {
     findUniqueOrThrow.mockResolvedValueOnce({ guests: [{ displayName: "Pete F.", instagramUrl: null }] });
     const page = renderPage(Guests, await guestsLoader());
     const guestRows = [...page.querySelectorAll<HTMLElement>(".guest-list .link-row")];
-    expect(guestRows).toHaveLength(11);
+    expect(guestRows).toHaveLength(10);
+    expect(page.textContent).not.toContain("Christine Calvo");
     expect(page.textContent).not.toContain("Kristy Kelly");
     expect(guestRows[0]?.querySelector(".link-name")?.textContent).toBe("Kaise");
     expect(guestRows[0]?.getAttribute("href")).toBe("https://www.instagram.com/kaise.white");

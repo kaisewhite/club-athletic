@@ -37,11 +37,10 @@ const PAGES = [
  * than against whatever happens to be seeded.
  */
 /**
- * Confirmed guests on the trip — one flight card each. Moves whenever the
- * organizer assigns an open spot (Pete F. took a Bedroom 5 bunk on 2026-09-28,
- * Christine Calvo a Bedroom 4 bunk on 2026-09-29), so it is named rather than inlined as a magic 9.
+ * Confirmed guests on the trip — one flight card each. Pete F. took a Bedroom 5
+ * bunk on 2026-09-28; the current roster has ten guests after the latest cancellation.
  */
-const CONFIRMED_GUESTS = 11;
+const CONFIRMED_GUESTS = 10;
 
 const LONGEST = {
   guest: "Augustus Shewchuck", // 18 chars

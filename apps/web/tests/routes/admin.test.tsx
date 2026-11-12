@@ -40,10 +40,11 @@ describe("/admin", () => {
     expect(headers()).toEqual({ "Cache-Control": "private, no-store" });
   });
 
-  it("collapses empty fields into one Not provided line and hides a duplicate full name", async () => {
-    getAdminGuests.mockResolvedValue([{ ...guest, displayName: "Jacqueline Herrera", venmoHandle: null, flights: [] }]);
+  it("shows em dashes for empty cells and hides a duplicate full name", async () => {
+    getAdminGuests.mockResolvedValue([{ ...guest, displayName: "Jacqueline Herrera", venmoHandle: null, phone: null, instagramUrl: null, dietaryNotes: null, favoriteCocktails: null, tasks: [], flights: [] }]);
     const { text } = render(await loader());
-    expect(text).toContain("Not provided: Venmo");
+    expect(text).toContain("—");
+    expect(text).not.toContain("Not provided: Venmo");
     expect(text).not.toContain("Email");
     expect(text).toContain("No flights yet");
     expect(text.match(/Jacqueline Herrera/g)).toHaveLength(1);
@@ -54,7 +55,7 @@ describe("/admin", () => {
     expect(getAdminGuests).toHaveBeenCalledOnce();
     const { text } = render(data);
     for (const value of ["Jacqueline Herrera", "@jac-venmo", "+1 555 555 0100", "@Jacquelineann_1", "Bedroom 8 · spot 2",
-      "No shellfish", "Negroni", "Payment Done Sun 1 Nov", "Arriving", "United UA956", "Departs EWR Fri 29 Jan · 17:30", "Lands GVA Sat 30 Jan · 07:30", "Confirmation ABC123 · Terminal B"]) {
+      "No shellfish", "Negroni", "Payment · Done Sun 1 Nov", "Arriving", "United UA956", "Departs EWR Fri 29 Jan · 17:30", "Lands GVA Sat 30 Jan · 07:30", "Confirmation ABC123 · Terminal B"]) {
       expect(text).toContain(value);
     }
     // Airport-local wall times, never UTC.
@@ -62,6 +63,15 @@ describe("/admin", () => {
     expect(text).not.toContain("UTC");
     expect(text).not.toMatch(/[A-Z]+_[A-Z]+/);
     for (const removed of ["Emergency contact", "Notes", "Added via", "Form submissions", "Payments"]) expect(text).not.toContain(removed);
+  });
+
+  it("renders each admin field as its own ordered table column", async () => {
+    const { html } = render(await loader());
+    const headers = ["Guest", "Status", "Room / spot", "Venmo", "Phone", "Instagram", "Dietary", "Cocktails", "Tasks", "Flights"];
+    const headerPattern = new RegExp(headers.map((header) => `<th scope="col">${header.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}<\\/th>`).join(".*"));
+    expect(html).toMatch(headerPattern);
+    expect(html.match(/<td(?:\s|>)/g)).toHaveLength(headers.length - 1);
+    expect(html).toContain('<th class="admin-identity" scope="row">');
   });
 
   it("tracks the seven refund follow-ups on the admin page", async () => {

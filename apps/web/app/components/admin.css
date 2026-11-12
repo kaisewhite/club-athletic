@@ -1,41 +1,29 @@
-/* Spacing scale for this page: 4 / 8 / 12 / 20 / 32 / 48. Tight inside a group,
-   looser between groups, widest between guests. */
-.admin-guests {
-  --admin-space-1: 4px; --admin-space-2: 8px; --admin-space-3: 12px;
-  --admin-space-4: 20px; --admin-space-5: 32px; --admin-space-6: 48px;
-  display: grid;
-  margin-top: var(--admin-space-5);
+/* Guest roster follows the open, ruled table style used by Group Flights. */
+.admin-page { min-width: 0; }
+.admin-guest-table-wrap {
+  margin-top: 32px;
+  contain: paint;
+  overflow-x: auto;
+  border: 0;
+  border-radius: 0;
+  background: transparent;
 }
-.admin-guest {
-  display: grid;
-  grid-template-columns: minmax(180px, 220px) minmax(0, 1fr);
-  gap: var(--admin-space-4) clamp(24px, 4vw, 48px);
-  padding-block: clamp(28px, 4vw, 48px);
-  border-top: 1px solid var(--border-subtle);
+.admin-guest-table { width: max-content; min-width: 100%; border-collapse: collapse; table-layout: auto; text-align: left; background: transparent; }
+.admin-guest-table thead th {
+  padding: 14px 14px 6px; border: 0; border-bottom: 1px solid var(--border-subtle);
+  background: transparent; color: var(--text-dim); font-size: 11px; font-weight: 600; text-align: left;
+  overflow-wrap: normal; white-space: nowrap;
 }
-.admin-guest:last-child { border-bottom: 1px solid var(--border-subtle); }
-
-.admin-identity { display: flex; flex-direction: column; align-items: flex-start; gap: var(--admin-space-1); }
-.admin-identity h3 { margin: 0 0 var(--admin-space-1); font: 700 20px/1.2 var(--font-display); }
-.admin-full-name { color: var(--text-dim); font-size: 13px; }
-.admin-status { color: var(--brand-dim); font-size: 12px; font-weight: 600; }
-.admin-room { margin-top: var(--admin-space-2); color: var(--text); font-size: 14px; }
-
-.admin-details {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: var(--admin-space-5) var(--admin-space-5);
-  align-items: start;
-}
-.admin-group { display: grid; gap: var(--admin-space-3); min-width: 0; }
-.admin-group-title { margin: 0; font-size: 11px; font-weight: 500; letter-spacing: .06em; text-transform: uppercase; color: var(--text-faint); }
-.admin-rows { display: grid; gap: var(--admin-space-2); margin: 0; }
-.admin-row { display: grid; grid-template-columns: 80px minmax(0, 1fr); gap: var(--admin-space-3); align-items: baseline; }
-.admin-row dt { color: var(--text-dim); font-size: 12px; }
-.admin-row dd { margin: 0; color: var(--text); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; white-space: pre-line; }
-.admin-row a { color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
-.admin-row .guest-instagram-link, .admin-row .guest-instagram-label { display: inline-flex; align-items: center; gap: .35em; }
-.admin-row .guest-instagram-arrow { display: inline; flex: none; color: var(--brand-dim); }
+.admin-guest > th, .admin-guest > td { padding: 14px; border: 0; text-align: left; vertical-align: top; overflow-wrap: normal; white-space: nowrap; color: var(--text-muted); font-size: 13px; line-height: 1.55; }
+.admin-guest { border-top: 1px solid var(--border-subtle); }
+.admin-guest:hover { background: color-mix(in srgb, var(--surface) 55%, transparent); }
+.admin-guest > th { vertical-align: middle; font-weight: 600; }
+.admin-guest-name { display: block; color: var(--text); font: 600 14px/1.35 var(--font-display); }
+.admin-full-name { display: block; margin-top: 3px; color: var(--text-dim); font-size: 12px; }
+.admin-status { color: var(--brand-dim) !important; font-size: 13px !important; font-weight: 600; }
+.admin-empty { color: var(--text-faint); }
+.admin-guest-table td a { color: inherit; text-decoration: underline; text-decoration-color: var(--border-strong); text-underline-offset: 3px; }
+.admin-task-list { display: grid; gap: 5px; margin: 0; padding-left: 16px; }
 .admin-missing { margin: 0; color: var(--text-faint); font-size: 12px; line-height: 1.5; }
 .admin-task-done { color: var(--brand-dim); }
 .admin-task-open { color: var(--text-dim); }
@@ -49,9 +37,8 @@
 .admin-folie-group > .admin-missing { margin-top: 12px; }
 .admin-refunds ul { display: flex; flex-wrap: wrap; gap: 8px 24px; margin: 12px 0 0; padding: 0; list-style: none; color: var(--text-muted); font-size: 14px; }
 
-.admin-flights { grid-column: 1 / -1; }
-.admin-flight-legs { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: var(--admin-space-4) var(--admin-space-5); }
-.admin-flight { display: grid; gap: var(--admin-space-1); }
+.admin-flight-legs { display: grid; gap: 12px; }
+.admin-flight { display: grid; gap: 4px; }
 .admin-flight-direction { color: var(--text-dim); font-size: 12px; font-weight: 600; }
 .admin-flight-route { font-size: 15px; font-weight: 600; }
 .admin-flight-route svg { display: inline; vertical-align: -0.125em; }
@@ -61,9 +48,16 @@
 
 @media (max-width: 859px) {
   .admin-folie-groups { grid-template-columns: minmax(0, 1fr); gap: 20px; }
-  .admin-guest { grid-template-columns: minmax(0, 1fr); gap: var(--admin-space-4); padding-block: var(--admin-space-5); }
-  .admin-identity { flex-flow: row wrap; align-items: baseline; column-gap: var(--admin-space-3); }
-  .admin-identity h3 { flex-basis: 100%; margin: 0; }
-  .admin-room { margin-top: 0; }
-  .admin-details { grid-template-columns: minmax(0, 1fr); gap: var(--admin-space-4); }
+  .admin-guest-cards { display: grid; gap: 0; margin: 32px 0 0; padding: 0; list-style: none; }
+  .admin-guest-card { min-width: 0; overflow-wrap: anywhere; padding: 16px 0 24px; border-top: 1px solid var(--border-subtle); background: transparent; }
+  .admin-guest-card h3 { min-width: 0; margin: 0 0 8px; font: 600 16px/1.35 var(--font-display); }
+  .admin-guest-card .admin-guest-name { font: inherit; }
+  .admin-mobile-fields { display: grid; gap: 0; margin: 0; }
+  .admin-mobile-fields > div { display: grid; grid-template-columns: minmax(84px, 30%) minmax(0, 1fr); gap: 12px; padding: 9px 0; border-top: 1px solid var(--border-subtle); }
+  .admin-mobile-fields dt { color: var(--text-dim); font-size: 10px; font-weight: 600; letter-spacing: .06em; line-height: 1.4; text-transform: uppercase; }
+  .admin-mobile-fields dd { min-width: 0; margin: 0; color: var(--text-muted); font-size: 14px; line-height: 1.5; overflow-wrap: anywhere; white-space: normal; }
+  .admin-mobile-fields .admin-flight { font-size: 13px; }
+  .admin-mobile-fields .admin-flight-route { font-size: 14px; }
+  .admin-mobile-fields .admin-flight-times { font-size: 13px; }
+  .admin-mobile-fields .admin-task-list { padding-left: 16px; }
 }

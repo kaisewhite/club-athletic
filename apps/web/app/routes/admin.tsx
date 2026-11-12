@@ -1,3 +1,4 @@
+import { useSyncExternalStore, type ReactNode } from "react";
 import { getAdminGuests, getFolieDouceVotes, type AdminGuests } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramLink } from "../components/guest-instagram-link";
@@ -22,22 +23,19 @@ const day = new Intl.DateTimeFormat("en-GB", { timeZone: "UTC", weekday: "short"
 const formatDay = (value: Date | string) => day.format(new Date(value));
 const humanize = (value: string) => value.charAt(0).toUpperCase() + value.slice(1).toLowerCase().replaceAll("_", " ");
 
-type Row = { label: string; value: React.ReactNode };
-
-/** One labelled group. Filled rows first; empty ones collapse into a single "Not provided" line. */
-function Group({ title, rows }: { title: string; rows: Row[] }) {
-  const filled = rows.filter((row) => row.value !== null && row.value !== undefined && row.value !== "");
-  const missing = rows.filter((row) => !filled.includes(row)).map((row) => row.label);
-  return <section className="admin-group" aria-label={title}>
-    <h4 className="admin-group-title">{title}</h4>
-    {filled.length > 0 && <dl className="admin-rows">{filled.map((row) => <div className="admin-row" key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}</dl>}
-    {missing.length > 0 && <p className="admin-missing">Not provided: {missing.join(", ")}</p>}
-    {rows.length === 0 && <p className="admin-missing">None</p>}
-  </section>;
-}
-
 type AdminFlight = AdminGuests[number]["flights"][number];
 type FolieDouceVote = Awaited<ReturnType<typeof getFolieDouceVotes>>["vip"][number];
+type GuestField = { label: string; value: ReactNode };
+const mobileQuery = "(max-width: 859px)";
+
+function subscribeMobile(onChange: () => void) {
+  const media = window.matchMedia(mobileQuery);
+  media.addEventListener("change", onChange);
+  return () => media.removeEventListener("change", onChange);
+}
+
+const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
+const serverSnapshot = () => false;
 
 function FolieDouceGroup({ title, votes }: { title: string; votes: FolieDouceVote[] }) {
   return <section className="admin-folie-group" aria-label={title}>
@@ -65,42 +63,65 @@ function FlightLeg({ flight }: { flight: AdminFlight }) {
   </div>;
 }
 
-function GuestCard({ guest }: { guest: AdminGuests[number] }) {
+function guestFields(guest: AdminGuests[number]): GuestField[] {
   const fullName = [guest.firstName, guest.lastName].filter(Boolean).join(" ");
   const instagram = guest.instagramUrl && <GuestInstagramLink displayName={guest.instagramUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@").replace(/\/$/, "")} instagramUrl={guest.instagramUrl} />;
-  return <article className="admin-guest" aria-labelledby={`admin-guest-${guest.id}`}>
-    <header className="admin-identity">
-      <h3 id={`admin-guest-${guest.id}`}>{guest.displayName}</h3>
-      {fullName !== guest.displayName && <span className="admin-full-name">{fullName}</span>}
-      <span className="admin-status">{humanize(guest.status)}</span>
-      <span className="admin-room">{guest.spot ? `${guest.spot.room.name} · spot ${guest.spot.index}` : guest.preferredRoom ? `${guest.preferredRoom.name} · selected` : "No room yet"}</span>
-    </header>
-    <div className="admin-details">
-      <Group title="Contact" rows={[
-        { label: "Venmo", value: guest.venmoHandle },
-        { label: "Phone", value: guest.phone && <a href={`tel:${guest.phone}`}>{guest.phone}</a> },
-        { label: "Instagram", value: instagram },
-      ]} />
-      <Group title="Food & drink" rows={[
-        { label: "Dietary", value: guest.dietaryNotes },
-        { label: "Cocktails", value: guest.favoriteCocktails },
-      ]} />
-      <Group title="Tasks" rows={guest.tasks.map((task) => ({
-        label: humanize(task.type),
-        value: <span className={task.done ? "admin-task-done" : "admin-task-open"}>{task.done ? `Done${task.completedAt ? ` ${formatDay(task.completedAt)}` : ""}` : "Not done"}{task.notes ? ` · ${task.notes}` : ""}</span>,
-      }))} />
-      <section className="admin-group admin-flights" aria-label="Flights">
-        <h4 className="admin-group-title">Flights</h4>
-        {guest.flights.length ? <div className="admin-flight-legs">{guest.flights.map((flight) => <FlightLeg key={flight.id} flight={flight} />)}</div> : <p className="admin-missing">No flights yet</p>}
-      </section>
-    </div>
-  </article>;
+  const room = guest.spot ? `${guest.spot.room.name} · spot ${guest.spot.index}` : guest.preferredRoom ? `${guest.preferredRoom.name} · selected` : "No room yet";
+  return [
+    { label: "Status", value: <span className="admin-status">{humanize(guest.status)}</span> },
+    { label: "Room / spot", value: room },
+    { label: "Venmo", value: guest.venmoHandle || <span className="admin-empty">—</span> },
+    { label: "Phone", value: guest.phone ? <a href={`tel:${guest.phone}`}>{guest.phone}</a> : <span className="admin-empty">—</span> },
+    { label: "Instagram", value: instagram || <span className="admin-empty">—</span> },
+    { label: "Dietary", value: guest.dietaryNotes || <span className="admin-empty">—</span> },
+    { label: "Cocktails", value: guest.favoriteCocktails || <span className="admin-empty">—</span> },
+    { label: "Tasks", value: guest.tasks.length ? <ul className="admin-task-list">{guest.tasks.map((task) => <li key={task.id}><span className={task.done ? "admin-task-done" : "admin-task-open"}>{humanize(task.type)} · {task.done ? `Done${task.completedAt ? ` ${formatDay(task.completedAt)}` : ""}` : "Not done"}{task.notes ? ` · ${task.notes}` : ""}</span></li>)}</ul> : <span className="admin-empty">None</span> },
+    { label: "Flights", value: guest.flights.length ? <div className="admin-flight-legs">{guest.flights.map((flight) => <FlightLeg key={flight.id} flight={flight} />)}</div> : <span className="admin-empty">No flights yet</span> },
+  ];
+}
+
+function GuestName({ guest }: { guest: AdminGuests[number] }) {
+  const fullName = [guest.firstName, guest.lastName].filter(Boolean).join(" ");
+  return <>
+    <span className="admin-guest-name">{guest.displayName}</span>
+    {fullName !== guest.displayName && <span className="admin-full-name">{fullName}</span>}
+  </>;
+}
+
+function GuestRow({ guest }: { guest: AdminGuests[number] }) {
+  return <tr className="admin-guest">
+    <th className="admin-identity" scope="row"><GuestName guest={guest} /></th>
+    {guestFields(guest).map((field) => <td key={field.label}>{field.value}</td>)}
+  </tr>;
+}
+
+function GuestCard({ guest }: { guest: AdminGuests[number] }) {
+  return <li className="admin-guest-card">
+    <article aria-labelledby={`admin-guest-${guest.id}`}>
+      <h3 id={`admin-guest-${guest.id}`}><GuestName guest={guest} /></h3>
+      <dl className="admin-mobile-fields">
+        {guestFields(guest).map((field) => <div key={field.label}><dt>{field.label}</dt><dd>{field.value}</dd></div>)}
+      </dl>
+    </article>
+  </li>;
+}
+
+function GuestRoster({ guests }: { guests: AdminGuests }) {
+  const mobile = useSyncExternalStore(subscribeMobile, mobileSnapshot, serverSnapshot);
+  if (mobile) return <ul className="admin-guest-cards" aria-label="Guest details">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</ul>;
+
+  return <div className="admin-guest-table-wrap">
+    <table className="admin-guest-table" aria-label="Guest details">
+      <thead><tr><th scope="col">Guest</th><th scope="col">Status</th><th scope="col">Room / spot</th><th scope="col">Venmo</th><th scope="col">Phone</th><th scope="col">Instagram</th><th scope="col">Dietary</th><th scope="col">Cocktails</th><th scope="col">Tasks</th><th scope="col">Flights</th></tr></thead>
+      <tbody>{guests.map((guest) => <GuestRow key={guest.id} guest={guest} />)}</tbody>
+    </table>
+  </div>;
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
   const { guests, folieDouceVotes } = loaderData;
   const voteCount = folieDouceVotes.vip.length + folieDouceVotes.generalAdmission.length;
-  return <section aria-labelledby="admin-heading">
+  return <section className="admin-page" aria-labelledby="admin-heading">
     <PageHeading id="admin-heading" sub={`${guests.length} guests · contact details, rooms, preferences, flights and ${voteCount} La Folie Douce responses.`}>Admin</PageHeading>
     <section className="admin-folie" aria-labelledby="admin-folie-heading">
       <h2 id="admin-folie-heading">La Folie Douce</h2>
@@ -122,6 +143,6 @@ export default function Admin({ loaderData }: Route.ComponentProps) {
         <li>Elijah</li>
       </ul>
     </section>
-    <div className="admin-guests">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</div>
+    <GuestRoster guests={guests} />
   </section>;
 }
