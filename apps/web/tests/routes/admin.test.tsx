@@ -65,13 +65,13 @@ describe("/admin", () => {
     for (const removed of ["Emergency contact", "Notes", "Added via", "Form submissions", "Payments"]) expect(text).not.toContain(removed);
   });
 
-  it("renders each admin field as its own ordered table column", async () => {
+  it("renders each guest as a block with the nine fields in order", async () => {
     const { html } = render(await loader());
-    const headers = ["Guest", "Status", "Room / spot", "Venmo", "Phone", "Instagram", "Dietary", "Cocktails", "Tasks", "Flights"];
-    const headerPattern = new RegExp(headers.map((header) => `<th scope="col">${header.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")}<\\/th>`).join(".*"));
-    expect(html).toMatch(headerPattern);
-    expect(html.match(/<td(?:\s|>)/g)).toHaveLength(headers.length - 1);
-    expect(html).toContain('<th class="admin-identity" scope="row">');
+    expect(html).not.toMatch(/<table(?:\s|>)/);
+    expect(html).toContain('<ul class="admin-guest-cards" aria-label="Guest details">');
+    expect(html).toContain('<li class="admin-guest-card"><article aria-labelledby="admin-guest-g1">');
+    const labels = ["Status", "Room / spot", "Venmo", "Phone", "Instagram", "Dietary", "Cocktails", "Tasks", "Flights"];
+    expect(html).toMatch(new RegExp(labels.map((label) => `<dt>${label}</dt>`).join(".*")));
   });
 
   it("tracks the seven refund follow-ups on the admin page", async () => {

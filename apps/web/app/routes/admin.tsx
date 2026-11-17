@@ -1,4 +1,4 @@
-import { useSyncExternalStore, type ReactNode } from "react";
+import type { ReactNode } from "react";
 import { getAdminGuests, getFolieDouceVotes, type AdminGuests } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramLink } from "../components/guest-instagram-link";
@@ -26,17 +26,6 @@ const humanize = (value: string) => value.charAt(0).toUpperCase() + value.slice(
 type AdminFlight = AdminGuests[number]["flights"][number];
 type FolieDouceVote = Awaited<ReturnType<typeof getFolieDouceVotes>>["vip"][number];
 type GuestField = { label: string; value: ReactNode };
-const mobileQuery = "(max-width: 859px)";
-
-function subscribeMobile(onChange: () => void) {
-  const media = window.matchMedia(mobileQuery);
-  media.addEventListener("change", onChange);
-  return () => media.removeEventListener("change", onChange);
-}
-
-const mobileSnapshot = () => window.matchMedia(mobileQuery).matches;
-const serverSnapshot = () => false;
-
 function FolieDouceGroup({ title, votes }: { title: string; votes: FolieDouceVote[] }) {
   return <section className="admin-folie-group" aria-label={title}>
     <h3>{title} <span>{votes.length}</span></h3>
@@ -64,7 +53,6 @@ function FlightLeg({ flight }: { flight: AdminFlight }) {
 }
 
 function guestFields(guest: AdminGuests[number]): GuestField[] {
-  const fullName = [guest.firstName, guest.lastName].filter(Boolean).join(" ");
   const instagram = guest.instagramUrl && <GuestInstagramLink displayName={guest.instagramUrl.replace(/^https?:\/\/(www\.)?instagram\.com\//, "@").replace(/\/$/, "")} instagramUrl={guest.instagramUrl} />;
   const room = guest.spot ? `${guest.spot.room.name} · spot ${guest.spot.index}` : guest.preferredRoom ? `${guest.preferredRoom.name} · selected` : "No room yet";
   return [
@@ -88,13 +76,6 @@ function GuestName({ guest }: { guest: AdminGuests[number] }) {
   </>;
 }
 
-function GuestRow({ guest }: { guest: AdminGuests[number] }) {
-  return <tr className="admin-guest">
-    <th className="admin-identity" scope="row"><GuestName guest={guest} /></th>
-    {guestFields(guest).map((field) => <td key={field.label}>{field.value}</td>)}
-  </tr>;
-}
-
 function GuestCard({ guest }: { guest: AdminGuests[number] }) {
   return <li className="admin-guest-card">
     <article aria-labelledby={`admin-guest-${guest.id}`}>
@@ -107,15 +88,7 @@ function GuestCard({ guest }: { guest: AdminGuests[number] }) {
 }
 
 function GuestRoster({ guests }: { guests: AdminGuests }) {
-  const mobile = useSyncExternalStore(subscribeMobile, mobileSnapshot, serverSnapshot);
-  if (mobile) return <ul className="admin-guest-cards" aria-label="Guest details">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</ul>;
-
-  return <div className="admin-guest-table-wrap">
-    <table className="admin-guest-table" aria-label="Guest details">
-      <thead><tr><th scope="col">Guest</th><th scope="col">Status</th><th scope="col">Room / spot</th><th scope="col">Venmo</th><th scope="col">Phone</th><th scope="col">Instagram</th><th scope="col">Dietary</th><th scope="col">Cocktails</th><th scope="col">Tasks</th><th scope="col">Flights</th></tr></thead>
-      <tbody>{guests.map((guest) => <GuestRow key={guest.id} guest={guest} />)}</tbody>
-    </table>
-  </div>;
+  return <ul className="admin-guest-cards" aria-label="Guest details">{guests.map((guest) => <GuestCard key={guest.id} guest={guest} />)}</ul>;
 }
 
 export default function Admin({ loaderData }: Route.ComponentProps) {
