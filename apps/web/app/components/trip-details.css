@@ -224,7 +224,7 @@
 .guest-link-entry .link-row > .text-accent { margin-left: auto; }
 .guest-profile-note { margin-left: auto; color: var(--text-dim); font-size: 12px; }
 .guest-list .guest-link-entry .link-row { min-height: 66px; }
-.guest-actions { display: flex; justify-content: flex-start; margin: 18px 0; }
+.guest-actions { display: flex; flex-wrap: wrap; justify-content: flex-start; gap: 8px; margin: 18px 0; }
 .guest-copy-all { display: inline-flex; align-items: center; gap: 6px; min-height: 28px; padding: 0 4px; border: 0; background: transparent; color: var(--text-muted); font: inherit; font-size: 12px; cursor: pointer; }
 @media (max-width: 859px) { .guest-copy-all { min-height: 44px; padding-inline: 8px; } }
 .guest-copy-all svg { width: 14px; height: 14px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; }

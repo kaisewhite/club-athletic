@@ -257,8 +257,8 @@ export async function getLinks(tripKey = DEFAULT_TRIP_KEY) {
 export async function getGuestInstagramProfiles(tripKey = DEFAULT_TRIP_KEY) {
   return withReadDatabase(async (db) => (await db.trip.findUniqueOrThrow({
     where: { seedKey: tripKey },
-    select: { guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { displayName: true, instagramUrl: true } } },
-  })).guests.map(({ displayName, instagramUrl }) => ({ displayName, href: instagramUrl ?? undefined })));
+    select: { guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { displayName: true, firstName: true, lastName: true, instagramUrl: true } } },
+  })).guests.map(({ displayName, firstName, lastName, instagramUrl }) => ({ displayName, firstName, lastName, href: instagramUrl ?? undefined })));
 }
 
 export async function getFolieDouceVotes(tripKey = DEFAULT_TRIP_KEY) {

@@ -3,6 +3,7 @@ import { getGuestInstagramProfiles } from "@/lib/db/repository.server";
 import { PageHeading } from "../components/trip-details";
 import { GuestInstagramAvatar } from "../components/guest-instagram-preview";
 import { CopyAllLinksButton } from "../components/copy-all-links-button";
+import { CopyAllNamesButton } from "../components/copy-all-names-button";
 import { guestInstagramProfiles } from "../lib/guest-instagrams";
 import type { Route } from "./+types/guests";
 import { ArrowText } from "../components/arrow-text";
@@ -18,13 +19,16 @@ export async function loader() {
   const guestProfiles = await getGuestInstagramProfiles();
   const profiles = new Map<string, GuestProfile>(guestInstagramProfiles.map((profile) => [profile.displayName, profile] as const));
   guestProfiles.forEach((profile) => profiles.set(profile.displayName, profile));
-  return { guestProfiles: [...profiles.values()] };
+  return { guestProfiles: [...profiles.values()], confirmedGuestNames: guestProfiles.map(({ firstName, lastName }) => ({ firstName, lastName })) };
 }
 
 export default function Guests({ loaderData }: Route.ComponentProps) {
   return <section aria-labelledby="guests-heading">
     <PageHeading id="guests-heading" sub="Everyone on the trip. Guests with Instagram profiles link directly.">Guests</PageHeading>
-    <div className="guest-actions"><CopyAllLinksButton links={loaderData.guestProfiles.flatMap(({ href }) => href ? [href] : [])} /></div>
+    <div className="guest-actions">
+      <CopyAllLinksButton links={loaderData.guestProfiles.flatMap(({ href }) => href ? [href] : [])} />
+      <CopyAllNamesButton guests={loaderData.confirmedGuestNames} />
+    </div>
     <div className="guest-directory">
     <div className="guest-list">
       {loaderData.guestProfiles.map(({ displayName, href }) => <div className="guest-link-entry" key={displayName}>
