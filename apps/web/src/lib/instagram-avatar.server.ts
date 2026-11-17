@@ -4,6 +4,7 @@ export type InstagramAvatarFetcher = (input: string | URL, init?: RequestInit) =
 const MAX_HANDLE_LENGTH = 30;
 const MAX_PROFILE_HTML_BYTES = 3 * 1024 * 1024;
 const MAX_IMAGE_BYTES = 5 * 1024 * 1024;
+const MAX_AVATAR_DIMENSION = 1024;
 const CACHE_TTL_MS = 6 * 60 * 60 * 1000;
 const FAILURE_TTL_MS = 2 * 60 * 1000;
 const MAX_CACHE_ENTRIES = 200;
@@ -104,6 +105,20 @@ async function readLimitedBytes(response: Response, maximum: number) {
   return bytes;
 }
 
+function isUsableAvatar(bytes: Uint8Array, contentType: string) {
+  if (!bytes.length) return false;
+  // Instagram can return its 4168px generic account graphic as a successful
+  // profile image to server requests. Real profile thumbnails are much smaller.
+  if (contentType === "image/png" && bytes.length >= 24 &&
+    bytes.subarray(0, 8).every((value, index) => value === [137, 80, 78, 71, 13, 10, 26, 10][index])) {
+    const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+    const width = view.getUint32(16);
+    const height = view.getUint32(20);
+    return width > 0 && height > 0 && width <= MAX_AVATAR_DIMENSION && height <= MAX_AVATAR_DIMENSION;
+  }
+  return true;
+}
+
 export function createInstagramAvatarResolver(fetcher: InstagramAvatarFetcher = fetch, now = Date.now) {
   const cache = new Map<string, { expiresAt: number; avatar: InstagramAvatar | null }>();
   const pending = new Map<string, Promise<InstagramAvatar | null>>();
@@ -131,7 +146,7 @@ export function createInstagramAvatarResolver(fetcher: InstagramAvatarFetcher = 
       const contentType = imageResponse.headers.get("content-type")?.split(";")[0]?.trim().toLowerCase() ?? "";
       if (!imageResponse.ok || !allowedImageTypes.has(contentType)) return null;
       const bytes = await readLimitedBytes(imageResponse, MAX_IMAGE_BYTES);
-      return bytes?.length ? { bytes, contentType } : null;
+      return bytes && isUsableAvatar(bytes, contentType) ? { bytes, contentType } : null;
     } catch {
       return null;
     }

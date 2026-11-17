@@ -14,15 +14,16 @@ export async function loader() {
   const occupantsByRoom = new Map(roomData.floors.flatMap((floor) => floor.rooms.map((room) => [room.id, room.spots
     .filter((spot) => spot.status === "ASSIGNED" && spot.guest)
     .map((spot) => ({ displayName: spot.guest!.displayName, instagramUrl: spot.guest!.instagramUrl }))] as const)));
-  return { rooms: data.openRooms.filter((room) => room.openCount > 0).map((room) => ({
+  const rooms = roomData.floors.flatMap((floor) => floor.rooms.map((room) => ({
     id: room.id, name: room.name, shortName: room.shortName, type: room.type,
-    floorName: room.floorName, openCount: room.openCount, occupants: occupantsByRoom.get(room.id) ?? [],
-    priceLabel: room.priceLabel,
+    floorName: floor.name, openCount: room.openCount, occupants: occupantsByRoom.get(room.id) ?? [],
+    priceLabel: room.pricePerPerson === null ? null : formatPrice.format(Number(room.pricePerPerson)),
     totalPriceLabel: room.pricePerPerson === null || addOnsPerPerson === null
       ? null
       : formatPrice.format(Number(room.pricePerPerson) + addOnsPerPerson),
     description: formatRoomDescription(room.type, room.description),
-  })) };
+  })));
+  return { rooms };
 }
 
 export function meta() {

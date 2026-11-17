@@ -1,5 +1,5 @@
 import { describe, expect, it, vi } from "vitest";
-import { saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError } from "../../src/lib/db/guest-submissions.server";
+import { findGuestQuestionnaireResume, saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError } from "../../src/lib/db/guest-submissions.server";
 import { guestDetailsSchema } from "../../src/lib/guest-details-schema";
 
 const details = guestDetailsSchema.parse({
@@ -19,6 +19,22 @@ function dependencies(tx: Record<string, unknown>, options: { existingSubmission
 }
 
 describe("guest details writes", () => {
+  it("resumes a normalized full-name match with only its assigned room id", async () => {
+    const withDatabase = async (operation: (db: unknown) => Promise<unknown>) => operation({
+      findResumeCandidates: async () => [{ id: "guest-1", firstName: "Caroline", lastName: "Brüder", status: "CONFIRMED", submissions: [{ processedAt: new Date() }], spot: { status: "ASSIGNED", roomId: "room-4" } }],
+    });
+    const result = await findGuestQuestionnaireResume("Caroline", "Bruder", { withDatabase: withDatabase as never });
+    expect(result).toEqual({ kind: "resume", roomId: "room-4" });
+  });
+
+  it("does not resume ambiguous matches, pending guests, or guests without a completed submission", async () => {
+    const run = (candidates: unknown[]) => findGuestQuestionnaireResume("Alex", "Guest", { withDatabase: (async (operation: (db: unknown) => Promise<unknown>) => operation({ findResumeCandidates: async () => candidates })) as never });
+    const base = { id: "guest-1", firstName: "Alex", lastName: "Guest", status: "CONFIRMED", submissions: [{ processedAt: new Date() }], spot: { status: "ASSIGNED", roomId: "room-1" } };
+    expect(await run([base, { ...base, id: "guest-2" }])).toEqual({ kind: "ambiguous" });
+    expect(await run([{ ...base, status: "PENDING" }])).toEqual({ kind: "not-found" });
+    expect(await run([{ ...base, submissions: [] }])).toEqual({ kind: "not-found" });
+  });
+
   it("updates one normalized roster match and stores only the submission identity", async () => {
     const calls: unknown[] = [];
     const tx = {

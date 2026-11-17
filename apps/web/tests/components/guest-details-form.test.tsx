@@ -9,7 +9,7 @@ vi.mock("react-router", async (importOriginal) => ({ ...(await importOriginal<ty
 const rooms = [
   { id: "room-1", name: "Room One", shortName: "Room 1", type: "QUAD_BUNK", floorName: "Middle floor", openCount: 2, occupants: [{ displayName: "Alex Guest", instagramUrl: "https://www.instagram.com/alexguest/" }, { displayName: "Sam Guest", instagramUrl: null }], priceLabel: "€1,700", totalPriceLabel: "€2,350.15", description: "Two single beds" },
   { id: "room-2", name: "Room Two", shortName: "Room 2", type: "BUNK_CABIN", floorName: "Top floor", openCount: 1, occupants: [], priceLabel: null, totalPriceLabel: null, description: null },
-  { id: "room-full", name: "Full Room", shortName: "Full", type: "DOUBLE", floorName: "Lower floor", openCount: 0, occupants: [{ displayName: "Jamie Guest", instagramUrl: null }], priceLabel: null, totalPriceLabel: null, description: null },
+  { id: "room-full", name: "Full Room", shortName: "Full", type: "DOUBLE", floorName: "Lower floor", openCount: 0, occupants: [{ displayName: "Jamie Guest", instagramUrl: null }], priceLabel: "€1,000", totalPriceLabel: "€1,500", description: null },
 ];
 
 let root: Root | undefined;
@@ -151,7 +151,7 @@ describe("GuestDetailsForm", () => {
 
     expect(container.textContent).toContain("Payment & cancellation policy");
     expect(container.textContent).toContain("there is no deposit");
-    expect(fetch).toHaveBeenCalledTimes(1);
+    expect(fetch).toHaveBeenCalledTimes(2);
     await clickButton("Continue");
     expect(container.textContent).toContain("Trip details & group chat");
     expect(container.querySelector('a[href="https://meribel.clubathletic.org/"]')).toBeDefined();
@@ -187,7 +187,9 @@ describe("GuestDetailsForm", () => {
   });
 
   it("returns to step 1 and refreshes the room list after a 409", async () => {
-    const fetch = vi.fn(async () => ({ ok: false, status: 409, json: async () => ({ ok: false, code: "ROOM_FULL", error: "That room no longer has an open spot. Choose another room." }) }));
+    const fetch = vi.fn(async (_url: string, init: RequestInit) => String(init.body).includes('"intent":"resume"')
+      ? ({ ok: true, status: 200, json: async () => ({ ok: true, resume: false }) })
+      : ({ ok: false, status: 409, json: async () => ({ ok: false, code: "ROOM_FULL", error: "That room no longer has an open spot. Choose another room." }) }));
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
     await clickButton("Start");
@@ -209,7 +211,8 @@ describe("GuestDetailsForm", () => {
     let finalAttempts = 0;
     const fetch = vi.fn(async (_url: string, _init: RequestInit) => {
       finalAttempts++;
-      return finalAttempts === 1 ? { ok: true, json: async () => { throw new Error("Invalid JSON"); } } : { ok: true, json: async () => ({ ok: true, created: true }) };
+      if (finalAttempts === 1) return { ok: true, json: async () => ({ ok: true, resume: false }) };
+      return finalAttempts === 2 ? { ok: true, json: async () => { throw new Error("Invalid JSON"); } } : { ok: true, json: async () => ({ ok: true, created: true }) };
     });
     vi.stubGlobal("fetch", fetch);
     await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
@@ -230,10 +233,28 @@ describe("GuestDetailsForm", () => {
     await clickButton("Continue");
     await clickButton("Finish");
     expect(container.textContent).toContain("Thanks — you’re all set.");
-    expect(fetch).toHaveBeenCalledTimes(2);
-    const firstBody = JSON.parse(String(fetch.mock.calls[0]?.[1]?.body));
-    const retryBody = JSON.parse(String(fetch.mock.calls[1]?.[1]?.body));
+    expect(fetch).toHaveBeenCalledTimes(3);
+    const firstBody = JSON.parse(String(fetch.mock.calls[1]?.[1]?.body));
+    const retryBody = JSON.parse(String(fetch.mock.calls[2]?.[1]?.body));
     expect(retryBody.submissionId).toBe(firstBody.submissionId);
     expect(retryBody.firstName).toBe("Alex");
+  });
+
+  it("matches a returning guest by name and resumes at the saved payment step", async () => {
+    const fetch = vi.fn(async (_url: string, init: RequestInit) => ({
+      ok: true, status: 200,
+      json: async () => String(init.body).includes('"intent":"resume"') ? { ok: true, resume: true, roomId: "room-full" } : { ok: true },
+    }));
+    vi.stubGlobal("fetch", fetch);
+    await act(async () => root!.render(<GuestDetailsForm rooms={rooms} />));
+    await clickButton("Start");
+    await enter("guest-firstName", "Caroline");
+    await enter("guest-lastName", "Bruder");
+    await clickButton("Continue");
+    expect(container.querySelector("#guest-question-title")?.textContent).toBe("Payment & cancellation policy");
+    expect(container.textContent).toContain("Your total for Full Room");
+    expect(container.querySelector<HTMLInputElement>('#guest-room-full')).toBeNull();
+    await clickButton("Continue");
+    expect(fetch).toHaveBeenCalledTimes(1);
   });
 });

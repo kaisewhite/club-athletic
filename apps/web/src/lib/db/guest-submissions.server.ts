@@ -9,6 +9,7 @@ type SubmissionTransaction = Pick<Prisma.TransactionClient, "trip" | "guest" | "
 type SubmissionDatabase = {
   transaction<T>(operation: (tx: SubmissionTransaction) => Promise<T>): Promise<T>;
   findSubmission(submissionId: string): Promise<{ guestId: string; status: string } | null>;
+  findResumeCandidates(firstName: string, lastName: string): Promise<{ id: string; firstName: string; lastName: string; status: string; submissions: { processedAt: Date | null }[]; spot: { status: string; roomId: string } | null }[]>;
 };
 type WithSubmissionDatabase = <T>(operation: (db: SubmissionDatabase) => Promise<T>) => Promise<T>;
 type Dependencies = { withDatabase?: WithSubmissionDatabase; createId?: () => string; now?: () => Date };
@@ -31,6 +32,15 @@ const withSubmissionDatabase: WithSubmissionDatabase = async (operation) => {
     return await operation({
       transaction: (callback) => db.$transaction((tx) => callback(tx), { maxWait: 10_000, timeout: 20_000, isolationLevel: Prisma.TransactionIsolationLevel.Serializable }),
       findSubmission: (submissionId) => db.guestSubmission.findUnique({ where: { submissionId }, select: { guestId: true, guest: { select: { status: true } } } }).then((row) => row ? { guestId: row.guestId, status: row.guest.status } : null),
+      findResumeCandidates: async (firstName, lastName) => {
+        const trip = await db.trip.findUnique({ where: { seedKey: TRIP_KEY }, select: { id: true } });
+        if (!trip) return [];
+        return db.guest.findMany({ where: { tripId: trip.id }, select: {
+          id: true, firstName: true, lastName: true, status: true,
+          submissions: { where: { processedAt: { not: null } }, orderBy: { submittedAt: "desc" }, take: 1, select: { processedAt: true } },
+          spot: { select: { status: true, roomId: true } },
+        } }).then((guests) => guests.filter((guest) => normalizeName(guest.firstName) === normalizeName(firstName) && normalizeName(guest.lastName) === normalizeName(lastName)));
+      },
     });
   } finally {
     await db.$disconnect();
@@ -43,6 +53,18 @@ function normalizeName(value: string) {
 
 function isPrismaCode(error: unknown, code: string) {
   return error instanceof Prisma.PrismaClientKnownRequestError && error.code === code;
+}
+
+/** Returns only the next questionnaire step and room, never the guest's saved contact or preference data. */
+export async function findGuestQuestionnaireResume(firstName: string, lastName: string, deps: Pick<Dependencies, "withDatabase"> = {}) {
+  const withDatabase = deps.withDatabase ?? withSubmissionDatabase;
+  return withDatabase(async (db) => {
+    const matches = await db.findResumeCandidates(firstName, lastName);
+    if (matches.length > 1) return { kind: "ambiguous" as const };
+    const guest = matches[0];
+    if (!guest || guest.status !== "CONFIRMED" || !guest.submissions.length || guest.spot?.status !== "ASSIGNED") return { kind: "not-found" as const };
+    return { kind: "resume" as const, roomId: guest.spot.roomId };
+  });
 }
 
 export async function saveGuestDetails(

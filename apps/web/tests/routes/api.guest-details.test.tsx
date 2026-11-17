@@ -1,11 +1,11 @@
 import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 
-const { saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError } = vi.hoisted(() => {
+const { saveGuestDetails, findGuestQuestionnaireResume, GuestDetailsNameMatchError, GuestDetailsRoomFullError } = vi.hoisted(() => {
   class GuestDetailsNameMatchError extends Error {}
   class GuestDetailsRoomFullError extends Error { constructor() { super("That room no longer has an open spot. Choose another room."); } }
-  return { saveGuestDetails: vi.fn(), GuestDetailsNameMatchError, GuestDetailsRoomFullError };
+  return { saveGuestDetails: vi.fn(), findGuestQuestionnaireResume: vi.fn(), GuestDetailsNameMatchError, GuestDetailsRoomFullError };
 });
-vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, GuestDetailsNameMatchError, GuestDetailsRoomFullError }));
+vi.mock("../../src/lib/db/guest-submissions.server", () => ({ saveGuestDetails, findGuestQuestionnaireResume, GuestDetailsNameMatchError, GuestDetailsRoomFullError }));
 import { action, loader } from "../../app/routes/api.guest-details";
 
 const valid = {
@@ -13,7 +13,7 @@ const valid = {
   venmoHandle: "@alex-guest", instagramHandle: "@alex.guest", dietaryNotes: "None", favoriteCocktails: "Margarita", roomId: "room-1",
 };
 
-beforeEach(() => { saveGuestDetails.mockReset(); saveGuestDetails.mockResolvedValue({ duplicate: false, created: false, guestId: "guest-1" }); });
+beforeEach(() => { saveGuestDetails.mockReset(); saveGuestDetails.mockResolvedValue({ duplicate: false, created: false, guestId: "guest-1" }); findGuestQuestionnaireResume.mockReset().mockResolvedValue({ kind: "not-found" }); });
 afterEach(() => vi.restoreAllMocks());
 
 function request(body: unknown, init: { method?: string; headers?: Record<string, string> } = {}) {
@@ -28,6 +28,14 @@ describe("guest details API", () => {
     const payload = { kind: "field", submissionId: valid.submissionId, field: "firstName", value: "Alex" };
     const response = await action({ request: request(payload) });
     expect(response.status).toBe(400);
+    expect(saveGuestDetails).not.toHaveBeenCalled();
+  });
+  it("looks up a previously saved questionnaire by full name without exposing guest details", async () => {
+    findGuestQuestionnaireResume.mockResolvedValue({ kind: "resume", roomId: "room-4" });
+    const response = await action({ request: request({ intent: "resume", firstName: "Caroline", lastName: "Bruder" }) });
+    expect(response.status).toBe(200);
+    expect(await response.json()).toEqual({ ok: true, resume: true, roomId: "room-4" });
+    expect(findGuestQuestionnaireResume).toHaveBeenCalledWith("Caroline", "Bruder");
     expect(saveGuestDetails).not.toHaveBeenCalled();
   });
   it("accepts a validated submission and passes normalized values to the write boundary", async () => {

@@ -1,6 +1,6 @@
 import { createTextLimiter } from "../../src/lib/chat/rate-limit.server";
-import { GuestDetailsNameMatchError, GuestDetailsRoomFullError, saveGuestDetails } from "../../src/lib/db/guest-submissions.server";
-import { guestDetailsSubmissionSchema } from "../../src/lib/guest-details-schema";
+import { findGuestQuestionnaireResume, GuestDetailsNameMatchError, GuestDetailsRoomFullError, saveGuestDetails } from "../../src/lib/db/guest-submissions.server";
+import { guestDetailsSchema, guestDetailsSubmissionSchema } from "../../src/lib/guest-details-schema";
 
 const MAX_BODY_BYTES = 8 * 1024;
 const writeLimiter = createTextLimiter();
@@ -60,6 +60,21 @@ export async function action({ request }: { request: Request }) {
     return Response.json({ ok: false, error: "We couldn’t verify this submission. Refresh the form and try again." }, { status: 400 });
   }
   if (typeof payload === "object" && payload !== null && "website" in payload) delete (payload as { website?: unknown }).website;
+
+  if (typeof payload === "object" && payload !== null && "intent" in payload && payload.intent === "resume") {
+    const namePayload = payload as { firstName?: unknown; lastName?: unknown };
+    const firstName = guestDetailsSchema.shape.firstName.safeParse(namePayload.firstName);
+    const lastName = guestDetailsSchema.shape.lastName.safeParse(namePayload.lastName);
+    if (!firstName.success || !lastName.success) return Response.json({ ok: false, error: "Enter your first and last name to look for a saved questionnaire." }, { status: 400 });
+    try {
+      const result = await findGuestQuestionnaireResume(firstName.data, lastName.data);
+      if (result.kind === "ambiguous") return Response.json({ ok: false, error: "We found more than one guest with that name. Please contact the organizer to continue." }, { status: 409 });
+      return Response.json({ ok: true, resume: result.kind === "resume", ...(result.kind === "resume" ? { roomId: result.roomId } : {}) });
+    } catch (error) {
+      console.error("Guest questionnaire resume lookup failed.", error instanceof Error ? error.name : "Unknown error");
+      return Response.json({ ok: false, error: "We couldn’t look up your questionnaire. Please try again." }, { status: 503 });
+    }
+  }
 
   const parsed = guestDetailsSubmissionSchema.safeParse(payload);
   if (!parsed.success) {

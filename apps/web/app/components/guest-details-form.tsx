@@ -18,7 +18,7 @@ type GuestDetailsValues = {
 };
 type FieldName = keyof GuestDetailsValues;
 type RoomOption = { id: string; name: string; shortName: string; type: string; floorName: string; openCount: number; occupants: { displayName: string; instagramUrl: string | null }[]; priceLabel: string | null; totalPriceLabel: string | null; description: string | null };
-type ResponseBody = { ok: boolean; code?: string; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean };
+type ResponseBody = { ok: boolean; code?: string; error?: string; fieldErrors?: Partial<Record<FieldName, string>>; created?: boolean; resume?: boolean; roomId?: string };
 
 function isResponseBody(value: unknown): value is ResponseBody {
   return typeof value === "object" && value !== null && "ok" in value && typeof value.ok === "boolean";
@@ -168,6 +168,40 @@ export function GuestDetailsForm({ rooms }: { rooms: RoomOption[] }) {
         else document.getElementById(`guest-${invalid}`)?.focus();
         return;
       }
+    }
+    if (step === 1) {
+      setBusy(true);
+      setFormError("");
+      try {
+        const response = await fetch("/api/guest-details", {
+          method: "POST", headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ intent: "resume", firstName: values.firstName, lastName: values.lastName }),
+        });
+        const payload: unknown = await response.json();
+        if (!isResponseBody(payload) || !response.ok || !payload.ok) {
+          setFormError(isResponseBody(payload) ? payload.error ?? "We couldn’t check for a saved questionnaire. Try again." : "We couldn’t check for a saved questionnaire. Try again.");
+          return;
+        }
+        if (payload.resume && payload.roomId && rooms.some((room) => room.id === payload.roomId)) {
+          form.setFieldValue("roomId", payload.roomId);
+          submissionSavedRef.current = true;
+          setSubmissionSaved(true);
+          setFormError("");
+          setStep(7);
+          return;
+        }
+        setStep(2);
+      } catch {
+        setFormError("We couldn’t check for a saved questionnaire. Check your connection and try again.");
+      } finally {
+        setBusy(false);
+      }
+      return;
+    }
+    if (step === 2 && selectedRoom && selectedRoom.openCount < 1) {
+      form.setFieldValue("roomId", "");
+      setFormError("Your saved room choice no longer has an open spot. Choose another available room.");
+      return;
     }
     if (step === 6 && !submissionSavedRef.current && !await saveSubmission(values)) return;
     setFormError("");
