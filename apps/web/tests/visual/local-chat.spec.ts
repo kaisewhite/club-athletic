@@ -122,19 +122,19 @@ test.describe("local chat browser journeys", () => {
   test("mobile navigation opens, navigates, and closes through touch taps", async ({ page }) => {
     await page.setViewportSize({ width: 390, height: 844 });
     await openChat(page);
-    const toggle = page.getByRole("button", { name: "Menu" });
+    const toggle = page.getByRole("button", { name: "Open menu" });
     await toggle.tap();
     await expect(page.getByRole("dialog", { name: "Trip navigation" })).toBeVisible();
     await page.getByRole("link", { name: "Rooms", exact: true }).tap();
     await expect(page).toHaveURL(/\/rooms$/);
     await expect(page.getByRole("dialog", { name: "Trip navigation" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Menu" }).tap();
-    await page.getByRole("dialog", { name: "Trip navigation" }).getByRole("button", { name: "Close navigation" }).tap();
+    await page.getByRole("button", { name: "Open menu" }).tap();
+    await page.getByRole("button", { name: "Close navigation" }).tap({ position: { x: 370, y: 400 } });
     await expect(page.getByRole("dialog", { name: "Trip navigation" })).toHaveCount(0);
-    await page.getByRole("button", { name: "Menu" }).tap();
+    await page.getByRole("button", { name: "Open menu" }).tap();
     await page.keyboard.press("Escape");
     await expect(page.getByRole("dialog", { name: "Trip navigation" })).toHaveCount(0);
-    await expect(page.getByRole("button", { name: "Menu" })).toBeFocused();
+    await expect(page.getByRole("button", { name: "Open menu" })).toBeFocused();
   });
 
   test("landscape phone viewport keeps the app within the screen", async ({ page }) => {

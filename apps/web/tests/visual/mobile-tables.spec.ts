@@ -237,10 +237,11 @@ for (const width of [1280, 1440]) {
       return { rowCount: rows.length, headerRowCount, bodyRowCount: bodyRows.length, bodyColumnCounts: bodyRows.map((row) => row.querySelectorAll("th, td").length), failures };
     });
 
-      expect(audit.rowCount).toBe(13);
+      // Rows are the 10 confirmed guests in the seed snapshot plus two header rows.
+      expect(audit.rowCount).toBe(12);
       expect(audit.headerRowCount).toBe(2);
-      expect(audit.bodyRowCount).toBe(11);
-      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 11 }, () => 6));
+      expect(audit.bodyRowCount).toBe(10);
+      expect(audit.bodyColumnCounts).toEqual(Array.from({ length: 10 }, () => 6));
       expect(audit.failures).toEqual([]);
     });
   });
