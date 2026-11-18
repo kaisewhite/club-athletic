@@ -67,6 +67,13 @@ function VoteGroup({ title, votes }: { title: string; votes: Vote[] }) {
   </section>;
 }
 
+function NonVoterGroup({ guests }: { guests: Awaited<ReturnType<typeof loader>>["nonVoters"] }) {
+  return <section className="folie-vote-group" aria-label="Not voted yet">
+    <div className="folie-vote-group-heading"><h3>Not voted yet</h3><span>{guests.length} {guests.length === 1 ? "guest" : "guests"}</span></div>
+    {guests.length ? <ul>{guests.map((guest, index) => <li key={`${guest.displayName}-${index}`}>{[guest.firstName, guest.lastName].filter(Boolean).join(" ") || guest.displayName}</li>)}</ul> : <p>Everyone has voted.</p>}
+  </section>;
+}
+
 export default function FolieDouce({ loaderData: votes }: Route.ComponentProps) {
   const actionData = useActionData<typeof action>();
   const navigation = useNavigation();
@@ -108,6 +115,7 @@ export default function FolieDouce({ loaderData: votes }: Route.ComponentProps) 
       <div className="folie-vote-groups">
         <VoteGroup title="VIP table" votes={votes.vip} />
         <VoteGroup title="General Admission" votes={votes.generalAdmission} />
+        <NonVoterGroup guests={votes.nonVoters} />
       </div>
     </section>
   </section>;

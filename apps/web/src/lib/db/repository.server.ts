@@ -4,6 +4,7 @@ import type { Prisma } from "../../../prisma/generated/client";
 import { buildFlightTable, flightSelect } from "./flights";
 import { airportLocalTime } from "./airport-timezones";
 import { countOpenSpots, getTripPricing } from "./projections";
+import { getFolieDouceNonVoters as findFolieDouceNonVoters } from "../folie-douce-non-voters";
 
 // A lookup key, not a duplicate of editable trip facts.
 const DEFAULT_TRIP_KEY = "meribel-2027";
@@ -263,9 +264,10 @@ export async function getGuestInstagramProfiles(tripKey = DEFAULT_TRIP_KEY) {
 
 export async function getFolieDouceVotes(tripKey = DEFAULT_TRIP_KEY) {
   return withReadDatabase(async (db) => {
-    const { folieDouceVotes } = await db.trip.findUniqueOrThrow({
+    const { guests, folieDouceVotes } = await db.trip.findUniqueOrThrow({
       where: { seedKey: tripKey },
       select: {
+        guests: { where: { status: "CONFIRMED" }, orderBy: [...guestOrder], select: { firstName: true, lastName: true, displayName: true } },
         folieDouceVotes: {
           orderBy: [{ firstName: "asc" }, { lastName: "asc" }],
           select: { id: true, firstName: true, lastName: true, choice: true },
@@ -275,6 +277,7 @@ export async function getFolieDouceVotes(tripKey = DEFAULT_TRIP_KEY) {
     return {
       vip: folieDouceVotes.filter((vote) => vote.choice === "VIP_TABLE"),
       generalAdmission: folieDouceVotes.filter((vote) => vote.choice === "GENERAL_ADMISSION"),
+      nonVoters: findFolieDouceNonVoters(guests, folieDouceVotes),
     };
   });
 }
