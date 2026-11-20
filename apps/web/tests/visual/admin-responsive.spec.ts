@@ -44,14 +44,17 @@ test("guest records wrap without horizontal scrolling at desktop widths", async 
   }
 });
 
-test("chef page reads normalized preferences from the local database", async ({ page }) => {
+test("chef page renders seeded guest preferences as individual items", async ({ page }) => {
   await page.setViewportSize({ width: 1440, height: 1000 });
   await openFrozen(page, "/chef");
   const preferences = page.getByRole("table", { name: "Guest food preferences" });
-  await expect(preferences).toContainText("Pescatarian; lactose intolerant");
-  await expect(preferences).toContainText("Avoid parsley");
-  await expect(preferences).toContainText("Espresso Martini; Margarita; Old Fashioned");
-  await expect(preferences).toContainText("Peanut sensitivity (avoid peanuts)");
+  const guestRow = (name: string) => preferences.getByRole("row", { name: new RegExp(name) });
+  const items = (row: ReturnType<typeof guestRow>, column: number) => row.locator("td").nth(column).locator(".dietary-preference-item");
+
+  await expect(items(guestRow("Kaise"), 0)).toHaveText(["•Pescatarian; lactose intolerant"]);
+  await expect(items(guestRow("Ted Delcima"), 0)).toHaveText(["•Avoid parsley"]);
+  await expect(items(guestRow("Olajuwon Jones"), 1)).toHaveText(["•Espresso Martini; Margarita; Old Fashioned"]);
+  await expect(items(guestRow("Valeriia Stobolva"), 0)).toHaveText(["•Peanut sensitivity (avoid peanuts)"]);
 });
 
 for (const [width, height] of [[390, 844], [320, 568]] as const) {
