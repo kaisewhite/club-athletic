@@ -101,6 +101,7 @@ it("hydrates the wide SSR shell on a narrow viewport, then switches at exactly 8
     expect(container.querySelector(".mobile-nav-toggle")?.getAttribute("aria-expanded")).toBe("false");
     await act(async () => container.querySelector<HTMLButtonElement>(".mobile-nav-toggle")!.click());
     expect(container.querySelector('.mobile-drawer .side-item.active')?.textContent).toBe("Schedule");
+    expect(container.querySelector('.mobile-drawer-close[aria-label="Close navigation"]')).not.toBeNull();
     expect(container.querySelectorAll(".mobile-drawer nav a")).toHaveLength(14);
     expect([...container.querySelectorAll<HTMLAnchorElement>(".mobile-drawer nav a")].map((link) => link.textContent)).toEqual([
       "Chat", "Chalet", "Rooms", "Pricing", "Shuttle", "Flights", "Schedule", "Overview", "Chef", "Guests", "Links", "FAQ", "Questionnaire", "La Folie Douce",

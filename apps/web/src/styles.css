@@ -615,7 +615,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
      outline or fill, pressed state below. */
   .mobile-chat-link, .mobile-new-chat, .mobile-nav-toggle { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: var(--radius-sm); background: transparent; color: var(--text); cursor: pointer; }
   .mobile-chat-link:hover { color: var(--text); }
-  .mobile-chat-link:focus-visible, .mobile-new-chat:focus-visible, .mobile-nav-toggle:focus-visible { outline: 2px solid var(--text); outline-offset: -2px; }
+  .mobile-chat-link:focus-visible, .mobile-new-chat:focus-visible, .mobile-nav-toggle:focus-visible, .mobile-drawer-close:focus-visible { outline: 2px solid var(--text); outline-offset: -2px; }
   .mobile-nav-layer { position: fixed; z-index: 10; inset: 0; }
   .mobile-nav-scrim { position: absolute; inset: 0; width: 100%; border: 0; background: rgb(18 24 30 / 34%); opacity: 1; transition: opacity var(--duration-drawer) var(--ease-out); }
   @starting-style { .mobile-nav-scrim { opacity: 0; } }
@@ -624,6 +624,7 @@ a:focus-visible { outline: 2px solid var(--text); outline-offset: 2px; }
   .app-shell.mobile-nav-open .site-footer { transform: translateX(var(--mobile-drawer-width)); }
   .mobile-drawer { position: absolute; inset: 0 auto 0 0; width: var(--mobile-drawer-width); padding: max(16px, env(safe-area-inset-top, 0px)) 12px max(20px, env(safe-area-inset-bottom, 0px)); overflow-y: auto; overscroll-behavior-y: contain; -webkit-overflow-scrolling: touch; touch-action: pan-y; background: var(--sidebar); border-right: 1px solid var(--border-subtle); }
   .mobile-drawer-heading { display: flex; align-items: center; justify-content: space-between; padding: 8px 4px 18px 10px; color: var(--text-faint); font-size: 11px; font-weight: 600; letter-spacing: .12em; text-transform: uppercase; }
+  .mobile-drawer-close { display: inline-flex; flex: none; align-items: center; justify-content: center; width: 44px; min-width: 44px; height: 44px; min-height: 44px; padding: 0; border: 0; border-radius: 0; background: transparent; color: var(--text-muted); }
   .mobile-drawer .side-nav { gap: 2px; }
   .mobile-drawer .side-item { display: flex; align-items: center; gap: 12px; min-height: 44px; padding: 11px 12px; }
   .mobile-drawer .side-item-icon { flex: none; }
