@@ -231,7 +231,7 @@ for (const [width, height] of VIEWPORTS) {
       }));
       expect(entries).toHaveLength(14);
       expect(entries.every((entry) => entry.question && entry.answer)).toBe(true);
-      expect(page.locator(".faq-question-link")).toHaveCount(10);
+      await expect(page.locator(".faq-question-link")).toHaveCount(10);
       for (const entry of entries) {
         if (mobile) expect(entry.answerWidth, `answer measure at ${width}px`).toBeGreaterThan(width * 0.6);
       }
